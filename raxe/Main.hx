@@ -45,6 +45,8 @@ class Main {
       return result + type + (isFunction ? " {" : "");
     });
 
+    file += "}";
+
     File.saveContent("export/Main.hx", file);
   }
 }

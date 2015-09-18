@@ -52,4 +52,4 @@ function update(deltaTime) {
   }
 
   sprite.x += speed * deltaTime
-}
+}}

@@ -20,13 +20,16 @@ class Main {
     file = regex.replace(file, "$1//$2");
 
     // Defines to functions and variables
-    regex = ~/(.*)def(\s*)(static|private|public)?(\s+)([^=\n]*)/g;
+    regex = ~/def(\s*)(static|private|public)?(\s*)([^=\n]*)/g;
     file = regex.map(file, function(r) {
-      var type = r.matched(5);
+      var type = r.matched(4);
 
-      var result = r.matched(1) != null ? r.matched(1) : "";
-      result += r.matched(3) != null ? r.matched(3) : "";
-      result += r.matched(2) != null ? r.matched(2) : "";
+      var result = "";
+
+      if (r.matched(2) != null) {
+        result += r.matched(2);
+        result += r.matched(3) != null ? r.matched(3) : "";
+      }
 
       // This is function
       var isFunction = type.indexOf("(") > -1;
@@ -37,7 +40,7 @@ class Main {
         result += "var";
       }
 
-      result += r.matched(4) != null ? r.matched(4) : "";
+      result += r.matched(1) != null ? r.matched(1) : "";
 
       return result + type + (isFunction ? " {" : "");
     });

@@ -38,7 +38,7 @@ function new() {
   cacheTime = Lib.getTimer()
 
   // Event listener magic, hell yeah
-  addEventListener(Event.ENTER_FRAME, def(event)
+  addEventListener(Event.ENTER_FRAME, function(event) {
     var currentTime = Lib.getTimer ()
     update (currentTime - cacheTime)
     cacheTime = currentTime

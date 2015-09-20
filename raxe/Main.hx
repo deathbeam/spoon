@@ -4,8 +4,13 @@ class Main {
   static function main() {
     var file = File.getContent("export/Main.rx");
 
+    // Ruby comments to C-like comments
+    var regex = ~/^(.*)#(\s+.*)$/gm;
+    regex.match(file);
+    file = regex.replace(file, "$1//$2");
+
     // Ruby end to C-style ending
-    var regex = ~/(\s+)end/gm;
+    regex = ~/(\s+)end/gm;
     regex.match(file);
     file = regex.replace(file, "$1}");
     
@@ -13,11 +18,6 @@ class Main {
     regex = ~/^\s*(require)\s"(.+)"$/gm;
     regex.match(file);
     file = regex.replace(file, "import " +  StringTools.replace(regex.matched(2), "/", ".") + ";");
-
-    // Ruby comments to C-like comments
-    regex = ~/^(.*)#(\s+.*)$/gm;
-    regex.match(file);
-    file = regex.replace(file, "$1//$2");
 
     // Defines to functions and variables
     regex = ~/def(\s*)(static|private|public)?(\s*)([^=\n]*)/g;

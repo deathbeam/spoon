@@ -3,28 +3,32 @@ import openfl.display.Sprite;
 import openfl.display.Sprite;
 import openfl.display.Sprite;
 
-// Set type of this module to class and extend it by OpenFL sprite
-module class extends Sprite
+// Some random things right?
+// I do not found good syntax how to varine what is
+// this. Any suggestions?
+module class<String>
+  extends Sprite
+  implements Dynamic
   
 // Module variables
 static var appname = "My Application"
-static var instance = new Main() // Test
-
-static function instance() {
-  return instance // Return instance of Main
-}
+static var instance = new Main() // New instance of self
 
 // Instance variables
 var cacheTime : Float
 var speed : Float
 var sprite : Sprite
 
+static function instance() {
+  return instance // Return instance of Main
+}
+
 // Create a new instance of class Main
 // It is just entry point for OpenFL
 function new() {
   super()
 
-  puts("This is " + appname)
+  trace("This is " + appname)
 
   // Create our super sprite
   sprite = new Sprite()

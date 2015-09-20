@@ -3,28 +3,32 @@ require "openfl/display/Sprite"
 require "openfl/events/Event"
 require "openfl/Lib"
 
-# Set type of this module to class and extend it by OpenFL sprite
-module class extends Sprite
+# Some random things right?
+# I do not found good syntax how to define what is
+# this. Any suggestions?
+module class<String>
+  extends Sprite
+  implements Dynamic
   
 # Module variables
 def static appname = "My Application"
-def static instance = new Main() # Test
-
-def static instance()
-  return instance # Return instance of Main
-end
+def static instance = new Main() # New instance of self
 
 # Instance variables
 def cacheTime : Float
 def speed : Float
 def sprite : Sprite
 
+def static instance()
+  return instance # Return instance of Main
+end
+
 # Create a new instance of class Main
 # It is just entry point for OpenFL
 def new()
   super()
 
-  puts("This is " + appname)
+  trace("This is " + appname)
 
   # Create our super sprite
   sprite = new Sprite()

@@ -26,6 +26,14 @@ var cacheTime : Float
 var speed : Float
 var sprite : Sprite
 
+// Just multiline string
+// Yes I know Haxe supports them already
+// but this is solely for syntax highlighting purposes
+var test = "
+  Hello bro
+  This is for you. Biatch
+"
+
 static function instance(){
   return instance // Return instance of Main
 }

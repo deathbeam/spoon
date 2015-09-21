@@ -105,13 +105,20 @@ class Transpiler {
         } else {
           handle.increment();
         }
-
-        continue;
       }
       // Step over things in strings (" ")
       else if (handle.is("\"")) {
+        if (handle.at("\"\"\"")) {
+          handle.remove("\"\"");
+        }
+
         handle.increment();
         handle.next("\"");
+
+        if (handle.at("\"\"\"")) {
+          handle.remove("\"\"");
+        }
+        
         handle.increment();
       }
       // Change end to classic bracket end

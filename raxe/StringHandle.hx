@@ -36,6 +36,12 @@ class StringHandle {
     return current == content;
   }
 
+  public function at(content : String) : Bool {
+    var divided = divide();
+    if (divided.right.substr(0, content.length) == content) return true;
+    return false;
+  }
+
   public function prev(?content : String) : Bool {
     if (content == null) {
       if (current != null) return prev(current);

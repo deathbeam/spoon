@@ -13,22 +13,22 @@ class Transpiler {
 
   var tokens = [
     // Standard keywords
-    "\"", "=", "(", ")", "/",
+    "\"", "\\\"", "(", ")", "/", "=",
 
     // Raxe keywords
-    "--", "require", "module", "def", "end",
+    "-", "require", "module", "def", "end",
 
     // Haxe keywords
-    //"//", "import", "var", "function", "extends", "implements"
+    "extends", "implements", //"//", "import", "var", "function",
 
-    // If, else etc
+    // Expressions
     "if", "else", "case", "elsif", "while",
 
     // Types
-    "class", "enum", "abstract",
+    "class", "enum", "abstract"
 
     // Access modifiers
-    "private", "public", "static"
+    //"private", "public", "static"
   ];
   
   public function new(directory : String, inputFile : String, outputFile : String) {
@@ -52,8 +52,7 @@ class Transpiler {
   public function transpile() {
     while (handle.nextToken()) {
       if (buffer == "require") {
-        if (handle.is("--") || handle.is("require")) {
-          handle.insert(";");
+        if (handle.is("-") || handle.is("require")) {
           buffer = null;
           continue;
         } else {
@@ -67,27 +66,47 @@ class Transpiler {
           handle.increment();
           continue;
         }
-      } else if (buffer == ";") {
-        if (handle.is("require") ||
-            handle.is("--") ||
-            handle.is("end") ||
-            handle.is("def") ||
-            handle.is("static") ||
-            handle.is("private") ||
-            handle.is("public")) {
-          handle.insert(";");
-          buffer = null;
-        }
       }
 
       // Process comments and ignore everything in
-      // them until end of line
-      if (handle.is("--")) {
-        handle.remove();
-        handle.insert("//");
-        handle.increment();
-        handle.next("\n");
-        handle.increment();
+      // them until end of line or until next match if multiline
+      if (handle.is("-")) {
+        var comment = "";
+        var position = handle.position;
+
+        while(handle.nextTokenLine()) {
+          handle.increment(); 
+
+          if (handle.is("-")) {
+            comment += "-";
+          } else {
+            break;
+          }
+        }
+        trace(comment);
+
+        handle.position = position;
+        handle.current = "-";
+
+        if (comment.length > 2) {
+          handle.remove(comment);
+          handle.insert("/* ");
+          handle.increment();
+          handle.next(comment);
+          handle.remove(comment);
+          handle.insert(" */");
+          handle.increment();
+        } else if (comment.length == 2) {
+          handle.remove(comment);
+          handle.insert("//");
+          handle.increment();
+          handle.next("\n");
+          handle.increment();
+        } else {
+          handle.increment();
+        }
+
+        continue;
       }
       // Step over things in strings (" ")
       else if (handle.is("\"")) {
@@ -120,11 +139,9 @@ class Transpiler {
           consumeCurlys();
           handle.insert("{");
           handle.increment();
-          buffer = null;
         } else {
           handle.position = position;
           handle.insert("var");
-          buffer = ";";
         }
 
         handle.increment();
@@ -162,13 +179,7 @@ class Transpiler {
         }
       }
       else {
-        if (handle.is("(")) consumeCurlys();
-        if (handle.next("\n")) {
-          handle.insert(";");
-          handle.increment("\n;");
-        } else {
-          handle.increment(); // Skip this token
-        }
+        handle.increment(); // Skip this token
       }
     }
 

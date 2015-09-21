@@ -26,11 +26,14 @@ class StringHandle {
     return position >= content.length;
   }
 
-  public function is(?content : String) : Bool {
-    var divided = divide();
+  public function is(content : String) : Bool {
+    /* var divided = divide();
 
     if (divided.right.substr(0, content.length) == content) return true;
     return false;
+    */
+
+    return current == content;
   }
 
   public function prev(?content : String) : Bool {
@@ -70,6 +73,32 @@ class StringHandle {
         newPos = pos;
         currentToken = token;
       }
+    }
+
+    if (newPos == -1) return false;
+    position = newPos;
+    current = currentToken;
+    return true;
+  }
+
+  public function nextTokenLine() : Bool {
+    var newPos = -1;
+    var currentToken = "";
+
+    for (token in tokens) {
+      var pos = this.content.indexOf(token, position);
+
+      if (pos != -1 && (pos < newPos || newPos == -1)) {
+        newPos = pos;
+        currentToken = token;
+      }
+    }
+
+    var pos = this.content.indexOf("\n", position);
+
+    if (pos != -1 && (pos < newPos || newPos == -1)) {
+      newPos = pos;
+      currentToken = "\n";
     }
 
     if (newPos == -1) return false;

@@ -1,6 +1,5 @@
--main Main
+-main raxe.Main
 -cp raxe
--lib hxparse
 
 -neko export/Main.n
 -cmd neko export/Main.n

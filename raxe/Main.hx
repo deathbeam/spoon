@@ -1,7 +1,13 @@
+package raxe;
+
 import sys.io.File;
 
 class Main {
   static function main() {
+    new Transpiler("test", "export/Main.rx", "export/Main.hx").transpile().save();
+
+    return;
+
     var file = File.getContent("export/Main.rx");
 
     // Ruby comments to C-like comments

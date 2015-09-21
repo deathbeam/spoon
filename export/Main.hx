@@ -15,7 +15,7 @@ this. Any suggestions?
   extends Sprite
   implements Dynamic
   
-// Module variables
+{// Module variables
 static var appname = "My Application"
 static var instance = new Main() // New instance of self
 
@@ -73,4 +73,4 @@ function update(deltaTime){
   }
 
   sprite.x += speed * deltaTime
-}
+}}

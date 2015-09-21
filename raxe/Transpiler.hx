@@ -42,7 +42,6 @@ class Transpiler {
     currentPackage = StringTools.replace(currentPackage, "/", ".");
 
     handle = new StringHandle(File.getContent(inputFile), tokens);
-    handle.insert("package " + currentPackage + ";").increment();
   }
 
   public function save() {
@@ -50,6 +49,8 @@ class Transpiler {
   }
 
   public function transpile() {
+    handle.insert("package " + currentPackage + ";").increment();
+
     while (handle.nextToken()) {
       if (buffer == "require") {
         if (handle.is("-") || handle.is("require")) {
@@ -83,7 +84,6 @@ class Transpiler {
             break;
           }
         }
-        trace(comment);
 
         handle.position = position;
         handle.current = "-";
@@ -169,19 +169,28 @@ class Transpiler {
       }
       else if (handle.is("module")) {
         handle.remove();
-        handle.nextToken();
 
-        if (handle.is("enum") ||
-            handle.is("class") ||
-            handle.is("abstract")) {
-          handle.increment();
-          handle.insert(" " + currentModule + " ");
+        while(handle.nextToken()) {
+          if (handle.is("enum") ||
+              handle.is("class") ||
+              handle.is("abstract")) {
+            handle.increment();
+            handle.insert(" " + currentModule + " ");
+            handle.increment();
+          } else if (handle.is("extends") || handle.is("implements")) {
+            handle.increment();
+          } else {
+            handle.insert("{");
+            break;
+          }
         }
       }
       else {
         handle.increment(); // Skip this token
       }
     }
+
+    handle.content = handle.content + "}";
 
     return this;
   }

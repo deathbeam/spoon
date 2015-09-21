@@ -9,19 +9,20 @@ class Transpiler {
   var inputFile : String;
   var outputFile : String;
   var handle : StringHandle;
+  var buffer : String = null;
 
   var tokens = [
     // Standard keywords
-    "\"", "=", "(", ")", "\n", "extends", "implements", ".", "/",
+    "\"", "=", "(", ")", "/",
 
     // Raxe keywords
     "--", "require", "module", "def", "end",
 
     // Haxe keywords
-    "//", "import", "var", "function",
+    //"//", "import", "var", "function", "extends", "implements"
 
     // If, else etc
-    "if", "else", "switch", "do", "while",
+    "if", "else", "case", "elsif", "while",
 
     // Types
     "class", "enum", "abstract",
@@ -41,6 +42,7 @@ class Transpiler {
     currentPackage = StringTools.replace(currentPackage, "/", ".");
 
     handle = new StringHandle(File.getContent(inputFile), tokens);
+    handle.insert("package " + currentPackage + ";").increment();
   }
 
   public function save() {
@@ -48,16 +50,14 @@ class Transpiler {
   }
 
   public function transpile() {
-    handle.insert("package " + currentPackage + ";").increment();
-    var buffer : String = null;
-
     while (handle.nextToken()) {
       if (buffer == "require") {
         if (handle.is("--") || handle.is("require")) {
-          buffer = ";";
+          handle.insert(";");
+          buffer = null;
           continue;
         } else {
-            if (handle.is("\"")) {
+          if (handle.is("\"")) {
             handle.remove();
           } else if (handle.is("/")) {
             handle.remove();
@@ -71,7 +71,10 @@ class Transpiler {
         if (handle.is("require") ||
             handle.is("--") ||
             handle.is("end") ||
-            handle.is("def")) {
+            handle.is("def") ||
+            handle.is("static") ||
+            handle.is("private") ||
+            handle.is("public")) {
           handle.insert(";");
           buffer = null;
         }
@@ -104,11 +107,86 @@ class Transpiler {
         handle.insert("import");
         handle.increment();
         buffer = "require";
-      } else {
-        handle.increment(); // Skip this token
+      }
+      // Defines to variables and functions
+      else if (handle.is("def")) {
+        var position = handle.position;
+        handle.remove("def");
+        handle.nextToken();
+
+        if (handle.is("(")) {
+          handle.position = position;
+          handle.insert("function");
+          consumeCurlys();
+          handle.insert("{");
+          handle.increment();
+          buffer = null;
+        } else {
+          handle.position = position;
+          handle.insert("var");
+          buffer = ";";
+        }
+
+        handle.increment();
+      }
+      else if (handle.is("if") || handle.is("while")) {
+        handle.increment();
+        consumeCurlys();
+        handle.insert("{");
+        handle.increment();
+      }
+      else if (handle.is("elsif")) {
+        handle.remove();
+        handle.insert("}else if");
+        handle.increment();
+        consumeCurlys();
+        handle.insert("{");
+        handle.increment();
+      }
+      else if (handle.is("else")) {
+        handle.insert("}");
+        handle.increment();
+        handle.increment("else");
+        handle.insert("{");
+        handle.increment();
+      }
+      else if (handle.is("module")) {
+        handle.remove();
+        handle.nextToken();
+
+        if (handle.is("enum") ||
+            handle.is("class") ||
+            handle.is("abstract")) {
+          handle.increment();
+          handle.insert(" " + currentModule + " ");
+        }
+      }
+      else {
+        if (handle.is("(")) consumeCurlys();
+        if (handle.next("\n")) {
+          handle.insert(";");
+          handle.increment("\n;");
+        } else {
+          handle.increment(); // Skip this token
+        }
       }
     }
 
     return this;
+  }
+
+  private function consumeCurlys() {
+    var count = 0;
+
+    while(handle.nextToken()) {
+      if (handle.is("(")) {
+        count++;
+      } else if (handle.is(")")) {
+        count--;
+      }
+
+      handle.increment();
+      if (count == 0) break;
+    }
   }
 }

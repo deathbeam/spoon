@@ -11,20 +11,18 @@ require "openfl/Lib"
 -- I do not found good syntax how to define what is
 -- this. Any suggestions?
 ----------------------------------------------------
-module class<String>
-  extends Sprite
-  implements Dynamic
+module class<String> extends Sprite implements Dynamic
   
 -- Module variables
-def static appname = "My Application"
-def static instance = new Main() -- New instance of self
+static def appname = "My Application"
+static def instance = new Main() -- New instance of self
 
 -- Instance variables
 def cacheTime : Float
 def speed : Float
 def sprite : Sprite
 
-def static instance()
+static def instance()
   return instance -- Return instance of Main
 end
 
@@ -46,6 +44,11 @@ def new()
   speed = 0.3
   cacheTime = Lib.getTimer()
 
+  while (true)
+    trace(hello)
+    break
+  end
+
   -- Event listener magic, hell yeah
   addEventListener(Event.ENTER_FRAME, def(event)
     var currentTime = Lib.getTimer ()
@@ -58,6 +61,11 @@ end
 def update(deltaTime)
   if (sprite.x + sprite.width >= stage.stageWidth || sprite.x <= 0)  
     speed *= -1
+  elsif (sprite.x == 5)
+    testThis()
+    break
+  else
+    testThat()
   end
 
   sprite.x += speed * deltaTime

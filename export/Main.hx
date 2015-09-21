@@ -11,56 +11,64 @@ import openfl.Lib
 // I do not found good syntax how to define what is
 // this. Any suggestions?
 //--------------------------------------------------
-module class<String>
-  extends Sprite
-  implements Dynamic
+ class Main <String> ext}s Sprite implements Dynamic
   
 // Module variables
-def static appname = "My Application"
-def static instance = new Main() // New instance of self
+static def appname = "My Application";
+static def instance = new Main() -- New instance of self;
 
 // Instance variables
-def cacheTime : Float
-def speed : Float
-def sprite : Sprite
+var cacheTime : Float
+;def speed : Float;
+var sprite : Sprite
 
-def static instance()
+;static def instance();
   return instance // Return instance of Main
 }
 
 // Create a new instance of class Main
 // It is just entry point for OpenFL
-def new()
-  super()
+function new(){
+  super();
 
-  trace("This is " + appname)
+  trace("This is " + appname);
 
   // Create our super sprite
-  sprite = new Sprite()
-  sprite.graphics.beginFill(0x24AFC4)
-  sprite.graphics.drawRect(0, 0, 100, 100)
-  sprite.y = 50
-  addChild(sprite)
+  sprite = new Sprite();
+  sprite.graphics.beginFill(0x24AFC4);
+  sprite.graphics.drawRect(0, 0, 100, 100);
+  sprite.y = 50;
+  addChild(sprite);
 
   // Initialize rest of things
-  speed = 0.3
-  cacheTime = Lib.getTimer()
+  speed = 0.3;
+  cacheTime = Lib.getTimer();
+
+  while (true){
+    trace(hello);
+    break
+  }
 
   // Event listener magic, hell yeah
   addEventListener(Event.ENTER_FRAME, def(event)
     var currentTime = Lib.getTimer ()
     update (currentTime - cacheTime)
     cacheTime = currentTime
-  })
+  end);
 }
 
 // Just main loop. I love them.
-def update(deltaTime)
-  if (sprite.x + sprite.width >= stage.stageWidth || sprite.x <= 0)  
-    speed *= -1
+function update(deltaTime){
+  if (sprite.x + sprite.width >= stage.stageWidth || sprite.x <= 0){  
+    speed *= -1;
+  }else if (sprite.x == 5){
+    testThis();
+    break
+  }else{
+    testThat();
   }
 
-  sprite.x += speed * deltaTime
+  sprite.x += speed * deltaTime;
 }
 
 // 

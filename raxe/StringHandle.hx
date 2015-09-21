@@ -27,12 +27,6 @@ class StringHandle {
   }
 
   public function is(content : String) : Bool {
-    /* var divided = divide();
-
-    if (divided.right.substr(0, content.length) == content) return true;
-    return false;
-    */
-
     return current == content;
   }
 

@@ -5,32 +5,32 @@ Anoanymous array declaration is dynamic by default.
 So you can put anything in there.
 ---
 static def array = [
-	"a", "b", "c", 6
+  "a", "b", "c", 6
 ]
 
 ---
 Same applies to anonymous structures.
 ---
 static def struct = {
-	a: "hello",
-	b: "yolo",
+  a: "hello",
+  b: "yolo",
 
-	---
-	And this is how we define anonymous function. It is also
-	dynamic by default, so all parameters are correctly typed
-	by Haxe compiler
-	---
-	callback: def(event)
-		return event + " World"
-	end,
+  ---
+  And this is how we define anonymous function. It is also
+  dynamic by default, so all parameters are correctly typed
+  by Haxe compiler
+  ---
+  callback: def(event)
+    return event + " World"
+  end,
 }
 
 static def main()
-	-- Here we will call our anonymous function
-	def result = struct.callback("Hello")
+  -- Here we will call our anonymous function
+  def result = struct.callback("Hello")
 
-	-- And now, print everything to console
-	trace(result)
-	trace(array)
-	trace(struct)
+  -- And now, print everything to console
+  trace(result)
+  trace(array)
+  trace(struct)
 end

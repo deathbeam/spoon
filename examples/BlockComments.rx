@@ -21,8 +21,8 @@ And now, we need to terminate it with same number of hypnens as
 we initialized it, in this case 5.
 -----
 static def main()
-	-----------------------------------
-	We can also do this :)
-	-----------------------------------
-	trace("This is block comment demo")
+  -----------------------------------
+  We can also do this :)
+  -----------------------------------
+  trace("This is block comment demo")
 end

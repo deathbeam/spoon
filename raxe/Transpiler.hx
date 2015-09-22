@@ -27,7 +27,10 @@ class Transpiler {
     "class", "enum", "abstract",
 
     // Access modifiers
-    "private", "public", "static"
+    "private", "public", "static",
+
+    // Just to define main
+    "import", ";"
   ];
   
   public function new(directory : String, inputFile : String, outputFile : String) {
@@ -49,6 +52,7 @@ class Transpiler {
 
   public function transpile() {
     var isPublic = false;
+    var isMain = true;
 
     handle.insert("package " + currentPackage + ";using Lambda;").increment();
 
@@ -117,11 +121,19 @@ class Transpiler {
         handle.insert("import");
         handle.increment();
 
-        while (handle.nextToken()) {
-          if (handle.is("-") || handle.is("require")) break;
+        var firstQuote = true;
 
+        while (handle.nextToken()) {
           if (handle.is("\"")) {
             handle.remove();
+
+            if (!firstQuote) {
+              handle.insert(";");
+              handle.increment();
+              break;
+            }
+
+            firstQuote = false;
           } else if (handle.is("/")) {
             handle.remove();
             handle.insert(".");
@@ -190,6 +202,7 @@ class Transpiler {
       }
       // Process module declarations and insert curly after them
       else if (handle.is("module")) {
+        isMain = false;
         handle.remove();
 
         while(handle.nextToken()) {
@@ -213,6 +226,33 @@ class Transpiler {
     }
 
     handle.content = handle.content + "}";
+
+    // Lazy main class. If no module definition is found,
+    // create main class
+    if (isMain) {
+      handle.position = 0;
+
+      while (handle.nextTokenLine()) {
+        if (!handle.is("import") && !handle.is("/") && !handle.is("using") && !handle.is("\n") && !handle.is(";")) {
+          var position = handle.position;
+          var current = handle.current;
+          handle.prevTokenLine();
+
+          if (handle.is("\n") || handle.is(";")) {
+            handle.increment();
+            handle.insert("class " + currentModule + "{public static function main(){");
+            handle.content = handle.content + "}";
+            break;
+          }
+
+          handle.position = position;
+          handle.current = current;
+          handle.increment();
+        } else {
+          handle.increment();
+        }
+      } 
+    }
 
     return this;
   }

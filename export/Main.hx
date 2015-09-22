@@ -1,8 +1,8 @@
 package export;using Lambda;// testing something right
-import openfl.display.Sprite
+import openfl.display.Sprite;
 // testing something right
-import openfl.events.Event // testing something right
-import openfl.Lib
+import openfl.events.Event; // testing something right
+import openfl.Lib;
 
 // require "openfl/Lib"
 
@@ -11,7 +11,7 @@ Some random things right?
 I do not found good syntax how to define what is
 this. Any suggestions?
  */
- class Main <String> 
+ class Main <String>
   extends Sprite
   implements Dynamic
   
@@ -54,6 +54,8 @@ static public function instance(){
 // It is just entry point for OpenFL
 public function new(){
   super()
+
+  public var hell = "88Jdf"
 
   /* 
   Print something

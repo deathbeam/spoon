@@ -24,10 +24,10 @@ class Transpiler {
     "if", "else", "case", "elsif", "while",
 
     // Types
-    "class", "enum", "abstract"
+    "class", "enum", "abstract",
 
     // Access modifiers
-    //"private", "public", "static"
+    "private", "public", "static"
   ];
   
   public function new(directory : String, inputFile : String, outputFile : String) {

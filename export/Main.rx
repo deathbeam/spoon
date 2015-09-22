@@ -15,7 +15,6 @@ module class<String>
   extends Sprite
   implements Dynamic
   
--- Module variables
 static def appname = "My Application"
 static def instance = new Main() -- New instance of self
 

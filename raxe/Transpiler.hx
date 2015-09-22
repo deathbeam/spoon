@@ -18,7 +18,7 @@ class Transpiler {
     "-", "require", "module", "def", "end",
 
     // Haxe keywords
-    "extends", "implements", //"//", "import", "var", "function",
+    "extends", "implements", "inline", //"//", "import", "var", "function",
 
     // Expressions
     "if", "else", "case", "elsif", "while",

@@ -48,6 +48,8 @@ class Transpiler {
   }
 
   public function transpile() {
+    var isPublic = false;
+
     handle.insert("package " + currentPackage + ";").increment();
 
     while (handle.nextToken()) {
@@ -128,10 +130,24 @@ class Transpiler {
           handle.increment();
         }
       }
+      // Just handle public for definitions
+      else if (handle.is("public")) {
+        isPublic = true;
+        handle.increment();
+      }
       // Defines to variables and functions
       else if (handle.is("def")) {
+        if (!isPublic) {
+          handle.insert("public ");
+          handle.increment();
+        } else {
+          isPublic = false;
+        }
+
+        handle.next("def");
         var position = handle.position;
         handle.remove("def");
+
         handle.nextToken();
 
         if (handle.is("(")) {

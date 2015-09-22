@@ -26,6 +26,18 @@ def cacheTime : Float
 def speed : Float
 def sprite : Sprite
 
+def struct = {
+  a: "hello",
+  b: "world",
+  callback: def(test)
+    trace("hello world")
+  end
+}
+
+def array = [
+  "hello", "world"
+]
+
 -- Just multiline string
 -- Yes I know Haxe supports them already
 -- but this is solely for syntax highlighting purposes

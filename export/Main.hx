@@ -26,6 +26,18 @@ var cacheTime : Float
 var speed : Float
 var sprite : Sprite
 
+var struct = {
+  a: "hello",
+  b: "world",
+  callback: function(test){
+    trace("hello world")
+  }
+}
+
+var array = [
+  "hello", "world"
+]
+
 // Just multiline string
 // Yes I know Haxe supports them already
 // but this is solely for syntax highlighting purposes
@@ -45,7 +57,7 @@ function new(){
   super()
 
   /* 
-  We can also do this :)
+  Print something
    */
   trace("This is " + appname)
 

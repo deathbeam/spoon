@@ -1,7 +1,7 @@
 module class
 
 ---
-Anoanymous array declaration is dynamic by default.
+Anonymous array declaration is dynamic by default.
 So you can put anything in there.
 ---
 static def array = [

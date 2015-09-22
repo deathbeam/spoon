@@ -18,7 +18,7 @@ class Transpiler {
     "-", "require", "module", "def", "end",
 
     // Haxe keywords
-    "extends", "implements", "inline", //"//", "import", "var", "function",
+    "using", "extends", "implements", "inline", //"//", "import", "var", "function",
 
     // Expressions
     "if", "else", "case", "elsif", "while",
@@ -50,7 +50,7 @@ class Transpiler {
   public function transpile() {
     var isPublic = false;
 
-    handle.insert("package " + currentPackage + ";").increment();
+    handle.insert("package " + currentPackage + ";using Lambda;").increment();
 
     while (handle.nextToken()) {
       // Process comments and ignore everything in

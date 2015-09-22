@@ -1,4 +1,4 @@
-package export;// testing something right
+package export;using Lambda;// testing something right
 import openfl.display.Sprite
 // testing something right
 import openfl.events.Event // testing something right

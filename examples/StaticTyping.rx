@@ -5,10 +5,10 @@ To define return type, we can add : <YourType>
 after method definition
 ---
 static def main() : Void
-	def message : String = "Hello World"
-	message = toLowerCase(message)
+  def message : String = "Hello World"
+  message = toLowerCase(message)
 
-	trace(message)
+  trace(message)
 end
 
 ---
@@ -16,5 +16,5 @@ Also, to define param or variable type,
 simply add : <YourType> after it's name
 ---
 static def toLowercase(message : String) : String
-	return message.toLowerCase()
+  return message.toLowerCase()
 end

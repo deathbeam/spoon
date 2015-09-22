@@ -44,6 +44,9 @@ static function instance(){
 function new(){
   super()
 
+  /* 
+  We can also do this :)
+   */
   trace("This is " + appname)
 
   // Create our super sprite

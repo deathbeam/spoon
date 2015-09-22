@@ -44,6 +44,9 @@ end
 def new()
   super()
 
+  ---------------------------
+  Print something
+  ---------------------------
   trace("This is " + appname)
 
   -- Create our super sprite

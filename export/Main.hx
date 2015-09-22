@@ -30,8 +30,9 @@ var sprite : Sprite
 // Yes I know Haxe supports them already
 // but this is solely for syntax highlighting purposes
 var test = "
-  Hello bro
-  This is for you. Biatch
+  Hello bro.
+  This is new line bro.
+  Okay bro.
 "
 
 static function instance(){

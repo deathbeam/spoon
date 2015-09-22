@@ -9,7 +9,6 @@ class Transpiler {
   var inputFile : String;
   var outputFile : String;
   var handle : StringHandle;
-  var buffer : String = null;
 
   var tokens = [
     // Standard keywords
@@ -52,23 +51,6 @@ class Transpiler {
     handle.insert("package " + currentPackage + ";").increment();
 
     while (handle.nextToken()) {
-      if (buffer == "require") {
-        if (handle.is("-") || handle.is("require")) {
-          buffer = null;
-          continue;
-        } else {
-          if (handle.is("\"")) {
-            handle.remove();
-          } else if (handle.is("/")) {
-            handle.remove();
-            handle.insert(".");
-          }
-
-          handle.increment();
-          continue;
-        }
-      }
-
       // Process comments and ignore everything in
       // them until end of line or until next match if multiline
       if (handle.is("-")) {
@@ -106,7 +88,7 @@ class Transpiler {
           handle.increment();
         }
       }
-      // Step over things in strings (" ")
+      // Step over things in strings (" ") and process multiline strings
       else if (handle.is("\"")) {
         if (handle.at("\"\"\"")) {
           handle.remove("\"\"");
@@ -118,7 +100,7 @@ class Transpiler {
         if (handle.at("\"\"\"")) {
           handle.remove("\"\"");
         }
-        
+
         handle.increment();
       }
       // Change end to classic bracket end
@@ -132,7 +114,19 @@ class Transpiler {
         handle.remove();
         handle.insert("import");
         handle.increment();
-        buffer = "require";
+
+        while (handle.nextToken()) {
+          if (handle.is("-") || handle.is("require")) break;
+
+          if (handle.is("\"")) {
+            handle.remove();
+          } else if (handle.is("/")) {
+            handle.remove();
+            handle.insert(".");
+          }
+
+          handle.increment();
+        }
       }
       // Defines to variables and functions
       else if (handle.is("def")) {
@@ -153,12 +147,14 @@ class Transpiler {
 
         handle.increment();
       }
+      // Insert begin bracket after if and while
       else if (handle.is("if") || handle.is("while")) {
         handle.increment();
         consumeCurlys();
         handle.insert("{");
         handle.increment();
       }
+      // Change elsif to else if and insert begin and end brackets around it
       else if (handle.is("elsif")) {
         handle.remove();
         handle.insert("}else if");
@@ -167,6 +163,8 @@ class Transpiler {
         handle.insert("{");
         handle.increment();
       }
+      // Inser begin and end brackets around else but do not try to
+      // process curlys because there will not be any
       else if (handle.is("else")) {
         handle.insert("}");
         handle.increment();
@@ -174,6 +172,7 @@ class Transpiler {
         handle.insert("{");
         handle.increment();
       }
+      // Process module declarations and insert curly after them
       else if (handle.is("module")) {
         handle.remove();
 

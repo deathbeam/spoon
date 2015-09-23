@@ -2,7 +2,7 @@
   width: 100%;
 }
 
-@media all and (min-height: 742px) {
+@media all and (min-height: 757px) {
   html, body, .jumbotron-pattern {
     height: 100%;
   }

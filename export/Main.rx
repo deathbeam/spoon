@@ -30,11 +30,11 @@ def struct = {
   b: "world",
   callback: def(test)
     trace("hello world")
-  end
+  end,
 }
 
 def array = [
-  "hello", "world"
+  "hello", "world",
 ]
 
 -- Just multiline string

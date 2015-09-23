@@ -35,6 +35,12 @@ class Transpiler {
     "//", "/*", "*/", "\"", "\\\"",
     "var", "function", "public"
   ];
+
+  var semicolon_tokens = [
+    "{", "}", "[", "]", "(", ")", ",", ":",
+    "//", "/*", "*/", "\"", "\\\"", "=",
+    "break", "continue", "return"
+  ];
   
   public function new(directory : String, inputFile : String, outputFile : String) {
     this.inputFile = inputFile;
@@ -212,6 +218,7 @@ class Transpiler {
 
     handle.content = handle.content + "}";
     transpilePublic();
+    transpileSemicolons();
 
     return this;
   }
@@ -254,6 +261,39 @@ class Transpiler {
         alreadyPublic = false;
         handle.increment(current);
       } else {
+        handle.increment();
+      }
+    }
+  }
+
+  private function transpileSemicolons() {
+    handle = new StringHandle(handle.content, semicolon_tokens);
+    var last = "";
+
+    while(handle.nextTokenLine()) {
+      if (handle.is("\"")) {
+        handle.increment();
+        handle.next("\"");
+        last = handle.current;
+        handle.increment();
+      } else if (handle.is("/*")) {
+        handle.increment();
+        handle.next("*/");
+        handle.increment();
+      } else {
+        if (handle.is("\n") || handle.is("//")) {
+          if (last == "}" || last == "]" || last == ")" || last == "\"" || last == "=" || last == ":" || last == ")" || last == "continue" || last == "break" || last == "return") {
+            handle.insert(";");
+            handle.increment();
+          }
+
+          if (handle.is("//")) {
+            handle.increment();
+            handle.next("\n");
+          } 
+        }
+        
+        last = handle.current;
         handle.increment();
       }
     }

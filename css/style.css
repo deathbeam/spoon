@@ -25,9 +25,10 @@
 }
 
 .jumbotron-footer {
-  padding-top: 15px;
-  padding-bottom: 15px;
+  padding-top: 20px;
+  padding-bottom: 20px;
   font-size: 60px;
+  color: #6f1313;
 }
 
 .jumbotron-dark {
@@ -43,6 +44,10 @@
 
 .jumbotron-dark .right pre {
   color: black;
+}
+
+.jumbotron-dark .left, .right {
+  padding-bottom: 20px;
 }
 
 .jumbotron-pattern {

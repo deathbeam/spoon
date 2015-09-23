@@ -1,0 +1,149 @@
+
+.jumbotron {
+  margin: 0;
+}
+
+body, .jumbotron-dark {
+  background-color: #333333;
+  color: white;
+}
+
+.jumbotron-pattern {
+  background: url(../img/pattern.jpg);
+  background-size: cover;
+  color: white;
+}
+
+/* Buttons */
+
+.btn {
+  letter-spacing: 1px;
+  text-decoration: none;
+  background: none;
+    -moz-user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 0;
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+    white-space: nowrap;
+  font-size:14px;
+  line-height:20px;
+  font-weight:700;
+  text-transform:uppercase;
+  border: 3px solid;
+  padding:8px 20px;
+}
+
+.btn-fixed {
+  width: 250px !important;
+}
+
+.btn-outlined {
+    border-radius: 0;
+    -webkit-transition: all 0.3s;
+       -moz-transition: all 0.3s;
+            transition: all 0.3s;
+}
+
+.btn-outlined.btn-theme {
+    background: none;
+    color: #6f5499;
+  border-color: #6f5499;
+}
+
+.btn-outlined.btn-theme:hover,
+.btn-outlined.btn-theme:active {
+    color: #FFF;
+    background: #6f5499;
+    border-color: #6f5499;
+}
+
+.btn-outlined.btn-black {
+    background: none;
+    color: #000000;
+  border-color: #000000;
+}
+
+.btn-outlined.btn-black:hover,
+.btn-outlined.btn-black:active {
+    color: #FFF;
+    background: #000000;
+    border-color: #000000;
+}
+
+.btn-outlined.btn-white {
+    background: none;
+    color: #FFFFFF;
+  border-color: #FFFFFF;
+}
+
+.btn-outlined.btn-white:hover,
+.btn-outlined.btn-white:active {
+    color: #6f5499;
+    background: #FFFFFF;
+    border-color: #FFFFFF;
+}
+
+.btn-xs{
+  font-size:11px;
+  line-height:14px;
+  border: 1px solid;
+  padding:5px 10px;
+}
+
+.btn-sm{
+  font-size:12px;
+  line-height:16px;
+  border: 2px solid;
+  padding:8px 15px;
+}
+
+.btn-lg{
+  font-size:18px;
+  line-height:22px;
+  border: 4px solid;
+  padding:13px 40px;
+}
+
+.jumbotron-pattern .container {
+  max-width: 600px;
+  text-align: center;
+}
+
+.jumbotron-pattern h1 {
+  font-size: 140px;
+}
+
+.jumbotron-pattern img {
+  -moz-transform:scale(1);
+  -webkit-transform:scale(1);
+  -o-transform:scale(1);
+  -ms-transform:scale(1);
+  transform:scale(1);
+  -moz-transition:all .1s ease-in-out;
+  -webkit-transition:all .1s ease-in-out;
+  -ms-transition:all .1s ease-in-out;
+  -o-transition:all .1s ease-in-out;
+  transition:all .1s ease-in-out;
+  max-width: 50%;
+}
+
+.jumbotron-pattern img:hover {
+  -moz-transform:scale(1.06);
+  -webkit-transform:scale(1.06);
+  -o-transform:scale(1.06);
+  -ms-transform:scale(1.06);
+  transform:scale(1.06)
+}
+
+pre {
+  border:none;
+  text-align:left;
+  margin:0;
+  line-height: 125%;
+  background: transparent;
+  color: white;
+}

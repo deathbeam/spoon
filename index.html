@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="An awesome mix between Haxe and Ruby. Raxe is open source, cross-platform and compiles to Haxe without any performance penatly and runtime library.">
+    <meta name="author" content="Tomas Slusny">
+
+    <title>raxe</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" >
+    <link href="css/style.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation 
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#"><img src="img/logo.png" width="32px" style="margin-top: -6px; margin-right: 12px" class="pull-left"/> Raxe</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#">About</a>
+                    </li>
+                    <li>
+                        <a href="#">Services</a>
+                    </li>
+                    <li>
+                        <a href="#">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    -->
+
+    <div class="jumbotron jumbotron-pattern">
+      <div class="container">
+        <img class="main" src="img/logo.png"/>
+        <h1>raxe</h1>
+        <p>An awesome mix between Haxe and Ruby. Raxe is open source, cross-platform and compiles to Haxe without any performance penatly and runtime library.</p>
+        <p class="hidden-xs">
+          <a href="https://github.com/nondev/raxe" class="btn btn-lg btn-outlined btn-white btn-fixed"><i class="fa fa-fw fa-gears"></i> Install</a>
+          <b style="padding-left: 10px; padding-right: 10px;"> or </b>
+          <a href="https://github.com/nondev/raxe" class="btn btn-lg btn-outlined btn-white btn-fixed"><i class="fa fa-fw fa-file"></i> Learn more</a>
+        </p>
+        <p class="visible-xs">
+          <a href="https://github.com/nondev/raxe" class="btn btn-lg btn-outlined btn-white btn-block"><i class="fa fa-fw fa-gears"></i> Install</a>
+          <b style="padding-left: 10px; padding-right: 10px;"> or </b>
+          <a href="https://github.com/nondev/raxe" class="btn btn-lg btn-outlined btn-white btn-block"><i class="fa fa-fw fa-file"></i> Learn more</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="jumbotron jumbotron-dark">
+      <div class="container">
+      <pre><span style="color:#ffff00;"><strong>module</strong></span> class
+
+<span style="color:#75715e;">---</span>
+<span style="color:#75715e;">Anonymous array declaration is dynamic by default.</span>
+<span style="color:#75715e;">So you can put anything in there.</span>
+<span style="color:#75715e;">---</span>
+<span style="color:#ffff00;">static def</span> array <span style="color:#40e0d0;">= [</span>
+  <span style="color:#ff0000;">&quot;a&quot;</span>, <span style="color:#ff0000;">&quot;b&quot;</span>, <span style="color:#ff0000;">&quot;c&quot;</span>, <span style="color:#ee82ee;">6</span>
+<span style="color:#40e0d0;">]</span>
+    
+<span style="color:#75715e;">---</span>
+<span style="color:#75715e;">Same applies to anonymous structures.</span>
+<span style="color:#75715e;">---</span>
+<span style="color:#ffff00;">static def</span> struct <span style="color:#40e0d0;">= {</span>
+  a: <span style="color:#ff0000;">&quot;hello&quot;</span>,
+  b: <span style="color:#ff0000;">&quot;yolo&quot;</span>,
+    
+  <span style="color:#75715e;">---</span>
+  <span style="color:#75715e;">And this is how we define anonymous function. It is also</span>
+  <span style="color:#75715e;">dynamic by default, so all parameters are correctly typed</span>
+  <span style="color:#75715e;">by Haxe compiler</span>
+  <span style="color:#75715e;">---</span>
+  callback: <span style="color:#ffff00;">def</span>(event)
+    <span style="color:#ffff00;">return</span> event <span style="color:#ee82ee;">+</span> <span style="color:#ff0000;">&quot; World&quot;</span>
+  <span style="color:#ffff00;">end</span>
+<span style="color:#40e0d0;">}</span>
+
+<span style="color:#ffff00;">static def</span> main()
+  <span style="color:#75715e;">-- Here we will call our anonymous function</span>
+  <span style="color:#ffff00;">def</span> result = struct.callback(&quot;Hello&quot;)
+
+  <span style="color:#75715e;">-- And now, print everything to console</span>
+  trace(result)
+  trace(array)
+  trace(struct)
+
+  lambdas()
+<span style="color:#ffff00;">end</span>
+
+<span style="color:#ffff00;">static def</span> lambdas()
+  <span style="color:#ffff00;">def</span> numbers = <span style="color:#00ffff;">[</span><span style="color:#dda0dd;">1</span>, <span style="color:#dda0dd;">3</span>, <span style="color:#dda0dd;">5</span>, <span style="color:#dda0dd;">6</span>, <span style="color:#dda0dd;">7</span>, <span style="color:#dda0dd;">8</span><span style="color:#00ffff;">]</span>
+
+  trace(numbers.count()) <span style="color:#75715e;">-- 6</span>
+  trace(numbers.has(<span style="color:#dda0dd;">4</span>)) <span style="color:#75715e;">-- false</span>
+
+  <span style="color:#75715e;">  -- test if all numbers are greater/smaller than 20</span>
+  trace(numbers.foreach(<span style="color:#ffff00;">def</span>(v)
+    <span style="color:#ffff00;">return</span> v <span style="color:#dda0dd;">&lt;</span> 20
+  <span style="color:#ffff00;">end</span>)) -- true
+
+  trace(numbers.foreach(<span style="color:#ffff00;">def</span>(v)
+    <span style="color:#ffff00;">return</span> v <span style="color:#dda0dd;">&gt;</span> 20
+  <span style="color:#ffff00;">end</span>)) -- false
+
+  <span style="color:#75715e;">  -- sum all the numbers</span>
+  <span style="color:#ffff00;">def</span> sum = <span style="color:#ffff00;">def</span>(num, total)
+    <span style="color:#ffff00;">return</span> total <span style="color:#dda0dd;">+=</span> num
+  <span style="color:#ffff00;">end</span>
+
+  trace(numbers.fold(sum, 0)) <span style="color:#75715e;">-- 30</span>
+<span style="color:#ffff00;">end</span>
+</pre>
+      </div>
+    </div>
+
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+</body>
+</html>

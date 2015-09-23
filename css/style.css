@@ -27,8 +27,12 @@
 .jumbotron-footer {
   padding-top: 20px;
   padding-bottom: 20px;
-  font-size: 60px;
+  font-size: 30px;
   color: #6f1313;
+}
+
+.jumbotron-footer img {
+  height: 30px;
 }
 
 .jumbotron-dark {

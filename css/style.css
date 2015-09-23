@@ -1,29 +1,48 @@
-html, body, .jumbotron-pattern {
-  height: 100%;
-} 
+.container {
+  width: 100%;
+}
+
+@media all and (min-height: 742px) {
+  html, body, .jumbotron-pattern {
+    height: 100%;
+  }
+
+  .jumbotron-pattern {
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+  }
+
+  .jumbotron-pattern .container {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
 
 .jumbotron {
   margin: 0;
 }
 
-body, .jumbotron-dark {
+.jumbotron-dark {
   background-color: #333333;
   color: white;
+  padding: 0;
+}
+
+.jumbotron-dark .right {
+  background-color: white;
+  color: black;
+}
+
+.jumbotron-dark .right pre {
+  color: black;
 }
 
 .jumbotron-pattern {
   background: url(../img/pattern.jpg);
   background-size: cover;
   color: white;
-  -webkit-transform-style: preserve-3d;
-  -moz-transform-style: preserve-3d;
-  transform-style: preserve-3d;
-}
-
-.jumbotron-pattern .container {
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
 a {

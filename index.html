@@ -23,7 +23,7 @@
 
 </head>
 
-<body style="min-height: 100%">
+<body>
 
     <!-- Navigation 
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -54,7 +54,7 @@
     </nav>
     -->
 
-    <div class="jumbotron jumbotron-pattern" style="min-height: 100%">
+    <div class="jumbotron jumbotron-pattern">
       <div class="container">
         <img class="main" src="img/logo.png"/>
         <h1>raxe</h1>
@@ -74,7 +74,10 @@
 
     <div class="jumbotron jumbotron-dark">
       <div class="container">
-      <pre><span style="color:#ffff00;"><strong>module</strong></span> class
+      <div class="row">
+        <div class="col-md-6">
+          <h2><b>Main</b>.rx</h2>
+          <pre><span style="color:#ffff00;"><strong>module</strong></span> class
 
 <span style="color:#75715e;">---</span>
 <span style="color:#75715e;">Anonymous array declaration is dynamic by default.</span>
@@ -134,8 +137,73 @@
   <span style="color:#ffff00;">end</span>
 
   trace(numbers.fold(sum, 0)) <span style="color:#75715e;">-- 30</span>
-<span style="color:#ffff00;">end</span>
-</pre>
+<span style="color:#ffff00;">end</span></pre>
+          </div>
+          <div class="col-md-6 right">
+            <h2><b>Main</b>.hx</h2>
+            <pre><span style="color: #008000; font-weight: bold">package</span> <span style="color: #0000FF; font-weight: bold">export</span>;<span style="color: #008000; font-weight: bold">using</span> <span style="color: #0000FF; font-weight: bold">Lambda</span>; <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Main</span> 
+
+{<span style="color: #408080; font-style: italic">/* </span>
+<span style="color: #408080; font-style: italic">Anonymous array declaration is dynamic by default.</span>
+<span style="color: #408080; font-style: italic">So you can put anything in there.</span>
+<span style="color: #408080; font-style: italic"> */</span>
+<span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">var</span> <span style="color: #19177C">array</span> <span style="color: #666666">=</span> [
+  <span style="color: #BA2121">&quot;a&quot;</span>, <span style="color: #BA2121">&quot;b&quot;</span>, <span style="color: #BA2121">&quot;c&quot;</span>, <span style="color: #666666">6</span>
+];
+    
+<span style="color: #408080; font-style: italic">/* </span>
+<span style="color: #408080; font-style: italic">Same applies to anonymous structures.</span>
+<span style="color: #408080; font-style: italic"> */</span>
+<span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">var</span> <span style="color: #19177C">struct</span> <span style="color: #666666">=</span> {
+  a<span style="color: #666666">:</span> <span style="color: #BA2121">&quot;hello&quot;</span>,
+  b<span style="color: #666666">:</span> <span style="color: #BA2121">&quot;yolo&quot;</span>,
+    
+  <span style="color: #408080; font-style: italic">/* </span>
+<span style="color: #408080; font-style: italic">  And this is how we define anonymous function. It is also</span>
+<span style="color: #408080; font-style: italic">  dynamic by default, so all parameters are correctly typed</span>
+<span style="color: #408080; font-style: italic">  by Haxe compiler</span>
+<span style="color: #408080; font-style: italic">   */</span>
+  <span style="color: #008000; font-weight: bold">callback</span><span style="color: #666666">:</span> <span style="color: #008000; font-weight: bold">function</span>(<span style="color: #19177C">event</span>){
+    <span style="color: #008000; font-weight: bold">return</span> event <span style="color: #666666">+</span> <span style="color: #BA2121">&quot; World&quot;</span>;
+  }
+};
+
+<span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">function</span> <span style="color: #0000FF">main</span>(){
+  <span style="color: #408080; font-style: italic">// Here we will call our anonymous function</span>
+  <span style="color: #008000; font-weight: bold">var</span> <span style="color: #19177C">result</span> <span style="color: #666666">=</span> struct<span style="color: #666666">.</span><span style="color: #008000; font-weight: bold">callback</span>(<span style="color: #BA2121">&quot;Hello&quot;</span>);
+
+  <span style="color: #408080; font-style: italic">// And now, print everything to console</span>
+  <span style="color: #008000; font-weight: bold">trace</span>(result);
+  <span style="color: #008000; font-weight: bold">trace</span>(array);
+  <span style="color: #008000; font-weight: bold">trace</span>(struct);
+
+  lambdas();
+}
+
+<span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">function</span> <span style="color: #0000FF">lambdas</span>(){
+  <span style="color: #008000; font-weight: bold">var</span> <span style="color: #19177C">numbers</span> <span style="color: #666666">=</span> [<span style="color: #666666">1</span>, <span style="color: #666666">3</span>, <span style="color: #666666">5</span>, <span style="color: #666666">6</span>, <span style="color: #666666">7</span>, <span style="color: #666666">8</span>];
+
+  <span style="color: #008000; font-weight: bold">trace</span>(numbers<span style="color: #666666">.</span>count()); <span style="color: #408080; font-style: italic">// 6</span>
+  <span style="color: #008000; font-weight: bold">trace</span>(numbers<span style="color: #666666">.</span>has(<span style="color: #666666">4</span>)); <span style="color: #408080; font-style: italic">// false</span>
+
+    <span style="color: #408080; font-style: italic">// test if all numbers are greater/smaller than 20</span>
+  <span style="color: #008000; font-weight: bold">trace</span>(numbers<span style="color: #666666">.</span>foreach(<span style="color: #008000; font-weight: bold">function</span>(<span style="color: #19177C">v</span>){
+    <span style="color: #008000; font-weight: bold">return</span> v <span style="color: #666666">&lt;</span> <span style="color: #666666">20</span>;
+  })); <span style="color: #408080; font-style: italic">// true</span>
+
+  <span style="color: #008000; font-weight: bold">trace</span>(numbers<span style="color: #666666">.</span>foreach(<span style="color: #008000; font-weight: bold">function</span>(<span style="color: #19177C">v</span>){
+    <span style="color: #008000; font-weight: bold">return</span> v <span style="color: #666666">&gt;</span> <span style="color: #666666">20</span>;
+  })); <span style="color: #408080; font-style: italic">// false</span>
+
+    <span style="color: #408080; font-style: italic">// sum all the numbers</span>
+  <span style="color: #008000; font-weight: bold">var</span> <span style="color: #19177C">sum</span> <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">function</span>(<span style="color: #19177C">num</span>, <span style="color: #19177C">total</span>){
+    <span style="color: #008000; font-weight: bold">return</span> total <span style="color: #666666">+=</span> num;
+  };
+
+  <span style="color: #008000; font-weight: bold">trace</span>(numbers<span style="color: #666666">.</span>fold(sum, <span style="color: #666666">0</span>)); <span style="color: #408080; font-style: italic">// 30</span>
+}}</pre>
+          </div>
+        </div>
       </div>
     </div>
 

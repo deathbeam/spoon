@@ -24,6 +24,12 @@
   margin: 0;
 }
 
+.jumbotron-footer {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  font-size: 60px;
+}
+
 .jumbotron-dark {
   background-color: #333333;
   color: white;

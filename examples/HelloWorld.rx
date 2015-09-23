@@ -1,1 +1,5 @@
-trace("Hello World")
+module class
+
+static def main()
+  trace("Hello World")
+end

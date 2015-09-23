@@ -15,47 +15,47 @@ this. Any suggestions?
   extends Sprite
   implements Dynamic
   
-{static public var appname = "My Application"
-static public var instance = new Main() // New instance of self
+{static var appname = "My Application"
+static var instance = new Main() // New instance of self
 
 /* 
 Instance variables
  */
-public var cacheTime : Float
-public var speed : Float
-public var sprite : Sprite
+var cacheTime : Float
+var speed : Float
+var sprite : Sprite
 
-public var struct = {
+var struct = {
   a: "hello",
   b: "world",
-  callback: public function(test){
+  callback: function(test){
     trace("hello world")
   }
 }
 
-public var array = [
+var array = [
   "hello", "world"
 ]
 
 // Just multiline string
 // Yes I know Haxe supports them already
 // but this is solely for syntax highlighting purposes
-public var test = "
+var test = "
   Hello bro.
   This is new line bro.
   Okay bro.
 "
 
-static public function instance(){
+static function instance(){
   return instance // Return instance of Main
 }
 
 // Create a new instance of class Main
 // It is just entry point for OpenFL
-public function new(){
+function new(){
   super()
 
-  public var hell = "88Jdf"
+  var hell = "88Jdf"
 
   /* 
   Print something
@@ -79,7 +79,7 @@ public function new(){
   }
 
   // Event listener magic, hell yeah
-  addEventListener(Event.ENTER_FRAME, public function(event){
+  addEventListener(Event.ENTER_FRAME, function(event){
     var currentTime = Lib.getTimer ()
     update (currentTime - cacheTime)
     cacheTime = currentTime
@@ -87,7 +87,7 @@ public function new(){
 }
 
 // Just main loop. I love them.
-public function update(deltaTime){
+function update(deltaTime){
   if (sprite.x + sprite.width >= stage.stageWidth || sprite.x <= 0){  
     speed *= -1
   }else if (sprite.x == 5){

@@ -27,10 +27,7 @@ class Transpiler {
     "class", "enum", "abstract",
 
     // Access modifiers
-    "private", "public", "static",
-
-    // Just to define main
-    "import", ";"
+    "private", "public", "static"
   ];
   
   public function new(directory : String, inputFile : String, outputFile : String) {
@@ -51,9 +48,6 @@ class Transpiler {
   }
 
   public function transpile() {
-    var isPublic = false;
-    var isMain = true;
-
     handle.insert("package " + currentPackage + ";using Lambda;").increment();
 
     while (handle.nextToken()) {
@@ -142,24 +136,10 @@ class Transpiler {
           handle.increment();
         }
       }
-      // Just handle public for definitions
-      else if (handle.is("public")) {
-        isPublic = true;
-        handle.increment();
-      }
       // Defines to variables and functions
       else if (handle.is("def")) {
-        if (!isPublic) {
-          handle.insert("public ");
-          handle.increment();
-        } else {
-          isPublic = false;
-        }
-
-        handle.next("def");
-        var position = handle.position;
         handle.remove("def");
-
+        var position = handle.position;
         handle.nextToken();
 
         if (handle.is("(")) {
@@ -171,9 +151,8 @@ class Transpiler {
         } else {
           handle.position = position;
           handle.insert("var");
+          handle.increment();
         }
-
-        handle.increment();
       }
       // Insert begin bracket after if and while
       else if (handle.is("if") || handle.is("while")) {
@@ -202,7 +181,6 @@ class Transpiler {
       }
       // Process module declarations and insert curly after them
       else if (handle.is("module")) {
-        isMain = false;
         handle.remove();
 
         while(handle.nextToken()) {
@@ -216,6 +194,7 @@ class Transpiler {
             handle.increment();
           } else {
             handle.insert("{");
+            handle.increment();
             break;
           }
         }
@@ -226,33 +205,6 @@ class Transpiler {
     }
 
     handle.content = handle.content + "}";
-
-    // Lazy main class. If no module definition is found,
-    // create main class
-    if (isMain) {
-      handle.position = 0;
-
-      while (handle.nextTokenLine()) {
-        if (!handle.is("import") && !handle.is("/") && !handle.is("using") && !handle.is("\n") && !handle.is(";")) {
-          var position = handle.position;
-          var current = handle.current;
-          handle.prevTokenLine();
-
-          if (handle.is("\n") || handle.is(";")) {
-            handle.increment();
-            handle.insert("class " + currentModule + "{public static function main(){");
-            handle.content = handle.content + "}";
-            break;
-          }
-
-          handle.position = position;
-          handle.current = current;
-          handle.increment();
-        } else {
-          handle.increment();
-        }
-      } 
-    }
 
     return this;
   }

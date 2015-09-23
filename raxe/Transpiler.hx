@@ -29,6 +29,12 @@ class Transpiler {
     // Access modifiers
     "private", "public", "static"
   ];
+
+  var public_tokens = [
+    "{", "}", "[", "]", "(", ")",
+    "var", "function",
+    "//", "/*", "*/", "\"", "\\\""
+  ];
   
   public function new(directory : String, inputFile : String, outputFile : String) {
     this.inputFile = inputFile;
@@ -205,8 +211,47 @@ class Transpiler {
     }
 
     handle.content = handle.content + "}";
+    transpilePublic();
 
     return this;
+  }
+
+  private function transpilePublic() {
+    handle = new StringHandle(handle.content, public_tokens);
+    var count = -1;
+
+    while(handle.nextToken()) {
+      if (handle.is("\"")) {
+        handle.increment();
+        handle.next("\"");
+        handle.increment();
+      } else if (handle.is("//")) {
+        handle.increment();
+        handle.next("\n");
+        handle.increment();
+      } else if (handle.is("/*")) {
+        handle.increment();
+        handle.next("*/");
+        handle.increment();
+      } else if (handle.is("[") || handle.is("{")) {
+        count++;
+        handle.increment();
+      } else if (handle.is("]") || handle.is("}")) {
+        count--;
+        handle.increment();
+      } else if (handle.is("var") || handle.is("function")) {
+        var current = handle.current;
+
+        if (count == 0) {
+          handle.insert("public ");
+          handle.increment();
+        }
+
+        handle.increment(current);
+      } else {
+        handle.increment();
+      }
+    }
   }
 
   private function consumeCurlys() {

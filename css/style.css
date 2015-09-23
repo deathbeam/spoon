@@ -1,3 +1,6 @@
+html, body, .jumbotron-pattern {
+  height: 100%;
+} 
 
 .jumbotron {
   margin: 0;
@@ -12,6 +15,15 @@ body, .jumbotron-dark {
   background: url(../img/pattern.jpg);
   background-size: cover;
   color: white;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+.jumbotron-pattern .container {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 a {

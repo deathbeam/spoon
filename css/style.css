@@ -14,6 +14,10 @@ body, .jumbotron-dark {
   color: white;
 }
 
+a {
+  color: #6f1313;
+}
+
 /* Buttons */
 
 .btn {
@@ -82,7 +86,7 @@ body, .jumbotron-dark {
 
 .btn-outlined.btn-white:hover,
 .btn-outlined.btn-white:active {
-    color: #6f5499;
+    color: #6f1313;
     background: #FFFFFF;
     border-color: #FFFFFF;
 }

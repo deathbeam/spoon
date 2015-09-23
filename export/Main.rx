@@ -52,7 +52,7 @@ end
 
 -- Create a new instance of class Main
 -- It is just entry point for OpenFL
-def new()
+public def new()
   super()
 
   def hell = "88Jdf"

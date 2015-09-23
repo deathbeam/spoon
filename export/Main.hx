@@ -15,7 +15,7 @@ this. Any suggestions?
   extends Sprite
   implements Dynamic
   
-{static public var appname = "My Application{"
+{static public var appname = "My Application"
 static public var instance = new Main() // New instance of self
 
 /* 
@@ -37,8 +37,8 @@ public var array = [
   "hello", "world"
 ]
 
-// Just multiline string {
-// Yes I know Haxe supports them already {
+// Just multiline string
+// Yes I know Haxe supports them already
 // but this is solely for syntax highlighting purposes
 public var test = "
   Hello bro.
@@ -58,7 +58,7 @@ public function new(){
   var hell = "88Jdf"
 
   /* 
-  Print something {
+  Print something
    */
   trace("This is " + appname)
 

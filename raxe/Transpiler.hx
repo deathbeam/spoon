@@ -32,8 +32,8 @@ class Transpiler {
 
   var public_tokens = [
     "{", "}", "[", "]", "(", ")",
-    "var", "function",
-    "//", "/*", "*/", "\"", "\\\""
+    "//", "/*", "*/", "\"", "\\\"",
+    "var", "function", "public"
   ];
   
   public function new(directory : String, inputFile : String, outputFile : String) {
@@ -219,6 +219,7 @@ class Transpiler {
   private function transpilePublic() {
     handle = new StringHandle(handle.content, public_tokens);
     var count = -1;
+    var alreadyPublic = false;
 
     while(handle.nextToken()) {
       if (handle.is("\"")) {
@@ -239,14 +240,18 @@ class Transpiler {
       } else if (handle.is("]") || handle.is("}")) {
         count--;
         handle.increment();
+      } else if (handle.is("public")) {
+        alreadyPublic = true;
+        handle.increment();
       } else if (handle.is("var") || handle.is("function")) {
         var current = handle.current;
 
-        if (count == 0) {
+        if (count == 0 && !alreadyPublic) {
           handle.insert("public ");
           handle.increment();
         }
-
+        
+        alreadyPublic = false;
         handle.increment(current);
       } else {
         handle.increment();

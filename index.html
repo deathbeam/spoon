@@ -99,7 +99,7 @@
   <span style="color:#75715e;">dynamic by default, so all parameters are correctly typed</span>
   <span style="color:#75715e;">by Haxe compiler</span>
   <span style="color:#75715e;">---</span>
-  callback: <span style="color:#ffff00;">def</span>(event)
+  callback: <span style="color:#ffff00;">do</span>(event)
     <span style="color:#ffff00;">return</span> event <span style="color:#ee82ee;">+</span> <span style="color:#ff0000;">&quot; World&quot;</span>
   <span style="color:#ffff00;">end</span>
 <span style="color:#40e0d0;">}</span>
@@ -123,16 +123,16 @@
   trace(numbers.has(<span style="color:#dda0dd;">4</span>)) <span style="color:#75715e;">-- false</span>
 
   <span style="color:#75715e;">-- test if all numbers are greater/smaller than 20</span>
-  trace(numbers.foreach(<span style="color:#ffff00;">def</span>(v)
+  trace(numbers.foreach(<span style="color:#ffff00;">do</span>(v)
     <span style="color:#ffff00;">return</span> v <span style="color:#dda0dd;">&lt;</span> 20
   <span style="color:#ffff00;">end</span>)) -- true
 
-  trace(numbers.foreach(<span style="color:#ffff00;">def</span>(v)
+  trace(numbers.foreach(<span style="color:#ffff00;">do</span>(v)
     <span style="color:#ffff00;">return</span> v <span style="color:#dda0dd;">&gt;</span> 20
   <span style="color:#ffff00;">end</span>)) -- false
 
   <span style="color:#75715e;">-- sum all the numbers</span>
-  <span style="color:#ffff00;">def</span> sum = <span style="color:#ffff00;">def</span>(num, total)
+  <span style="color:#ffff00;">def</span> sum = <span style="color:#ffff00;">do</span>(num, total)
     <span style="color:#ffff00;">return</span> total <span style="color:#dda0dd;">+=</span> num
   <span style="color:#ffff00;">end</span>
 

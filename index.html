@@ -102,20 +102,20 @@
       <div class="row">
         <div class="col-md-6 left">
           <h2><b>Main</b>.rx</h2>
-          <pre><span style="color:#ffff00;"><strong>module</strong></span> class
+          <pre><span style="color:#ffff00;"><strong>self</strong></span> class
 
 <span style="color:#75715e;">---</span>
 <span style="color:#75715e;">Anonymous array declaration is dynamic by default.</span>
 <span style="color:#75715e;">So you can put anything in there.</span>
 <span style="color:#75715e;">---</span>
-<span style="color:#ffff00;">static def</span> array <span style="color:#40e0d0;">= [</span>
+<span style="color:#ffff00;">def</span> <span style="color:#ffff00;">self.</span>array <span style="color:#40e0d0;">= [</span>
   <span style="color:#ff0000;">&quot;a&quot;</span>, <span style="color:#ff0000;">&quot;b&quot;</span>, <span style="color:#ff0000;">&quot;c&quot;</span>, <span style="color:#ee82ee;">6</span>
 <span style="color:#40e0d0;">]</span>
     
 <span style="color:#75715e;">---</span>
 <span style="color:#75715e;">Same applies to anonymous structures.</span>
 <span style="color:#75715e;">---</span>
-<span style="color:#ffff00;">static def</span> struct <span style="color:#40e0d0;">= {</span>
+<span style="color:#ffff00;">def</span> <span style="color:#ffff00;">self.</span>struct <span style="color:#40e0d0;">= {</span>
   a: <span style="color:#ff0000;">&quot;hello&quot;</span>,
   b: <span style="color:#ff0000;">&quot;yolo&quot;</span>,
     
@@ -129,7 +129,7 @@
   <span style="color:#ffff00;">end</span>
 <span style="color:#40e0d0;">}</span>
 
-<span style="color:#ffff00;">static def</span> main()
+<span style="color:#ffff00;">def</span> <span style="color:#ffff00;">self.</span>main()
   <span style="color:#75715e;">-- Here we will call our anonymous function</span>
   <span style="color:#ffff00;">def</span> result = struct.callback(&quot;Hello&quot;)
 
@@ -141,7 +141,7 @@
   lambdas()
 <span style="color:#ffff00;">end</span>
 
-<span style="color:#ffff00;">static def</span> lambdas()
+<span style="color:#ffff00;">def</span> <span style="color:#ffff00;">self.</span>lambdas()
   <span style="color:#ffff00;">def</span> numbers = <span style="color:#00ffff;">[</span><span style="color:#dda0dd;">1</span>, <span style="color:#dda0dd;">3</span>, <span style="color:#dda0dd;">5</span>, <span style="color:#dda0dd;">6</span>, <span style="color:#dda0dd;">7</span>, <span style="color:#dda0dd;">8</span><span style="color:#00ffff;">]</span>
 
   trace(numbers.count()) <span style="color:#75715e;">-- 6</span>

@@ -93,7 +93,7 @@
           <b style="padding-left: 10px; padding-right: 10px;"> or </b>
           <a href="https://github.com/nondev/raxe" class="btn btn-lg btn-outlined btn-white btn-block"><i class="fa fa-fw fa-file"></i> Learn more</a>
         </p>
-        <p style="margin-top: 30px; color: #c6c6c6">updated <span id="updated">unknown</span></p>
+        <p style="margin-top: 30px;"><a id="updated" href="#">updated <b>unknown</b></a></p>
       </div>
     </div>
 
@@ -258,8 +258,10 @@
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
           var latest = JSON.parse(xmlhttp.responseText)[0];
           var date = $.timeago(latest.commit.author.date);
+          var url = latest.html_url;
           console.log(date);
-          $("#updated").text(date);
+          $("#updated").text("updated " + date);
+          $("#updated").attr("href", date);
         }
       }
 

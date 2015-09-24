@@ -59,6 +59,10 @@
   color: white;
 }
 
+.jumbotron-pattern a {
+  color: #c6c6c6;
+}
+
 a {
   color: #6f1313;
 }

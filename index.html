@@ -93,6 +93,7 @@
           <b style="padding-left: 10px; padding-right: 10px;"> or </b>
           <a href="https://github.com/nondev/raxe" class="btn btn-lg btn-outlined btn-white btn-block"><i class="fa fa-fw fa-file"></i> Learn more</a>
         </p>
+        <p style="margin-top: 30px; color: #c6c6c6">updated <span id="updated">unknown</span></p>
       </div>
     </div>
 
@@ -247,7 +248,26 @@
     </div>
 
     <script src="js/jquery.js"></script>
+    <script src="js/jquery.timeago.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script>
+      var xmlhttp = new XMLHttpRequest();
+      var url = "https://api.github.com/repos/nondev/raxe/commits";
+
+      xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          var latest = JSON.parse(xmlhttp.responseText)[0];
+          var date = $.timeago(latest.commit.author.date);
+          console.log(date);
+          $("#updated").text(date);
+        }
+      }
+
+      $(function() {
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+      });
+    </script>
 
 </body>
 </html>

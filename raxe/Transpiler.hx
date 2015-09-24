@@ -12,16 +12,16 @@ class Transpiler {
 
   var tokens = [
     // Standard keywords
-    "\"", "\\\"", "(", ")", "/", "=",
+    "\"", "\\\"", "(", ")", "/", "=", "#",
 
     // Raxe keywords
-    "-", "require", "module", "def", "end",
+    "-", "require", "module", "def", "end", "do",
 
     // Haxe keywords
-    "using", "extends", "implements", "inline", //"//", "import", "var", "function",
+    "using", "extends", "implements", "inline", "typedef", //"//", "import", "var", "function",
 
     // Expressions
-    "if", "else", "case", "elsif", "while",
+    "if", "else", "case", "elseif", "while",
 
     // Types
     "class", "enum", "abstract",
@@ -100,6 +100,10 @@ class Transpiler {
           handle.increment();
         }
       }
+      // Skip compiler defines
+      else if (handle.is("#")) {
+        handle.next("\n");
+      }
       // Step over things in strings (" ") and process multiline strings
       else if (handle.is("\"")) {
         if (handle.at("\"\"\"")) {
@@ -158,6 +162,7 @@ class Transpiler {
           handle.position = position;
           handle.insert("function");
           consumeCurlys();
+          handle.next("\n");
           handle.insert("{");
           handle.increment();
         } else {
@@ -166,6 +171,14 @@ class Transpiler {
           handle.increment();
         }
       }
+      // Defines to variables and functions
+      else if (handle.is("do")) {
+        handle.remove("do");
+        handle.insert("function");
+        consumeCurlys();
+        handle.insert("{");
+        handle.increment();
+      }
       // Insert begin bracket after if and while
       else if (handle.is("if") || handle.is("while")) {
         handle.increment();
@@ -173,8 +186,8 @@ class Transpiler {
         handle.insert("{");
         handle.increment();
       }
-      // Change elsif to else if and insert begin and end brackets around it
-      else if (handle.is("elsif")) {
+      // Change elseif to else if and insert begin and end brackets around it
+      else if (handle.is("elseif")) {
         handle.remove();
         handle.insert("}else if");
         handle.increment();

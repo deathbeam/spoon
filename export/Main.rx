@@ -6,6 +6,13 @@ require "openfl/Lib"
 
 -- require "openfl/Lib"
 
+#if android
+typedef User = {
+  var age : Int
+  var name : String
+}
+#end
+
 ---
 Some random things right?
 I do not found good syntax how to define what is
@@ -28,7 +35,7 @@ def sprite : Sprite
 def struct = {
   a: "hello",
   b: "world",
-  callback: def(test)
+  callback: do(test)
     trace("hello world")
   end,
 }
@@ -79,7 +86,7 @@ public def new()
   end
 
   -- Event listener magic, hell yeah
-  addEventListener(Event.ENTER_FRAME, def(event)
+  addEventListener(Event.ENTER_FRAME, do(event)
     var currentTime = Lib.getTimer ()
     update (currentTime - cacheTime)
     cacheTime = currentTime

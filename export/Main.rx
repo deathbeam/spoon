@@ -18,12 +18,12 @@ Some random things right?
 I do not found good syntax how to define what is
 this. Any suggestions?
 ---
-module class<String>
+self class<String>
   extends Sprite
   implements Dynamic
   
-static def appname = "My Application"
-static def instance = new Main() -- New instance of self
+def self.appname = "My Application"
+def self.instance = new self() -- New instance of self
 
 ------------------
 Instance variables
@@ -53,8 +53,8 @@ def test = """
   Okay bro.
 """
 
-static def instance()
-  return instance -- Return instance of Main
+def self.getInstance()
+  return self.instance -- Return instance of Main
 end
 
 -- Create a new instance of class Main

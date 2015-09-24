@@ -1,6 +1,6 @@
-module class
+self class
 
-static def info = """
+def self.info = """
   This is multiline string.
   It automatically accepts all tabs, newlines
   and whitespace in general. Syntax for
@@ -8,7 +8,7 @@ static def info = """
   triple quotes for terminating
 """
 
-static def main()
+def self.main()
   trace(info)
   
   trace("""

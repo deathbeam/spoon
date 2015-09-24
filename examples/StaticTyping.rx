@@ -1,10 +1,10 @@
-module class
+self class
 
 ---
 To define return type, we can add : <YourType>
 after method definition
 ---
-static def main() : Void
+def self.main() : Void
   def message : String = "Hello World"
   message = toLowerCase(message)
 
@@ -15,6 +15,6 @@ end
 Also, to define param or variable type,
 simply add : <YourType> after it's name
 ---
-static def toLowercase(message : String) : String
+def self.toLowercase(message : String) : String
   return message.toLowerCase()
 end

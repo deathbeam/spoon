@@ -53,8 +53,8 @@ public var test = "
   Okay bro.
 ";
 
-static public function instance(){
-  return instance ;// Return instance of Main
+static public var getInstance();
+  return Main.instance ;// Return instance of Main
 };
 
 // Create a new instance of class Main
@@ -62,12 +62,12 @@ static public function instance(){
 public function new(){
   super();
 
-  var hell = "88Jdf";
+  public var hell = "88Jdf";
 
   /* 
   Print something
    */
-  trace("This is ${appname}");
+  trace("This is $appname");
 
   // Create our super sprite
   sprite = new Sprite();
@@ -86,7 +86,7 @@ public function new(){
   };
 
   // Event listener magic, hell yeah
-  addEventListener(Event.ENTER_FRAME, function(event){
+  addEventListener(Event.ENTER_FRAME, public function(event){
     var currentTime = Lib.getTimer ();
     update (currentTime - cacheTime);
     cacheTime = currentTime;
@@ -94,7 +94,7 @@ public function new(){
 };
 
 // Just main loop. I love them.
-public function update(deltaTime){
+function update(deltaTime){
   if (sprite.x + sprite.width >= stage.stageWidth || sprite.x <= 0){  
     speed *= -1;
   elsif (sprite.x == 5){

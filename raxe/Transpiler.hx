@@ -15,7 +15,7 @@ class Transpiler {
     "\"", "\\\"", "(", ")", "/", "=", "#",
 
     // Raxe keywords
-    "-", "require", "module", "def", "end", "do",
+    "-", "require", "def", "self.", "self", "end", "do",
 
     // Haxe keywords
     "using", "extends", "implements", "inline", "typedef", //"//", "import", "var", "function",
@@ -167,6 +167,15 @@ class Transpiler {
         var position = handle.position;
         handle.nextToken();
 
+        if (handle.is("self.")) {
+          handle.remove();
+          handle.position = position;
+          handle.insert("static ");
+          handle.increment();
+          position = handle.position;
+        }
+
+
         if (handle.is("(")) {
           handle.position = position;
           handle.insert("function");
@@ -214,7 +223,7 @@ class Transpiler {
         handle.increment();
       }
       // Process module declarations and insert curly after them
-      else if (handle.is("module")) {
+      else if (handle.is("self")) {
         handle.remove();
 
         while(handle.nextToken()) {
@@ -224,6 +233,11 @@ class Transpiler {
             handle.increment();
             handle.insert(" " + currentModule + " ");
             handle.increment();
+          } else if (handle.is("(")) {
+            handle.insert(currentModule);
+            handle.increment();
+            handle.increment("(");
+            break;
           } else if (handle.is("extends") || handle.is("implements")) {
             handle.increment();
           } else {
@@ -232,6 +246,11 @@ class Transpiler {
             break;
           }
         }
+      }
+      else if (handle.is("self.")) {
+        handle.remove();
+        handle.insert(currentModule + ".");
+        handle.increment();
       }
       else {
         handle.increment(); // Skip this token

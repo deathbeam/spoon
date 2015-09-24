@@ -1,5 +1,5 @@
-module class
+self class
 
-static def main()
+def self.main()
   trace("Hello World")
 end

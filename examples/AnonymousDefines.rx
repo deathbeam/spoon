@@ -1,24 +1,24 @@
-module class
+self class
 
 ---
 Anonymous array declaration is not dynamic by default.
 You can have array of only one type.
 ---
-static def array = [
+def self.array = [
   "a", "b", "c"
 ]
 
 ---
 And this is dynamic anonymous array, so you can put anything in there
 ---
-static def dynarray : Array<Dynamic> = [
+def self.dynarray : Array<Dynamic> = [
   "a", "b", "c", 6, 7, array
 ]
 
 ---
 Same applies to anonymous structures.
 ---
-static def struct = {
+def self.struct = {
   a: "hello",
   b: "yolo",
 
@@ -32,7 +32,7 @@ static def struct = {
   end,
 }
 
-static def main()
+def self.main()
   -- Here we will call our anonymous function
   def result = struct.callback("Hello")
 

@@ -20,7 +20,7 @@ And of course, you can always also do this:
 And now, we need to terminate it with same number of hypnens as
 we initialized it, in this case 5.
 -----
-static def main()
+def self.main()
   -----------------------------------
   We can also do this :)
   -----------------------------------

@@ -1,0 +1,22 @@
+self class
+
+-- You can use self world to reference current class name
+def self.instance = new self()
+
+-- Self keyword before defines basically means that define is static
+def self.getInstance()
+  return instance
+end
+
+def self.main()
+  -- Get instance of self
+  def myInstance = getInstance()
+
+  -- Call instance function
+  myInstance.instanceFunction()
+end
+
+def instanceFunction()
+  -- print this instance to console
+  trace(this)
+end

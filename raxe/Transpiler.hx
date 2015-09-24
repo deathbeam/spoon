@@ -111,7 +111,16 @@ class Transpiler {
         }
 
         handle.increment();
-        handle.next("\"");
+
+        while (handle.nextToken()) {
+          if (handle.is("#")) {
+            handle.remove();
+            handle.insert("$");
+            handle.increment();
+          } else if (handle.is("\"")) {
+            break;
+          }
+        }
 
         if (handle.at("\"\"\"")) {
           handle.remove("\"\"");

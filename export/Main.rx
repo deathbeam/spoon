@@ -67,7 +67,7 @@ public def new()
   ---------------------------
   Print something
   ---------------------------
-  trace("This is " + appname)
+  trace("This is #appname")
 
   -- Create our super sprite
   sprite = new Sprite()

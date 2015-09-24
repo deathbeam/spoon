@@ -176,6 +176,7 @@ class Transpiler {
           position = handle.position;
         }
 
+        handle.nextToken();
 
         if (handle.is("(")) {
           handle.position = position;

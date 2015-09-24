@@ -53,7 +53,7 @@ public var test = "
   Okay bro.
 ";
 
-static public var getInstance();
+static public function getInstance(){
   return Main.instance ;// Return instance of Main
 };
 
@@ -62,7 +62,7 @@ static public var getInstance();
 public function new(){
   super();
 
-  public var hell = "88Jdf";
+  var hell = "88Jdf";
 
   /* 
   Print something
@@ -86,7 +86,7 @@ public function new(){
   };
 
   // Event listener magic, hell yeah
-  addEventListener(Event.ENTER_FRAME, public function(event){
+  addEventListener(Event.ENTER_FRAME, function(event){
     var currentTime = Lib.getTimer ();
     update (currentTime - cacheTime);
     cacheTime = currentTime;

@@ -30,10 +30,10 @@ class Transpiler {
     "private", "public", "static"
   ];
 
-  var public_tokens = [
+  var access_tokens = [
     "{", "}", "[", "]", "(", ")",
     "//", "/*", "*/", "\"", "\\\"",
-    "var", "function", "public"
+    "var", "function", "public", "private"
   ];
 
   var semicolon_tokens = [
@@ -57,6 +57,7 @@ class Transpiler {
 
   public function save() {
     File.saveContent(outputFile, handle.content);
+    trace(handle.content);
   }
 
   public function transpile() {
@@ -258,16 +259,16 @@ class Transpiler {
     }
 
     handle.content = handle.content + "}";
-    transpilePublic();
+    transpileAccess();
     transpileSemicolons();
 
     return this;
   }
 
-  private function transpilePublic() {
-    handle = new StringHandle(handle.content, public_tokens);
+  private function transpileAccess() {
+    handle = new StringHandle(handle.content, access_tokens);
     var count = -1;
-    var alreadyPublic = false;
+    var notPublic = false;
 
     while(handle.nextToken()) {
       if (handle.is("\"")) {
@@ -288,18 +289,18 @@ class Transpiler {
       } else if (handle.is("]") || handle.is("}")) {
         count--;
         handle.increment();
-      } else if (handle.is("public")) {
-        alreadyPublic = true;
+      } else if (handle.is("public") || handle.is("private")) {
+        notPublic = true;
         handle.increment();
       } else if (handle.is("var") || handle.is("function")) {
         var current = handle.current;
 
-        if (count == 0 && !alreadyPublic) {
+        if (count == 0 && !notPublic) {
           handle.insert("public ");
           handle.increment();
         }
         
-        alreadyPublic = false;
+        notPublic = false;
         handle.increment(current);
       } else {
         handle.increment();

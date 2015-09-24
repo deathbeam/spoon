@@ -8,8 +8,8 @@ require "openfl/Lib"
 
 #if android
 typedef User = {
-  var age : Int
-  var name : String
+  def age : Int
+  def name : String
 }
 #end
 
@@ -22,7 +22,7 @@ self class<String>
   extends Sprite
   implements Dynamic
   
-def self.appname = "My Application"
+private def self.appname = "My Application"
 def self.instance = new self() -- New instance of self
 
 ------------------
@@ -94,7 +94,7 @@ public def new()
 end
 
 -- Just main loop. I love them.
-def update(deltaTime)
+private def update(deltaTime)
   if (sprite.x + sprite.width >= stage.stageWidth || sprite.x <= 0)  
     speed *= -1
   elsif (sprite.x == 5)

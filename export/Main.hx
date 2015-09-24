@@ -22,7 +22,7 @@ this. Any suggestions?
   extends Sprite
   implements Dynamic
   
-{static public var appname = "My Application";
+{private static var appname = "My Application";
 static public var instance = new Main() ;// New instance of self
 
 /* 
@@ -94,7 +94,7 @@ public function new(){
 };
 
 // Just main loop. I love them.
-function update(deltaTime){
+private function update(deltaTime){
   if (sprite.x + sprite.width >= stage.stageWidth || sprite.x <= 0){  
     speed *= -1;
   elsif (sprite.x == 5){

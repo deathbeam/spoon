@@ -21,7 +21,7 @@ class Transpiler {
     "using", "extends", "implements", "inline", "typedef", //"//", "import", "var", "function",
 
     // Expressions
-    "if", "else", "case", "elseif", "while",
+    "elseif", "if", "else", "case", "while",
 
     // Types
     "class", "enum", "abstract",

@@ -97,7 +97,7 @@ public function new(){
 private function update(deltaTime){
   if (sprite.x + sprite.width >= stage.stageWidth || sprite.x <= 0){  
     speed *= -1;
-  elsif (sprite.x == 5){
+  }else if (sprite.x == 5){
     testThis();
     break;
   }else{

@@ -23,9 +23,11 @@ class TranspilerCommand
             Error.create(ERROR_TYPE, "Source not found");
         }
 
+        var dir = src;
+
         // Transpile one file
         if (!FileSystem.isDirectory(src)) {
-            var result = transpileFile(src);
+            var result = transpileFile(dir, src);
 
             if (dest == null) {
                 return result;
@@ -58,7 +60,7 @@ class TranspilerCommand
                 }
                 // If it's a raxe file, we transpile it
                 if (isRaxeFile(file)) {
-                    var result = transpileFile(file);
+                    var result = transpileFile(dir, file);
                     FolderReader.createFile(newPath, result);
 
                 // If it's not a raxe file, we just copy/past it to the new folder
@@ -78,7 +80,7 @@ class TranspilerCommand
      *
      * @return String content
      */
-    public static function transpileFile(file: String): String
+    public static function transpileFile(dir : String, file: String): String
     {
         var group = new TranspilerGroup();
 
@@ -87,8 +89,9 @@ class TranspilerCommand
             .push(new AccessTranspiler())
             .push(new SemicolonTranspiler())
         ;
+        
 
-        return group.transpile(Sys.getCwd(), file);
+        return group.transpile(dir != null ? FileSystem.absolutePath(dir) : Sys.getCwd(), FileSystem.absolutePath(file));
     }
 
     /**

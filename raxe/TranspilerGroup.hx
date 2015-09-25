@@ -15,20 +15,23 @@ class TranspilerGroup {
   }
 
   public function transpile(directory : String, inputFile : String) : String {
+    trace(inputFile);
     var currentPackage = StringTools.replace(inputFile, directory, "");
-      currentPackage = StringTools.replace(currentPackage, "\\", "/");
-      var currentModule = StringTools.replace(currentPackage.substr(currentPackage.lastIndexOf("/") + 1), ".rx", "");
-      currentPackage = StringTools.replace(currentPackage, currentPackage.substr(currentPackage.lastIndexOf("/")), "");
-      currentPackage = StringTools.replace(currentPackage, "/", ".");
+    currentPackage = StringTools.replace(currentPackage, "\\", "/");
+    var currentModule = StringTools.replace(currentPackage.substr(currentPackage.lastIndexOf("/") + 1), ".rx", "");
+    currentPackage = StringTools.replace(currentPackage, currentPackage.substr(currentPackage.lastIndexOf("/")), "");
+    currentPackage = StringTools.replace(currentPackage, "/", ".");
 
-      var content = File.getContent(inputFile);
+    if (currentPackage.charAt(0) == ".") currentPackage = currentPackage.substr(1);
 
-      for (transpiler in transpilers) {
-        content = transpiler.transpile(
-          new StringHandle(content, transpiler.tokens()),
-          currentPackage, currentModule);
-      }
+    var content = File.getContent(inputFile);
 
-      return content;
+    for (transpiler in transpilers) {
+      content = transpiler.transpile(
+        new StringHandle(content, transpiler.tokens()),
+        currentPackage, currentModule);
+    }
+
+    return content;
   }
 }

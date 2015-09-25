@@ -94,9 +94,9 @@ class CoreTranspiler implements Transpiler {
 
         if (handle.at("\"\"\"")) {
           handle.remove("\"\"\"");
+          handle.insert("\"");
         }
 
-        handle.insert("\"");
         handle.increment();
       }
       else if (handle.is("self.new")) {

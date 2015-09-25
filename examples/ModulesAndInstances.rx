@@ -21,6 +21,11 @@ def self.main()
   myInstance.instanceFunction()
 end
 
+-- Create the constructor method so we can make instances
+def new()
+  trace("Instance created")
+end
+
 def instanceFunction()
   trace(this) -- print this instance to console
   trace(self) -- print this module to console

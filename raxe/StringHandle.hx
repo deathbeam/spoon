@@ -18,6 +18,11 @@ class StringHandle {
     this.position = position;
   }
 
+  public function reset() {
+    position = 0;
+    current = null;
+  }
+
   public function atStart() : Bool {
     return position <= 0;
   }

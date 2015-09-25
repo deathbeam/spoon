@@ -4,6 +4,13 @@ import sys.io.File;
 
 class Main {
   static function main() {
-    new Transpiler("test", "export/Main.rx", "export/Main.hx").transpile().save();
+    var group = new TranspilerGroup();
+
+    group
+    	.push(new CoreTranspiler())
+    	.push(new AccessTranspiler())
+    	.push(new SemicolonTranspiler());
+
+    trace(group.transpile("test", "export/Main.rx"));
   }
 }

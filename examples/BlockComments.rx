@@ -6,7 +6,6 @@ initialized it.
 ---
 self class
 
-
 -----
 If you want to use nested block comments, you must initialize
 block comment with different number of hypnens as you use in

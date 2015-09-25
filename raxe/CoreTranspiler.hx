@@ -15,7 +15,7 @@ class CoreTranspiler implements Transpiler {
       "using", "extends", "implements", "inline", "typedef", //"//", "import", "var", "function",
 
       // Expressions
-      "elseif", "if", "else", "case", "while",
+      "elseif", "if", "else", "case", "while", "for",
 
       // Types
       "class", "enum", "abstract",
@@ -165,7 +165,7 @@ class CoreTranspiler implements Transpiler {
         handle.increment();
       }
       // Insert begin bracket after if and while
-      else if (handle.is("if") || handle.is("while")) {
+      else if (handle.is("if") || handle.is("while") || handle.is("for")) {
         handle.increment();
         consumeCurlys(handle);
         handle.insert("{");

@@ -12,6 +12,11 @@ static public function main(){
   // Get instance of self
   var myInstance = getInstance();
 
+  // Type class name directly
+  var myAnotherInstance =new  ModulesAndInstances();
+
+new   ModulesAndInstances().instanceFunction();
+
   // Call instance function
   myInstance.instanceFunction();
 };

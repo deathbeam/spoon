@@ -89,7 +89,6 @@ class StringHandle {
     var sub = this.content.substr(
       nearStart(1) ? position : position - 1,
       content.length + 2);
-    trace(sub);
 
     return regex.match(sub);
   }

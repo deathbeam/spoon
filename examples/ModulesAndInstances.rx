@@ -1,7 +1,7 @@
 self class
 
 -- You can use self world to reference current class name
-def self.instance = new self()
+def self.instance = self.new()
 
 -- Self keyword before defines basically means that define is static
 def self.getInstance()
@@ -11,6 +11,11 @@ end
 def self.main()
   -- Get instance of self
   def myInstance = getInstance()
+
+  -- Type class name directly
+  def myAnotherInstance = ModulesAndInstances.new()
+
+  ModulesAndInstances.new().instanceFunction()
 
   -- Call instance function
   myInstance.instanceFunction()

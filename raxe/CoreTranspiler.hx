@@ -6,16 +6,16 @@ class CoreTranspiler implements Transpiler {
   public function tokens() : Array<String> {
     return [
       // Standard keywords
-      "\"", "\\\"", "(", ")", "/", "=", "#",
+      "\"", "\\\"", "(", ")", "/", "=", "#", ",",
 
       // Raxe keywords
-      "-", "require", "def", "self.", "self", "end", "do",
+      "-", "require", "def", "self.new", ".new", "self.", "self", "end", "do",
 
       // Haxe keywords
       "using", "extends", "implements", "inline", "typedef", //"//", "import", "var", "function",
 
       // Expressions
-      "elseif", "if", "else", "while", "for",
+      "elsif", "if", "else", "while", "for",
 
       // Types
       "class", "enum", "abstract", "interface",
@@ -93,6 +93,18 @@ class CoreTranspiler implements Transpiler {
           handle.remove("\"\"");
         }
 
+        handle.increment();
+      }
+      else if (handle.is("self.new")) {
+        handle.remove();
+        handle.insert("new " + name);
+        handle.increment();
+      }
+      else if (handle.is(".new")) {
+        handle.remove();
+        handle.prevTokenLine();
+        handle.increment();
+        handle.insert("new ");
         handle.increment();
       }
       // Change end to classic bracket end
@@ -173,12 +185,17 @@ class CoreTranspiler implements Transpiler {
         handle.increment();
       }
       // Change elseif to else if and insert begin and end brackets around it
-      else if (handle.safeis("elseif")) {
+      else if (handle.safeis("elsif")) {
         handle.remove();
         handle.insert("}else if");
         handle.increment();
         consumeCurlys(handle);
         handle.insert("{");
+        handle.increment();
+      }
+      else if (handle.safeis("next")) {
+        handle.remove();
+        handle.insert("continue");
         handle.increment();
       }
       // Inser begin and end brackets around else but do not try to

@@ -41,7 +41,7 @@ public var struct = {
 };
 
 public var array = [
-  "hello", "world",
+  "hello", "world";
 ];
 
 // Just multiline string
@@ -90,7 +90,8 @@ public function new(){
     var currentTime = Lib.getTimer ();
     update (currentTime - cacheTime);
     cacheTime = currentTime;
-  });
+  };
+  );
 };
 
 // Just main loop. I love them.

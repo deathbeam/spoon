@@ -325,14 +325,25 @@ class Transpiler {
         handle.increment();
       } else {
         if (handle.is("\n") || handle.is("//")) {
+          if (last == "}" || last == "]") {
+            var position = handle.position;
+            handle.nextToken();
+            handle.position = position;
+
+            if (handle.is(")")) {
+              handle.increment();
+              continue;
+            }
+          }
+
           if (last == "}" || last == "]" || last == ")" || last == "\"" || last == "=" || last == ":" || last == ")" || last == "continue" || last == "break" || last == "return") {
             handle.insert(";");
             handle.increment();
           }
 
           if (handle.is("//")) {
-            handle.increment();
             handle.next("\n");
+            handle.increment();
           } 
         }
         

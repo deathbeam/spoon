@@ -41,7 +41,7 @@ def struct = {
 }
 
 def array = [
-  "hello", "world",
+  "hello", "world"
 ]
 
 -- Just multiline string
@@ -90,7 +90,8 @@ public def new()
     var currentTime = Lib.getTimer ()
     update (currentTime - cacheTime)
     cacheTime = currentTime
-  end)
+  end
+  )
 end
 
 -- Just main loop. I love them.

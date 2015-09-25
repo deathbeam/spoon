@@ -35,6 +35,15 @@ class StringHandle {
     return current == content;
   }
 
+  public function safeis(content : String) : Bool {
+      var regex = new EReg("(\\w$content\\w)|($content\\w)|(\\w$content)", "g");
+
+      var result = regex.matchSub(this.content,
+        atStart() ? position : position - 1,
+        atEnd() ? content.length : content.length + 1);
+      return result;
+    }
+
   public function at(content : String) : Bool {
     var divided = divide();
     if (divided.right.substr(0, content.length) == content) return true;

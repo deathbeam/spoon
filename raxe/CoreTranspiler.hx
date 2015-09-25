@@ -15,10 +15,10 @@ class CoreTranspiler implements Transpiler {
       "using", "extends", "implements", "inline", "typedef", //"//", "import", "var", "function",
 
       // Expressions
-      "elseif", "if", "else", "case", "while", "for",
+      "elseif", "if", "else", "while", "for",
 
       // Types
-      "class", "enum", "abstract",
+      "class", "enum", "abstract", "interface",
 
       // Access modifiers
       "private", "public", "static"
@@ -26,6 +26,7 @@ class CoreTranspiler implements Transpiler {
   }
 
   public function transpile(handle : StringHandle, packagepath : String, name : String) {
+    var alreadyDefined = false;
     handle.insert("package " + packagepath + ";using Lambda;").increment();
 
     while (handle.nextToken()) {
@@ -194,21 +195,19 @@ class CoreTranspiler implements Transpiler {
         handle.remove();
 
         while(handle.nextToken()) {
-          if (handle.is("enum") ||
+          if (!alreadyDefined && handle.is("enum") ||
               handle.is("class") ||
-              handle.is("abstract")) {
+              handle.is("abstract") ||
+              handle.is("interface")) {
             handle.increment();
             handle.insert(" " + name + " ");
-            handle.increment();
-          } else if (handle.is("(")) {
-            handle.insert(name);
-            handle.increment();
-            handle.increment("(");
-            break;
-          } else if (handle.is("extends") || handle.is("implements")) {
-            handle.increment();
-          } else {
+            handle.next("\n");
             handle.insert("{");
+            handle.increment();
+            alreadyDefined = true;
+            break;
+          } else if (alreadyDefined) {
+            handle.insert(name);
             handle.increment();
             break;
           }

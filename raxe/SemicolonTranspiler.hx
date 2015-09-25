@@ -5,7 +5,7 @@ class SemicolonTranspiler implements Transpiler {
   
   public function tokens() : Array<String> {
     return [
-      "{", "}", "[", "]", "(", ")", ",", ":",
+      "{", "}", "[", "]", "(", ")", ",", "@:", "@", ":", 
       "//", "/*", "*/", "\"", "\\\"", "=",
       "break", "continue", "return",
       "if", "while", "for"

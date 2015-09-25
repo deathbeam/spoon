@@ -74,7 +74,8 @@ class CoreTranspiler implements Transpiler {
       // Step over things in strings (" ") and process multiline strings
       else if (handle.is("\"")) {
         if (handle.at("\"\"\"")) {
-          handle.remove("\"\"");
+          handle.remove("\"\"\"");
+          handle.insert("\"");
         }
 
         handle.increment();
@@ -86,13 +87,16 @@ class CoreTranspiler implements Transpiler {
             handle.increment();
           } else if (handle.is("\"")) {
             break;
+          } else {
+            handle.increment();
           }
         }
 
         if (handle.at("\"\"\"")) {
-          handle.remove("\"\"");
+          handle.remove("\"\"\"");
         }
 
+        handle.insert("\"");
         handle.increment();
       }
       else if (handle.is("self.new")) {

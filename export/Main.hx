@@ -10,7 +10,7 @@ import openfl.Lib;
 typedef User = {
   public var age : Int;
   public var name : String;
-};
+}
 #end
 
 /* 
@@ -41,7 +41,7 @@ public var struct = {
 };
 
 public var array = [
-  "hello", "world";
+  "hello", "world",
 ];
 
 // Just multiline string
@@ -80,19 +80,25 @@ public function new(){
   speed = 0.3;
   cacheTime = Lib.getTimer();
 
+  while(true){ break ;}
+
   while (true){
-    trace(hello);
+    if (test){
+      trace(hello);
+    }
+
     break;
-  };
+  }
 
   // Event listener magic, hell yeah
   addEventListener(Event.ENTER_FRAME, function(event){
-    var currentTime = Lib.getTimer ();
-    update (currentTime - cacheTime);
-    cacheTime = currentTime;
-  };
+      var currentTime = Lib.getTimer ();
+      update (currentTime - cacheTime);
+      cacheTime = currentTime;
+    }
   );
-};
+
+}
 
 // Just main loop. I love them.
 private function update(deltaTime){
@@ -103,7 +109,7 @@ private function update(deltaTime){
     break;
   }else{
     testThat();
-  };
+  }
 
   sprite.x += speed * deltaTime;
-}}
+};}

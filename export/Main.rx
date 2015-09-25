@@ -41,7 +41,7 @@ def struct = {
 }
 
 def array = [
-  "hello", "world"
+  "hello", "world",
 ]
 
 -- Just multiline string
@@ -80,18 +80,24 @@ public def new()
   speed = 0.3
   cacheTime = Lib.getTimer()
 
+  while(true) break end
+
   while (true)
-    trace(hello)
+    if (test)
+      trace(hello)
+    end
+
     break
   end
 
   -- Event listener magic, hell yeah
   addEventListener(Event.ENTER_FRAME, do(event)
-    var currentTime = Lib.getTimer ()
-    update (currentTime - cacheTime)
-    cacheTime = currentTime
-  end
+      var currentTime = Lib.getTimer ()
+      update (currentTime - cacheTime)
+      cacheTime = currentTime
+    end
   )
+
 end
 
 -- Just main loop. I love them.

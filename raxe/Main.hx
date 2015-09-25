@@ -11,6 +11,8 @@ class Main {
     	.push(new AccessTranspiler())
     	.push(new SemicolonTranspiler());
 
-    trace(group.transpile("test", "export/Main.rx"));
+    var content = group.transpile("test", "export/Main.rx");
+    File.saveContent("export/Main.hx", content);
+    trace("\n" + File.getContent("export/Main.hx"));
   }
 }

@@ -8,7 +8,7 @@ class SemicolonTranspiler implements Transpiler {
       "{", "}", "[", "]", "(", ")", ",", ":",
       "//", "/*", "*/", "\"", "\\\"", "=",
       "break", "continue", "return",
-      "else if", "if", "else", "while", "for"
+      "if", "while", "for"
     ];
   }
 
@@ -20,13 +20,12 @@ class SemicolonTranspiler implements Transpiler {
       if (handle.is("\"")) {
         handle.increment();
         handle.next("\"");
-        last = handle.current;
         handle.increment();
       } else if (handle.is("/*")) {
         handle.increment();
         handle.next("*/");
         handle.increment();
-      } else if (handle.is("if") || handle.is("while") || handle.is("else") || handle.is("for") || handle.is("else if")) {
+      } else if (handle.is("if") || handle.is("while") || handle.is("for")) {
         counter.push(0);
         last = handle.current;
         handle.increment();
@@ -34,16 +33,11 @@ class SemicolonTranspiler implements Transpiler {
         if (counter.length > 0) {
           counter[counter.length - 1] = counter[counter.length - 1] + 1;
         }
-        last = handle.current;
-        handle.increment();
-      } else if (handle.is("}")) {
-        if (counter.length > 0) {
-          counter[counter.length - 1] = counter[counter.length - 1] -1;
-        }
+
         last = handle.current;
         handle.increment();
       } else {
-        if (handle.is("\n") || handle.is("//")) {
+        if (handle.is("\n") || handle.is("//") || handle.is("}")) {
           if (last == "}" || last == "]") {
             var position = handle.position;
             handle.nextToken();
@@ -59,9 +53,7 @@ class SemicolonTranspiler implements Transpiler {
             if (counter.length == 0 || counter[counter.length - 1] != 0) {
               handle.insert(";");
               handle.increment();
-            }
-
-            if (counter.length > 0 && counter[counter.length - 1] == 0) {
+            } else {
               counter.pop();
             }
           }
@@ -69,15 +61,18 @@ class SemicolonTranspiler implements Transpiler {
           if (handle.is("//")) {
             handle.next("\n");
             handle.increment();
-          } 
+          }
+
+          if (handle.is("}")) {
+            if (counter.length > 0) {
+              counter[counter.length - 1] = counter[counter.length - 1] -1;
+            }
+          }
         }
-        
         
         last = handle.current;
         handle.increment();
       }
-
-      trace(counter);
     }
 
     return handle.content;

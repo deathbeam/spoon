@@ -31,18 +31,68 @@ class StringHandle {
     return position >= content.length;
   }
 
+  public function nearStart(tolerance : Int) : Bool {
+    return (position - tolerance) <= 0;
+  }
+
+  public function nearEnd(tolerance : Int) : Bool {
+    return (position + tolerance) >= content.length;
+  }
+
   public function is(content : String) : Bool {
     return current == content;
   }
 
-  public function safeis(content : String) : Bool {
-      var regex = new EReg("(\\w$content\\w)|($content\\w)|(\\w$content)", "g");
+  public function safeisStart(content : String) : Bool {
+    var regex = new EReg("[^\\w]" + content, "");
 
-      var result = regex.matchSub(this.content,
-        atStart() ? position : position - 1,
-        atEnd() ? content.length : content.length + 1);
-      return result;
+    if (nearStart(1)) {
+      return is(content);
     }
+
+    if (nearEnd(content.length + 1)) {
+      return is(content);
+    }
+
+    var sub = this.content.substr(
+      nearStart(1) ? position : position - 1,
+      nearEnd(content.length + 1) ? content.length : content.length + 1);
+
+    return regex.match(sub);
+  }
+
+  public function safeisEnd(content : String) : Bool {
+    var regex = new EReg(content + "[^\\w]", "");
+
+    if (nearEnd(content.length + 2)) {
+      return is(content);
+    }
+
+    var sub = this.content.substr(
+      0,
+      nearEnd(content.length + 2) ? content.length : content.length + 2);
+
+    return regex.match(sub);
+  }
+
+  public function safeis(content : String) : Bool {
+    var regex = new EReg("[^\\w]" + content + "[^\\w]", "");
+
+    if (nearStart(1)) {
+      return safeisEnd(content);
+    }
+
+    if (nearEnd(content.length + 2)) {
+      return safeisStart(content);
+    }
+
+    var sub = this.content.substr(
+      nearStart(1) ? position : position - 1,
+      content.length + 2);
+    trace(sub);
+
+    return regex.match(sub);
+  }
 
   public function at(content : String) : Bool {
     var divided = divide();

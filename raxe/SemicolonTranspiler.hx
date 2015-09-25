@@ -25,7 +25,7 @@ class SemicolonTranspiler implements Transpiler {
         handle.increment();
         handle.next("*/");
         handle.increment();
-      } else if (handle.is("if") || handle.is("while") || handle.is("for")) {
+      } else if (handle.safeis("if") || handle.safeis("while") || handle.safeis("for")) {
         counter.push(0);
         last = handle.current;
         handle.increment();

@@ -17,6 +17,6 @@ def self.main()
 end
 
 def instanceFunction()
-  -- print this instance to console
-  trace(this)
+  trace(this) -- print this instance to console
+  trace(self) -- print this module to console
 end

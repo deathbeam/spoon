@@ -96,13 +96,13 @@ class CoreTranspiler implements Transpiler {
         handle.increment();
       }
       // Change end to classic bracket end
-      else if (handle.is("end")) {
+      else if (handle.safeis("end")) {
         handle.remove();
         handle.insert("}");
         handle.increment();
       }
       // Change require to classic imports
-      else if (handle.is("require")) {
+      else if (handle.safeis("require")) {
         handle.remove();
         handle.insert("import");
         handle.increment();
@@ -129,12 +129,12 @@ class CoreTranspiler implements Transpiler {
         }
       }
       // Defines to variables and functions
-      else if (handle.is("def")) {
+      else if (handle.safeis("def")) {
         handle.remove("def");
         var position = handle.position;
         handle.nextToken();
 
-        if (handle.is("self.")) {
+        if (handle.safeisStart("self.")) {
           handle.remove();
           handle.position = position;
           handle.insert("static ");
@@ -158,7 +158,7 @@ class CoreTranspiler implements Transpiler {
         }
       }
       // Defines to variables and functions
-      else if (handle.is("do")) {
+      else if (handle.safeis("do")) {
         handle.remove("do");
         handle.insert("function");
         consumeCurlys(handle);
@@ -166,14 +166,14 @@ class CoreTranspiler implements Transpiler {
         handle.increment();
       }
       // Insert begin bracket after if and while
-      else if (handle.is("if") || handle.is("while") || handle.is("for")) {
+      else if (handle.safeis("if") || handle.safeis("while") || handle.safeis("for")) {
         handle.increment();
         consumeCurlys(handle);
         handle.insert("{");
         handle.increment();
       }
       // Change elseif to else if and insert begin and end brackets around it
-      else if (handle.is("elseif")) {
+      else if (handle.safeis("elseif")) {
         handle.remove();
         handle.insert("}else if");
         handle.increment();
@@ -183,7 +183,7 @@ class CoreTranspiler implements Transpiler {
       }
       // Inser begin and end brackets around else but do not try to
       // process curlys because there will not be any
-      else if (handle.is("else")) {
+      else if (handle.safeis("else")) {
         handle.insert("}");
         handle.increment();
         handle.increment("else");
@@ -191,29 +191,29 @@ class CoreTranspiler implements Transpiler {
         handle.increment();
       }
       // Process module declarations and insert curly after them
-      else if (handle.is("self")) {
+      else if (handle.safeis("self")) {
         handle.remove();
 
-        while(handle.nextToken()) {
-          if (!alreadyDefined && handle.is("enum") ||
-              handle.is("class") ||
-              handle.is("abstract") ||
-              handle.is("interface")) {
-            handle.increment();
-            handle.insert(" " + name + " ");
-            handle.next("\n");
-            handle.insert("{");
-            handle.increment();
-            alreadyDefined = true;
-            break;
-          } else if (alreadyDefined) {
-            handle.insert(name);
-            handle.increment();
-            break;
+        if (!alreadyDefined) {
+          while(handle.nextToken()) {
+           if (handle.is("enum") ||
+                handle.is("class") ||
+                handle.is("abstract") ||
+                handle.is("interface")) {
+              handle.increment();
+              handle.insert(" " + name + " ");
+              handle.next("\n");
+              handle.insert("{");
+              handle.increment();
+              alreadyDefined = true;
+              break;
+            }
           }
+        } else {
+          handle.insert(name);
         }
       }
-      else if (handle.is("self.")) {
+      else if (handle.safeisStart("self.")) {
         handle.remove();
         handle.insert(name + ".");
         handle.increment();

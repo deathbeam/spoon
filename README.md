@@ -4,6 +4,12 @@
 
 An awesome mix between Haxe and Ruby. Raxe is open source, cross-platform and compiles to Haxe without any performance penatly and runtime library.
 
+# Installation
+
+To install Raxe you can use haxelib
+
+```haxelib git raxe https://github.com/nondev/raxe.git```
+
 # Build the project
 
 You'll need [mcli](https://github.com/waneck/mcli) library installed
@@ -17,7 +23,7 @@ A binary ```run.n``` will be available
 
 Base
 --
-If you installed the library with haxelib (not available yet) :
+If you installed the library with haxelib:
 
 ```haxelib run raxe -h```
 

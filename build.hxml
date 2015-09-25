@@ -1,5 +1,3 @@
+-lib mcli
 -main raxe.Main
--cp raxe
-
--neko export/Main.n
--cmd neko export/Main.n
+-neko run.n

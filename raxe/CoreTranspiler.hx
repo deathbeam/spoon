@@ -6,7 +6,7 @@ class CoreTranspiler implements Transpiler {
   public function tokens() : Array<String> {
     return [
       // Standard keywords
-      "\"", "\\\"", "(", ")", "/", "=", "#", ",",
+      "\"", "\\\"", "(", ")", "/", "=", "#", ",", "@",
 
       // Raxe keywords
       "-", "require", "def", "self.new", ".new", "self.", "self", "end", "do",
@@ -68,7 +68,7 @@ class CoreTranspiler implements Transpiler {
         }
       }
       // Skip compiler defines
-      else if (handle.is("#")) {
+      else if (handle.is("#") || handle.is("@")) {
         handle.next("\n");
       }
       // Step over things in strings (" ") and process multiline strings

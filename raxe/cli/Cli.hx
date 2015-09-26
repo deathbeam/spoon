@@ -64,7 +64,7 @@ class Cli extends CommandLine {
             while (true) {
                 try {
                     if (transpiler.transpile(this.raxeOnly)) {
-                        if (transpiler.response != "") {
+                        if (transpiler.response != null && transpiler.response != "") {
                             Sys.println(transpiler.response);
                         } else {
                             Sys.println("Transpilation done.");

@@ -75,19 +75,14 @@ class TranspilerCommand
                 dest = dest.substr(0, dest.length - 1);
             }
 
+            var currentFiles = new Map<String, Int>();
             for (file in files.iterator()) {
                 var oldFileSize : Int = this.files.get(file);
                 var currentSize : Int = FileSystem.stat(file).size;
 
                 if (oldFileSize == null || oldFileSize != currentSize) {
-                    var parts : Array<String> = file.split('/');
-                    var fileName : String = parts.pop();
+                    var newPath = this.getDestinationFile(file, src, dest);
 
-                    var newPath = parts.join("/") + "/" + fileName.replace(".rx", ".hx");
-
-                    if (dest != null) {
-                        newPath = newPath.replace(src, dest);
-                    }
                     // If it's a raxe file, we transpile it
                     if (isRaxeFile(file)) {
                         var result = transpileFile(dir, file);
@@ -100,6 +95,15 @@ class TranspilerCommand
 
                     this.files.set(file, currentSize);
                     hasTranspile = true;
+                }
+
+                currentFiles.set(file, currentSize);
+            }
+
+            for (key in this.files.keys()) {
+                if (currentFiles.get(key) == null) {
+                    this.files.remove(key);
+                    FileSystem.deleteFile(this.getDestinationFile(key, src, dest));
                 }
             }
 
@@ -136,5 +140,28 @@ class TranspilerCommand
     public function isRaxeFile(filename: String): Bool
     {
         return filename.endsWith(".rx");
+    }
+
+    /**
+     * Get the path the destination file
+     *
+     * @param String file Path to the file
+     * @param String src  Source directory
+     * @param String dest Destination directory
+     *
+     * @return String destination file path
+     */
+    public function getDestinationFile(file: String, src: String, dest: String) : String
+    {
+        var parts : Array<String> = file.split('/');
+        var fileName : String = parts.pop();
+
+        var newPath = parts.join("/") + "/" + fileName.replace(".rx", ".hx");
+
+        if (dest != null) {
+            newPath = newPath.replace(src, dest);
+        }
+
+        return newPath;
     }
 }

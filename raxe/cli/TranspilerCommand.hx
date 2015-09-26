@@ -7,37 +7,64 @@ using StringTools;
 
 class TranspilerCommand
 {
-    public static inline var ERROR_TYPE = "transpile_error";
+    /**
+     * @var files
+     *
+     * Size of the files (file_size;) for files
+     **/
+    private var files : Map<String, Int>;
+
+    private var src : String;
+
+    private var dest: String;
+
+    public var response : String;
+
+    /**
+     * @param String src   Source file or directory
+     * @param String ?dest Destination file or directory (optional)
+     */
+    public function new(src: String, ?dest: String)
+    {
+        this.src = src;
+        this.dest = dest;
+        this.files = new Map<String, Int>();
+    }
 
     /**
      * Transpile a file or a whole directory
      *
-     * @param String src   Source file or directory
-     * @param String ?dest Destination file or directory (optional)
-     *
-     * @return String A file if no destination provided
+     * @return Bool transpilation has been done or not
      */
-    public static function transpile(src: String, ?dest: String) : String
+    public function transpile() : Bool
     {
-        if (!FileSystem.exists(src)) {
-            Error.create(ERROR_TYPE, "Source not found");
-        }
-
+        var src = this.src;
+        var dest = this.dest;
         var dir = src;
 
         // Transpile one file
-        if (!FileSystem.isDirectory(src)) {
-            var result = transpileFile(dir, src);
+        if (!FileSystem.isDirectory(this.src)) {
+            var oldFileSize : Int = this.files.get(this.src);
+            var currentSize : Int = FileSystem.stat(this.src).size;
 
-            if (dest == null) {
-                return result;
+            if (oldFileSize == null || oldFileSize != currentSize) {
+                var result = transpileFile(dir, src);
+
+                if (dest == null) {
+                    this.response = result;
+                } else {
+                    FolderReader.createFile(dest, result);
+                }
+
+                this.files.set(this.src, currentSize);
+                return true;
             }
 
-            FolderReader.createFile(dest, result);
-
+            return false;
         // Transpile a whole folder
         } else {
             var files = FolderReader.getFiles(src);
+            var hasTranspile : Bool = false;
 
             // To have the same pattern between src and dest (avoid src/ and dist instead of dist/)
             if (src.endsWith("/")) {
@@ -48,29 +75,38 @@ class TranspilerCommand
                 dest = dest.substr(0, dest.length - 1);
             }
 
-            Sys.println(files.length + " files to transpile from " + src);
             for (file in files.iterator()) {
-                var parts : Array<String> = file.split('/');
-                var fileName : String = parts.pop();
+                var oldFileSize : Int = this.files.get(file);
+                var currentSize : Int = FileSystem.stat(file).size;
 
-                var newPath = parts.join("/") + "/" + fileName.replace(".rx", ".hx");
+                if (oldFileSize == null || oldFileSize != currentSize) {
+                    var parts : Array<String> = file.split('/');
+                    var fileName : String = parts.pop();
 
-                if (dest != null) {
-                    newPath = newPath.replace(src, dest);
-                }
-                // If it's a raxe file, we transpile it
-                if (isRaxeFile(file)) {
-                    var result = transpileFile(dir, file);
-                    FolderReader.createFile(newPath, result);
+                    var newPath = parts.join("/") + "/" + fileName.replace(".rx", ".hx");
 
-                // If it's not a raxe file, we just copy/past it to the new folder
-                } else {
-                    FolderReader.copyFileSystem(file, newPath);
+                    if (dest != null) {
+                        newPath = newPath.replace(src, dest);
+                    }
+                    // If it's a raxe file, we transpile it
+                    if (isRaxeFile(file)) {
+                        var result = transpileFile(dir, file);
+                        FolderReader.createFile(newPath, result);
+
+                    // If it's not a raxe file, we just copy/past it to the new folder
+                    } else {
+                        FolderReader.copyFileSystem(file, newPath);
+                    }
+
+                    this.files.set(file, currentSize);
+                    hasTranspile = true;
                 }
             }
+
+            return hasTranspile;
         }
 
-        return "";
+        return false;
     }
 
     /**
@@ -80,7 +116,7 @@ class TranspilerCommand
      *
      * @return String content
      */
-    public static function transpileFile(dir : String, file: String): String
+    public function transpileFile(dir : String, file: String): String
     {
         var group = new TranspilerGroup();
 
@@ -89,7 +125,7 @@ class TranspilerCommand
             .push(new AccessTranspiler())
             .push(new SemicolonTranspiler())
         ;
-        
+
 
         return group.transpile(dir != null ? FileSystem.absolutePath(dir) : Sys.getCwd(), FileSystem.absolutePath(file));
     }
@@ -97,7 +133,7 @@ class TranspilerCommand
     /**
      * Checks if the given file is a raxefile
      */
-    public static function isRaxeFile(filename: String): Bool
+    public function isRaxeFile(filename: String): Bool
     {
         return filename.endsWith(".rx");
     }

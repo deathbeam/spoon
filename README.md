@@ -44,3 +44,9 @@ Arguments:
 Example : ```haxelib run raxe -t -s examples/ -d dist/```
 
 Will transpile all raxe files from examples to dist directory. Non raxe files will be just copy/paste to the new directory
+
+Watch
+--
+If you want to automatically transpile modified raxe files, you can add argument ```-w or --watch```. It will create an endless loop that will watch your files.
+
+Example : ```haxelib run raxe -t -s examples/ -d dist/ -w```

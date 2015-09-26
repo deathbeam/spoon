@@ -42,12 +42,13 @@ class SemicolonTranspiler implements Transpiler {
         handle.increment();
       } else {
         if (handle.is("\n") || handle.is("//") || handle.is("}")) {
+          var position = handle.position;
+
           if (last == "}" || last == "]") {
-            var position = handle.position;
             handle.nextToken();
             handle.position = position;
 
-            if (handle.is(")")) {
+            if (handle.is(")") || handle.is("@")) {
               handle.increment();
               continue;
             }

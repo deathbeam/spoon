@@ -5,7 +5,7 @@ class AccessTranspiler implements Transpiler {
   
   public function tokens() : Array<String> {
     return [
-      "{", "}", "[", "]", "(", ")",
+      "{", "}", "[", "]", "(", ")", "@",
       "//", "/*", "*/", "\"", "\\\"",
       "var", "function", "public", "private"
     ];
@@ -20,7 +20,7 @@ class AccessTranspiler implements Transpiler {
         handle.increment();
         handle.next("\"");
         handle.increment();
-      } else if (handle.is("//")) {
+      } else if (handle.is("//") || handle.is("@")) {
         handle.increment();
         handle.next("\n");
         handle.increment();

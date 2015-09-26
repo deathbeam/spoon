@@ -48,7 +48,7 @@ class SemicolonTranspiler implements Transpiler {
             handle.nextToken();
             handle.position = position;
 
-            if (handle.is(")") || handle.is("@")) {
+            if (handle.is(")")) {
               handle.increment();
               continue;
             }
@@ -65,7 +65,6 @@ class SemicolonTranspiler implements Transpiler {
 
           if (handle.is("//")) {
             handle.next("\n");
-            handle.increment();
           }
 
           if (handle.is("}")) {

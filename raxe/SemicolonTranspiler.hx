@@ -5,8 +5,8 @@ class SemicolonTranspiler implements Transpiler {
   
   public function tokens() : Array<String> {
     return [
-      "{", "}", "[", "]", "(", ")", ",", ":", 
-      "@", "//", "/*", "*/", "\"", "\\\"", "=",
+      "@", "{", "}", "[", "]", "(", ")", ",", ":", 
+      "//", "/*", "*/", "\"", "\\\"", "=",
       "break", "continue", "return",
       "if", "while", "for"
     ];
@@ -17,7 +17,11 @@ class SemicolonTranspiler implements Transpiler {
     var counter : Array<Int> = new Array<Int>();
 
     while(handle.nextTokenLine()) {
-      if (handle.is("\"")) {
+      if (handle.is("@")) {
+        handle.increment();
+        handle.next("\n");
+        handle.increment();
+      } else if (handle.is("\"")) {
         handle.increment();
         handle.next("\"");
         handle.increment();
@@ -25,11 +29,6 @@ class SemicolonTranspiler implements Transpiler {
         handle.increment();
         handle.next("*/");
         handle.increment();
-      } else if (handle.is("@")) {
-        handle.increment();
-        handle.next("\n");
-        handle.increment();
-        last = handle.current;
       } else if (handle.safeis("if") || handle.safeis("while") || handle.safeis("for")) {
         counter.push(0);
         last = handle.current;

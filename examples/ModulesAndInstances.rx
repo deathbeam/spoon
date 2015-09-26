@@ -9,6 +9,7 @@ def self.getInstance()
   return instance
 end
 
+@:pippa(123)
 def self.main()
   -- Get instance of self
   def myInstance = getInstance()

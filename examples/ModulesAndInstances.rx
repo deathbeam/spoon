@@ -4,6 +4,7 @@ self class
 def self.instance = self.new()
 
 -- Self keyword before defines basically means that define is static
+@:pippa(123)
 def self.getInstance()
   return instance
 end

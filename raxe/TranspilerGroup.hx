@@ -15,7 +15,6 @@ class TranspilerGroup {
   }
 
   public function transpile(directory : String, inputFile : String) : String {
-    trace(inputFile);
     var currentPackage = StringTools.replace(inputFile, directory, "");
     currentPackage = StringTools.replace(currentPackage, "\\", "/");
     var currentModule = StringTools.replace(currentPackage.substr(currentPackage.lastIndexOf("/") + 1), ".rx", "");

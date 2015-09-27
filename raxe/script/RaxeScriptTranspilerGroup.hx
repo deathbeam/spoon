@@ -1,7 +1,10 @@
-package raxe.transpiler;
+package raxe.script;
 
+import raxe.transpiler.CoreTranspiler;
+import raxe.transpiler.AccessTranspiler;
+import raxe.transpiler.SemicolonTranspiler;
+import raxe.transpiler.TranspilerGroup;
 import raxe.tools.StringHandle;
-
 import sys.io.File;
 
 class RaxeScriptTranspilerGroup extends TranspilerGroup {

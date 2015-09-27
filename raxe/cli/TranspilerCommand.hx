@@ -34,9 +34,11 @@ class TranspilerCommand
     /**
      * Transpile a file or a whole directory
      *
+     * @param raxeOnly Bool Must only copy to the dest directory, raxe files
+     *
      * @return Bool transpilation has been done or not
      */
-    public function transpile() : Bool
+    public function transpile(raxeOnly: Bool) : Bool
     {
         var src = this.src;
         var dest = this.dest;
@@ -71,7 +73,9 @@ class TranspilerCommand
                 src = src.substr(0, src.length - 1);
             }
 
-            if (dest.endsWith("/")) {
+            if (dest == null) {
+                dest = src;
+            } else if (dest.endsWith("/")) {
                 dest = dest.substr(0, dest.length - 1);
             }
 
@@ -80,13 +84,14 @@ class TranspilerCommand
                 var oldFileSize : Int = this.files.get(file);
                 var currentSize : Int = FileSystem.stat(file).size;
 
-                if (oldFileSize == null || oldFileSize != currentSize) {
+                if (oldFileSize != currentSize && (isRaxeFile(file) || !raxeOnly)) {
                     var newPath = this.getDestinationFile(file, src, dest);
 
                     // If it's a raxe file, we transpile it
                     if (isRaxeFile(file)) {
                         var result = transpileFile(dir, file);
                         FolderReader.createFile(newPath, result);
+                        this.files.set(file, currentSize);
 
                     // If it's not a raxe file, we just copy/past it to the new folder
                     } else {

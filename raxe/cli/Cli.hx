@@ -37,6 +37,11 @@ class Cli extends CommandLine {
     public var watch : Bool;
 
     /**
+        Only copy raxe files to the dest directory
+     **/
+    public var raxeOnly: Bool = false;
+
+    /**
         Show this message
         @alias h
      **/
@@ -58,7 +63,7 @@ class Cli extends CommandLine {
             var transpiler = new TranspilerCommand(this.src, this.dest);
             while (true) {
                 try {
-                    if (transpiler.transpile()) {
+                    if (transpiler.transpile(this.raxeOnly)) {
                         if (transpiler.response != null && transpiler.response != "") {
                             Sys.println(transpiler.response);
                         } else {
@@ -80,7 +85,11 @@ class Cli extends CommandLine {
 
     public function runDefault() {
         try {
-            this.help();
+            if (this.src != null) {
+                this.transpile();
+            } else {
+                this.help();
+            }
         } catch (err : String) {
             Sys.println(err);
             Sys.exit(0);

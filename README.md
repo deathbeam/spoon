@@ -50,3 +50,7 @@ Watch
 If you want to automatically transpile modified raxe files, you can add argument ```-w or --watch```. It will create an endless loop that will watch your files.
 
 Example : ```haxelib run raxe -t -s examples/ -d dist/ -w```
+
+Raxe Only
+--
+If you don't want to copy other files than raxe files, you can add the option ```--raxe-only```. So, if you have an image inside your raxe directories, it will be skipped by the transpiler (by default, it's copied).

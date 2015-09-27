@@ -1,7 +1,6 @@
 package raxe;
 
 import raxe.cli.Cli;
-import raxe.script.RaxeScript;
 
 class Main {
   static function main() {

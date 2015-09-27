@@ -20,12 +20,7 @@ class RaxeTranspilerGroup extends TranspilerGroup {
 
     var content = File.getContent(file);
 
-    var ct = new CoreTranspiler();
-    ct.name = currentModule;
-    ct.script = false;
-    ct.path = currentPackage;
-
-    push(ct);
+    push(new CoreTranspiler().setName(currentModule).setPath(currentPackage));
     push(new AccessTranspiler());
     push(new SemicolonTranspiler());
 

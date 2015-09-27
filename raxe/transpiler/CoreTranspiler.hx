@@ -5,9 +5,24 @@ import raxe.tools.StringHandle;
 class CoreTranspiler implements Transpiler {
   public function new() {}
 
-  public var script : Bool = false;
-  public var path : String = "";
-  public var name : String = "";
+  var script : Bool = false;
+  var path : String = "";
+  var name : String = "";
+
+  public function setIsScript(script : Bool) : CoreTranspiler {
+    this.script = script;
+    return this;
+  }
+
+  public function setPath(path : String) : CoreTranspiler {
+    this.path = path;
+    return this;
+  }
+
+  public function setName(name : String) : CoreTranspiler {
+    this.name = name;
+    return this;
+  }
 
   public function tokens() : Array<String> {
     return [

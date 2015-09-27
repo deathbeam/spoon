@@ -13,11 +13,7 @@ class RaxeScriptTranspilerGroup extends TranspilerGroup {
   }
 
   public function transpile(content : String) : String {
-    var ct = new CoreTranspiler();
-    ct.script = true;
-
-    push(ct);
-    push(new AccessTranspiler());
+    push(new CoreTranspiler().setIsScript(true));
     push(new SemicolonTranspiler());
 
     for (transpiler in transpilers) {

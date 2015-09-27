@@ -3,6 +3,7 @@ package raxe.cli;
 import sys.FileSystem;
 import raxe.tools.Error;
 import raxe.tools.FolderReader;
+import raxe.transpiler.RaxeTranspilerGroup;
 using StringTools;
 
 class TranspilerCommand
@@ -127,15 +128,7 @@ class TranspilerCommand
      */
     public function transpileFile(dir : String, file: String): String
     {
-        var group = new TranspilerGroup();
-
-        group
-            .push(new CoreTranspiler())
-            .push(new AccessTranspiler())
-            .push(new SemicolonTranspiler())
-        ;
-
-
+        var group = new RaxeTranspilerGroup();
         return group.transpile(dir != null ? FileSystem.absolutePath(dir) : Sys.getCwd(), FileSystem.absolutePath(file));
     }
 

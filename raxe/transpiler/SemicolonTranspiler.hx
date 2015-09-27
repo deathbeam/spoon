@@ -1,4 +1,6 @@
-package raxe;
+package raxe.transpiler;
+
+import raxe.tools.StringHandle;
 
 class SemicolonTranspiler implements Transpiler {
   public function new() {}
@@ -12,7 +14,7 @@ class SemicolonTranspiler implements Transpiler {
     ];
   }
 
-  public function transpile(handle : StringHandle, packagepath : String, name : String) {
+  public function transpile(handle : StringHandle) {
     var last = "";
     var counter : Array<Int> = new Array<Int>();
 

@@ -1,4 +1,6 @@
-package raxe;
+package raxe.transpiler;
+
+import raxe.tools.StringHandle;
 
 class AccessTranspiler implements Transpiler {
   public function new() {}
@@ -11,7 +13,7 @@ class AccessTranspiler implements Transpiler {
     ];
   }
 
-  public function transpile(handle : StringHandle, packagepath : String, name : String) {
+  public function transpile(handle : StringHandle) {
     var count = -1;
     var notPublic = false;
 

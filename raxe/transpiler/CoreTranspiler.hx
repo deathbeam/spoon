@@ -1,7 +1,13 @@
-package raxe;
+package raxe.transpiler;
+
+import raxe.tools.StringHandle;
 
 class CoreTranspiler implements Transpiler {
   public function new() {}
+
+  public var script : Bool = false;
+  public var path : String = "";
+  public var name : String = "";
 
   public function tokens() : Array<String> {
     return [
@@ -25,9 +31,12 @@ class CoreTranspiler implements Transpiler {
     ];
   }
 
-  public function transpile(handle : StringHandle, packagepath : String, name : String) {
-    var alreadyDefined = false;
-    handle.insert("package " + packagepath + ";using Lambda;").increment();
+  public function transpile(handle : StringHandle) {
+    var alreadyDefined = script;
+    
+    if (!script) {
+      handle.insert("package " + path + ";using Lambda;").increment();
+    }
 
     while (handle.nextToken()) {
       // Process comments and ignore everything in
@@ -244,7 +253,11 @@ class CoreTranspiler implements Transpiler {
       }
     }
 
-    return handle.content + "}";
+    if (!script) {
+      handle.content = handle.content + "}";
+    }
+
+    return handle.content;
   }
 
   private function consumeCurlys(handle : StringHandle) {

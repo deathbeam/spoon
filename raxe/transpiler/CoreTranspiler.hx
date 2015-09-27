@@ -128,6 +128,11 @@ class CoreTranspiler implements Transpiler {
       }
       // Change require to classic imports
       else if (handle.safeis("require")) {
+        if (script) {
+          handle.increment();
+          continue;
+        }
+
         handle.remove();
         handle.insert("import");
         handle.increment();

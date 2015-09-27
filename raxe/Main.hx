@@ -1,9 +1,10 @@
 package raxe;
 
+import mcli.Dispatch;
 import raxe.cli.Cli;
 
 class Main {
   static function main() {
-    new mcli.Dispatch(Sys.args()).dispatch(new Cli());
+    new Dispatch(Sys.args()).dispatch(new Cli());
   }
 }

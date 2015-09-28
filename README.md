@@ -12,9 +12,12 @@ To install Raxe you can use haxelib
 
 # Build the project
 
-You'll need [mcli](https://github.com/waneck/mcli) library installed
+You'll need [mcli](https://github.com/waneck/mcli) [hscript](https://github.com/HaxeFoundation/HScript) libraries installed:
 
-```haxelib install mcli```
+```
+haxelib install mcli
+haxelib install hscript
+```
 
 Now, compile the project with ```haxe build.hxml```
 A binary ```run.n``` will be available
@@ -37,7 +40,6 @@ Transpile
 ```haxelib run raxe -t -s <raxe filename or directory> [-d <filename or directory>]```
 
 Arguments:
-- ```-t or --transpile``` tells the command line to transpile
 - ```-s or --src``` the source filename (raxe) or directory
 - ```-d or --dest``` destination for the haxe file(s) generated. If omitted and src is a file, the dest will be the same filename in .hx. If omitted and src is a directory, the hx files will be generated in the same directory as raxe files.
 
@@ -49,8 +51,8 @@ Watch
 --
 If you want to automatically transpile modified raxe files, you can add argument ```-w or --watch```. It will create an endless loop that will watch your files.
 
-Example : ```haxelib run raxe -t -s examples/ -d dist/ -w```
+Example : ```haxelib run raxe -s examples/ -d dist/ -w```
 
-Raxe Only
+All files
 --
-If you don't want to copy other files than raxe files, you can add the option ```--raxe-only```. So, if you have an image inside your raxe directories, it will be skipped by the transpiler (by default, it's copied).
+If also want to copy other files other than raxe files, you can add the option ```-a or --all```. So, if you have an image inside your raxe directories, it will be copied by the transpiler (by default, it's skipped).

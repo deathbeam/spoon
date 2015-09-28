@@ -37,13 +37,13 @@ On development :
 Transpile
 --
 
-```haxelib run raxe -t -s <raxe filename or directory> [-d <filename or directory>]```
+```haxelib run raxe -s <raxe filename or directory> [-d <filename or directory>]```
 
 Arguments:
 - ```-s or --src``` the source filename (raxe) or directory
 - ```-d or --dest``` destination for the haxe file(s) generated. If omitted and src is a file, the dest will be the same filename in .hx. If omitted and src is a directory, the hx files will be generated in the same directory as raxe files.
 
-Example : ```haxelib run raxe -t -s examples/ -d dist/```
+Example : ```haxelib run raxe -s examples/ -d dist/```
 
 Will transpile all raxe files from examples to dist directory. Non raxe files will be just copy/paste to the new directory
 

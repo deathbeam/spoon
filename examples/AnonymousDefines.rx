@@ -21,12 +21,6 @@ Same applies to anonymous structures.
 def self.struct = {
   a: "hello",
   b: "yolo",
-
-  ---
-  And this is how we define anonymous function. It is also
-  dynamic by default, so all parameters are correctly typed
-  by Haxe compiler
-  ---
   callback: do(event)
     return event + " World"
   end,

@@ -18,7 +18,7 @@ class RaxeScript extends Interp {
     parser = new Parser();
     group = new RaxeScriptTranspilerGroup();
 
-    variables.set("require", function(thing) {
+    variables.set("require", function(thing : String) {
       var path = thing + ".rx";
 
       if (FileSystem.exists(path)) {
@@ -37,7 +37,9 @@ class RaxeScript extends Interp {
   }
 
   public function parse(s : String) : Expr {
-    return parser.parseString(group.transpile(s));
+    var content = group.transpile(s);
+    trace(content);
+    return parser.parseString(content);
   }
 
   override function get(o : Dynamic, f : String ) : Dynamic {

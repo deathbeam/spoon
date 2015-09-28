@@ -29,8 +29,6 @@ class SemicolonTranspiler implements Transpiler {
           handle.is("/") ||
           handle.is(".") ||
           handle.is(",") ||
-          handle.is(":") ||
-          handle.is("=") ||
           handle.is("||") ||
           handle.is("&&")) {
 
@@ -87,8 +85,6 @@ class SemicolonTranspiler implements Transpiler {
               handle.is("/") ||
               handle.is(".") ||
               handle.is(",") ||
-              handle.is(":") ||
-              handle.is("=") ||
               handle.is("||") ||
               handle.is("&&")) {
             continue;

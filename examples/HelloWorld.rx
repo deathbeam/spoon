@@ -1,5 +1,6 @@
 self class
 
 def self.main()
-  trace("Hello World")
+  def myvar : String = null
+  def myarray = Array<String>.new()
 end

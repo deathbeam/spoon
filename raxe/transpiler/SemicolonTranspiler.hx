@@ -78,6 +78,25 @@ class SemicolonTranspiler implements Transpiler {
             }
           }
 
+          handle.increment();
+          handle.nextTokenLine();
+
+          if (handle.is("+") ||
+              handle.is("-") ||
+              handle.is("*") ||
+              handle.is("/") ||
+              handle.is(".") ||
+              handle.is(",") ||
+              handle.is(":") ||
+              handle.is("=") ||
+              handle.is("||") ||
+              handle.is("&&")) {
+            continue;
+          }
+
+          handle.position = position;
+
+
           
           if ((!handle.is("}") && last == ",") || last == "+" || last == "-" || last == "*" || last == "/" || last == "." || last == "=" || last == "||" || last == "&&" ||
               last == "}" || last == "]" || last == ")" || last == "\"" || last == "=" || last == ":" || last == ")" || last == "continue" || last == "break" || last == "return") {

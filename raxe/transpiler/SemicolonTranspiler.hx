@@ -7,8 +7,12 @@ class SemicolonTranspiler implements Transpiler {
   
   public function tokens() : Array<String> {
     return [
-      "@", "{", "}", "[", "]", "(", ")", ",", ":", 
-      "//", "/*", "*/", "\"", "\\\"", "=",
+      // Parser - ignoring tokens
+      "//", "@", "/*", "*/", "\"", "\\\"",
+      // End of line - ignoring tokens
+      "=", "+", "-", "*", ".", "/", "," , "||", "&&", 
+      // And the rest
+      "{", "}", "[", "]", "(", ")",
       "break", "continue", "return",
       "if", "while", "for"
     ];
@@ -19,7 +23,25 @@ class SemicolonTranspiler implements Transpiler {
     var counter : Array<Int> = new Array<Int>();
 
     while(handle.nextTokenLine()) {
-      if (handle.is("@")) {
+      if (handle.is("+") ||
+          handle.is("-") ||
+          handle.is("*") ||
+          handle.is("/") ||
+          handle.is(".") ||
+          handle.is(",") ||
+          handle.is(":") ||
+          handle.is("=") ||
+          handle.is("||") ||
+          handle.is("&&")) {
+
+        last = handle.current;
+
+        if (handle.closest("\n")) {
+          handle.next("\n");
+        }
+
+        handle.increment();
+      } else if (handle.is("@")) {
         handle.increment();
         handle.next("\n");
         handle.increment();
@@ -56,7 +78,9 @@ class SemicolonTranspiler implements Transpiler {
             }
           }
 
-          if (last == "}" || last == "]" || last == ")" || last == "\"" || last == "=" || last == ":" || last == ")" || last == "continue" || last == "break" || last == "return") {
+          
+          if ((!handle.is("}") && last == ",") || last == "+" || last == "-" || last == "*" || last == "/" || last == "." || last == "=" || last == "||" || last == "&&" ||
+              last == "}" || last == "]" || last == ")" || last == "\"" || last == "=" || last == ":" || last == ")" || last == "continue" || last == "break" || last == "return") {
             if (counter.length == 0 || counter[counter.length - 1] != 0) {
               handle.insert(";");
               handle.increment();

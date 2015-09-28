@@ -39,6 +39,25 @@ class StringHandle {
     return (position + tolerance) >= content.length;
   }
 
+  public function closest(content : String) : Bool {
+    var divided = divide();
+    var regex = new EReg("[^\\w][ \t]*" + content, "");
+
+    var sub = this.content.substr(position);
+
+    var count = 1;
+
+    while (true) {
+      if (sub.charAt(count) == " " || sub.charAt(count) == "\t" || sub.charAt(count) == "\n") {
+        count ++;
+      } else {
+        break;
+      }
+    }
+
+    return regex.match(sub.substr(0, count));
+  }
+
   public function is(content : String) : Bool {
     return current == content;
   }

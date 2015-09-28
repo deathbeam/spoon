@@ -14,7 +14,7 @@ class StringHandle {
     } else {
       this.tokens = tokens;
     }
-    
+
     this.position = position;
   }
 
@@ -260,13 +260,18 @@ class StringHandle {
     return this;
   }
 
-  public function insert(?content : String) : StringHandle {
+  public function insert(?content : String, ?after : Bool) : StringHandle {
     if (content == null) {
       if (current != null) insert(current);
       return this;
     }
 
-    var divided = divide();
+    var divided;
+    if (after == null || !after) {
+      divided = divide();
+    } else {
+      divided = divide(1);
+    }
 
     this.content = divided.left + content + divided.right;
     current = content;
@@ -288,10 +293,10 @@ class StringHandle {
     return this;
   }
 
-  private function divide() {
+  private function divide(?offset: Int = 0) {
     return {
-      left: position > 0 ? content.substr(0, position) : "",
-      right: position < content.length ? content.substring(position) : ""
+      left: position > 0 ? content.substr(0, position + offset) : "",
+      right: position < content.length ? content.substring(position + offset) : ""
     }
   }
 }

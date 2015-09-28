@@ -48,7 +48,7 @@ class CoreTranspiler implements Transpiler {
 
   public function transpile(handle : StringHandle) {
     var alreadyDefined = script;
-    
+
     if (!script) {
       handle.insert("package " + path + ";using Lambda;").increment();
     }
@@ -61,7 +61,7 @@ class CoreTranspiler implements Transpiler {
         var position = handle.position;
 
         while(handle.nextTokenLine()) {
-          handle.increment(); 
+          handle.increment();
 
           if (handle.is("-")) {
             comment += "-";
@@ -177,7 +177,7 @@ class CoreTranspiler implements Transpiler {
       else if (handle.safeis("def")) {
         handle.remove("def");
         var position = handle.position;
-        safeNextToken(handle);
+        handle.nextToken();
 
         if (handle.safeisStart("self.")) {
           handle.remove();
@@ -185,8 +185,9 @@ class CoreTranspiler implements Transpiler {
           handle.insert("static ");
           handle.increment();
           position = handle.position;
-          safeNextToken(handle);
         }
+
+        handle.nextToken();
 
         if (handle.is("(")) {
           handle.position = position;
@@ -212,8 +213,8 @@ class CoreTranspiler implements Transpiler {
       // Insert begin bracket after if and while
       else if (handle.safeis("if") || handle.safeis("while") || handle.safeis("for")) {
         handle.increment();
-        consumeCurlys(handle);
-        handle.insert("{");
+        consumeCondition(handle);
+        handle.insert("{", true);
         handle.increment();
       }
       // Change elseif to else if and insert begin and end brackets around it
@@ -221,8 +222,8 @@ class CoreTranspiler implements Transpiler {
         handle.remove();
         handle.insert("}else if");
         handle.increment();
-        consumeCurlys(handle);
-        handle.insert("{");
+        consumeCondition(handle);
+        handle.insert("{", true);
         handle.increment();
       }
       else if (handle.safeis("next")) {
@@ -279,28 +280,6 @@ class CoreTranspiler implements Transpiler {
     return handle.content;
   }
 
-  private function safeNextToken(handle : StringHandle) : Bool {
-    handle.nextToken();
-
-    if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
-        safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "next") &&
-        safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "require")) {
-      return true;
-    } else {
-      handle.increment();
-      return safeNextToken(handle);
-    }
-  }
-
-  private function safeCheck(handle : StringHandle, content : String) : Bool {
-    if (handle.is(content)) {
-      return handle.safeis(content);
-    }
-
-    return true;
-  }
-
-
   private function consumeCurlys(handle : StringHandle) {
     var count = 0;
 
@@ -314,5 +293,11 @@ class CoreTranspiler implements Transpiler {
       handle.increment();
       if (count == 0) break;
     }
+  }
+
+  private function consumeCondition(handle: StringHandle) {
+    handle.insert("(");
+    handle.next("\n");
+    handle.insert(")");
   }
 }

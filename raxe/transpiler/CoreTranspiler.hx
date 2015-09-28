@@ -48,7 +48,7 @@ class CoreTranspiler implements Transpiler {
 
   public function transpile(handle : StringHandle) {
     var alreadyDefined = script;
-    
+
     if (!script) {
       handle.insert("package " + path + ";using Lambda;using StringTools;").increment();
     }
@@ -61,7 +61,7 @@ class CoreTranspiler implements Transpiler {
         var position = handle.position;
 
         while(handle.nextTokenLine()) {
-          handle.increment(); 
+          handle.increment();
 
           if (handle.is("-")) {
             comment += "-";
@@ -212,8 +212,8 @@ class CoreTranspiler implements Transpiler {
       // Insert begin bracket after if and while
       else if (handle.safeis("if") || handle.safeis("while") || handle.safeis("for")) {
         handle.increment();
-        consumeCurlys(handle);
-        handle.insert("{");
+        consumeCondition(handle);
+        handle.insert("{", true);
         handle.increment();
       }
       // Change elseif to else if and insert begin and end brackets around it
@@ -221,8 +221,8 @@ class CoreTranspiler implements Transpiler {
         handle.remove();
         handle.insert("}else if");
         handle.increment();
-        consumeCurlys(handle);
-        handle.insert("{");
+        consumeCondition(handle);
+        handle.insert("{", true);
         handle.increment();
       }
       else if (handle.safeis("next")) {
@@ -300,7 +300,6 @@ class CoreTranspiler implements Transpiler {
     return true;
   }
 
-
   private function consumeCurlys(handle : StringHandle) {
     var count = 0;
 
@@ -314,5 +313,25 @@ class CoreTranspiler implements Transpiler {
       handle.increment();
       if (count == 0) break;
     }
+  }
+
+  private function consumeCondition(handle: StringHandle) {
+    handle.insert("(");
+
+    while (true) {
+        handle.next("\n");
+        handle.prevToken();
+
+        if (!handle.is(",")) {
+            handle.next("\n");
+            break;
+        }
+
+        handle.remove();
+        handle.next("\n");
+        handle.increment();
+    }
+
+    handle.insert(")");
   }
 }

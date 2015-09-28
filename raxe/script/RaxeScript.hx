@@ -25,11 +25,16 @@ class RaxeScript extends Interp {
         return execute(parse(File.getContent(path)));
       }
 
-      var clazz = Type.resolveClass(thing.replace("\\", ".").replace("/", "."));
+      path = thing.replace("\\", ".").replace("/", ".");
+
+      var clazz = Type.resolveClass(path);
 
       if (clazz == null) {
-        trace('Failed to resolve class $thing');
-        return null;
+        clazz = Type.resolveEnum(path);
+
+        if (clazz == null) {
+          trace('Failed to resolve type $thing');
+        }
       }
 
       return clazz;

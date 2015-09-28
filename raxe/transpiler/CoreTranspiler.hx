@@ -177,7 +177,7 @@ class CoreTranspiler implements Transpiler {
       else if (handle.safeis("def")) {
         handle.remove("def");
         var position = handle.position;
-        handle.nextToken();
+        safeNextToken(handle);
 
         if (handle.safeisStart("self.")) {
           handle.remove();
@@ -185,9 +185,8 @@ class CoreTranspiler implements Transpiler {
           handle.insert("static ");
           handle.increment();
           position = handle.position;
+          safeNextToken(handle);
         }
-
-        handle.nextToken();
 
         if (handle.is("(")) {
           handle.position = position;
@@ -278,6 +277,27 @@ class CoreTranspiler implements Transpiler {
     }
 
     return handle.content;
+  }
+
+  private function safeNextToken(handle : StringHandle) : Bool {
+    handle.nextToken();
+
+    if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
+        safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "next") &&
+        safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "require")) {
+      return true;
+    } else {
+      handle.increment();
+      return safeNextToken(handle);
+    }
+  }
+
+  private function safeCheck(handle : StringHandle, content : String) : Bool {
+    if (handle.is(content)) {
+      return handle.safeis(content);
+    }
+
+    return true;
   }
 
   private function consumeCurlys(handle : StringHandle) {

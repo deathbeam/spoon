@@ -50,7 +50,7 @@ class CoreTranspiler implements Transpiler {
     var alreadyDefined = script;
     
     if (!script) {
-      handle.insert("package " + path + ";using Lambda;").increment();
+      handle.insert("package " + path + ";using Lambda;using StringTools;").increment();
     }
 
     while (handle.nextToken()) {

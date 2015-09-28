@@ -27,7 +27,7 @@ class RaxeScript extends Interp {
 
       path = thing.replace("\\", ".").replace("/", ".");
 
-      var clazz = Type.resolveClass(path);
+      var clazz : Dynamic = Type.resolveClass(path);
 
       if (clazz == null) {
         clazz = Type.resolveEnum(path);

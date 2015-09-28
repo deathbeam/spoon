@@ -1,12 +1,13 @@
 self class
 
+def self.message : String
+
 ---
 To define return type, we can add : <YourType>
 after method definition
 ---
 def self.main() : Void
-  def message : String = "Hello World"
-  message = toLowerCase(message)
+  message = toLowerCase("Hello World")
 
   trace(message)
 end

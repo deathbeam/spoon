@@ -12,7 +12,7 @@ class SemicolonTranspiler implements Transpiler {
       // End of line - ignoring tokens
       "=", "+", "-", "*", ".", "/", "," , "||", "&&", 
       // And the rest
-      "{", "}", "[", "]", "(", ")",
+      "{", "}", "[", "]", "(", ")", ":",
       "break", "continue", "return",
       "if", "while", "for"
     ];

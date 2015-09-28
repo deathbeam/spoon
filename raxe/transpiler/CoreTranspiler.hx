@@ -317,7 +317,21 @@ class CoreTranspiler implements Transpiler {
 
   private function consumeCondition(handle: StringHandle) {
     handle.insert("(");
-    handle.next("\n");
+
+    while (true) {
+        handle.next("\n");
+        handle.prevToken();
+
+        if (!handle.is(",")) {
+            handle.next("\n");
+            break;
+        }
+
+        handle.remove();
+        handle.next("\n");
+        handle.increment();
+    }
+
     handle.insert(")");
   }
 }

@@ -13,4 +13,10 @@ def self.main()
   else
     trace("coco")
   end
+
+  if myvar == null,
+     && myvar.charAt(0) == "x",
+     && myvar.charAt(2) == "x"
+    trace("ok")
+  end
 end

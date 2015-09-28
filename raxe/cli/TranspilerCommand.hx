@@ -39,7 +39,7 @@ class TranspilerCommand
      *
      * @return Bool transpilation has been done or not
      */
-    public function transpile(raxeOnly: Bool) : Bool
+    public function transpile(all: Bool) : Bool
     {
         var src = this.src;
         var dest = this.dest;
@@ -85,7 +85,7 @@ class TranspilerCommand
                 var oldFileSize : Int = this.files.get(file);
                 var currentSize : Int = FileSystem.stat(file).size;
 
-                if (oldFileSize != currentSize && (isRaxeFile(file) || !raxeOnly)) {
+                if (oldFileSize != currentSize && (all || isRaxeFile(file))) {
                     var newPath = this.getDestinationFile(file, src, dest);
 
                     // If it's a raxe file, we transpile it

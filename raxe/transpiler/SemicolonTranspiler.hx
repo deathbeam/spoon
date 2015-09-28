@@ -12,7 +12,7 @@ class SemicolonTranspiler implements Transpiler {
       // End of line - ignoring tokens
       "=", "+", "-", "*", ".", "/", "," , "||", "&&", 
       // And the rest
-      "{", "}", "[", "]", "(", ")",
+      "{", "}", "[", "]", "(", ")", ":",
       "break", "continue", "return",
       "if", "while", "for"
     ];
@@ -29,8 +29,6 @@ class SemicolonTranspiler implements Transpiler {
           handle.is("/") ||
           handle.is(".") ||
           handle.is(",") ||
-          handle.is(":") ||
-          handle.is("=") ||
           handle.is("||") ||
           handle.is("&&")) {
 
@@ -87,8 +85,6 @@ class SemicolonTranspiler implements Transpiler {
               handle.is("/") ||
               handle.is(".") ||
               handle.is(",") ||
-              handle.is(":") ||
-              handle.is("=") ||
               handle.is("||") ||
               handle.is("&&")) {
             continue;

@@ -1,8 +1,9 @@
 package raxe.cli;
 
 import mcli.CommandLine;
-import raxe.tools.Error;
 import sys.FileSystem;
+import raxe.raxefile.Raxefile;
+import raxe.tools.Error;
 
 /**
     -
@@ -31,15 +32,22 @@ class Cli extends CommandLine {
     public var dest : String;
 
     /**
+        Task to execute when running Raxefile
+        @alias t
+     **/
+    public var task : String = "default";
+
+    /**
         Execute the command when source file(s) are changed
         @alias w
      **/
     public var watch : Bool;
 
     /**
-        Only copy raxe files to the dest directory
+        Copy all (not only .rx) files to dest directory
+        @alias a
      **/
-    public var raxeOnly: Bool = false;
+    public var all: Bool;
 
     /**
         Show this message
@@ -50,43 +58,13 @@ class Cli extends CommandLine {
         Sys.exit(0);
     }
 
-    /**
-       Transpile command
-       @alias t
-     **/
-    public function transpile() {
-        if (this.src != null) {
-            if (!FileSystem.exists(src)) {
-                Error.create(ERROR_TYPE, "Source not found");
-            }
-
-            var transpiler = new TranspilerCommand(this.src, this.dest);
-            while (true) {
-                try {
-                    if (transpiler.transpile(this.raxeOnly)) {
-                        if (transpiler.response != null && transpiler.response != "") {
-                            Sys.println(transpiler.response);
-                        } else {
-                            Sys.println("Transpilation done.");
-                        }
-                    }
-                } catch (err : String) {
-                    Sys.println(err);
-                }
-
-                if (!this.watch) {
-                    break;
-                }
-            }
-        }
-
-        Sys.exit(0);
-    }
-
     public function runDefault() {
         try {
             if (this.src != null) {
                 this.transpile();
+            } else if (FileSystem.exists("Raxefile")) {
+                var rf = new Raxefile("Raxefile");
+                rf.run(this.task);
             } else {
                 this.help();
             }
@@ -94,5 +72,34 @@ class Cli extends CommandLine {
             Sys.println(err);
             Sys.exit(0);
         }
+    }
+
+    private function transpile() {
+      if (this.src != null) {
+        if (!FileSystem.exists(src)) {
+          Error.create(ERROR_TYPE, "Source not found");
+        }
+
+        var transpiler = new TranspilerCommand(this.src, this.dest);
+        while (true) {
+          try {
+            if (transpiler.transpile(this.all)) {
+              if (transpiler.response != null && transpiler.response != "") {
+                Sys.println(transpiler.response);
+              } else {
+                Sys.println("Transpilation done.");
+              }
+            }
+          } catch (err : String) {
+            Sys.println(err);
+          }
+
+          if (!this.watch) {
+            break;
+          }
+        }
+      }
+
+      Sys.exit(0);
     }
 }

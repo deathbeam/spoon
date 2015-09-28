@@ -12,7 +12,7 @@ class Raxefile {
     script.execute(script.parse(File.getContent(path)));
   }
 
-  public function run(task = "default") {
+  public function run(task : String) {
     var fn = script.variables.get(task);
     fn();
   }
@@ -37,6 +37,15 @@ class Raxefile {
         FileSystem.deleteDirectory(path);
       } else {
         FileSystem.deleteFile(path);
+      }
+    });
+
+    script.variables.set("env",{
+      get: function(key : String) : String {
+        return Sys.getEnv(key);
+      },
+      set: function(key : String, value : String) {
+        Sys.putEnv(key, value);
       }
     });
 

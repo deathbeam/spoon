@@ -1,4 +1,4 @@
-class self < String :: TestInterface
+class self
 
 def self.main()
   def myvar : String = null

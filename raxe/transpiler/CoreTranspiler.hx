@@ -136,8 +136,18 @@ class CoreTranspiler implements Transpiler {
       }
       else if (handle.is(".new")) {
         handle.remove();
-        handle.prevTokenLine();
-        handle.increment();
+
+        while (handle.prevTokenLine()) {
+            // Handle case Array<Int> for example (conflict with < for extends)
+            if (handle.is("<")) {
+                handle.decrement();
+                continue;
+            }
+
+            handle.increment();
+            break;
+        }
+
         handle.insert("new ");
         handle.increment();
       }

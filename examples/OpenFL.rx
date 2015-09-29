@@ -46,7 +46,6 @@ def onKeyDown(event)
   end
 end
 
-
 def onKeyUp(event)
   if event.keyCode == Keyboard.DOWN:
     movingDown = false
@@ -58,7 +57,6 @@ def onKeyUp(event)
     movingUp = false
   end
 end
-
 
 def onEnterFrame(event)
   if movingDown:

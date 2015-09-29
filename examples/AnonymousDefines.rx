@@ -11,7 +11,7 @@ def self.array = [
 ---
 And this is dynamic anonymous array, so you can put anything in there
 ---
-def self.dynarray : Array<Dynamic> = [
+def self.dynarray : Array(:Dynamic:) = [
   "a", "b", "c", 6, 7, array,
 ]
 

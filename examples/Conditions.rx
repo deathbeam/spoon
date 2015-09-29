@@ -2,7 +2,7 @@ class self
 
 def self.main()
   def myvar : String = null
-  def myarray = Array<String>.new()
+  def myarray = Array(:String:).new()
 
   if myvar != null && myvar.charAt(10) == "p":
     for i in myarray.iterator():

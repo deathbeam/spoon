@@ -39,7 +39,7 @@ class CoreTranspiler implements Transpiler {
       "-", "require", "def", "self.new", ".new", "self.", "self", "new", "end", "do",
 
       // Haxe keywords
-      "using", "extends", "implements", "inline", "typedef", //"//", "import", "var", "function",
+      "using", "inline", "typedef", //"//", "import", "var", "function",
 
       // Expressions
       "elsif", "if", "else", "while", "for",
@@ -47,13 +47,15 @@ class CoreTranspiler implements Transpiler {
       // Types
       "class", "enum", "abstract", "interface",
 
-      // Access modifiers
-      "private", "public", "static",
+      // Modifiers
+      "private", "public", "fixed", "inline"
     ];
   }
 
   public function transpile(handle : StringHandle) {
     var alreadyDefined = script;
+    var isFixed = false;
+    var fullyFixed = false;
 
     if (!script) {
       handle.insert("package " + path + ";using Lambda;using StringTools;").increment();
@@ -129,6 +131,14 @@ class CoreTranspiler implements Transpiler {
 
         handle.increment();
       }
+      else if (handle.is("(:")) {
+        handle.remove();
+        handle.insert("<");
+      }
+      else if (handle.is(":)")) {
+        handle.remove();
+        handle.insert(">");
+      }
       else if (handle.is("self.new")) {
         handle.remove();
         handle.insert("new " + name);
@@ -136,18 +146,14 @@ class CoreTranspiler implements Transpiler {
       }
       else if (handle.is(".new")) {
         handle.remove();
+        handle.prevTokenLine();
 
-        while (handle.prevTokenLine()) {
-            // Handle case Array<Int> for example (conflict with < for extends)
-            if (handle.is("<")) {
-                handle.decrement();
-                continue;
-            }
-
-            handle.increment();
-            break;
+        if (handle.is(")")) {
+          handle.prev("(:");
+          handle.prevTokenLine();
         }
 
+        handle.increment();
         handle.insert("new ");
         handle.increment();
       }
@@ -213,6 +219,10 @@ class CoreTranspiler implements Transpiler {
 
         insertDynamic = insertDynamic && !script;
 
+        if (fullyFixed || isFixed) {
+          insertDynamic = false;
+        }
+
         if (handle.is("(")) {
           handle.position = position;
 
@@ -231,6 +241,8 @@ class CoreTranspiler implements Transpiler {
           handle.insert("var");
           handle.increment();
         }
+
+        isFixed = false;
       }
       // Defines to variables and functions
       else if (handle.safeis("do")) {
@@ -270,8 +282,21 @@ class CoreTranspiler implements Transpiler {
         handle.insert("{");
         handle.increment();
       }
+      else if (handle.safeis("fixed")) {
+        handle.remove();
+        isFixed = true;
+      }
+      else if (handle.safeis("inline")) {
+        isFixed = true;
+        handle.increment();
+      }
       // [abstract] class/interface/enum
       else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum")) {
+        if (isFixed) {
+          fullyFixed = true;
+          isFixed = false;
+        }
+
         handle.increment();
 
         while(handle.nextToken()) {

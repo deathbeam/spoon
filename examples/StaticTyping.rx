@@ -1,5 +1,6 @@
 class self
 
+def self.array : Array(:String:)
 def self.message : String
 
 ---

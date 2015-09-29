@@ -10,8 +10,9 @@ class SemicolonTranspiler implements Transpiler {
   public function tokens() : Array<String> {
     return [
       ")", "}", ";",
+      "(:", ":)",
       "@", "//", "/*", "/*", "\\\"", "\"",
-      "=", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[",
+      "=", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "<", ">", "~",
       "if", "for", "while", "else"
     ];
   }
@@ -52,7 +53,7 @@ class SemicolonTranspiler implements Transpiler {
         var position = handle.position;
         handle.prevTokenLine();
 
-        if (handle.isOne(["=", "+", "-", "*", ".", "/", ",", "|", "&", "{", "(", "[", "\n", ";"]) && onlyWhitespace(handle.content, handle.position + 1, position)) {
+        if (handle.isOne(["=", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "<", ">", "~", "\n"]) && onlyWhitespace(handle.content, handle.position + 1, position)) {
           handle.position = position;
 
           if (isComment) {
@@ -103,6 +104,14 @@ class SemicolonTranspiler implements Transpiler {
         if (!handle.safeis("else")) {
           handle.increment();
         }
+      } else if (handle.is("(:")) {
+        handle.remove();
+        handle.insert("<");
+        handle.next(":)");
+        handle.remove();
+        handle.insert(">");
+        handle.increment();
+        break;
       } else {
         break;
       }

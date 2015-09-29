@@ -210,6 +210,7 @@ class CoreTranspiler implements Transpiler {
       else if (handle.safeis("const")) {
         handle.remove();
         handle.insert("public static inline var");
+        handle.increment();
       }
       // Defines to variables and functions
       else if (handle.safeis("do")) {

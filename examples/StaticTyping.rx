@@ -1,4 +1,4 @@
-self class
+class self
 
 def self.message : String
 

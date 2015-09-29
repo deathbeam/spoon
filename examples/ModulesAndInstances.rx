@@ -1,4 +1,4 @@
-self class
+class self
 
 -- You can use self world to reference current class name
 def self.instance = self.new()

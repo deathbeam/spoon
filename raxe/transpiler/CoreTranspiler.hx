@@ -26,8 +26,14 @@ class CoreTranspiler implements Transpiler {
 
   public function tokens() : Array<String> {
     return [
+      // Line break
+      "\n",
+
+      // Inheritance & interfaces
+      "<", "::",
+
       // Standard keywords
-      "\"", "\\\"", "(", ")", "/", "=", "#", ",", "@",
+      "\"", "\\\"", "(", ")", "/", "=", "#", ",", "@", ":",
 
       // Raxe keywords
       "-", "require", "def", "self.new", ".new", "self.", "self", "end", "do",
@@ -42,7 +48,7 @@ class CoreTranspiler implements Transpiler {
       "class", "enum", "abstract", "interface",
 
       // Access modifiers
-      "private", "public", "static"
+      "private", "public", "static",
     ];
   }
 
@@ -239,27 +245,26 @@ class CoreTranspiler implements Transpiler {
         handle.insert("{");
         handle.increment();
       }
-      // Process module declarations and insert curly after them
-      else if (handle.safeis("self")) {
-        handle.remove();
+      // [abstract] class/interface/enum
+      else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum")) {
+        handle.increment();
 
-        if (!alreadyDefined) {
-          while(handle.nextToken()) {
-           if (handle.is("enum") ||
-                handle.is("class") ||
-                handle.is("abstract") ||
-                handle.is("interface")) {
-              handle.increment();
-              handle.insert(" " + name + " ");
-              handle.next("\n");
-              handle.insert("{");
-              handle.increment();
-              alreadyDefined = true;
-              break;
-            }
+        while(handle.nextToken()) {
+          if (handle.is("self")) {
+            handle.remove();
+            handle.insert(name);
+          } else if (handle.is("<")) {
+            handle.remove();
+            handle.insert("extends");
+          } else if (handle.is("::")) {
+            handle.remove();
+            handle.insert("implements");
+          } else if (handle.is("\n")) {
+            handle.insert("{");
+            break;
           }
-        } else {
-          handle.insert(name);
+
+          handle.increment();
         }
       }
       else if (handle.safeisStart("self.")) {
@@ -318,18 +323,13 @@ class CoreTranspiler implements Transpiler {
   private function consumeCondition(handle: StringHandle) {
     handle.insert("(");
 
-    while (true) {
-        handle.next("\n");
-        handle.prevToken();
-
-        if (!handle.is(",")) {
-            handle.next("\n");
-            break;
-        }
-
+    while (handle.nextToken()) {
+      if (handle.is(":")) {
         handle.remove();
-        handle.next("\n");
-        handle.increment();
+        break;
+      }
+
+      handle.increment();
     }
 
     handle.insert(")");

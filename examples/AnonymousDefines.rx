@@ -1,4 +1,4 @@
-self class
+class self
 
 ---
 Anonymous array declaration is not dynamic by default.

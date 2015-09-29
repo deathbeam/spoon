@@ -1,4 +1,4 @@
-self class
+class self
 
 def self.info = """
   This is multiline string.
@@ -10,7 +10,7 @@ def self.info = """
 
 def self.main()
   trace(info)
-  
+
   trace("""
     And this is inline multiline string.
     It also works.

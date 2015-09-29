@@ -131,14 +131,6 @@ class CoreTranspiler implements Transpiler {
 
         handle.increment();
       }
-      else if (handle.is("(:")) {
-        handle.remove();
-        handle.insert("<");
-      }
-      else if (handle.is(":)")) {
-        handle.remove();
-        handle.insert(">");
-      }
       else if (handle.is("self.new")) {
         handle.remove();
         handle.insert("new " + name);
@@ -149,7 +141,7 @@ class CoreTranspiler implements Transpiler {
         handle.prevTokenLine();
 
         if (handle.is(")")) {
-          handle.prev("(:");
+          handle.prev("(");
           handle.prevTokenLine();
         }
 

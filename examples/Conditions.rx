@@ -1,4 +1,5 @@
 class self
+const TEST = "BLA"
 
 def self.main()
   def myvar : String = null

@@ -1,7 +1,6 @@
 package raxe.transpiler;
 
 import raxe.tools.StringHandle;
-
 import sys.io.File;
 
 class RaxeTranspilerGroup extends TranspilerGroup {

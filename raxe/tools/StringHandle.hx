@@ -62,6 +62,16 @@ class StringHandle {
     return current == content;
   }
 
+  public function isOne(content : Array<String>) : Bool {
+    var contains = false;
+
+    for (cnt in content) {
+      contains = contains || current == cnt;
+    }
+
+    return contains;
+  }
+
   public function safeisStart(content : String) : Bool {
     var regex = new EReg("[^\\w]" + content, "");
 

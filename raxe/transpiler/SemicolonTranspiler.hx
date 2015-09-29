@@ -3,123 +3,117 @@ package raxe.transpiler;
 import raxe.tools.StringHandle;
 
 class SemicolonTranspiler implements Transpiler {
+  var counter : Array<Int> = new Array<Int>();
+
   public function new() {}
   
   public function tokens() : Array<String> {
     return [
-      // Parser - ignoring tokens
-      "//", "@", "/*", "*/", "\"", "\\\"",
-      // End of line - ignoring tokens
-      "=", "+", "-", "*", ".", "/", "," , "||", "&&", 
-      // And the rest
-      "{", "}", "[", "]", "(", ")", ":",
-      "break", "continue", "return",
-      "if", "while", "for"
+      ")", "}",
+      "@", "//", "/*", "/*", "\\\"", "\"",
+      "=", "+", "-", "*", ".", "/", "," , "||", "&&", "{", "(", "[",
+      "if", "for", "while", "else"
     ];
   }
 
   public function transpile(handle : StringHandle) {
-    var last = "";
-    var counter : Array<Int> = new Array<Int>();
-
     while(handle.nextTokenLine()) {
-      if (handle.is("+") ||
-          handle.is("-") ||
-          handle.is("*") ||
-          handle.is("/") ||
-          handle.is(".") ||
-          handle.is(",") ||
-          handle.is("||") ||
-          handle.is("&&")) {
+      skipLines(handle);
 
-        last = handle.current;
+      if (handle.is("\n") || handle.is("//")) {
+        var position = handle.position;
+        var isComment = handle.is("//");
 
-        if (handle.closest("\n")) {
+        handle.nextToken();
+        handle.position = position;
+
+        if (!handle.isOne([")", "]"])) {
+          handle.insert(";");
+          handle.increment();
+        }
+
+        if (isComment) {
           handle.next("\n");
         }
 
+        handle.increment("\n");
+      } else {
         handle.increment();
-      } else if (handle.is("@")) {
-        handle.increment();
-        handle.next("\n");
-        handle.increment();
-      } else if (handle.is("\"")) {
-        handle.increment();
-        handle.next("\"");
-        handle.increment();
+      }
+    }
+
+    return handle.content;
+  }
+
+  private function skipLines(handle : StringHandle) {
+    while(handle.nextTokenLine()) {
+      if (handle.is("\n") || handle.is("//")) {
+        var isComment = handle.is("//");
+        var position = handle.position;
+        handle.prevTokenLine();
+
+        if (handle.isOne(["=", "+", "-", "*", ".", "/", "," , "||", "&&", "{", "(", "[", "\n"]) && onlyWhitespace(handle.content, handle.position + 1, position)) {
+          handle.position = position;
+
+          if (isComment) {
+            handle.next("\n");
+            handle.increment();
+          } else {
+            handle.increment("\n");
+          }
+        } else {
+          handle.position = position;
+          break;
+        }
       } else if (handle.is("/*")) {
-        handle.increment();
         handle.next("*/");
         handle.increment();
-      } else if (handle.safeis("if") || handle.safeis("while") || handle.safeis("for")) {
+      } else if (handle.is("@")) {
+        handle.next("\n");
+        handle.increment();
+      } else if (handle.safeis("if") || handle.safeis("while") || handle.safeis("for") || handle.safeis("else")) {
+        if (handle.safeis("else")) {
+          var position = handle.position;
+          handle.nextToken();
+
+          if (!handle.safeis("if")) {
+            handle.position = position;
+          }
+        }
+
         counter.push(0);
-        last = handle.current;
         handle.increment();
       } else if (handle.is("{")) {
         if (counter.length > 0) {
           counter[counter.length - 1] = counter[counter.length - 1] + 1;
         }
 
-        last = handle.current;
         handle.increment();
-      } else {
-        if (handle.is("\n") || handle.is("//") || handle.is("}")) {
-          var position = handle.position;
+      } else if (handle.is("}")) {
+        if (counter.length > 0) {
+          counter[counter.length - 1] = counter[counter.length - 1] - 1;
 
-          if (last == "}" || last == "]") {
-            handle.nextToken();
-            handle.position = position;
-
-            if (handle.is(")")) {
-              handle.increment();
-              continue;
-            }
-          }
-
-          handle.increment();
-          handle.nextTokenLine();
-
-          if (handle.is("+") ||
-              handle.is("-") ||
-              handle.is("*") ||
-              handle.is("/") ||
-              handle.is(".") ||
-              handle.is(",") ||
-              handle.is("||") ||
-              handle.is("&&")) {
-            continue;
-          }
-
-          handle.position = position;
-
-
-          
-          if ((!handle.is("}") && last == ",") || last == "+" || last == "-" || last == "*" || last == "/" || last == "." || last == "=" || last == "||" || last == "&&" ||
-              last == "}" || last == "]" || last == ")" || last == "\"" || last == "=" || last == ":" || last == ")" || last == "continue" || last == "break" || last == "return") {
-            if (counter.length == 0 || counter[counter.length - 1] != 0) {
-              handle.insert(";");
-              handle.increment();
-            } else {
-              counter.pop();
-            }
-          }
-
-          if (handle.is("//")) {
-            handle.next("\n");
-          }
-
-          if (handle.is("}")) {
-            if (counter.length > 0) {
-              counter[counter.length - 1] = counter[counter.length - 1] -1;
-            }
+          if (counter[counter.length - 1] == 0) {
+            counter.pop();
+            handle.increment();
+            handle.nextTokenLine();
           }
         }
-        
-        last = handle.current;
-        handle.increment();
+
+        if (!handle.safeis("else")) {
+          handle.increment();
+        }
+      } else {
+        break;
       }
     }
 
-    return handle.content;
+    handle.nextTokenLine();
+  }
+
+  private function onlyWhitespace(content : String, from : Int, to : Int) {
+    var sub = content.substr(from, to - from);
+    var regex = ~/^\s*$/;
+    return regex.match(sub);
   }
 }

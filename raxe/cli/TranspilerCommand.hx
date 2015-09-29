@@ -51,7 +51,7 @@ class TranspilerCommand
             var currentSize : Int = FileSystem.stat(this.src).size;
 
             if (oldFileSize == null || oldFileSize != currentSize) {
-                var result = transpileFile(dir, src);
+                var result = transpileFile(dest, src);
 
                 if (dest == null) {
                     this.response = result;
@@ -129,7 +129,7 @@ class TranspilerCommand
     public function transpileFile(dir : String, file: String): String
     {
         var group = new RaxeTranspilerGroup();
-        return group.transpile(dir != null ? FileSystem.fullPath(dir) : Sys.getCwd(), FileSystem.fullPath(file));
+        return group.transpile(dir != null ? dir : Sys.getCwd(), file);
     }
 
     /**

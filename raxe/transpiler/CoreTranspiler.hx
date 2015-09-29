@@ -278,7 +278,7 @@ class CoreTranspiler implements Transpiler {
     }
 
     if (!script) {
-      handle.content = handle.content + "}";
+      handle.content = handle.content + "\n}";
     }
 
     return handle.content;

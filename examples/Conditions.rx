@@ -14,7 +14,7 @@ def self.main()
     trace("coco")
   end
 
-  if myvar == null
+  if myvar != null
      && myvar.charAt(0) == "x"
      && myvar.charAt(2) == "x":
     trace("ok")

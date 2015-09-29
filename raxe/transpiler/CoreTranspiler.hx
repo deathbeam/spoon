@@ -165,7 +165,6 @@ class CoreTranspiler implements Transpiler {
             handle.remove();
 
             if (!firstQuote) {
-              handle.insert(";");
               handle.increment();
               break;
             }

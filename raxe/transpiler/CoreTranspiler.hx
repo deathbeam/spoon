@@ -211,6 +211,8 @@ class CoreTranspiler implements Transpiler {
           handle.nextToken();
         }
 
+        insertDynamic = insertDynamic && !script;
+
         if (handle.is("(")) {
           handle.position = position;
 

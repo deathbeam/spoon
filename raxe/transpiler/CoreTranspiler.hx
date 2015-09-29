@@ -36,7 +36,7 @@ class CoreTranspiler implements Transpiler {
       "\"", "\\\"", "(", ")", "/", "=", "#", ",", "@", ":",
 
       // Raxe keywords
-      "-", "require", "def", "self.new", ".new", "self.", "self", "end", "do",
+      "-", "require", "def", "self.new", ".new", "self.", "self", "end", "do", "const",
 
       // Haxe keywords
       "using", "extends", "implements", "inline", "typedef", //"//", "import", "var", "function",
@@ -206,6 +206,10 @@ class CoreTranspiler implements Transpiler {
           handle.insert("var");
           handle.increment();
         }
+      }
+      else if (handle.safeis("const")) {
+        handle.remove();
+        handle.insert("public static inline var");
       }
       // Defines to variables and functions
       else if (handle.safeis("do")) {

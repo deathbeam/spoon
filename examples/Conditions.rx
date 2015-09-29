@@ -3,6 +3,7 @@ class self < String :: TestInterface
 def self.main()
   def myvar : String = null
   def myarray = Array<String>.new()
+  const TEST = "BLA"
 
   if myvar != null && myvar.charAt(10) == "p":
     for i in myarray.iterator():

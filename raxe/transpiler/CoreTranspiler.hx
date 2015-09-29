@@ -36,7 +36,7 @@ class CoreTranspiler implements Transpiler {
       "\"", "\\\"", "(", ")", "/", "=", "#", ",", "@", ":",
 
       // Raxe keywords
-      "-", "require", "def", "self.new", ".new", "self.", "self", "end", "do",
+      "-", "require", "def", "self.new", ".new", "self.", "self", "new", "end", "do",
 
       // Haxe keywords
       "using", "extends", "implements", "inline", "typedef", //"//", "import", "var", "function",
@@ -203,9 +203,23 @@ class CoreTranspiler implements Transpiler {
           safeNextToken(handle);
         }
 
+        var insertDynamic = true;
+
+        if (handle.safeis("new")) {
+          insertDynamic = false;
+          handle.increment();
+          handle.nextToken();
+        }
+
         if (handle.is("(")) {
           handle.position = position;
-          handle.insert("function");
+
+          if (insertDynamic) {
+            handle.insert("dynamic function");
+          } else {
+            handle.insert("function");
+          }
+          
           consumeCurlys(handle);
           handle.next("\n");
           handle.insert("{");

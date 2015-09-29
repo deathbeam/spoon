@@ -1,0 +1,79 @@
+-- Load OpenFL libraries
+require "openfl/display/Bitmap"
+require "openfl/display/Sprite"
+require "openfl/events/Event"
+require "openfl/events/KeyboardEvent"
+require "openfl/ui/Keyboard"
+require "openfl/Assets"
+
+-- Extend self by OpenFL Sprite
+class self < Sprite
+
+def logo : Sprite
+def movingDown : Bool
+def movingLeft : Bool
+def movingRight : Bool
+def movingUp : Bool
+
+def new()
+  super()
+
+  logo = Sprite.new()
+  logo.addChild(Bitmap.new(Assets.getBitmapData("assets/openfl.png")))
+  logo.x = 100
+  logo.y = 100
+  logo.buttonMode = true
+  addChild(Logo)
+
+  stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown)
+  stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp)
+  stage.addEventListener(Event.ENTER_FRAME, onEnterFrame)
+end
+
+---
+Event handlers
+---
+
+def onKeyDown(event)
+  if event.keyCode == Keyboard.DOWN:
+    movingDown = true
+  elsif event.keyCode == Keyboard.LEFT:
+    movingLeft = true
+  elsif event.keyCode == Keyboard.RIGHT:
+    movingRight = true
+  elsif event.keyCode == Keyboard.UP:
+    movingUp = true
+  end
+end
+
+
+def onKeyUp(event)
+  if event.keyCode == Keyboard.DOWN:
+    movingDown = false
+  elsif event.keyCode == Keyboard.LEFT:
+    movingLeft = false
+  elsif event.keyCode == Keyboard.RIGHT:
+    movingRight = false
+  elsif event.keyCode == Keyboard.UP:
+    movingUp = false
+  end
+end
+
+
+def onEnterFrame(event)
+  if movingDown:
+    logo.y += 5
+  end
+
+  if movingLeft:
+    logo.x -= 5
+  end
+
+  if movingRight:
+    logo.x += 5
+  end
+
+  if movingUp:
+    logo.y -= 5
+  end
+end

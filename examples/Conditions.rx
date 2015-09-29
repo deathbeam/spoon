@@ -1,9 +1,9 @@
-class self < String :: TestInterface
+class self
+const TEST = "BLA"
 
 def self.main()
   def myvar : String = null
   def myarray = Array<String>.new()
-  const TEST = "BLA"
 
   if myvar != null && myvar.charAt(10) == "p":
     for i in myarray.iterator():
@@ -15,9 +15,9 @@ def self.main()
     trace("coco")
   end
 
-  if myvar != null
-     && myvar.charAt(0) == "x"
-     && myvar.charAt(2) == "x":
+  if myvar != null &&
+      myvar.charAt(0) == "x" &&
+      myvar.charAt(2) == "x":
     trace("ok")
   end
 end

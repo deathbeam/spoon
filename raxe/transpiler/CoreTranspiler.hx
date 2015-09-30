@@ -32,6 +32,9 @@ class CoreTranspiler implements Transpiler {
       // Inheritance & interfaces
       "<", "::",
 
+      // Anonymous functions
+      "=>",
+
       // Standard keywords
       "\"", "\\\"", "(", ")", "/", "=", "#", ",", "@", ":",
 
@@ -42,7 +45,7 @@ class CoreTranspiler implements Transpiler {
       "using", "inline", "typedef", //"//", "import", "var", "function",
 
       // Expressions
-      "elseif", "if", "else", "while", "for", "then", "loop",
+      "elsif", "if", "else", "while", "for", "then",
 
       // Types
       "class", "enum", "abstract", "interface",
@@ -237,8 +240,9 @@ class CoreTranspiler implements Transpiler {
         isFixed = false;
       }
       // Defines to variables and functions
-      else if (handle.safeis("do")) {
-        handle.remove("do");
+      else if (handle.is("=>")) {
+        handle.remove();
+        handle.prev("(");
         handle.insert("function");
         consumeCurlys(handle);
         handle.insert("{");
@@ -263,7 +267,7 @@ class CoreTranspiler implements Transpiler {
         handle.increment();
       }
       // Change elseif to else if and insert begin and end brackets around it
-      else if (handle.safeis("elseif")) {
+      else if (handle.safeis("elsif")) {
         handle.remove();
         handle.insert("}else if");
         handle.increment();
@@ -287,7 +291,7 @@ class CoreTranspiler implements Transpiler {
         handle.insert("(");
 
         while (handle.nextToken()) {
-          if (handle.safeis("loop")) {
+          if (handle.safeis("do")) {
             handle.remove();
             break;
           }
@@ -368,7 +372,7 @@ class CoreTranspiler implements Transpiler {
   private function safeNextToken(handle : StringHandle) : Bool {
     handle.nextToken();
 
-    if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elseif") && safeCheck(handle, "end")  &&
+    if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
         safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "next") &&
         safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "require")) {
       return true;

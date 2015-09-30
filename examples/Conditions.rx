@@ -5,10 +5,10 @@ def self.main()
   def myarray = Array(:String:).new()
 
   if myvar != null && myvar.charAt(10) == "p" then
-    for i in myarray.iterator() loop
+    for i in myarray.iterator() do
       trace("Wouhou")
     end
-  elseif myvar != null && myvar.charAt(20) == "c" then
+  elsif myvar != null && myvar.charAt(20) == "c" then
     trace("no")
   else
     trace("coco")

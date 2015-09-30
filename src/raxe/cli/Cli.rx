@@ -1,0 +1,102 @@
+require "mcli/CommandLine"
+require "sys/FileSystem"
+require "raxe/raxefile/Raxefile"
+require "raxe/tools/Error"
+
+---
+  -
+  8b,dPPYba,  ,adPPYYba,  8b,     ,d8  ,adPPYba,
+  88P'   "Y8  ""     `Y8   `Y8, ,8P'  a8P_____88
+  88          ,adPPPPP88     )888(    8PP"""""""
+  88          88,    ,88   ,d8" "8b,  "8b,   ,aa
+  88          `"8bbdP"Y8  8P'     `Y8  `"Ybbd8"'
+
+  Raxe 0.0.1 - https://raxe-lang.org
+---
+class self < CommandLine
+
+inline def self.ERROR_TYPE = "transpile_error"
+
+---
+  Source directory or file
+  @alias s
+---
+def src : String
+
+---
+  Destination directory or file
+  @alias d
+---
+def dest : String
+
+---
+  Task to execute when running Raxefile
+  @alias t
+---
+def task : String = "default"
+
+---
+  Execute the command when source file(s) are changed
+  @alias w
+---
+def watch : Bool
+
+---
+  Copy all (not only .rx) files to dest directory
+  @alias a
+---
+def all: Bool
+
+---
+  Show this message
+  @alias h
+---
+def help()
+  Sys.println(this.showUsage())
+  Sys.exit(0)
+end
+
+def runDefault()
+  try
+    if this.src != null then
+      this.transpile()
+    elsif FileSystem.exists("Raxefile") then
+      def rf = Raxefile.new("Raxefile")
+      rf.run(this.task)
+    else
+      this.help()
+    end
+  catch err : String
+    Sys.println(err)
+    Sys.exit(0)
+  end
+end
+
+private def transpile()
+  if this.src != null then
+    if !FileSystem.exists(src) then
+      Error.create(ERROR_TYPE, "Source not found")
+    end
+
+    def transpiler = TranspilerCommand.new(this.src, this.dest)
+    while true do
+      try
+        if transpiler.transpile(this.all) then
+          if transpiler.response != null && transpiler.response != "" then
+            Sys.println(transpiler.response)
+          else
+            Sys.println("Transpilation done.")
+          end
+        end
+      catch err : String
+        Sys.println(err)
+      end
+
+      if !this.watch then
+        break
+      end
+    end
+  end
+
+  Sys.exit(0)
+end

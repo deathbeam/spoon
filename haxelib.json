@@ -3,11 +3,13 @@
   "url" : "https://github.com/nondev/raxe",
   "license": "MIT",
   "tags": ["cross"],
-  "description": "Ruby-like syntax transpiler into haxe.",
-  "version": "0.0.0",
-  "releasenote": "TODO.",
-  "contributors": ["deathbeam"],
+  "description": "Ruby + Haxe = Raxe",
+  "version": "0.0.1",
+  "classPath": "build/",
+  "releasenote": "Initial release",
+  "contributors": ["deathbeam", "Peekmo"],
   "dependencies": {
-    "mcli": "0.1.4"
+    "mcli": "0.1.4",
+    "hscript": "2.0.5"
   }
 }

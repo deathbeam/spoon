@@ -1,0 +1,156 @@
+require "sys.FileSystem"
+require "raxe.tools.Error"
+require "raxe.tools.FolderReader"
+require "raxe.transpiler.RaxeTranspilerGroup"
+
+class self
+
+---
+ * @var files
+ *
+ * Size of the files (file_size) for files
+---
+private def files = Map(:String, Int:).new()
+
+private def src : String
+
+private def dest: String
+
+def response : String
+
+---
+ * @param String src   Source file or directory
+ * @param String ?dest Destination file or directory (optional)
+---
+def new(src: String, ?dest: String)
+  this.src = src
+  this.dest = dest
+end
+
+---
+ * Transpile a file or a whole directory
+ *
+ * @param raxeOnly Bool Must only copy to the dest directory, raxe files
+ *
+ * @return Bool transpilation has been done or not
+---
+def transpile(all: Bool) : Bool
+  def src = this.src
+  def dest = this.dest
+  def dir = src
+
+  -- Transpile one file
+  if !FileSystem.isDirectory(this.src) then
+    def oldFileSize : Int = this.files.get(this.src)
+    def currentSize : Int = FileSystem.stat(this.src).size
+
+    if oldFileSize == null || oldFileSize != currentSize then
+      def result = transpileFile(dest, src)
+
+      if dest == null then
+          this.response = result
+      else
+          FolderReader.createFile(dest, result)
+      end
+
+      this.files.set(this.src, currentSize)
+      return true
+    end
+
+    return false
+  -- Transpile a whole folder
+  else
+    def files = FolderReader.getFiles(src)
+    def hasTranspile : Bool = false
+
+    -- To have the same pattern between src and dest (avoid src/ and dist instead of dist/)
+    if src.endsWith("/") then
+      src = src.substr(0, src.length - 1)
+    end
+
+    if dest == null then
+      dest = src
+    elsif dest.endsWith("/") then
+      dest = dest.substr(0, dest.length - 1)
+    end
+
+    def currentFiles = Map(:String, Int:).new()
+
+    for file in files.iterator() do
+      def oldFileSize : Int = this.files.get(file)
+      def currentSize : Int = FileSystem.stat(file).size
+
+      if oldFileSize != currentSize && (all || isRaxeFile(file)) then
+        def newPath = this.getDestinationFile(file, src, dest)
+
+        -- If it's a raxe file, we transpile it
+        if isRaxeFile(file) then
+          def result = transpileFile(dir, file)
+          FolderReader.createFile(newPath, result)
+          this.files.set(file, currentSize)
+
+        -- If it's not a raxe file, we just copy/past it to the new folder
+        else
+            FolderReader.copyFileSystem(file, newPath)
+        end
+
+        this.files.set(file, currentSize)
+        hasTranspile = true
+      end
+
+      currentFiles.set(file, currentSize)
+    end
+
+    for key in this.files.keys() do
+      if currentFiles.get(key) == null then
+        this.files.remove(key)
+        FileSystem.deleteFile(this.getDestinationFile(key, src, dest))
+      end
+    end
+
+    return hasTranspile
+  end
+
+  return false
+end
+
+---
+ * Transpile one file
+ *
+ * @param String file Transpile a file and returns its content
+ *
+ * @return String content
+---
+def transpileFile(dir : String, file: String): String
+  def group = RaxeTranspilerGroup.new()
+  return group.transpile(dir != null ? FileSystem.fullPath(dir) : Sys.getCwd(), FileSystem.fullPath(file))
+end
+
+---
+ * Checks if the given file is a raxefile
+---
+def isRaxeFile(filename: String): Bool
+  return filename.endsWith(".rx")
+end
+
+---
+ * Get the path the destination file
+ *
+ * @param String file Path to the file
+ * @param String src  Source directory
+ * @param String dest Destination directory
+ *
+ * @return String destination file path
+---
+def getDestinationFile(file: String, src: String, dest: String) : String
+  def parts : Array(:String:) = file.split("/")
+  def fileName : String = parts.pop()
+
+  def newPath = parts.join("/") + "/" + fileName.replace(".rx", ".hx")
+
+  if dest != null then
+    newPath = newPath.replace(src, dest)
+  end
+
+  return newPath
+end

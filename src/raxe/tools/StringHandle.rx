@@ -1,0 +1,364 @@
+class self
+
+def content : String
+def position : Int
+def current : String
+def tokens : Array(:String:)
+
+def new(content : String, ?tokens : Array(:String:), position : Int = 0)
+  this.content = content
+
+  if tokens == null then
+    this.tokens = [ "\n" ]
+  else
+    this.tokens = tokens
+  end
+
+  this.position = position
+end
+
+def reset()
+  position = 0
+  current = null
+end
+
+def atStart() : Bool
+  return position <= 0
+end
+
+def atEnd() : Bool
+  return position >= content.length
+end
+
+def nearStart(tolerance : Int) : Bool
+  return (position - tolerance) <= 0
+end
+
+def nearEnd(tolerance : Int) : Bool
+  return (position + tolerance) >= content.length
+end
+
+def closest(content : String) : Bool
+  def divided = divide()
+  def regex = EReg.new("[^\\w][ \t]*" + content, "")
+
+  def sub = this.content.substr(position)
+
+  def count = 1
+
+  while true do
+    if sub.charAt(count) == " " || sub.charAt(count) == "\t" || sub.charAt(count) == "\n" then
+      count = count + 1
+    else
+      break
+    end
+  end
+
+  return regex.match(sub.substr(0, count))
+end
+
+def is(content : String) : Bool
+  return current == content
+end
+
+def isOne(content : Array(:String:)) : Bool
+  def contains = false
+
+  for cnt in content do
+    contains = contains || current == cnt
+  end
+
+  return contains
+end
+
+def safeisStart(content : String) : Bool
+  var regex = EReg.new("[^\\w]" + content, "")
+
+  if nearStart(1) then
+    return is(content)
+  end
+
+  if nearEnd(content.length + 1) then
+    return is(content)
+  end
+
+  def sub = this.content.substr(
+    nearStart(1) ? position : position - 1,
+    nearEnd(content.length + 1) ? content.length : content.length + 1)
+
+  return regex.match(sub)
+end
+
+def safeisEnd(content : String) : Bool
+  def regex = EReg.new(content + "[^\\w]", "")
+
+  if nearEnd(content.length + 2) then
+    return is(content)
+  end
+
+  def sub = this.content.substr(
+    0,
+    nearEnd(content.length + 2) ? content.length : content.length + 2)
+
+  return regex.match(sub)
+end
+
+def safeis(content : String) : Bool
+  def regex = EReg.new("[^\\w]" + content + "[^\\w]", "")
+
+  if nearStart(1) then
+    return safeisEnd(content)
+  end
+
+  if nearEnd(content.length + 2) then
+    return safeisStart(content)
+  end
+
+  def sub = this.content.substr(
+    nearStart(1) ? position : position - 1,
+    content.length + 2)
+
+  return regex.match(sub)
+end
+
+def at(content : String) : Bool
+  def divided = divide()
+
+  if divided.right.substr(0, content.length) == content then
+    return true
+  end
+
+  return false
+end
+
+def prev(?content : String) : Bool
+  if content == null then
+    if current != null then
+      return prev(current)
+    end
+
+    return false
+  end
+
+  def newPos = this.content.substr(0, position).lastIndexOf(content)
+
+  if newPos == -1 then
+    return false
+  end
+
+  position = newPos
+  current = content
+  return true
+end
+
+def next(?content : String) : Bool
+  if content == null then
+    if current != null then 
+      return next(current)
+    end
+
+    return false
+  end
+
+  def newPos = this.content.indexOf(content, position)
+
+  if newPos == -1 then
+    return false
+  end
+
+  position = newPos
+  current = content
+  return true
+end
+
+def prevToken() : Bool
+  var newPos = position + 1
+  var currentToken = ""
+
+  for token in tokens do
+    def pos = this.content.substr(0, position).lastIndexOf(token)
+
+    if pos != -1 && (pos > newPos || newPos == position + 1) then
+      newPos = pos
+      currentToken = token
+    end
+  end
+
+  if newPos == -1 then
+    return false
+  end
+
+  position = newPos
+  current = currentToken
+  return true
+end
+
+def prevTokenLine() : Bool
+  def newPos = position + 1
+  def currentToken = ""
+
+  for token in tokens do
+    def pos = this.content.substr(0, position).lastIndexOf(token)
+
+    if pos != -1 && (pos > newPos || newPos == position + 1) then
+      newPos = pos
+      currentToken = token
+    end
+  end
+
+  def pos = this.content.substr(0, position).lastIndexOf("\n")
+
+  if pos != -1 && (pos > newPos || newPos == position + 1) then
+    newPos = pos
+    currentToken = "\n"
+  end
+
+  if newPos == -1 then
+    return false
+  end
+
+  position = newPos
+  current = currentToken
+  return true
+end
+
+def nextTokenLine() : Bool
+  def newPos = -1
+  def currentToken = ""
+
+  for token in tokens do
+    def pos = this.content.indexOf(token, position)
+
+    if pos != -1 && (pos < newPos || newPos == -1) then
+      newPos = pos
+      currentToken = token
+    end
+  end
+
+  def pos = this.content.indexOf("\n", position)
+
+  if pos != -1 && (pos < newPos || newPos == -1) then
+    newPos = pos
+    currentToken = "\n"
+  end
+
+  if newPos == -1 then
+    return false
+  end
+
+  position = newPos
+  current = currentToken
+  return true
+end
+
+def nextToken() : Bool
+  def newPos = -1
+  def currentToken = ""
+
+  for token in tokens do
+    def pos = this.content.indexOf(token, position)
+
+    if pos != -1 && (pos < newPos || newPos == -1) then
+      newPos = pos
+      currentToken = token
+    end
+  end
+
+  if newPos == -1 then
+    return false
+  end
+
+  position = newPos
+  current = currentToken
+  return true
+end
+
+def increment(?content : String) : StringHandle
+  if content == null then
+    if current != null then
+      increment(current)
+    end
+
+    return this
+  end
+
+  def newPos = position + content.length
+
+  if newPos > this.content.length then
+    return this
+  end
+
+  position = newPos
+  current = content
+  return this
+end
+
+def decrement(?content : String) : StringHandle
+  if content == null then
+    if current != null then
+      decrement(current)
+    end
+
+    return this
+  end
+
+  def newPos = position - content.length
+
+  if newPos < 0 then
+    return this
+  end
+
+  position = newPos
+  current = content
+  return this
+end
+
+def insert(?content : String, ?after : Bool) : StringHandle
+  if content == null then
+    if current != null then
+      insert(current)
+    end
+
+    return this
+  end
+
+  def divided
+
+  if after == null || !after then
+    divided = divide()
+  else
+    divided = divide(1)
+  end
+
+  this.content = divided.left + content + divided.right
+  current = content
+  return this
+end
+
+def remove(?content : String) : StringHandle
+  if content == null then
+    if current != null then
+      remove(current)
+    end
+
+    return this
+  end
+
+  def length = content.length
+  def divided = divide()
+
+  if divided.right.length < length then
+    return this
+  end
+
+  this.content = divided.left + divided.right.substr(length)
+  current = content
+  return this
+end
+
+private def divide(?offset: Int = 0)
+  return {
+    left: position > 0 ? content.substr(0, position + offset) : "",
+    right: position < content.length ? content.substring(position + offset) : "",
+  }
+end

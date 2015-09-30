@@ -8,7 +8,7 @@ def self.main()
     for i in myarray.iterator():
       trace("Wouhou")
     end
-  elsif myvar != null && myvar.charAt(20) == "c":
+  elseif myvar != null && myvar.charAt(20) == "c":
     trace("no")
   else
     trace("coco")

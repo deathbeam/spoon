@@ -42,7 +42,7 @@ class CoreTranspiler implements Transpiler {
       "using", "inline", "typedef", //"//", "import", "var", "function",
 
       // Expressions
-      "elsif", "if", "else", "while", "for",
+      "elseif", "if", "else", "while", "for",
 
       // Types
       "class", "enum", "abstract", "interface",
@@ -252,7 +252,7 @@ class CoreTranspiler implements Transpiler {
         handle.increment();
       }
       // Change elseif to else if and insert begin and end brackets around it
-      else if (handle.safeis("elsif")) {
+      else if (handle.safeis("elseif")) {
         handle.remove();
         handle.insert("}else if");
         handle.increment();
@@ -329,7 +329,7 @@ class CoreTranspiler implements Transpiler {
   private function safeNextToken(handle : StringHandle) : Bool {
     handle.nextToken();
 
-    if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
+    if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elseif") && safeCheck(handle, "end")  &&
         safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "next") &&
         safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "require")) {
       return true;

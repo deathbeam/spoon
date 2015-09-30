@@ -5,8 +5,9 @@ import raxe.cli.Cli;
 
 class Main {
   static function main() {
-  	Sys.args().pop();
-  	trace(Sys.args());
-    new Dispatch(Sys.args()).dispatch(new Cli());
+  	var args = Sys.args();
+  	args.pop();
+  	trace(args);
+    new Dispatch(args).dispatch(new Cli());
   }
 }

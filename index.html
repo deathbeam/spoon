@@ -126,7 +126,8 @@
   <span style="color: #66d9ef">super</span><span style="color: #f8f8f2">()</span>
 
   <span style="color: #f8f8f2">logo</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">Sprite</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">new()</span>
-  <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">addChild(</span><span style="color: #66d9ef">Bitmap</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">new(</span><span style="color: #66d9ef">Assets</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">getBitmapData(</span><span style="color: #e6db74">&quot;assets/openfl.png&quot;</span><span style="color: #f8f8f2">)))</span>
+  <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">addChild(
+    </span><span style="color: #66d9ef">Bitmap</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">new(</span><span style="color: #66d9ef">Assets</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">getBitmapData(</span><span style="color: #e6db74">&quot;assets/openfl.png&quot;</span><span style="color: #f8f8f2">)))</span>
   <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">x</span> <span style="color: #f92672">=</span> <span style="color: #ae81ff">100</span>
   <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">y</span> <span style="color: #f92672">=</span> <span style="color: #ae81ff">100</span>
   <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">buttonMode</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">true</span>
@@ -153,7 +154,6 @@ Event handlers
   <span style="color: #66d9ef">end</span>
 <span style="color: #66d9ef">end</span>
 
-
 <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">onKeyUp</span><span style="color: #f8f8f2">(event)</span>
   <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">DOWN:</span>
     <span style="color: #f8f8f2">movingDown</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">false</span>
@@ -165,7 +165,6 @@ Event handlers
     <span style="color: #f8f8f2">movingUp</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">false</span>
   <span style="color: #66d9ef">end</span>
 <span style="color: #66d9ef">end</span>
-
 
 <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">onEnterFrame</span><span style="color: #f8f8f2">(event)</span>
   <span style="color: #66d9ef">if</span> <span style="color: #e6db74">movingDown</span><span style="color: #f8f8f2">:</span>
@@ -208,7 +207,8 @@ Event handlers
   <span style="color: #008800; font-weight: bold">super</span>();
 
   logo =<span style="color: #008800; font-weight: bold">new</span>  <span style="color: #bb0066; font-weight: bold">Sprite</span>();
-  logo.addChild(<span style="color: #008800; font-weight: bold">new</span> <span style="color: #bb0066; font-weight: bold">Bitmap</span>(Assets.getBitmapData(<span style="color: #dd2200; background-color: #fff0f0">&quot;assets/openfl.png&quot;</span>)));
+  logo.addChild(
+    <span style="color: #008800; font-weight: bold">new</span> <span style="color: #bb0066; font-weight: bold">Bitmap</span>(Assets.getBitmapData(<span style="color: #dd2200; background-color: #fff0f0">&quot;assets/openfl.png&quot;</span>)));
   logo.x = <span style="color: #0000DD; font-weight: bold">100</span>;
   logo.y = <span style="color: #0000DD; font-weight: bold">100</span>;
   logo.buttonMode = <span style="color: #008800; font-weight: bold">true</span>;
@@ -223,7 +223,7 @@ Event handlers
 <span style="color: #888888">Event handlers</span>
 <span style="color: #888888"> */</span>
 
-<span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">function</span> <span style="color: #0066bb; font-weight: bold">onKeyDown</span>(<span style="color: #336699">event</span>){
+<span style="color: #008800; font-weight: bold">dynamic public</span> <span style="color: #008800; font-weight: bold">function</span> <span style="color: #0066bb; font-weight: bold">onKeyDown</span>(<span style="color: #336699">event</span>){
   <span style="color: #008800; font-weight: bold">if</span>( event.keyCode == Keyboard.DOWN){
     movingDown = <span style="color: #008800; font-weight: bold">true</span>;
   }<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span>( event.keyCode == Keyboard.LEFT){
@@ -235,8 +235,7 @@ Event handlers
   }
 };
 
-
-<span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">function</span> <span style="color: #0066bb; font-weight: bold">onKeyUp</span>(<span style="color: #336699">event</span>){
+<span style="color: #008800; font-weight: bold">dynamic public</span> <span style="color: #008800; font-weight: bold">function</span> <span style="color: #0066bb; font-weight: bold">onKeyUp</span>(<span style="color: #336699">event</span>){
   <span style="color: #008800; font-weight: bold">if</span>( event.keyCode == Keyboard.DOWN){
     movingDown = <span style="color: #008800; font-weight: bold">false</span>;
   }<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span>( event.keyCode == Keyboard.LEFT){
@@ -248,8 +247,7 @@ Event handlers
   }
 };
 
-
-<span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">function</span> <span style="color: #0066bb; font-weight: bold">onEnterFrame</span>(<span style="color: #336699">event</span>){
+<span style="color: #008800; font-weight: bold">dynamic public</span> <span style="color: #008800; font-weight: bold">function</span> <span style="color: #0066bb; font-weight: bold">onEnterFrame</span>(<span style="color: #336699">event</span>){
   <span style="color: #008800; font-weight: bold">if</span>( movingDown){
     logo.y += <span style="color: #0000DD; font-weight: bold">5</span>;
   }

@@ -46,7 +46,7 @@ def createScript() : RaxeScript
     set: (key : String, value : String) =>
       Sys.putEnv(key, value)
     end,
-  end)
+  })
 
   return script
 end

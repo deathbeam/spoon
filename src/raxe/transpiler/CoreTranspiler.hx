@@ -255,11 +255,18 @@ class CoreTranspiler implements Transpiler {
       }
       // Defines to variables and functions
       else if (handle.is("=>")) {
-        handle.remove();
-        handle.prev("(");
-        handle.insert("function");
-        consumeCurlys(handle);
-        handle.insert("{");
+        var position = handle.position;
+        handle.prevToken();
+        handle.position = position;
+
+        if (handle.is(")")) {
+          handle.remove("=>");
+          handle.prev("(");
+          handle.insert("function");
+          consumeCurlys(handle);
+          handle.insert("{");
+        }
+
         handle.increment();
       }
       // Insert begin bracket after if and while

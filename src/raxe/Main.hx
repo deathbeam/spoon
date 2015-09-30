@@ -1,6 +1,6 @@
 package raxe;
 
-import mcli.Dispat4ch;
+import mcli.Dispatch;
 import raxe.cli.Cli;
 
 class Main {

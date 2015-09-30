@@ -28,11 +28,11 @@ Base
 --
 If you installed the library with haxelib:
 
-```haxelib run raxe```
+```haxelib run raxe <commands>```
 
 On development :
 
-```neko run```
+```neko run <your_current_directory> <commands>```
 
 Transpile
 --

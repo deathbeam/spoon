@@ -40,9 +40,10 @@ class CoreTranspiler implements Transpiler {
 
       // Raxe keywords
       "-", "require", "def", "self.new", ".new", "self.", "self", "new", "end", "do",
+      "begin", "rescue", "raise",
 
       // Haxe keywords
-      "using", "inline", "typedef", "try", "catch", //"//", "import", "var", "function",
+      "using", "inline", "typedef",
 
       // Expressions
       "elsif", "if", "else", "while", "for", "then",
@@ -154,18 +155,25 @@ class CoreTranspiler implements Transpiler {
         handle.insert("new ");
         handle.increment();
       }
-      else if (handle.safeis("try")) {
+      else if (handle.safeis("begin")) {
+        handle.remove();
+        handle.insert("try");
         handle.increment();
         handle.insert("{");
         handle.increment();
       }
-      else if (handle.safeis("catch")) {
-        handle.insert("}");
+      else if (handle.safeis("rescue")) {
+        handle.remove();
+        handle.insert("}catch");
         handle.increment();
-        handle.increment("catch");
         handle.insert("(");
         handle.next("\n");
         handle.insert("){");
+        handle.increment();
+      }
+      else if (handle.safeis("raise")) {
+        handle.remove();
+        handle.insert("throw");
         handle.increment();
       }
       // Change end to classic bracket end

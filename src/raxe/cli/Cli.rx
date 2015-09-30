@@ -56,7 +56,7 @@ def help()
 end
 
 def runDefault()
-  try
+  begin
     if this.src != null then
       this.transpile()
     elsif FileSystem.exists("Raxefile") then
@@ -65,7 +65,7 @@ def runDefault()
     else
       this.help()
     end
-  catch err : String
+  rescue err : String
     Sys.println(err)
     Sys.exit(0)
   end
@@ -79,7 +79,7 @@ private def transpile()
 
     def transpiler = TranspilerCommand.new(this.src, this.dest)
     while true do
-      try
+      begin
         if transpiler.transpile(this.all) then
           if transpiler.response != null && transpiler.response != "" then
             Sys.println(transpiler.response)
@@ -87,7 +87,7 @@ private def transpile()
             Sys.println("Transpilation done.")
           end
         end
-      catch err : String
+      rescue err : String
         Sys.println(err)
       end
 

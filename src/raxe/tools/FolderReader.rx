@@ -79,7 +79,7 @@ end
  * @param  destination : String Destination's path
 ---
 def self.copyFileSystem(source : String, destination : String) : Void
-  try
+  begin
     if source.endsWith("/") then
       source = source.substr(0, -1)
     end
@@ -99,8 +99,7 @@ def self.copyFileSystem(source : String, destination : String) : Void
         copyFileSystem(source + "/" + file, destination + "/" + file)
       end
     end
-
-  catch ex: String
-    throw "Unable to copy " + source + " to " + destination + " : " + ex
+  rescue ex: String
+    raise "Unable to copy " + source + " to " + destination + " : " + ex
   end
 end

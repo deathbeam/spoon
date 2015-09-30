@@ -99,7 +99,6 @@ static dynamic public function copyFileSystem(source : String, destination : Str
         copyFileSystem(source + "/" + file, destination + "/" + file);
       }
     }
-
   }catch( ex: String){
     throw "Unable to copy " + source + " to " + destination + " : " + ex;
   }

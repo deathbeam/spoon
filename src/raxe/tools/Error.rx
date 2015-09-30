@@ -3,7 +3,7 @@
 ---
 class self
 
--- Throw a new error formatted into json to be able to parse it everywhere
+-- Raise a new error formatted into json to be able to parse it everywhere
 def self.create(errorType: String, error: String)
-  throw "{\"type\": #errorType,\"error\": #error}"
+  raise "{\"type\": #errorType,\"error\": #error}"
 end

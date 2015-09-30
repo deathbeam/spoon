@@ -33,10 +33,10 @@ class CoreTranspiler implements Transpiler {
       "<", "::",
 
       // Anonymous functions
-      "=>",
+      "=>", "(:", ":)",
 
       // Standard keywords
-      "\"", "\\\\\"", "\\\"", "(", ")", "/", "=", "#", ",", "@",
+      "\"", "(", ")", "/", "=", "#", ",", "@",
 
       // Raxe keywords
       "-", "require", "def", "self.new", ".new", "self.", "self", "new", "end", "do",
@@ -120,9 +120,11 @@ class CoreTranspiler implements Transpiler {
             handle.remove();
             handle.insert("$");
             handle.increment();
-          } else if (handle.is("\"")) {
-            break;
           } else {
+            if (handle.is("\"") && handle.content.charAt(handle.position -1) != "\\") {
+              break;
+            }
+
             handle.increment();
           }
         }
@@ -232,6 +234,12 @@ class CoreTranspiler implements Transpiler {
           insertDynamic = false;
         }
 
+        if (handle.is("(:")) {
+          handle.next(":)");
+          handle.increment();
+          handle.nextToken();
+        }
+
         if (handle.is("(")) {
           handle.position = position;
 
@@ -240,7 +248,7 @@ class CoreTranspiler implements Transpiler {
           } else {
             handle.insert("function");
           }
-          
+
           consumeCurlys(handle);
           handle.next("\n");
           handle.insert("{");

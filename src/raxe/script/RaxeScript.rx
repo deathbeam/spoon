@@ -1,0 +1,69 @@
+require "haxe/io/Input"
+require "hscript/Parser"
+require "hscript/Interp"
+require "hscript/Expr"
+require "sys/io/File"
+require "sys/FileSystem"
+
+class self < Interp
+
+def parser : Parser
+def group : RaxeScriptTranspilerGroup
+
+def new()
+  super()
+
+  parser = new Parser()
+  group = new RaxeScriptTranspilerGroup()
+
+  variables.set("require", (thing : String) =>
+    def path = thing + ".rx"
+
+    if FileSystem.exists(path) then
+      return execute(parse(File.getContent(path)))
+    end
+
+    path = thing.replace("/", ".")
+
+    def clazz : Dynamic = Type.resolveClass(path)
+
+    if clazz == null then
+      clazz = Type.resolveEnum(path)
+
+      if clazz == null then
+        trace("Failed to resolve type #thing")
+      end
+    end
+
+    return clazz
+  end)
+end
+
+def parse(s : String) : Expr
+  def content = group.transpile(s)
+  trace(content)
+  return parser.parseString(content)
+end
+
+fixed override def get(o : Dynamic, f : String ) : Dynamic
+  if o == null then
+    #if debug
+    trace("Null error when doing get #f")
+    #end
+    error(EInvalidAccess(f))
+  end
+
+  return Reflect.getProperty(o,f)
+end
+
+fixed override def set( o : Dynamic, f : String, v : Dynamic ) : Dynamic
+  if o == null then
+    #if debug
+    trace("Null error when doing set #f")
+    #end
+    error(EInvalidAccess(f))
+  end
+
+  Reflect.setProperty(o,f,v)
+  return v
+end

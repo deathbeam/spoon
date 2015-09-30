@@ -1,0 +1,23 @@
+require "raxe/transpiler/CoreTranspiler"
+require "raxe/transpiler/AccessTranspiler"
+require "raxe/transpiler/SemicolonTranspiler"
+require "raxe/transpiler/TranspilerGroup"
+require "raxe/tools/StringHandle"
+require "sys/io/File"
+
+class self < TranspilerGroup
+
+def new()
+  super()
+end
+
+def transpile(content : String) : String
+  push(new CoreTranspiler().setIsScript(true))
+  push(new SemicolonTranspiler())
+
+  for transpiler in transpilers do
+    content = transpiler.transpile(new StringHandle(content, transpiler.tokens()))
+  end
+
+  return content
+end

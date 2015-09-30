@@ -1,0 +1,9 @@
+---
+  Error handling
+---
+class self
+
+-- Throw a new error formatted into json to be able to parse it everywhere
+def self.create(errorType: String, error: String)
+  throw "{\"type\": #errorType,\"error\": #error}"
+end

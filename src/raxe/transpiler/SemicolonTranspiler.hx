@@ -73,7 +73,6 @@ class SemicolonTranspiler implements Transpiler {
         handle.next("\n");
         handle.increment();
       } else if (handle.safeis("if") || handle.safeis("while") || handle.safeis("for") || handle.safeis("else") || handle.safeis("try")|| handle.safeis("catch")) {
-        trace(handle.current);
         if (handle.safeis("else")) {
           var position = handle.position;
           handle.nextToken();
@@ -88,14 +87,12 @@ class SemicolonTranspiler implements Transpiler {
       } else if (handle.is("{")) {
         if (counter.length > 0) {
           counter[counter.length - 1] = counter[counter.length - 1] + 1;
-          trace(counter[counter.length - 1]);
         }
 
         handle.increment();
       } else if (handle.is("}")) {
         if (counter.length > 0) {
           counter[counter.length - 1] = counter[counter.length - 1] - 1;
-          trace(counter[counter.length - 1]);
 
           if (counter[counter.length - 1] == 0) {
             counter.pop();

@@ -6,7 +6,9 @@ import raxe.cli.Cli;
 class Main {
   static function main() {
   	var args = Sys.args();
-  	args.pop();
+  	trace(Sys.getCwd());
+  	Sys.setCwd(args.pop());
+  	trace(Sys.getCwd());
     new Dispatch(args).dispatch(new Cli());
   }
 }

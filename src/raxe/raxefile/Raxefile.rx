@@ -1,0 +1,52 @@
+require "raxe/script/RaxeScript"
+require "sys/io/File"
+require "sys/FileSystem"
+
+class self
+
+def script : RaxeScript
+
+def new(path : String)
+  script = createScript()
+  script.execute(script.parse(File.getContent(path)))
+end
+
+def run(task : String)
+  var fn = script.variables.get(task)
+  fn()
+end
+
+def createScript() : RaxeScript
+  def script = RaxeScript.new()
+
+  script.variables.set("sh", (cmd : String, ?args : Array<String>) =>
+    Sys.command(cmd, args)
+  end)
+
+  script.variables.set("cp", (from : String, to : String) =>
+    File.copy(from, to)
+  end)
+
+  script.variables.set("mv", function(from : String, to : String) {
+    FileSystem.rename(from, to)
+  })
+
+  script.variables.set("rm", (path : String) =>
+    if FileSystem.isDirectory(path) then
+      FileSystem.deleteDirectory(path)
+    else
+      FileSystem.deleteFile(path)
+    end
+  end)
+
+  script.variables.set("env",{
+    get: (key : String) =>
+      return Sys.getEnv(key)
+    end,
+    set: (key : String, value : String) =>
+      Sys.putEnv(key, value)
+    end,
+  end)
+
+  return script
+end

@@ -36,7 +36,7 @@ class CoreTranspiler implements Transpiler {
       "=>",
 
       // Standard keywords
-      "\"", "\\\"", "(", ")", "/", "=", "#", ",", "@",
+      "\"", "\\\\\"", "\\\"", "(", ")", "/", "=", "#", ",", "@",
 
       // Raxe keywords
       "-", "require", "def", "self.new", ".new", "self.", "self", "new", "end", "do",

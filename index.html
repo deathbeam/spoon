@@ -113,7 +113,7 @@
 <span style="color: #f8f8f2">require</span> <span style="color: #e6db74">&quot;openfl/ui/Keyboard&quot;</span>
 <span style="color: #f8f8f2">require</span> <span style="color: #e6db74">&quot;openfl/Assets&quot;</span>
 
-<span style="color: #75715e">--Extend self by OpenFL Sprite</span>
+<span style="color: #75715e">-- Extend self by OpenFL Sprite</span>
 <span style="color: #66d9ef">class</span> <span style="color: #f8f8f2">self</span> <span style="color: #f92672">&lt;</span> <span style="color: #66d9ef">Sprite</span>
 
 <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">logo</span> <span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Sprite</span>
@@ -143,43 +143,43 @@ Event handlers
 ---</span>
 
 <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">onKeyDown</span><span style="color: #f8f8f2">(event)</span>
-  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">DOWN:</span>
+  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">DOWN</span> <span style="color: #66d9ef">then</span>
     <span style="color: #f8f8f2">movingDown</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">true</span>
-  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">LEFT:</span>
+  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">LEFT</span> <span style="color: #66d9ef">then</span>
     <span style="color: #f8f8f2">movingLeft</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">true</span>
-  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">RIGHT:</span>
+  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">RIGHT</span> <span style="color: #66d9ef">then</span>
     <span style="color: #f8f8f2">movingRight</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">true</span>
-  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">UP:</span>
+  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">UP</span> <span style="color: #66d9ef">then</span>
     <span style="color: #f8f8f2">movingUp</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">true</span>
   <span style="color: #66d9ef">end</span>
 <span style="color: #66d9ef">end</span>
 
 <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">onKeyUp</span><span style="color: #f8f8f2">(event)</span>
-  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">DOWN:</span>
+  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">DOWN</span> <span style="color: #66d9ef">then</span>
     <span style="color: #f8f8f2">movingDown</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">false</span>
-  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">LEFT:</span>
+  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">LEFT</span> <span style="color: #66d9ef">then</span>
     <span style="color: #f8f8f2">movingLeft</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">false</span>
-  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">RIGHT:</span>
+  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">RIGHT</span> <span style="color: #66d9ef">then</span>
     <span style="color: #f8f8f2">movingRight</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">false</span>
-  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">UP:</span>
+  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">UP</span> <span style="color: #66d9ef">then</span>
     <span style="color: #f8f8f2">movingUp</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">false</span>
   <span style="color: #66d9ef">end</span>
 <span style="color: #66d9ef">end</span>
 
 <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">onEnterFrame</span><span style="color: #f8f8f2">(event)</span>
-  <span style="color: #66d9ef">if</span> <span style="color: #e6db74">movingDown</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">movingDown</span> <span style="color: #66d9ef">then</span>
     <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">y</span> <span style="color: #f92672">+=</span> <span style="color: #ae81ff">5</span>
   <span style="color: #66d9ef">end</span>
 
-  <span style="color: #66d9ef">if</span> <span style="color: #e6db74">movingLeft</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">movingLeft</span> <span style="color: #66d9ef">then</span>
     <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">x</span> <span style="color: #f92672">-=</span> <span style="color: #ae81ff">5</span>
   <span style="color: #66d9ef">end</span>
 
-  <span style="color: #66d9ef">if</span> <span style="color: #e6db74">movingRight</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">movingRight</span> <span style="color: #66d9ef">then</span>
     <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">x</span> <span style="color: #f92672">+=</span> <span style="color: #ae81ff">5</span>
   <span style="color: #66d9ef">end</span>
 
-  <span style="color: #66d9ef">if</span> <span style="color: #e6db74">movingUp</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">movingUp</span> <span style="color: #66d9ef">then</span>
     <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">y</span> <span style="color: #f92672">-=</span> <span style="color: #ae81ff">5</span>
   <span style="color: #66d9ef">end</span>
 <span style="color: #66d9ef">end</span></pre>

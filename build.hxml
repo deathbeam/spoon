@@ -1,4 +1,3 @@
--lib raxe
 -cmd haxelib run raxe -a -s src -d build
 --next
 -lib mcli

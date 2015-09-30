@@ -23,7 +23,7 @@ def new()
   logo.x = 100
   logo.y = 100
   logo.buttonMode = true
-  addChild(Logo)
+  addChild(logo)
 
   stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown)
   stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp)

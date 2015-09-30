@@ -27,7 +27,7 @@ dynamic public function createScript() : RaxeScript{
     File.copy(from, to);
   });
 
-  script.variables.set("mv", function(from : String, to : String) {
+  script.variables.set("mv", function(from : String, to : String){ 
     FileSystem.rename(from, to);
   });
 
@@ -39,7 +39,7 @@ dynamic public function createScript() : RaxeScript{
     }
   });
 
-  script.variables.set("env",{
+  script.variables.set("env", {
     get: function(key : String){ 
       return Sys.getEnv(key);
     },

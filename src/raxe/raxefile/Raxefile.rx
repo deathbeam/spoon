@@ -27,9 +27,9 @@ def createScript() : RaxeScript
     File.copy(from, to)
   end)
 
-  script.variables.set("mv", function(from : String, to : String) {
+  script.variables.set("mv", (from : String, to : String) =>
     FileSystem.rename(from, to)
-  })
+  end)
 
   script.variables.set("rm", (path : String) =>
     if FileSystem.isDirectory(path) then
@@ -39,7 +39,7 @@ def createScript() : RaxeScript
     end
   end)
 
-  script.variables.set("env",{
+  script.variables.set("env", {
     get: (key : String) =>
       return Sys.getEnv(key)
     end,

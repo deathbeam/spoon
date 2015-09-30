@@ -1,14 +1,8 @@
-# -lib raxe
-# -cmd haxelib run raxe -s src -d build
-# --next
-# -lib mcli
-# -lib hscript
-# -cp build
-# -main raxe.Main
-# -neko run.n
-
+-lib raxe
+-cmd haxelib run raxe -a -s src -d build
+--next
 -lib mcli
 -lib hscript
--cp src
+-cp build
 -main raxe.Main
 -neko run.n

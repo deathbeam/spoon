@@ -86,11 +86,11 @@ class CoreTranspiler implements Transpiler {
 
         if (comment.length > 2) {
           handle.remove(comment);
-          handle.insert("/* ");
+          handle.insert("/** ");
           handle.increment();
           handle.next(comment);
           handle.remove(comment);
-          handle.insert(" */");
+          handle.insert(" **/");
           handle.increment();
         } else if (comment.length == 2) {
           handle.remove(comment);

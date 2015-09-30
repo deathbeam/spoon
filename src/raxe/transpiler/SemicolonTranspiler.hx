@@ -11,7 +11,7 @@ class SemicolonTranspiler implements Transpiler {
     return [
       ")", "}", ";",
       "(:", ":)",
-      "@", "//", "/*", "/*", "\\\"", "\"",
+      "@", "//", "/**", "**/", "\\\"", "\"",
       "=", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "<", ">", "~",
       "if", "for", "while", "else", "try", "catch"
     ];
@@ -66,8 +66,8 @@ class SemicolonTranspiler implements Transpiler {
           handle.position = position;
           break;
         }
-      } else if (handle.is("/*")) {
-        handle.next("*/");
+      } else if (handle.is("/**")) {
+        handle.next("**/");
         handle.increment();
       } else if (handle.is("@")) {
         handle.next("\n");

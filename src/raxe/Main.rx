@@ -1,0 +1,10 @@
+require "mcli/Dispatch"
+require "raxe/cli/Cli"
+
+class self
+
+def self.main()
+  def args = Sys.args()
+  Sys.setCwd(args.pop())
+  Dispatch.new(args).dispatch(Cli.new())
+end

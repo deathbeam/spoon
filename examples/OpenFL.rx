@@ -59,19 +59,19 @@ def onKeyUp(event)
 end
 
 def onEnterFrame(event)
-  if movingDown:
+  if movingDown then
     logo.y += 5
   end
 
-  if movingLeft:
+  if movingLeft then
     logo.x -= 5
   end
 
-  if movingRight:
+  if movingRight then
     logo.x += 5
   end
 
-  if movingUp:
+  if movingUp then
     logo.y -= 5
   end
 end

@@ -32,7 +32,7 @@ If you installed the library with haxelib:
 
 On development :
 
-```neko run <your_current_directory> <commands>```
+```neko run <commands> <your_current_directory>```
 
 Transpile
 --

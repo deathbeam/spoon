@@ -67,7 +67,7 @@ class SemicolonTranspiler implements Transpiler {
           break;
         }
       } else if (handle.is("#")) {
-        handle.next("/n");
+        handle.next("\n");
         handle.increment();
       } else if (handle.is("/**")) {
         handle.next("**/");

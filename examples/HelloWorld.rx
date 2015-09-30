@@ -1,5 +1,5 @@
 class self
 
 def self.main()
-  def myvar : String = null
+  trace("Hello World")
 end

@@ -129,7 +129,7 @@ class TranspilerCommand
     public function transpileFile(dir : String, file: String): String
     {
         var group = new RaxeTranspilerGroup();
-        return group.transpile(dir != null ? dir : Sys.getCwd(), file);
+        return group.transpile(dir != null ? FileSystem.fullPath(dir) : Sys.getCwd(), FileSystem.fullPath(file));
     }
 
     /**

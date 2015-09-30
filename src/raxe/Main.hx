@@ -7,7 +7,6 @@ class Main {
   static function main() {
   	var args = Sys.args();
   	args.pop();
-  	trace(args);
     new Dispatch(args).dispatch(new Cli());
   }
 }

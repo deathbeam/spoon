@@ -1,0 +1,9 @@
+class self
+
+def self.main()
+  try
+    throw "Error"
+  catch msg : String
+    trace("Error occurred: " + msg)
+  end
+end

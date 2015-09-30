@@ -35,25 +35,25 @@ Event handlers
 ---
 
 def onKeyDown(event)
-  if event.keyCode == Keyboard.DOWN:
+  if event.keyCode == Keyboard.DOWN then
     movingDown = true
-  elseif event.keyCode == Keyboard.LEFT:
+  elseif event.keyCode == Keyboard.LEFT then
     movingLeft = true
-  elseif event.keyCode == Keyboard.RIGHT:
+  elseif event.keyCode == Keyboard.RIGHT then
     movingRight = true
-  elseif event.keyCode == Keyboard.UP:
+  elseif event.keyCode == Keyboard.UP then
     movingUp = true
   end
 end
 
 def onKeyUp(event)
-  if event.keyCode == Keyboard.DOWN:
+  if event.keyCode == Keyboard.DOWN then
     movingDown = false
-  elseif event.keyCode == Keyboard.LEFT:
+  elseif event.keyCode == Keyboard.LEFT then
     movingLeft = false
-  elseif event.keyCode == Keyboard.RIGHT:
+  elseif event.keyCode == Keyboard.RIGHT then
     movingRight = false
-  elseif event.keyCode == Keyboard.UP:
+  elseif event.keyCode == Keyboard.UP then
     movingUp = false
   end
 end

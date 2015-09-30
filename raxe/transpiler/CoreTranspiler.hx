@@ -42,7 +42,7 @@ class CoreTranspiler implements Transpiler {
       "using", "inline", "typedef", //"//", "import", "var", "function",
 
       // Expressions
-      "elseif", "if", "else", "while", "for",
+      "elseif", "if", "else", "while", "for", "then", "loop",
 
       // Types
       "class", "enum", "abstract", "interface",
@@ -245,9 +245,20 @@ class CoreTranspiler implements Transpiler {
         handle.increment();
       }
       // Insert begin bracket after if and while
-      else if (handle.safeis("if") || handle.safeis("while") || handle.safeis("for")) {
+      else if (handle.safeis("if")) {
         handle.increment();
-        consumeCondition(handle);
+        handle.insert("(");
+
+        while (handle.nextToken()) {
+          if (handle.safeis("then")) {
+            handle.remove();
+            break;
+          }
+
+          handle.increment();
+        }
+
+        handle.insert(")");
         handle.insert("{", true);
         handle.increment();
       }
@@ -256,7 +267,35 @@ class CoreTranspiler implements Transpiler {
         handle.remove();
         handle.insert("}else if");
         handle.increment();
-        consumeCondition(handle);
+        handle.insert("(");
+
+        while (handle.nextToken()) {
+          if (handle.safeis("then")) {
+            handle.remove();
+            break;
+          }
+
+          handle.increment();
+        }
+
+        handle.insert(")");
+        handle.insert("{", true);
+        handle.increment();
+      }
+      else if (handle.safeis("while") || handle.safeis("for")) {
+        handle.increment();
+        handle.insert("(");
+
+        while (handle.nextToken()) {
+          if (handle.safeis("loop")) {
+            handle.remove();
+            break;
+          }
+
+          handle.increment();
+        }
+
+        handle.insert(")");
         handle.insert("{", true);
         handle.increment();
       }
@@ -360,20 +399,5 @@ class CoreTranspiler implements Transpiler {
       handle.increment();
       if (count == 0) break;
     }
-  }
-
-  private function consumeCondition(handle: StringHandle) {
-    handle.insert("(");
-
-    while (handle.nextToken()) {
-      if (handle.is(":")) {
-        handle.remove();
-        break;
-      }
-
-      handle.increment();
-    }
-
-    handle.insert(")");
   }
 }

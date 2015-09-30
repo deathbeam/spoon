@@ -4,11 +4,11 @@ def self.main()
   def myvar : String = null
   def myarray = Array(:String:).new()
 
-  if myvar != null && myvar.charAt(10) == "p":
-    for i in myarray.iterator():
+  if myvar != null && myvar.charAt(10) == "p" then
+    for i in myarray.iterator() loop
       trace("Wouhou")
     end
-  elseif myvar != null && myvar.charAt(20) == "c":
+  elseif myvar != null && myvar.charAt(20) == "c" then
     trace("no")
   else
     trace("coco")
@@ -16,7 +16,7 @@ def self.main()
 
   if myvar != null &&
       myvar.charAt(0) == "x" &&
-      myvar.charAt(2) == "x":
+      myvar.charAt(2) == "x" then
     trace("ok")
   end
 end

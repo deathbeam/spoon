@@ -12,12 +12,15 @@ To install Raxe you can use haxelib
 
 # Build the project
 
-You'll need [mcli](https://github.com/waneck/mcli) [hscript](https://github.com/HaxeFoundation/HScript) libraries installed:
+You'll need these libraries installed:
 
 ```
 haxelib install mcli
 haxelib install hscript
+haxelib install tink_lang
 ```
+
+or you can just run ```haxelib install build.hxml``` to install all required dependencies.
 
 Now, compile the project with ```haxe build.hxml```
 A binary ```run.n``` will be available

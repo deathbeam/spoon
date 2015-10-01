@@ -12,7 +12,7 @@ def self.array = [
 Anonymous maps, not dynamic by default too
 ---
 def self.map = [
-  "a" => (test) =>
+  "a" => do(test)
     trace(test)
   end,
 ]
@@ -30,7 +30,7 @@ Same applies to anonymous structures.
 def self.struct = {
   a: "hello",
   b: "yolo",
-  callback: (event) =>
+  callback: do(event)
     return event + " World"
   end,
 }

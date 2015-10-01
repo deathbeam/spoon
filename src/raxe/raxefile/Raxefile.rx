@@ -19,19 +19,19 @@ end
 def createScript() : RaxeScript
   def script = RaxeScript.new()
 
-  script.variables.set("sh", (cmd : String, ?args : Array<String>) =>
+  script.variables.set("sh", do(cmd : String, ?args : Array(:String:))
     Sys.command(cmd, args)
   end)
 
-  script.variables.set("cp", (from : String, to : String) =>
+  script.variables.set("cp", do(from : String, to : String)
     File.copy(from, to)
   end)
 
-  script.variables.set("mv", (from : String, to : String) =>
+  script.variables.set("mv", do(from : String, to : String)
     FileSystem.rename(from, to)
   end)
 
-  script.variables.set("rm", (path : String) =>
+  script.variables.set("rm", do(path : String)
     if FileSystem.isDirectory(path) then
       FileSystem.deleteDirectory(path)
     else
@@ -40,10 +40,10 @@ def createScript() : RaxeScript
   end)
 
   script.variables.set("env", {
-    get: (key : String) =>
+    get: do(key : String)
       return Sys.getEnv(key)
     end,
-    set: (key : String, value : String) =>
+    set: do(key : String, value : String)
       Sys.putEnv(key, value)
     end,
   })

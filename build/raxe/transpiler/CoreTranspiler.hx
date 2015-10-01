@@ -32,8 +32,8 @@ class CoreTranspiler implements Transpiler {
       // Inheritance & interfaces
       "<", "::",
 
-      // Anonymous functions
-      "=>", "(:", ":)",
+      // Generics
+      "(:", ":)",
 
       // Standard keywords
       "\"", "(", ")", "/", "=", "#", ",", "@", "]", "[",
@@ -278,15 +278,16 @@ class CoreTranspiler implements Transpiler {
         isFixed = false;
       }
       // Defines to variables and functions
-      else if (handle.is("=>")) {
+      else if (handle.safeis("do")) {
         var position = handle.position;
-        handle.prevToken();
+        handle.increment();
+        handle.nextToken();
         handle.position = position;
 
-        if (handle.is(")")) {
-          handle.remove("=>");
-          handle.prev("(");
+        if (handle.is("(")) {
+          handle.remove("do");
           handle.insert("function");
+          handle.increment();
           consumeCurlys(handle);
           handle.insert("{");
         }
@@ -337,8 +338,14 @@ class CoreTranspiler implements Transpiler {
 
         while (handle.nextToken()) {
           if (handle.safeis("do")) {
-            handle.remove();
-            break;
+            var position = handle.position;
+            handle.nextToken();
+            handle.position = position;
+
+            if (!handle.is("(")) {
+              handle.remove();
+              break;
+            }
           }
 
           handle.increment();

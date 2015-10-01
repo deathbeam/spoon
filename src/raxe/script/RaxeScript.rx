@@ -16,7 +16,7 @@ def new()
   parser = new Parser()
   group = new RaxeScriptTranspilerGroup()
 
-  variables.set("require", (thing : String) =>
+  variables.set("require", do(thing : String)
     def path = thing + ".rx"
 
     if FileSystem.exists(path) then

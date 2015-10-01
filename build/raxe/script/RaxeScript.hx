@@ -16,7 +16,7 @@ public function new(){
   parser = new Parser();
   group = new RaxeScriptTranspilerGroup();
 
-  variables.set("require", function(thing : String){ 
+  variables.set("require", function(thing : String){
     var path = thing + ".rx";
 
     if( FileSystem.exists(path) ){

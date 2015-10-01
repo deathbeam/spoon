@@ -14,7 +14,7 @@ class AccessTranspiler implements Transpiler {
   }
 
   dynamic public function transpile(handle : StringHandle) {
-    var count = -1;
+    var count = 0;
     var notPublic = false;
 
     while(handle.nextToken()) {

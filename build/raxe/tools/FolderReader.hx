@@ -5,7 +5,7 @@ import sys.io.File;
  * Utility to deal with folders
  * @author Axel Anceau (Peekmo)
  **/
-class FolderReader{
+@:tink class FolderReader{
 
 /** 
  * Returns an array of all files which are in the given folder and its subfolders
@@ -15,16 +15,16 @@ class FolderReader{
 static dynamic public function getFiles(rootFolder: String) : Array<String>{
   var files : Array<String> =new  Array<String>();
 
-  if( FileSystem.exists(rootFolder) ){
+  if(FileSystem.exists(rootFolder)){
     var folders : Array<String> = FileSystem.readDirectory(rootFolder);
 
-    for( file in folders.iterator() ){
+    for(file in folders.iterator()){
       var path : String = rootFolder + "/" + file;
 
-      if( FileSystem.isDirectory(path) ){
+      if(FileSystem.isDirectory(path)){
         var data : Array<String> = getFiles(path);
 
-        for( i in data ){
+        for(i in data){
           files.push(i);
         }
       }else{
@@ -49,7 +49,7 @@ static dynamic public function createFile(path : String, ?content : String) : Vo
   // Create all directories necessaries
   createDirectory(parts.join("/"));
 
-  if( content == null ){
+  if(content == null){
     content = "";
   }
 
@@ -64,10 +64,10 @@ static dynamic public function createDirectory(path : String) : Void{
   var parts : Array<String> = path.split("/");
   var done : String = null;
 
-  for( part in parts.iterator() ){
+  for(part in parts.iterator()){
     done = done == null ? part : done + "/" + part;
 
-    if( !FileSystem.exists(done) ){
+    if(!FileSystem.exists(done)){
       FileSystem.createDirectory(done);
     }
   }
@@ -80,18 +80,18 @@ static dynamic public function createDirectory(path : String) : Void{
  **/
 static dynamic public function copyFileSystem(source : String, destination : String) : Void{
   try{
-    if( source.endsWith("/") ){
+    if(source.endsWith("/")){
       source = source.substr(0, -1);
     }
 
     // If that's a file
-    if( !FileSystem.isDirectory(source) ){
+    if(!FileSystem.isDirectory(source)){
       createFile(destination, File.getContent(source));
     }else{
       var files : Array<String> = FileSystem.readDirectory(source);
 
-      for( file in files.iterator() ){
-        if( FileSystem.isDirectory(source + "/" + file) ){
+      for(file in files.iterator()){
+        if(FileSystem.isDirectory(source + "/" + file)){
           createDirectory(destination);
         }
 
@@ -99,7 +99,7 @@ static dynamic public function copyFileSystem(source : String, destination : Str
         copyFileSystem(source + "/" + file, destination + "/" + file);
       }
     }
-  }catch( ex: String){
+  }catch(ex: String){
     throw "Unable to copy " + source + " to " + destination + " : " + ex;
   }
 };

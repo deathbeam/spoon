@@ -2,7 +2,7 @@ package raxe.raxefile;using Lambda;using StringTools;import raxe.script.RaxeScri
 import sys.io.File;
 import sys.FileSystem;
 
-class Raxefile{
+@:tink class Raxefile{
 
 public var script : RaxeScript;
 
@@ -32,7 +32,7 @@ dynamic public function createScript() : RaxeScript{
   });
 
   script.variables.set("rm", function(path : String){
-    if( FileSystem.isDirectory(path) ){
+    if(FileSystem.isDirectory(path)){
       FileSystem.deleteDirectory(path);
     }else{
       FileSystem.deleteFile(path);

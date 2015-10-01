@@ -2,6 +2,7 @@
 --next
 -lib mcli
 -lib hscript
+-lib tink_lang
 -cp build
 -main raxe.Main
 -neko run.n

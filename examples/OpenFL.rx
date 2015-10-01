@@ -35,43 +35,43 @@ Event handlers
 ---
 
 def onKeyDown(event)
-  if event.keyCode == Keyboard.DOWN then
+  if(event.keyCode == Keyboard.DOWN)
     movingDown = true
-  elsif event.keyCode == Keyboard.LEFT then
+  elsif(event.keyCode == Keyboard.LEFT)
     movingLeft = true
-  elsif event.keyCode == Keyboard.RIGHT then
+  elsif(event.keyCode == Keyboard.RIGHT)
     movingRight = true
-  elsif event.keyCode == Keyboard.UP then
+  elsif(event.keyCode == Keyboard.UP)
     movingUp = true
   end
 end
 
 def onKeyUp(event)
-  if event.keyCode == Keyboard.DOWN then
+  if(event.keyCode == Keyboard.DOWN)
     movingDown = false
-  elsif event.keyCode == Keyboard.LEFT then
+  elsif(event.keyCode == Keyboard.LEFT)
     movingLeft = false
-  elsif event.keyCode == Keyboard.RIGHT then
+  elsif(event.keyCode == Keyboard.RIGHT)
     movingRight = false
-  elsif event.keyCode == Keyboard.UP then
+  elsif(event.keyCode == Keyboard.UP)
     movingUp = false
   end
 end
 
 def onEnterFrame(event)
-  if movingDown then
+  if(movingDown)
     logo.y += 5
   end
 
-  if movingLeft then
+  if(movingLeft)
     logo.x -= 5
   end
 
-  if movingRight then
+  if(movingRight)
     logo.x += 5
   end
 
-  if movingUp then
+  if(movingUp)
     logo.y -= 5
   end
 end

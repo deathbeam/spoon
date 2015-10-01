@@ -19,7 +19,7 @@ def new()
   variables.set("require", do(thing : String)
     def path = thing + ".rx"
 
-    if FileSystem.exists(path) then
+    if(FileSystem.exists(path))
       return execute(parse(File.getContent(path)))
     end
 
@@ -27,10 +27,10 @@ def new()
 
     def clazz : Dynamic = Type.resolveClass(path)
 
-    if clazz == null then
+    if(clazz == null)
       clazz = Type.resolveEnum(path)
 
-      if clazz == null then
+      if(clazz == null)
         trace("Failed to resolve type #{thing}")
       end
     end
@@ -46,7 +46,7 @@ def parse(s : String) : Expr
 end
 
 fixed override def get(o : Dynamic, f : String ) : Dynamic
-  if o == null then
+  if(o == null)
     #if debug
     trace("Null error when doing get #{f}")
     #end
@@ -57,7 +57,7 @@ fixed override def get(o : Dynamic, f : String ) : Dynamic
 end
 
 fixed override def set( o : Dynamic, f : String, v : Dynamic ) : Dynamic
-  if o == null then
+  if(o == null)
     #if debug
     trace("Null error when doing set #{f}")
     #end

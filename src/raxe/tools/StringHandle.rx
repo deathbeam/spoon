@@ -8,7 +8,7 @@ def tokens : Array(:String:)
 def new(content : String, ?tokens : Array(:String:), position : Int = 0)
   this.content = content
 
-  if tokens == null then
+  if(tokens == null)
     this.tokens = [ "\n" ]
   else
     this.tokens = tokens
@@ -46,8 +46,8 @@ def closest(content : String) : Bool
 
   def count = 1
 
-  while true do
-    if sub.charAt(count) == " " || sub.charAt(count) == "\t" || sub.charAt(count) == "\n" then
+  while(true)
+    if(sub.charAt(count) == " " || sub.charAt(count) == "\t" || sub.charAt(count) == "\n")
       count = count + 1
     else
       break
@@ -64,7 +64,7 @@ end
 def isOne(content : Array(:String:)) : Bool
   def contains = false
 
-  for cnt in content do
+  for(cnt in content)
     contains = contains || current == cnt
   end
 
@@ -74,11 +74,11 @@ end
 def safeisStart(content : String) : Bool
   var regex = EReg.new("[^\\w]" + content, "")
 
-  if nearStart(1) then
+  if(nearStart(1))
     return is(content)
   end
 
-  if nearEnd(content.length + 1) then
+  if(nearEnd(content.length + 1))
     return is(content)
   end
 
@@ -92,7 +92,7 @@ end
 def safeisEnd(content : String) : Bool
   def regex = EReg.new(content + "[^\\w]", "")
 
-  if nearEnd(content.length + 2) then
+  if(nearEnd(content.length + 2))
     return is(content)
   end
 
@@ -106,11 +106,11 @@ end
 def safeis(content : String) : Bool
   def regex = EReg.new("[^\\w]" + content + "[^\\w]", "")
 
-  if nearStart(1) then
+  if(nearStart(1))
     return safeisEnd(content)
   end
 
-  if nearEnd(content.length + 2) then
+  if(nearEnd(content.length + 2))
     return safeisStart(content)
   end
 
@@ -124,7 +124,7 @@ end
 def at(content : String) : Bool
   def divided = divide()
 
-  if divided.right.substr(0, content.length) == content then
+  if(divided.right.substr(0, content.length) == content)
     return true
   end
 
@@ -132,8 +132,8 @@ def at(content : String) : Bool
 end
 
 def prev(?content : String) : Bool
-  if content == null then
-    if current != null then
+  if(content == null)
+    if(current != null)
       return prev(current)
     end
 
@@ -142,7 +142,7 @@ def prev(?content : String) : Bool
 
   def newPos = this.content.substr(0, position).lastIndexOf(content)
 
-  if newPos == -1 then
+  if(newPos == -1)
     return false
   end
 
@@ -152,8 +152,8 @@ def prev(?content : String) : Bool
 end
 
 def next(?content : String) : Bool
-  if content == null then
-    if current != null then 
+  if(content == null)
+    if(current != null)
       return next(current)
     end
 
@@ -162,7 +162,7 @@ def next(?content : String) : Bool
 
   def newPos = this.content.indexOf(content, position)
 
-  if newPos == -1 then
+  if(newPos == -1)
     return false
   end
 
@@ -175,16 +175,16 @@ def prevToken() : Bool
   var newPos = position + 1
   var currentToken = ""
 
-  for token in tokens do
+  for(token in tokens)
     def pos = this.content.substr(0, position).lastIndexOf(token)
 
-    if pos != -1 && (pos > newPos || newPos == position + 1) then
+    if(pos != -1 && (pos > newPos || newPos == position + 1))
       newPos = pos
       currentToken = token
     end
   end
 
-  if newPos == -1 then
+  if(newPos == -1)
     return false
   end
 
@@ -197,10 +197,10 @@ def prevTokenLine() : Bool
   def newPos = position + 1
   def currentToken = ""
 
-  for token in tokens do
+  for(token in tokens)
     def pos = this.content.substr(0, position).lastIndexOf(token)
 
-    if pos != -1 && (pos > newPos || newPos == position + 1) then
+    if(pos != -1 && (pos > newPos || newPos == position + 1))
       newPos = pos
       currentToken = token
     end
@@ -208,12 +208,12 @@ def prevTokenLine() : Bool
 
   def pos = this.content.substr(0, position).lastIndexOf("\n")
 
-  if pos != -1 && (pos > newPos || newPos == position + 1) then
+  if(pos != -1 && (pos > newPos || newPos == position + 1))
     newPos = pos
     currentToken = "\n"
   end
 
-  if newPos == -1 then
+  if(newPos == -1)
     return false
   end
 
@@ -226,10 +226,10 @@ def nextTokenLine() : Bool
   def newPos = -1
   def currentToken = ""
 
-  for token in tokens do
+  for(token in tokens)
     def pos = this.content.indexOf(token, position)
 
-    if pos != -1 && (pos < newPos || newPos == -1) then
+    if(pos != -1 && (pos < newPos || newPos == -1))
       newPos = pos
       currentToken = token
     end
@@ -237,12 +237,12 @@ def nextTokenLine() : Bool
 
   def pos = this.content.indexOf("\n", position)
 
-  if pos != -1 && (pos < newPos || newPos == -1) then
+  if(pos != -1 && (pos < newPos || newPos == -1))
     newPos = pos
     currentToken = "\n"
   end
 
-  if newPos == -1 then
+  if(newPos == -1)
     return false
   end
 
@@ -255,16 +255,16 @@ def nextToken() : Bool
   def newPos = -1
   def currentToken = ""
 
-  for token in tokens do
+  for(token in tokens)
     def pos = this.content.indexOf(token, position)
 
-    if pos != -1 && (pos < newPos || newPos == -1) then
+    if(pos != -1 && (pos < newPos || newPos == -1))
       newPos = pos
       currentToken = token
     end
   end
 
-  if newPos == -1 then
+  if(newPos == -1)
     return false
   end
 
@@ -274,8 +274,8 @@ def nextToken() : Bool
 end
 
 def increment(?content : String) : StringHandle
-  if content == null then
-    if current != null then
+  if(content == null)
+    if(current != null)
       increment(current)
     end
 
@@ -284,7 +284,7 @@ def increment(?content : String) : StringHandle
 
   def newPos = position + content.length
 
-  if newPos > this.content.length then
+  if(newPos > this.content.length)
     return this
   end
 
@@ -294,8 +294,8 @@ def increment(?content : String) : StringHandle
 end
 
 def decrement(?content : String) : StringHandle
-  if content == null then
-    if current != null then
+  if(content == null)
+    if(current != null)
       decrement(current)
     end
 
@@ -304,7 +304,7 @@ def decrement(?content : String) : StringHandle
 
   def newPos = position - content.length
 
-  if newPos < 0 then
+  if(newPos < 0)
     return this
   end
 
@@ -314,8 +314,8 @@ def decrement(?content : String) : StringHandle
 end
 
 def insert(?content : String, ?after : Bool) : StringHandle
-  if content == null then
-    if current != null then
+  if(content == null)
+    if(current != null)
       insert(current)
     end
 
@@ -324,7 +324,7 @@ def insert(?content : String, ?after : Bool) : StringHandle
 
   def divided
 
-  if after == null || !after then
+  if(after == null || !after)
     divided = divide()
   else
     divided = divide(1)
@@ -336,8 +336,8 @@ def insert(?content : String, ?after : Bool) : StringHandle
 end
 
 def remove(?content : String) : StringHandle
-  if content == null then
-    if current != null then
+  if(content == null)
+    if(current != null)
       remove(current)
     end
 
@@ -347,7 +347,7 @@ def remove(?content : String) : StringHandle
   def length = content.length
   def divided = divide()
 
-  if divided.right.length < length then
+  if(divided.right.length < length)
     return this
   end
 

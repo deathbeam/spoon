@@ -5,7 +5,7 @@ import raxe.transpiler.TranspilerGroup;
 import raxe.tools.StringHandle;
 import sys.io.File;
 
-class RaxeScriptTranspilerGroup extends TranspilerGroup{
+@:tink class RaxeScriptTranspilerGroup extends TranspilerGroup{
 
 public function new(){
   super();
@@ -15,7 +15,7 @@ dynamic public function transpile(content : String) : String{
   push(new CoreTranspiler().setIsScript(true));
   push(new SemicolonTranspiler());
 
-  for( transpiler in transpilers ){
+  for(transpiler in transpilers){
     content = transpiler.transpile(new StringHandle(content, transpiler.tokens()));
   }
 

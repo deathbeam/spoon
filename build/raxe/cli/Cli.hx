@@ -12,7 +12,7 @@ import raxe.tools.Error;
 
   Raxe 0.0.1 - https://raxe-lang.org
  **/
-class Cli extends CommandLine{
+@:tink class Cli extends CommandLine{
 
 inline static public var ERROR_TYPE = "transpile_error";
 
@@ -57,41 +57,41 @@ dynamic public function help(){
 
 dynamic public function runDefault(){
   try{
-    if( this.src != null ){
+    if(this.src != null){
       this.transpile();
-    }else if( FileSystem.exists("Raxefile") ){
+    }else if(FileSystem.exists("Raxefile")){
       var rf =new  Raxefile("Raxefile");
       rf.run(this.task);
     }else{
       this.help();
     }
-  }catch( err : String){
+  }catch(err : String){
     Sys.println(err);
     Sys.exit(0);
   }
 };
 
 private dynamic function transpile(){
-  if( this.src != null ){
-    if( !FileSystem.exists(src) ){
+  if(this.src != null){
+    if(!FileSystem.exists(src)){
       Error.create(ERROR_TYPE, "Source not found");
     }
 
     var transpiler =new  TranspilerCommand(this.src, this.dest);
-    while( true ){
+    while(true){
       try{
-        if( transpiler.transpile(this.all) ){
-          if( transpiler.response != null && transpiler.response != "" ){
+        if(transpiler.transpile(this.all)){
+          if(transpiler.response != null && transpiler.response != ""){
             Sys.println(transpiler.response);
           }else{
             Sys.println("Transpilation done.");
           }
         }
-      }catch( err : String){
+      }catch(err : String){
         Sys.println(err);
       }
 
-      if( !this.watch ){
+      if(!this.watch){
         break;
       }
     }

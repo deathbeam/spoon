@@ -8,7 +8,7 @@ def self.main()
   def enabled = true
 
   -- Here we will chain some expressions
-  def name = do(protected) return if protected then
+  def name = do(protected) return if(protected)
       "Nope"
     else
       "John Snow"
@@ -16,7 +16,7 @@ def self.main()
   end
 
   -- Simple example on how to use `if` as expression
-  def consider = if enabled then
+  def consider = if(enabled)
     "Your name is " + name(false)
   else
     "Security issue, response is " + name(true)

@@ -40,13 +40,12 @@ class CoreTranspiler implements Transpiler {
 
       // Raxe keywords
       "-", "require", "def", "self.new", ".new", "self.", "self", "new", "end", "do",
-      "begin", "rescue", "raise",
 
       // Haxe keywords
-      "using", "inline", "typedef",
+      "using", "inline", "typedef", "try", "catch",
 
       // Expressions
-      "elsif", "if", "else", "while", "for", "then",
+      "elsif", "if", "else", "while", "for",
 
       // Types
       "class", "enum", "abstract", "interface",
@@ -159,25 +158,18 @@ class CoreTranspiler implements Transpiler {
         handle.insert("new ");
         handle.increment();
       }
-      else if (handle.safeis("begin")) {
-        handle.remove();
-        handle.insert("try");
+      else if (handle.safeis("try")) {
         handle.increment();
         handle.insert("{");
         handle.increment();
       }
-      else if (handle.safeis("rescue")) {
-        handle.remove();
-        handle.insert("}catch");
+      else if (handle.safeis("catch")) {
+        handle.insert("}");
         handle.increment();
-        handle.insert("(");
-        handle.next("\n");
-        handle.insert("){");
-        handle.increment();
-      }
-      else if (handle.safeis("raise")) {
-        handle.remove();
-        handle.insert("throw");
+        handle.increment("catch");
+        handle.nextToken();
+        consumeCurlys(handle);
+        handle.insert("{");
         handle.increment();
       }
       // Change end to classic bracket end
@@ -297,19 +289,9 @@ class CoreTranspiler implements Transpiler {
       // Insert begin bracket after if and while
       else if (handle.safeis("if")) {
         handle.increment();
-        handle.insert("(");
-
-        while (handle.nextToken()) {
-          if (handle.safeis("then")) {
-            handle.remove();
-            break;
-          }
-
-          handle.increment();
-        }
-
-        handle.insert(")");
-        handle.insert("{", true);
+        handle.nextToken();
+        consumeCurlys(handle);
+        handle.insert("{");
         handle.increment();
       }
       // Change elseif to else if and insert begin and end brackets around it
@@ -317,42 +299,16 @@ class CoreTranspiler implements Transpiler {
         handle.remove();
         handle.insert("}else if");
         handle.increment();
-        handle.insert("(");
-
-        while (handle.nextToken()) {
-          if (handle.safeis("then")) {
-            handle.remove();
-            break;
-          }
-
-          handle.increment();
-        }
-
-        handle.insert(")");
-        handle.insert("{", true);
+        handle.nextToken();
+        consumeCurlys(handle);
+        handle.insert("{");
         handle.increment();
       }
       else if (handle.safeis("while") || handle.safeis("for")) {
         handle.increment();
-        handle.insert("(");
-
-        while (handle.nextToken()) {
-          if (handle.safeis("do")) {
-            var position = handle.position;
-            handle.nextToken();
-            handle.position = position;
-
-            if (!handle.is("(")) {
-              handle.remove();
-              break;
-            }
-          }
-
-          handle.increment();
-        }
-
-        handle.insert(")");
-        handle.insert("{", true);
+        handle.nextToken();
+        consumeCurlys(handle);
+        handle.insert("{");
         handle.increment();
       }
       else if (handle.safeis("next")) {
@@ -386,7 +342,9 @@ class CoreTranspiler implements Transpiler {
           isFixed = false;
         }
 
+        handle.insert("@:tink ");
         handle.increment();
+        handle.increment(type);
 
         while(handle.nextToken()) {
           if (handle.is("self")) {
@@ -448,7 +406,36 @@ class CoreTranspiler implements Transpiler {
     var count = 0;
 
     while(handle.nextToken()) {
-      if (handle.is("(")) {
+      if (handle.is("\"")) {
+        if (handle.at("\"\"\"")) {
+          handle.remove("\"\"\"");
+          handle.insert("\"");
+        }
+
+        handle.increment();
+
+        while (handle.nextToken()) {
+          if (handle.is("#")) {
+            if (handle.content.charAt(handle.position + 1) == "{") {
+              handle.remove();
+              handle.insert("$");
+            }
+            handle.increment();
+          } else {
+            if (handle.is("\"") && (handle.content.charAt(handle.position -1) != "\\" ||
+                (handle.content.charAt(handle.position -1) == "\\" && handle.content.charAt(handle.position -2) == "\\"))) {
+              break;
+            }
+
+            handle.increment();
+          }
+        }
+
+        if (handle.at("\"\"\"")) {
+          handle.remove("\"\"\"");
+          handle.insert("\"");
+        }
+      } else if (handle.is("(")) {
         count++;
       } else if (handle.is(")")) {
         count--;

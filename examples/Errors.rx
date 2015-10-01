@@ -1,9 +1,9 @@
 class self
 
 def self.main()
-  begin
-    raise "Error"
-  rescue msg : String
+  try
+    throw "Error"
+  catch(msg : String)
     trace("Error occurred: #{msg}")
   end
 end

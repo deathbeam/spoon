@@ -9,7 +9,8 @@
   "releasenote": "Initial release",
   "contributors": ["deathbeam", "Peekmo"],
   "dependencies": {
-    "mcli": "0.1.4",
-    "hscript": "2.0.5"
+    "mcli": "",
+    "hscript": "",
+    "tink_lang": ""
   }
 }

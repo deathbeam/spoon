@@ -15,16 +15,16 @@ class self
 def self.getFiles(rootFolder: String) : Array(:String:)
   def files : Array(:String:) = Array(:String:).new()
 
-  if FileSystem.exists(rootFolder) then
+  if(FileSystem.exists(rootFolder))
     def folders : Array(:String:) = FileSystem.readDirectory(rootFolder)
 
-    for file in folders.iterator() do
+    for(file in folders.iterator())
       def path : String = rootFolder + "/" + file
 
-      if FileSystem.isDirectory(path) then
+      if(FileSystem.isDirectory(path))
         def data : Array(:String:) = getFiles(path)
 
-        for i in data do
+        for(i in data)
           files.push(i)
         end
       else
@@ -49,7 +49,7 @@ def self.createFile(path : String, ?content : String) : Void
   -- Create all directories necessaries
   createDirectory(parts.join("/"))
 
-  if content == null then
+  if(content == null)
     content = ""
   end
 
@@ -64,10 +64,10 @@ def self.createDirectory(path : String) : Void
   def parts : Array(:String:) = path.split("/")
   def done : String = null
 
-  for part in parts.iterator() do
+  for(part in parts.iterator())
     done = done == null ? part : done + "/" + part
 
-    if !FileSystem.exists(done) then
+    if(!FileSystem.exists(done))
       FileSystem.createDirectory(done)
     end
   end
@@ -79,19 +79,19 @@ end
  * @param  destination : String Destination's path
 ---
 def self.copyFileSystem(source : String, destination : String) : Void
-  begin
-    if source.endsWith("/") then
+  try
+    if(source.endsWith("/"))
       source = source.substr(0, -1)
     end
 
     -- If that's a file
-    if !FileSystem.isDirectory(source) then
+    if(!FileSystem.isDirectory(source))
       createFile(destination, File.getContent(source))
     else
       def files : Array<String> = FileSystem.readDirectory(source)
 
-      for file in files.iterator() do
-        if FileSystem.isDirectory(source + "/" + file) then
+      for(file in files.iterator())
+        if(FileSystem.isDirectory(source + "/" + file))
           createDirectory(destination)
         end
 
@@ -99,7 +99,7 @@ def self.copyFileSystem(source : String, destination : String) : Void
         copyFileSystem(source + "/" + file, destination + "/" + file)
       end
     end
-  rescue ex: String
-    raise "Unable to copy " + source + " to " + destination + " : " + ex
+  catch(ex: String)
+    throw "Unable to copy " + source + " to " + destination + " : " + ex
   end
 end

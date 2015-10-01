@@ -1,6 +1,6 @@
 package raxe.transpiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
 
-class TranspilerGroup{
+@:tink class TranspilerGroup{
 
 public var transpilers : Array<Transpiler>;
 

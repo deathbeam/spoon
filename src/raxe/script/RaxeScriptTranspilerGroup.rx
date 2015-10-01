@@ -15,7 +15,7 @@ def transpile(content : String) : String
   push(new CoreTranspiler().setIsScript(true))
   push(new SemicolonTranspiler())
 
-  for transpiler in transpilers do
+  for(transpiler in transpilers)
     content = transpiler.transpile(new StringHandle(content, transpiler.tokens()))
   end
 

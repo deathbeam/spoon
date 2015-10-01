@@ -5,7 +5,7 @@ import hscript.Expr;
 import sys.io.File;
 import sys.FileSystem;
 
-class RaxeScript extends Interp{
+@:tink class RaxeScript extends Interp{
 
 public var parser : Parser;
 public var group : RaxeScriptTranspilerGroup;
@@ -19,7 +19,7 @@ public function new(){
   variables.set("require", function(thing : String){
     var path = thing + ".rx";
 
-    if( FileSystem.exists(path) ){
+    if(FileSystem.exists(path)){
       return execute(parse(File.getContent(path)));
     }
 
@@ -27,10 +27,10 @@ public function new(){
 
     var clazz : Dynamic = Type.resolveClass(path);
 
-    if( clazz == null ){
+    if(clazz == null){
       clazz = Type.resolveEnum(path);
 
-      if( clazz == null ){
+      if(clazz == null){
         trace("Failed to resolve type ${thing}");
       }
     }
@@ -46,7 +46,7 @@ dynamic public function parse(s : String) : Expr{
 };
 
  override public function get(o : Dynamic, f : String ) : Dynamic{
-  if( o == null ){
+  if(o == null){
     #if debug
     trace("Null error when doing get ${f}");
     #end
@@ -57,7 +57,7 @@ dynamic public function parse(s : String) : Expr{
 };
 
  override public function set( o : Dynamic, f : String, v : Dynamic ) : Dynamic{
-  if( o == null ){
+  if(o == null){
     #if debug
     trace("Null error when doing set ${f}");
     #end

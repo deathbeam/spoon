@@ -4,19 +4,19 @@ def self.main()
   def myvar : String = null
   def myarray = Array(:String:).new()
 
-  if myvar != null && myvar.charAt(10) == "p" then
-    for i in myarray.iterator() do
+  if(myvar != null && myvar.charAt(10) == "p")
+    for(i in myarray.iterator())
       trace("Wouhou")
     end
-  elsif myvar != null && myvar.charAt(20) == "c" then
+  elsif(myvar != null && myvar.charAt(20) == "c")
     trace("no")
   else
     trace("coco")
   end
 
-  if myvar != null &&
+  if(myvar != null &&
       myvar.charAt(0) == "x" &&
-      myvar.charAt(2) == "x" then
+      myvar.charAt(2) == "x")
     trace("ok")
   end
 end

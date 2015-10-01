@@ -32,7 +32,7 @@ def createScript() : RaxeScript
   end)
 
   script.variables.set("rm", do(path : String)
-    if FileSystem.isDirectory(path) then
+    if(FileSystem.isDirectory(path))
       FileSystem.deleteDirectory(path)
     else
       FileSystem.deleteFile(path)

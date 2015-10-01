@@ -1,4 +1,4 @@
-package raxe.tools;using Lambda;using StringTools;class StringHandle{
+package raxe.tools;using Lambda;using StringTools;@:tink class StringHandle{
 
 public var content : String;
 public var position : Int;
@@ -8,7 +8,7 @@ public var tokens : Array<String>;
 public function new(content : String, ?tokens : Array<String>, position : Int = 0){
   this.content = content;
 
-  if( tokens == null ){
+  if(tokens == null){
     this.tokens = [ "\n" ];
   }else{
     this.tokens = tokens;
@@ -46,8 +46,8 @@ dynamic public function closest(content : String) : Bool{
 
   var count = 1;
 
-  while( true ){
-    if( sub.charAt(count) == " " || sub.charAt(count) == "\t" || sub.charAt(count) == "\n" ){
+  while(true){
+    if(sub.charAt(count) == " " || sub.charAt(count) == "\t" || sub.charAt(count) == "\n"){
       count = count + 1;
     }else{
       break;
@@ -64,7 +64,7 @@ dynamic public function is(content : String) : Bool{
 dynamic public function isOne(content : Array<String>) : Bool{
   var contains = false;
 
-  for( cnt in content ){
+  for(cnt in content){
     contains = contains || current == cnt;
   }
 
@@ -74,11 +74,11 @@ dynamic public function isOne(content : Array<String>) : Bool{
 dynamic public function safeisStart(content : String) : Bool{
   var regex =new  EReg("[^\\w]" + content, "");
 
-  if( nearStart(1) ){
+  if(nearStart(1)){
     return is(content);
   }
 
-  if( nearEnd(content.length + 1) ){
+  if(nearEnd(content.length + 1)){
     return is(content);
   }
 
@@ -92,7 +92,7 @@ dynamic public function safeisStart(content : String) : Bool{
 dynamic public function safeisEnd(content : String) : Bool{
   var regex =new  EReg(content + "[^\\w]", "");
 
-  if( nearEnd(content.length + 2) ){
+  if(nearEnd(content.length + 2)){
     return is(content);
   }
 
@@ -106,11 +106,11 @@ dynamic public function safeisEnd(content : String) : Bool{
 dynamic public function safeis(content : String) : Bool{
   var regex =new  EReg("[^\\w]" + content + "[^\\w]", "");
 
-  if( nearStart(1) ){
+  if(nearStart(1)){
     return safeisEnd(content);
   }
 
-  if( nearEnd(content.length + 2) ){
+  if(nearEnd(content.length + 2)){
     return safeisStart(content);
   }
 
@@ -124,7 +124,7 @@ dynamic public function safeis(content : String) : Bool{
 dynamic public function at(content : String) : Bool{
   var divided = divide();
 
-  if( divided.right.substr(0, content.length) == content ){
+  if(divided.right.substr(0, content.length) == content){
     return true;
   }
 
@@ -132,8 +132,8 @@ dynamic public function at(content : String) : Bool{
 };
 
 dynamic public function prev(?content : String) : Bool{
-  if( content == null ){
-    if( current != null ){
+  if(content == null){
+    if(current != null){
       return prev(current);
     }
 
@@ -142,7 +142,7 @@ dynamic public function prev(?content : String) : Bool{
 
   var newPos = this.content.substr(0, position).lastIndexOf(content);
 
-  if( newPos == -1 ){
+  if(newPos == -1){
     return false;
   }
 
@@ -152,8 +152,8 @@ dynamic public function prev(?content : String) : Bool{
 };
 
 dynamic public function next(?content : String) : Bool{
-  if( content == null ){
-    if( current != null ){ 
+  if(content == null){
+    if(current != null){
       return next(current);
     }
 
@@ -162,7 +162,7 @@ dynamic public function next(?content : String) : Bool{
 
   var newPos = this.content.indexOf(content, position);
 
-  if( newPos == -1 ){
+  if(newPos == -1){
     return false;
   }
 
@@ -175,16 +175,16 @@ dynamic public function prevToken() : Bool{
   var newPos = position + 1;
   var currentToken = "";
 
-  for( token in tokens ){
+  for(token in tokens){
     var pos = this.content.substr(0, position).lastIndexOf(token);
 
-    if( pos != -1 && (pos > newPos || newPos == position + 1) ){
+    if(pos != -1 && (pos > newPos || newPos == position + 1)){
       newPos = pos;
       currentToken = token;
     }
   }
 
-  if( newPos == -1 ){
+  if(newPos == -1){
     return false;
   }
 
@@ -197,10 +197,10 @@ dynamic public function prevTokenLine() : Bool{
   var newPos = position + 1;
   var currentToken = "";
 
-  for( token in tokens ){
+  for(token in tokens){
     var pos = this.content.substr(0, position).lastIndexOf(token);
 
-    if( pos != -1 && (pos > newPos || newPos == position + 1) ){
+    if(pos != -1 && (pos > newPos || newPos == position + 1)){
       newPos = pos;
       currentToken = token;
     }
@@ -208,12 +208,12 @@ dynamic public function prevTokenLine() : Bool{
 
   var pos = this.content.substr(0, position).lastIndexOf("\n");
 
-  if( pos != -1 && (pos > newPos || newPos == position + 1) ){
+  if(pos != -1 && (pos > newPos || newPos == position + 1)){
     newPos = pos;
     currentToken = "\n";
   }
 
-  if( newPos == -1 ){
+  if(newPos == -1){
     return false;
   }
 
@@ -226,10 +226,10 @@ dynamic public function nextTokenLine() : Bool{
   var newPos = -1;
   var currentToken = "";
 
-  for( token in tokens ){
+  for(token in tokens){
     var pos = this.content.indexOf(token, position);
 
-    if( pos != -1 && (pos < newPos || newPos == -1) ){
+    if(pos != -1 && (pos < newPos || newPos == -1)){
       newPos = pos;
       currentToken = token;
     }
@@ -237,12 +237,12 @@ dynamic public function nextTokenLine() : Bool{
 
   var pos = this.content.indexOf("\n", position);
 
-  if( pos != -1 && (pos < newPos || newPos == -1) ){
+  if(pos != -1 && (pos < newPos || newPos == -1)){
     newPos = pos;
     currentToken = "\n";
   }
 
-  if( newPos == -1 ){
+  if(newPos == -1){
     return false;
   }
 
@@ -255,16 +255,16 @@ dynamic public function nextToken() : Bool{
   var newPos = -1;
   var currentToken = "";
 
-  for( token in tokens ){
+  for(token in tokens){
     var pos = this.content.indexOf(token, position);
 
-    if( pos != -1 && (pos < newPos || newPos == -1) ){
+    if(pos != -1 && (pos < newPos || newPos == -1)){
       newPos = pos;
       currentToken = token;
     }
   }
 
-  if( newPos == -1 ){
+  if(newPos == -1){
     return false;
   }
 
@@ -274,8 +274,8 @@ dynamic public function nextToken() : Bool{
 };
 
 dynamic public function increment(?content : String) : StringHandle{
-  if( content == null ){
-    if( current != null ){
+  if(content == null){
+    if(current != null){
       increment(current);
     }
 
@@ -284,7 +284,7 @@ dynamic public function increment(?content : String) : StringHandle{
 
   var newPos = position + content.length;
 
-  if( newPos > this.content.length ){
+  if(newPos > this.content.length){
     return this;
   }
 
@@ -294,8 +294,8 @@ dynamic public function increment(?content : String) : StringHandle{
 };
 
 dynamic public function decrement(?content : String) : StringHandle{
-  if( content == null ){
-    if( current != null ){
+  if(content == null){
+    if(current != null){
       decrement(current);
     }
 
@@ -304,7 +304,7 @@ dynamic public function decrement(?content : String) : StringHandle{
 
   var newPos = position - content.length;
 
-  if( newPos < 0 ){
+  if(newPos < 0){
     return this;
   }
 
@@ -314,8 +314,8 @@ dynamic public function decrement(?content : String) : StringHandle{
 };
 
 dynamic public function insert(?content : String, ?after : Bool) : StringHandle{
-  if( content == null ){
-    if( current != null ){
+  if(content == null){
+    if(current != null){
       insert(current);
     }
 
@@ -324,7 +324,7 @@ dynamic public function insert(?content : String, ?after : Bool) : StringHandle{
 
   var divided;
 
-  if( after == null || !after ){
+  if(after == null || !after){
     divided = divide();
   }else{
     divided = divide(1);
@@ -336,8 +336,8 @@ dynamic public function insert(?content : String, ?after : Bool) : StringHandle{
 };
 
 dynamic public function remove(?content : String) : StringHandle{
-  if( content == null ){
-    if( current != null ){
+  if(content == null){
+    if(current != null){
       remove(current);
     }
 
@@ -347,7 +347,7 @@ dynamic public function remove(?content : String) : StringHandle{
   var length = content.length;
   var divided = divide();
 
-  if( divided.right.length < length ){
+  if(divided.right.length < length){
     return this;
   }
 

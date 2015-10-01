@@ -3,7 +3,7 @@ import raxe.tools.Error;
 import raxe.tools.FolderReader;
 import raxe.transpiler.RaxeTranspilerGroup;
 
-class TranspilerCommand{
+@:tink class TranspilerCommand{
 
 /** 
  * @var files
@@ -40,14 +40,14 @@ dynamic public function transpile(all: Bool) : Bool{
   var dir = src;
 
   // Transpile one file
-  if( !FileSystem.isDirectory(this.src) ){
+  if(!FileSystem.isDirectory(this.src)){
     var oldFileSize : Int = this.files.get(this.src);
     var currentSize : Int = FileSystem.stat(this.src).size;
 
-    if( oldFileSize == null || oldFileSize != currentSize ){
+    if(oldFileSize == null || oldFileSize != currentSize){
       var result = transpileFile(dest, src);
 
-      if( dest == null ){
+      if(dest == null){
           this.response = result;
       }else{
           FolderReader.createFile(dest, result);
@@ -64,27 +64,27 @@ dynamic public function transpile(all: Bool) : Bool{
     var hasTranspile : Bool = false;
 
     // To have the same pattern between src and dest (avoid src/ and dist instead of dist/)
-    if( src.endsWith("/") ){
+    if(src.endsWith("/")){
       src = src.substr(0, src.length - 1);
     }
 
-    if( dest == null ){
+    if(dest == null){
       dest = src;
-    }else if( dest.endsWith("/") ){
+    }else if(dest.endsWith("/")){
       dest = dest.substr(0, dest.length - 1);
     }
 
     var currentFiles =new  Map<String, Int>();
 
-    for( file in files.iterator() ){
+    for(file in files.iterator()){
       var oldFileSize : Int = this.files.get(file);
       var currentSize : Int = FileSystem.stat(file).size;
 
-      if( oldFileSize != currentSize && (all || isRaxeFile(file)) ){
+      if(oldFileSize != currentSize && (all || isRaxeFile(file))){
         var newPath = this.getDestinationFile(file, src, dest);
 
         // If it's a raxe file, we transpile it
-        if( isRaxeFile(file) ){
+        if(isRaxeFile(file)){
           var result = transpileFile(dir, file);
           FolderReader.createFile(newPath, result);
           this.files.set(file, currentSize);
@@ -101,8 +101,8 @@ dynamic public function transpile(all: Bool) : Bool{
       currentFiles.set(file, currentSize);
     }
 
-    for( key in this.files.keys() ){
-      if( currentFiles.get(key) == null ){
+    for(key in this.files.keys()){
+      if(currentFiles.get(key) == null){
         this.files.remove(key);
         FileSystem.deleteFile(this.getDestinationFile(key, src, dest));
       }
@@ -148,7 +148,7 @@ dynamic public function getDestinationFile(file: String, src: String, dest: Stri
 
   var newPath = parts.join("/") + "/" + fileName.replace(".rx", ".hx");
 
-  if( dest != null ){
+  if(dest != null){
     newPath = newPath.replace(src, dest);
   }
 

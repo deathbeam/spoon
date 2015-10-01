@@ -56,42 +56,42 @@ def help()
 end
 
 def runDefault()
-  begin
-    if this.src != null then
+  try
+    if(this.src != null)
       this.transpile()
-    elsif FileSystem.exists("Raxefile") then
+    elsif(FileSystem.exists("Raxefile"))
       def rf = Raxefile.new("Raxefile")
       rf.run(this.task)
     else
       this.help()
     end
-  rescue err : String
+  catch(err : String)
     Sys.println(err)
     Sys.exit(0)
   end
 end
 
 private def transpile()
-  if this.src != null then
-    if !FileSystem.exists(src) then
+  if(this.src != null)
+    if(!FileSystem.exists(src))
       Error.create(ERROR_TYPE, "Source not found")
     end
 
     def transpiler = TranspilerCommand.new(this.src, this.dest)
-    while true do
-      begin
-        if transpiler.transpile(this.all) then
-          if transpiler.response != null && transpiler.response != "" then
+    while(true)
+      try
+        if(transpiler.transpile(this.all))
+          if(transpiler.response != null && transpiler.response != "")
             Sys.println(transpiler.response)
           else
             Sys.println("Transpilation done.")
           end
         end
-      rescue err : String
+      catch(err : String)
         Sys.println(err)
       end
 
-      if !this.watch then
+      if(!this.watch)
         break
       end
     end

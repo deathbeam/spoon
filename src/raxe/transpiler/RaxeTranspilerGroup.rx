@@ -1,0 +1,32 @@
+require "raxe/tools/StringHandle"
+require "sys/io/File"
+
+class self < TranspilerGroup
+
+def new()
+  super()
+end
+
+def transpile(directory : String, file : String) : String
+  def currentPackage = file.replace(directory, "")
+  currentPackage = currentPackage.replace("\\", "/")
+  def currentModule = currentPackage.substr(currentPackage.lastIndexOf("/") + 1).replace(".rx", "")
+  currentPackage = currentPackage.replace(currentPackage.substr(currentPackage.lastIndexOf("/")), "")
+  currentPackage = currentPackage.replace("/", ".")
+
+  if(currentPackage.charAt(0) == ".")
+    currentPackage = currentPackage.substr(1)
+  end
+
+  def content = File.getContent(file)
+
+  push(CoreTranspiler.new().setName(currentModule).setPath(currentPackage))
+  push(AccessTranspiler.new())
+  push(SemicolonTranspiler.new())
+
+  for(transpiler in transpilers)
+    content = transpiler.transpile(StringHandle.new(content, transpiler.tokens()))
+  end
+
+  return content
+end

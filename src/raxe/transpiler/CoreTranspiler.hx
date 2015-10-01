@@ -24,7 +24,7 @@ class CoreTranspiler implements Transpiler {
     return this;
   }
 
-  public function tokens() : Array<String> {
+  dynamic public function tokens() : Array<String> {
     return [
       // Line break
       "\n",
@@ -36,7 +36,7 @@ class CoreTranspiler implements Transpiler {
       "=>", "(:", ":)",
 
       // Standard keywords
-      "\"", "(", ")", "/", "=", "#", ",", "@",
+      "\"", "(", ")", "/", "=", "#", ",", "@", "]", "[",
 
       // Raxe keywords
       "-", "require", "def", "self.new", ".new", "self.", "self", "new", "end", "do",
@@ -56,10 +56,11 @@ class CoreTranspiler implements Transpiler {
     ];
   }
 
-  public function transpile(handle : StringHandle) {
+  dynamic public function transpile(handle : StringHandle) {
     var alreadyDefined = script;
     var isFixed = false;
     var fullyFixed = false;
+    var type = "";
 
     if (!script) {
       handle.insert("package " + path + ";using Lambda;using StringTools;").increment();
@@ -118,11 +119,14 @@ class CoreTranspiler implements Transpiler {
 
         while (handle.nextToken()) {
           if (handle.is("#")) {
-            handle.remove();
-            handle.insert("$");
+            if (handle.content.charAt(handle.position + 1) == "{") {
+              handle.remove();
+              handle.insert("$");
+            }
             handle.increment();
           } else {
-            if (handle.is("\"") && handle.content.charAt(handle.position -1) != "\\") {
+            if (handle.is("\"") && (handle.content.charAt(handle.position -1) != "\\" ||
+                (handle.content.charAt(handle.position -1) == "\\" && handle.content.charAt(handle.position -2) == "\\"))) {
               break;
             }
 
@@ -259,7 +263,11 @@ class CoreTranspiler implements Transpiler {
 
           consumeCurlys(handle);
           handle.next("\n");
-          handle.insert("{");
+
+          if (type == "class") {
+            handle.insert("{");
+          }
+
           handle.increment();
         } else {
           handle.position = position;
@@ -364,6 +372,8 @@ class CoreTranspiler implements Transpiler {
       }
       // [abstract] class/interface/enum
       else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum")) {
+        type = handle.current;
+
         if (isFixed) {
           fullyFixed = true;
           isFixed = false;

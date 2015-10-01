@@ -1,0 +1,144 @@
+require "raxe.tools.StringHandle"
+
+class self :: Transpiler
+
+def counter : Array(:Int:) 
+
+def new()
+  counter = Array(:Int:).new()
+end
+
+def tokens() : Array(:String:)
+  return [
+    ")", "}", ";",
+    "(:", ":)", "#", "\"",
+    "@", "//", "/**", "**/",
+    "=", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "<", ">", "~",
+    "if", "for", "while", "else", "try", "catch",
+  ]
+end
+
+def transpile(handle : StringHandle)
+  while handle.nextTokenLine() do
+    skipLines(handle)
+
+    if handle.is("\n") || handle.is("//") then
+      def position = handle.position
+      def isComment = handle.is("//")
+
+      handle.nextToken()
+      handle.position = position
+
+      if !handle.isOne([")", "]"]) then
+        handle.insert(";")
+        handle.increment()
+      end
+
+      if isComment then
+        handle.next("\n")
+      end
+
+      handle.increment("\n")
+    else
+      handle.increment()
+    end
+  end
+
+  return handle.content
+end
+
+def skipLines(handle : StringHandle)
+  while handle.nextTokenLine() do
+    if handle.is("\n") || handle.is("//") then
+      def isComment = handle.is("//")
+      def position = handle.position
+      handle.prevTokenLine()
+
+      if handle.isOne(["=", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "<", ">", "~", "\n"]) && onlyWhitespace(handle.content, handle.position + 1, position) then
+        handle.position = position
+
+        if isComment then
+          handle.next("\n")
+          handle.increment()
+        else
+          handle.increment("\n")
+        end
+      else
+        handle.position = position
+        break
+      end
+    elsif handle.is("\"") then
+      handle.increment()
+
+      while handle.nextToken() do
+        if handle.is("\"") && (handle.content.charAt(handle.position -1) != "\\" ||
+            (handle.content.charAt(handle.position -1) == "\\" && handle.content.charAt(handle.position -2) == "\\")) then
+          break
+        end
+
+        handle.increment()
+      end
+
+      handle.increment()
+    elsif handle.is("#") then
+      handle.next("\n")
+      handle.increment()
+    elsif handle.is("/**") then
+      handle.next("**/")
+      handle.increment()
+    elsif handle.is("@") then
+      handle.next("\n")
+      handle.increment()
+    elsif handle.safeis("if") || handle.safeis("while") || handle.safeis("for") || handle.safeis("else") || handle.safeis("try")|| handle.safeis("catch") then
+      if handle.safeis("else") then
+        def position = handle.position
+        handle.nextToken()
+
+        if !handle.safeis("if") then
+          handle.position = position
+        end
+      end
+
+      counter.push(0)
+      handle.increment()
+    elsif handle.is("{") then
+      if counter.length > 0 then
+        counter[counter.length - 1] = counter[counter.length - 1] + 1
+      end
+
+      handle.increment()
+    elsif handle.is("}") then
+      if counter.length > 0 then
+        counter[counter.length - 1] = counter[counter.length - 1] - 1
+
+        if counter[counter.length - 1] == 0 then
+          counter.pop()
+          handle.increment()
+          handle.nextTokenLine()
+        end
+      end
+
+      if !handle.safeis("else") && !handle.safeis("catch") then
+        handle.increment()
+      end
+    elsif handle.is("(:") then
+      handle.remove()
+      handle.insert("<")
+      handle.next(":)")
+      handle.remove()
+      handle.insert(">")
+      handle.increment()
+      break
+    else
+      break
+    end
+  end
+
+  handle.nextTokenLine()
+end
+
+def onlyWhitespace(content : String, from : Int, to : Int)
+  def sub = content.substr(from, to - from)
+  def regex = EReg.new("^\\s*$", "")
+  return regex.match(sub)
+end

@@ -5,7 +5,7 @@ import raxe.tools.StringHandle;
 class AccessTranspiler implements Transpiler {
   public function new() {}
   
-  public function tokens() : Array<String> {
+  dynamic public function tokens() : Array<String> {
     return [
       "{", "}", "[", "]", "(", ")", "@",
       "//", "/*", "*/", "\"", "\\\"",
@@ -13,7 +13,7 @@ class AccessTranspiler implements Transpiler {
     ];
   }
 
-  public function transpile(handle : StringHandle) {
+  dynamic public function transpile(handle : StringHandle) {
     var count = -1;
     var notPublic = false;
 

@@ -1,0 +1,14 @@
+require "raxe/tools/StringHandle"
+
+class self
+
+def transpilers : Array(:Transpiler:)
+
+def new()
+  transpilers = Array(:Transpiler:).new()
+end
+
+def push(transpiler : Transpiler) : TranspilerGroup
+  transpilers.push(transpiler)
+  return this
+end

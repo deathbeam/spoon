@@ -1,8 +1,7 @@
-package raxe.transpiler;
+package raxe.transpiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
 
-import raxe.tools.StringHandle;
+interface Transpiler{
 
-interface Transpiler {
-  public function tokens() : Array<String>;
-  public function transpile(handle : StringHandle) : String;
+dynamic public function tokens() : Array<String>;
+dynamic public function transpile(handle : StringHandle) : String;
 }

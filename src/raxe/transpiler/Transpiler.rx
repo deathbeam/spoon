@@ -1,0 +1,6 @@
+require "raxe/tools/StringHandle"
+
+interface self
+
+def tokens() : Array(:String:)
+def transpile(handle : StringHandle) : String

@@ -31,7 +31,7 @@ def new()
       clazz = Type.resolveEnum(path)
 
       if clazz == null then
-        trace("Failed to resolve type #thing")
+        trace("Failed to resolve type #{thing}")
       end
     end
 
@@ -48,7 +48,7 @@ end
 fixed override def get(o : Dynamic, f : String ) : Dynamic
   if o == null then
     #if debug
-    trace("Null error when doing get #f")
+    trace("Null error when doing get #{f}")
     #end
     error(EInvalidAccess(f))
   end
@@ -59,7 +59,7 @@ end
 fixed override def set( o : Dynamic, f : String, v : Dynamic ) : Dynamic
   if o == null then
     #if debug
-    trace("Null error when doing set #f")
+    trace("Null error when doing set #{f}")
     #end
     error(EInvalidAccess(f))
   end

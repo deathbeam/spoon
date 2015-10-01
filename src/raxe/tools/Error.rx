@@ -5,5 +5,5 @@ class self
 
 -- Raise a new error formatted into json to be able to parse it everywhere
 def self.create(errorType: String, error: String)
-  raise "{\"type\": #errorType,\"error\": #error}"
+  raise "{\"type\": #{errorType},\"error\": #{error}}"
 end

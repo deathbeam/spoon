@@ -31,7 +31,7 @@ public function new(){
       clazz = Type.resolveEnum(path);
 
       if( clazz == null ){
-        trace("Failed to resolve type $thing");
+        trace("Failed to resolve type ${thing}");
       }
     }
 
@@ -48,7 +48,7 @@ dynamic public function parse(s : String) : Expr{
  override public function get(o : Dynamic, f : String ) : Dynamic{
   if( o == null ){
     #if debug
-    trace("Null error when doing get $f");
+    trace("Null error when doing get ${f}");
     #end
     error(EInvalidAccess(f));
   }
@@ -59,7 +59,7 @@ dynamic public function parse(s : String) : Expr{
  override public function set( o : Dynamic, f : String, v : Dynamic ) : Dynamic{
   if( o == null ){
     #if debug
-    trace("Null error when doing set $f");
+    trace("Null error when doing set ${f}");
     #end
     error(EInvalidAccess(f));
   }

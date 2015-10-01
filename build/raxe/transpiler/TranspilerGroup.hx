@@ -1,16 +1,15 @@
-package raxe.transpiler;
+package raxe.transpiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
 
-import raxe.tools.StringHandle;
+class TranspilerGroup{
 
-class TranspilerGroup {
-  var transpilers : Array<Transpiler>;
+public var transpilers : Array<Transpiler>;
 
-  public function new() {
-    transpilers = new Array<Transpiler>();
-  }
+public function new(){
+  transpilers =new  Array<Transpiler>();
+};
 
-  public function push(transpiler : Transpiler) : TranspilerGroup {
-    transpilers.push(transpiler);
-    return this;
-  }
+dynamic public function push(transpiler : Transpiler) : TranspilerGroup{
+  transpilers.push(transpiler);
+  return this;
+};
 }

@@ -13,8 +13,8 @@ def group : RaxeScriptTranspilerGroup
 def new()
   super()
 
-  parser = new Parser()
-  group = new RaxeScriptTranspilerGroup()
+  parser = Parser.new()
+  group = RaxeScriptTranspilerGroup.new()
 
   variables.set("require", do(thing : String)
     def path = thing + ".rx"

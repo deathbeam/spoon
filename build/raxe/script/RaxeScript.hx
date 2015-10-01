@@ -13,8 +13,8 @@ public var group : RaxeScriptTranspilerGroup;
 public function new(){
   super();
 
-  parser = new Parser();
-  group = new RaxeScriptTranspilerGroup();
+  parser =new  Parser();
+  group =new  RaxeScriptTranspilerGroup();
 
   variables.set("require", function(thing : String){
     var path = thing + ".rx";

@@ -1,4 +1,4 @@
-require "raxe.tools.StringHandle"
+require "raxe/tools/StringHandle"
 
 class self :: Transpiler
 

@@ -12,11 +12,11 @@ def new()
 end
 
 def transpile(content : String) : String
-  push(new CoreTranspiler().setIsScript(true))
-  push(new SemicolonTranspiler())
+  push(CoreTranspiler.new().setIsScript(true))
+  push(SemicolonTranspiler.new())
 
   for(transpiler in transpilers)
-    content = transpiler.transpile(new StringHandle(content, transpiler.tokens()))
+    content = transpiler.transpile(StringHandle.new(content, transpiler.tokens()))
   end
 
   return content

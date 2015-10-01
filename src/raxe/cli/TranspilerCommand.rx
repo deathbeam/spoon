@@ -1,7 +1,7 @@
-require "sys.FileSystem"
-require "raxe.tools.Error"
-require "raxe.tools.FolderReader"
-require "raxe.transpiler.RaxeTranspilerGroup"
+require "sys/FileSystem"
+require "raxe/tools/Error"
+require "raxe/tools/FolderReader"
+require "raxe/transpiler/RaxeTranspilerGroup"
 
 class self
 

@@ -1,4 +1,4 @@
-package raxe.tools;using Lambda;using StringTools;@:tink class StringHandle{
+package raxe.tools;using Lambda;using StringTools;class StringHandle{
 
 public var content : String;
 public var position : Int;

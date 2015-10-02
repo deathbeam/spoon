@@ -2,7 +2,7 @@ package raxe.raxefile;using Lambda;using StringTools;import raxe.script.RaxeScri
 import sys.io.File;
 import sys.FileSystem;
 
-@:tink class Raxefile{
+class Raxefile{
 
 public var script : RaxeScript;
 

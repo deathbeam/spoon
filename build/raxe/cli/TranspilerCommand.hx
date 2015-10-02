@@ -3,7 +3,7 @@ import raxe.tools.Error;
 import raxe.tools.FolderReader;
 import raxe.transpiler.RaxeTranspilerGroup;
 
-@:tink class TranspilerCommand{
+class TranspilerCommand{
 
 /** 
  * @var files

@@ -1,7 +1,7 @@
 package raxe.transpiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
 import sys.io.File;
 
-@:tink class RaxeTranspilerGroup extends TranspilerGroup{
+class RaxeTranspilerGroup extends TranspilerGroup{
 
 public function new(){
   super();

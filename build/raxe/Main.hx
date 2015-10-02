@@ -1,7 +1,7 @@
 package raxe;using Lambda;using StringTools;import mcli.Dispatch;
 import raxe.cli.Cli;
 
-@:tink class Main{
+class Main{
 
 static dynamic public function main(){
   var args = Sys.args();

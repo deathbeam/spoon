@@ -1,6 +1,6 @@
 package raxe.transpiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
 
-@:tink class SemicolonTranspiler implements Transpiler{
+class SemicolonTranspiler implements Transpiler{
 
 public var counter : Array<Int> ;
 

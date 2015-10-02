@@ -12,7 +12,7 @@ import raxe.tools.Error;
 
   Raxe 0.0.1 - https://raxe-lang.org
  **/
-@:tink class Cli extends CommandLine{
+class Cli extends CommandLine{
 
 inline static public var ERROR_TYPE = "transpile_error";
 

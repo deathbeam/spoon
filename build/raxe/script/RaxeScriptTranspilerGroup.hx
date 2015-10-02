@@ -5,7 +5,7 @@ import raxe.transpiler.TranspilerGroup;
 import raxe.tools.StringHandle;
 import sys.io.File;
 
-@:tink class RaxeScriptTranspilerGroup extends TranspilerGroup{
+class RaxeScriptTranspilerGroup extends TranspilerGroup{
 
 public function new(){
   super();

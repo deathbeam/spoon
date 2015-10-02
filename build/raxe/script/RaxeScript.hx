@@ -5,7 +5,7 @@ import hscript.Expr;
 import sys.io.File;
 import sys.FileSystem;
 
-@:tink class RaxeScript extends Interp{
+class RaxeScript extends Interp{
 
 public var parser : Parser;
 public var group : RaxeScriptTranspilerGroup;

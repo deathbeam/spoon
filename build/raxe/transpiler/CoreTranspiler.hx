@@ -336,15 +336,12 @@ class CoreTranspiler implements Transpiler {
       // [abstract] class/interface/enum
       else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum")) {
         type = handle.current;
+        handle.increment();
 
         if (isFixed) {
           fullyFixed = true;
           isFixed = false;
         }
-
-        handle.insert("@:tink ");
-        handle.increment();
-        handle.increment(type);
 
         while(handle.nextToken()) {
           if (handle.is("self")) {

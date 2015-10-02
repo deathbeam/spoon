@@ -8,4 +8,5 @@ static dynamic public function main(){
   Sys.setCwd(args.pop());
 new   Dispatch(args).dispatch(new Cli());
 };
+
 }

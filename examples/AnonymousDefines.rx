@@ -41,6 +41,8 @@ def self.main()
 
   -- And now, print everything to console
   trace(result)
+  trace(dynarray)
+  trace(map)
   trace(array)
   trace(struct)
 end

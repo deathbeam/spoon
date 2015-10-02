@@ -1,0 +1,29 @@
+package examples;using Lambda;using StringTools;/** 
+This is how block (multiline) comments look in Raxe.
+You can plase as much text here as you want, you just must
+terminate block comment with same number of hypnens as you
+initialized it.
+ **/
+class BlockComments{
+
+/** 
+If you want to use nested block comments, you must initialize
+block comment with different number of hypnens as you use in
+nested block comment. So now when we initialized block comment
+with 5 hypnens, we can do this:
+---
+Nested block comment, hooray.
+---
+And of course, you can always also do this:
+-- Comment in block comment
+And now, we need to terminate it with same number of hypnens as
+we initialized it, in this case 5.
+ **/
+static dynamic public function main(){
+  /** 
+  We can also do this :)
+   **/
+  trace("This is block comment demo");
+};
+
+}

@@ -1,5 +1,3 @@
--- vim: set ft=rb:
-
 require "mcli/CommandLine"
 require "sys/FileSystem"
 require "raxe/raxefile/Raxefile"

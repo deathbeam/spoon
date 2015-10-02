@@ -8,7 +8,7 @@ class AccessTranspiler implements Transpiler {
   dynamic public function tokens() : Array<String> {
     return [
       "{", "}", "[", "]", "(", ")", "@",
-      "//", "/*", "*/", "\"", "\\\"",
+      "//", "/*", "*/", "\"",
       "var", "function", "public", "private"
     ];
   }
@@ -20,7 +20,16 @@ class AccessTranspiler implements Transpiler {
     while(handle.nextToken()) {
       if (handle.is("\"")) {
         handle.increment();
-        handle.next("\"");
+
+        while (handle.nextToken()) {
+          if (handle.is("\"") && (handle.content.charAt(handle.position -1) != "\\" ||
+              (handle.content.charAt(handle.position -1) == "\\" && handle.content.charAt(handle.position -2) == "\\"))) {
+            break;
+          }
+
+          handle.increment();
+        }
+
         handle.increment();
       } else if (handle.is("//") || handle.is("@")) {
         handle.increment();

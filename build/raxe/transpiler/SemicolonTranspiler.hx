@@ -151,7 +151,7 @@ dynamic public function skipLines(handle : StringHandle){
   handle.nextTokenLine();
 };
 
-dynamic function onlyWhitespace(content : String, from : Int, to : Int){
+dynamic public function onlyWhitespace(content : String, from : Int, to : Int){
   var sub = content.substr(from, to - from);
   var regex =new  EReg("^\\s*$", "");
   return regex.match(sub);

@@ -124,8 +124,10 @@ class CoreTranspiler implements Transpiler {
             }
             handle.increment();
           } else {
-            if (handle.is("\"") && (handle.content.charAt(handle.position -1) != "\\" ||
-                (handle.content.charAt(handle.position -1) == "\\" && handle.content.charAt(handle.position -2) == "\\"))) {
+            if (handle.is("\"") &&
+                (handle.content.charAt(handle.position -1) != "\\" ||
+                (handle.content.charAt(handle.position -1) == "\\" &&
+                handle.content.charAt(handle.position -2) == "\\"))) {
               break;
             }
 
@@ -383,7 +385,7 @@ class CoreTranspiler implements Transpiler {
 
     if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
         safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "next") &&
-        safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "require")) {
+        safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "require") && safeCheck(handle, "try") && safeCheck(handle, "catch")) {
       return true;
     } else {
       handle.increment();

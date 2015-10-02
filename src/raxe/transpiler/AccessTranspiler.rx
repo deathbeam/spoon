@@ -1,0 +1,67 @@
+require "raxe/tools/StringHandle"
+
+class self :: Transpiler
+
+def new()
+end
+
+def tokens() : Array(:String:)
+  return [
+    "{", "}", "[", "]", "(", ")", "@",
+    "//", "/*", "*/", "\"",
+    "var", "function", "public", "private",
+  ]
+end
+
+def transpile(handle : StringHandle)
+  def count = -1
+  def notPublic = false
+
+  while(handle.nextToken())
+    if(handle.is("\""))
+      handle.increment()
+
+      while(handle.nextToken())
+        if(handle.is("\"") && (handle.content.charAt(handle.position -1) != "\\" ||
+            (handle.content.charAt(handle.position -1) == "\\" && handle.content.charAt(handle.position -2) == "\\")))
+          break
+        end
+
+        handle.increment()
+      end
+
+      handle.increment()
+    elsif(handle.is("//") || handle.is("@"))
+      handle.increment()
+      handle.next("\n")
+      handle.increment()
+    elsif(handle.is("/*"))
+      handle.increment()
+      handle.next("*/")
+      handle.increment()
+    elsif(handle.is("[") || handle.is("{"))
+      count = count + 1
+      handle.increment()
+    elsif(handle.is("]") || handle.is("}"))
+      count = count - 1
+      handle.increment()
+    elsif(handle.is("public") || handle.is("private"))
+      notPublic = true
+      handle.increment()
+    elsif(handle.is("var") || handle.is("function"))
+      def current = handle.current
+
+      if(count == 0 && !notPublic)
+        handle.insert("public ")
+        handle.increment()
+      end
+
+      notPublic = false
+      handle.increment(current)
+    else
+      handle.increment()
+    end
+  end
+
+  return handle.content
+end

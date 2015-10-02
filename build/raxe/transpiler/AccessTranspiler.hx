@@ -1,68 +1,69 @@
-package raxe.transpiler;
+package raxe.transpiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
 
-import raxe.tools.StringHandle;
+class AccessTranspiler implements Transpiler{
 
-class AccessTranspiler implements Transpiler {
-  public function new() {}
+public function new(){
+};
 
-  dynamic public function tokens() : Array<String> {
-    return [
-      "{", "}", "[", "]", "(", ")", "@",
-      "//", "/*", "*/", "\"",
-      "var", "function", "public", "private"
-    ];
-  }
+dynamic public function tokens() : Array<String>{
+  return [
+    "{", "}", "[", "]", "(", ")", "@",
+    "//", "/*", "*/", "\"",
+    "var", "function", "public", "private",
+  ];
+};
 
-  dynamic public function transpile(handle : StringHandle) {
-    var count = -1;
-    var notPublic = false;
+dynamic public function transpile(handle : StringHandle){
+  var count = -1;
+  var notPublic = false;
 
-    while(handle.nextToken()) {
-      if (handle.is("\"")) {
-        handle.increment();
+  while(handle.nextToken()){
+    if(handle.is("\"")){
+      handle.increment();
 
-        while (handle.nextToken()) {
-          if (handle.is("\"") && (handle.content.charAt(handle.position -1) != "\\" ||
-              (handle.content.charAt(handle.position -1) == "\\" && handle.content.charAt(handle.position -2) == "\\"))) {
-            break;
-          }
-
-          handle.increment();
+      while(handle.nextToken()){
+        if(handle.is("\"") && (handle.content.charAt(handle.position -1) != "\\" ||
+            (handle.content.charAt(handle.position -1) == "\\" && handle.content.charAt(handle.position -2) == "\\"))){
+          break;
         }
 
-        handle.increment();
-      } else if (handle.is("//") || handle.is("@")) {
-        handle.increment();
-        handle.next("\n");
-        handle.increment();
-      } else if (handle.is("/*")) {
-        handle.increment();
-        handle.next("*/");
-        handle.increment();
-      } else if (handle.is("[") || handle.is("{")) {
-        count++;
-        handle.increment();
-      } else if (handle.is("]") || handle.is("}")) {
-        count--;
-        handle.increment();
-      } else if (handle.is("public") || handle.is("private")) {
-        notPublic = true;
-        handle.increment();
-      } else if (handle.is("var") || handle.is("function")) {
-        var current = handle.current;
-
-        if (count == 0 && !notPublic) {
-          handle.insert("public ");
-          handle.increment();
-        }
-
-        notPublic = false;
-        handle.increment(current);
-      } else {
         handle.increment();
       }
-    }
 
-    return handle.content;
-  }
+      handle.increment();
+    }else if(handle.is("//") || handle.is("@")){
+      handle.increment();
+      handle.next("\n");
+      handle.increment();
+    }else if(handle.is("/*")){
+      handle.increment();
+      handle.next("*/");
+      handle.increment();
+    }else if(handle.is("[") || handle.is("{")){
+      count = count + 1;
+      handle.increment();
+    }else if(handle.is("]") || handle.is("}")){
+      count = count - 1;
+      handle.increment();
+    }else if(handle.is("public") || handle.is("private")){
+      notPublic = true;
+      handle.increment();
+    }else if(handle.is("var") || handle.is("function")){
+      var current = handle.current;
+
+      if(count == 0 && !notPublic){
+        handle.insert("public ");
+        handle.increment();
+      }
+
+      notPublic = false;
+      handle.increment(current);
+    }else{
+      handle.increment();
+    }
+  };
+
+  return handle.content;
+};
+
 }

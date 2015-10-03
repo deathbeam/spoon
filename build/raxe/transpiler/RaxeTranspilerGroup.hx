@@ -1,4 +1,6 @@
-package raxe.transpiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
+package raxe.transpiler;using Lambda;using StringTools;// vim: set ft=rb:
+
+import raxe.tools.StringHandle;
 import sys.io.File;
 
 class RaxeTranspilerGroup extends TranspilerGroup{
@@ -30,4 +32,5 @@ dynamic public function transpile(directory : String, file : String) : String{
 
   return content;
 };
+
 }

@@ -1,4 +1,6 @@
-package raxe.cli;using Lambda;using StringTools;import mcli.CommandLine;
+package raxe.cli;using Lambda;using StringTools;// vim: set ft=rb:
+
+import mcli.CommandLine;
 import sys.FileSystem;
 import raxe.raxefile.Raxefile;
 import raxe.tools.Error;
@@ -83,8 +85,6 @@ private dynamic function transpile(){
         if(transpiler.transpile(this.all)){
           if(transpiler.response != null && transpiler.response != ""){
             Sys.println(transpiler.response);
-          }else{
-            Sys.println("Transpilation done.");
           }
         }
       }catch(err : String){
@@ -99,4 +99,5 @@ private dynamic function transpile(){
 
   Sys.exit(0);
 };
+
 }

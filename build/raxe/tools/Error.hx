@@ -1,4 +1,6 @@
-package raxe.tools;using Lambda;using StringTools;/** 
+package raxe.tools;using Lambda;using StringTools;// vim: set ft=rb:
+
+/** 
   Error handling
  **/
 class Error{
@@ -7,4 +9,5 @@ class Error{
 static dynamic public function create(errorType: String, error: String){
   throw "{\"type\": ${errorType},\"error\": ${error}}";
 };
+
 }

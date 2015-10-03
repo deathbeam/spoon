@@ -1,4 +1,6 @@
-package raxe.cli;using Lambda;using StringTools;import sys.FileSystem;
+package raxe.cli;using Lambda;using StringTools;// vim: set ft=rb:
+
+import sys.FileSystem;
 import raxe.tools.Error;
 import raxe.tools.FolderReader;
 import raxe.transpiler.RaxeTranspilerGroup;
@@ -123,7 +125,11 @@ dynamic public function transpile(all: Bool) : Bool{
  **/
 dynamic public function transpileFile(dir : String, file: String): String{
   var group =new  RaxeTranspilerGroup();
-  return group.transpile(dir != null ? FileSystem.fullPath(dir) : Sys.getCwd(), FileSystem.fullPath(file));
+  dir = dir != null ? FileSystem.fullPath(dir) : Sys.getCwd();
+  file = FileSystem.fullPath(file);
+
+  Sys.println("Compiling " + file);
+  return group.transpile(dir, file);
 };
 
 /** 
@@ -154,4 +160,5 @@ dynamic public function getDestinationFile(file: String, src: String, dest: Stri
 
   return newPath;
 };
+
 }

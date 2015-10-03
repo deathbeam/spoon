@@ -1,3 +1,5 @@
+-- vim: set ft=rb:
+
 require "raxe/tools/StringHandle"
 
 class self

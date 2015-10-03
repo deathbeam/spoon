@@ -1,4 +1,6 @@
-package raxe.script;using Lambda;using StringTools;import haxe.io.Input;
+package raxe.script;using Lambda;using StringTools;// vim: set ft=rb:
+
+import haxe.io.Input;
 import hscript.Parser;
 import hscript.Interp;
 import hscript.Expr;
@@ -67,4 +69,5 @@ dynamic public function parse(s : String) : Expr{
   Reflect.setProperty(o,f,v);
   return v;
 };
+
 }

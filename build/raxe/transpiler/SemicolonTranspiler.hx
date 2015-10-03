@@ -1,8 +1,10 @@
-package raxe.transpiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
+package raxe.transpiler;using Lambda;using StringTools;// vim: set ft=rb:
+
+import raxe.tools.StringHandle;
 
 class SemicolonTranspiler implements Transpiler{
 
-public var counter : Array<Int> ;
+public var counter : Array<Int>;
 
 public function new(){
   counter =new  Array<Int>();
@@ -54,7 +56,8 @@ dynamic public function skipLines(handle : StringHandle){
       var position = handle.position;
       handle.prevTokenLine();
 
-      if(handle.isOne(["=", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "<", ">", "~", "\n"]) && onlyWhitespace(handle.content, handle.position + 1, position)){
+      if(handle.isOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "<", ">", "~", "\n", ]) &&
+          onlyWhitespace(handle.content, handle.position + 1, position)){
         handle.position = position;
 
         if(isComment){
@@ -71,7 +74,8 @@ dynamic public function skipLines(handle : StringHandle){
           handle.increment("\n");
           handle.nextToken();
 
-          if(handle.isOne(["=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "<", ">", "~"]) && onlyWhitespace(handle.content, position + 1, handle.position - 1)){
+          if(handle.isOne(["=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "<", ">", "~"]) &&
+              onlyWhitespace(handle.content, position + 1, handle.position - 1)){
             break;
           }else{
             handle.position = position;
@@ -156,4 +160,5 @@ dynamic public function onlyWhitespace(content : String, from : Int, to : Int){
   var regex =new  EReg("^\\s*$", "");
   return regex.match(sub);
 };
+
 }

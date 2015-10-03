@@ -1,8 +1,10 @@
+-- vim: set ft=rb:
+
 require "raxe/tools/StringHandle"
 
 class self :: Transpiler
 
-def counter : Array(:Int:) 
+def counter : Array(:Int:)
 
 def new()
   counter = Array(:Int:).new()
@@ -54,7 +56,8 @@ def skipLines(handle : StringHandle)
       def position = handle.position
       handle.prevTokenLine()
 
-      if(handle.isOne(["=", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "<", ">", "~", "\n"]) && onlyWhitespace(handle.content, handle.position + 1, position))
+      if(handle.isOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "<", ">", "~", "\n", ]) &&
+          onlyWhitespace(handle.content, handle.position + 1, position))
         handle.position = position
 
         if(isComment)
@@ -71,7 +74,8 @@ def skipLines(handle : StringHandle)
           handle.increment("\n")
           handle.nextToken()
 
-          if(handle.isOne(["=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "<", ">", "~"]) && onlyWhitespace(handle.content, position + 1, handle.position - 1))
+          if(handle.isOne(["=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "<", ">", "~"]) &&
+              onlyWhitespace(handle.content, position + 1, handle.position - 1))
             break
           else
             handle.position = position

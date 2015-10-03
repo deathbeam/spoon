@@ -1,3 +1,5 @@
+-- vim: set ft=rb:
+
 require "haxe/io/Input"
 require "hscript/Parser"
 require "hscript/Interp"

@@ -1,3 +1,5 @@
+-- vim: set ft=rb:
+
 require "mcli/CommandLine"
 require "sys/FileSystem"
 require "raxe/raxefile/Raxefile"
@@ -83,8 +85,6 @@ private def transpile()
         if(transpiler.transpile(this.all))
           if(transpiler.response != null && transpiler.response != "")
             Sys.println(transpiler.response)
-          else
-            Sys.println("Transpilation done.")
           end
         end
       catch(err : String)

@@ -1,4 +1,6 @@
-package raxe.transpiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
+package raxe.transpiler;using Lambda;using StringTools;// vim: set ft=rb:
+
+import raxe.tools.StringHandle;
 
 class CoreTranspiler implements Transpiler{
 

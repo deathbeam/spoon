@@ -1,3 +1,5 @@
+-- vim: set ft=rb:
+
 require "sys/FileSystem"
 require "raxe/tools/Error"
 require "raxe/tools/FolderReader"
@@ -123,7 +125,11 @@ end
 ---
 def transpileFile(dir : String, file: String): String
   def group = RaxeTranspilerGroup.new()
-  return group.transpile(dir != null ? FileSystem.fullPath(dir) : Sys.getCwd(), FileSystem.fullPath(file))
+  dir = dir != null ? FileSystem.fullPath(dir) : Sys.getCwd()
+  file = FileSystem.fullPath(file)
+
+  Sys.println("Compiling " + file)
+  return group.transpile(dir, file)
 end
 
 ---

@@ -1,4 +1,6 @@
-package raxe.raxefile;using Lambda;using StringTools;import raxe.script.RaxeScript;
+package raxe.raxefile;using Lambda;using StringTools;// vim: set ft=rb:
+
+import raxe.script.RaxeScript;
 import sys.io.File;
 import sys.FileSystem;
 
@@ -50,4 +52,5 @@ dynamic public function createScript() : RaxeScript{
 
   return script;
 };
+
 }

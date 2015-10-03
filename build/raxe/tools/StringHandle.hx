@@ -1,4 +1,6 @@
-package raxe.tools;using Lambda;using StringTools;class StringHandle{
+package raxe.tools;using Lambda;using StringTools;// vim: set ft=rb:
+
+class StringHandle{
 
 public var content : String;
 public var position : Int;
@@ -362,4 +364,5 @@ private dynamic function divide(?offset: Int = 0){
     right: position < content.length ? content.substring(position + offset) : "",
   };
 };
+
 }

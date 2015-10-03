@@ -1,4 +1,6 @@
-package raxe.tools;using Lambda;using StringTools;import sys.FileSystem;
+package raxe.tools;using Lambda;using StringTools;// vim: set ft=rb:
+
+import sys.FileSystem;
 import sys.io.File;
 
 /** 
@@ -103,4 +105,5 @@ static dynamic public function copyFileSystem(source : String, destination : Str
     throw "Unable to copy " + source + " to " + destination + " : " + ex;
   }
 };
+
 }

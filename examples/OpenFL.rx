@@ -1,3 +1,5 @@
+-- vim: set ft=rb:
+
 -- Load OpenFL libraries
 require "openfl/display/Bitmap"
 require "openfl/display/Sprite"

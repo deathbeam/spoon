@@ -1,3 +1,5 @@
+-- vim: set ft=rb:
+
 ---
 This is how block (multiline) comments look in Raxe.
 You can plase as much text here as you want, you just must

@@ -1,8 +1,13 @@
-# raxe
+<img src="http://raxe-lang.org/img/logo.png"
+ alt="Raxe" title="Raxe" align="left" hspace="20" width="200px"/>
+
+### Raxe
 
 [![Build Status](https://travis-ci.org/nondev/raxe.svg)](https://travis-ci.org/nondev/raxe) [![Join the chat at https://gitter.im/nondev/raxe](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nondev/raxe?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 An awesome mix between Haxe and Ruby. Raxe is open source, cross-platform and compiles to Haxe without any performance penatly and runtime library.
+<br/><br/>
+
 
 # Installation
 

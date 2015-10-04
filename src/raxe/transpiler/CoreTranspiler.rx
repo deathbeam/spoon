@@ -179,7 +179,7 @@ def transpile(handle : StringHandle)
     elsif(handle.safeis("require"))
       if(script)
         handle.increment()
-        continue
+        next
       end
 
       handle.remove()

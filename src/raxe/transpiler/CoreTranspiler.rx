@@ -179,7 +179,7 @@ def transpile(handle : StringHandle)
     elsif(handle.safeis("require"))
       if(script)
         handle.increment()
-        next
+        continue
       end
 
       handle.remove()
@@ -305,10 +305,6 @@ def transpile(handle : StringHandle)
       consumeCurlys(handle)
       handle.insert("{")
       handle.increment()
-    elsif(handle.safeis("next"))
-      handle.remove()
-      handle.insert("continue")
-      handle.increment()
     -- Inser begin and end brackets around else but do not try to
     -- process curlys because there will not be any
     elsif(handle.safeis("else"))
@@ -370,8 +366,8 @@ private def safeNextToken(handle : StringHandle) : Bool
   handle.nextToken()
 
   if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
-      safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "next") &&
-      safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "require") && safeCheck(handle, "try") && safeCheck(handle, "catch"))
+      safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "require") &&
+      safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch"))
     return true
   else
     handle.increment()

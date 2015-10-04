@@ -126,6 +126,17 @@ def skipLines(handle : StringHandle)
 
       handle.increment()
     elsif(handle.is("}"))
+      def position = handle.position
+      handle.prevTokenLine()
+      handle.position = position
+
+      if(!handle.is("\n"))
+        handle.insert(";")
+        handle.increment()
+      end
+
+      handle.nextTokenLine()
+
       if(counter.length > 0)
         counter[counter.length - 1] = counter[counter.length - 1] - 1
 

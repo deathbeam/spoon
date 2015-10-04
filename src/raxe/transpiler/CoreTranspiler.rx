@@ -264,7 +264,7 @@ def transpile(handle : StringHandle)
       end
 
       isFixed = false
-    -- Defines to variables and functions
+    -- Closures and blocks
     elsif(handle.safeis("do"))
       var position = handle.position
       handle.increment()
@@ -276,6 +276,9 @@ def transpile(handle : StringHandle)
         handle.insert("function")
         handle.increment()
         consumeCurlys(handle)
+        handle.insert("{")
+      else
+        handle.remove("do")
         handle.insert("{")
       end
 

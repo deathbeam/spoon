@@ -264,7 +264,7 @@ dynamic public function transpile(handle : StringHandle){
       }
 
       isFixed = false;
-    // Defines to variables and functions
+    // Closures and blocks
     }else if(handle.safeis("do")){
       var position = handle.position;
       handle.increment();
@@ -276,6 +276,9 @@ dynamic public function transpile(handle : StringHandle){
         handle.insert("function");
         handle.increment();
         consumeCurlys(handle);
+        handle.insert("{");
+      }else{
+        handle.remove("do");
         handle.insert("{");
       }
 

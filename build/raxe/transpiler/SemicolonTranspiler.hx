@@ -126,6 +126,17 @@ dynamic public function skipLines(handle : StringHandle){
 
       handle.increment();
     }else if(handle.is("}")){
+      var position = handle.position;
+      handle.prevTokenLine();
+      handle.position = position;
+
+      if(!handle.is("\n")){
+        handle.insert(";");
+        handle.increment();
+      }
+
+      handle.nextTokenLine();
+
       if(counter.length > 0){
         counter[counter.length - 1] = counter[counter.length - 1] - 1;
 

@@ -10,7 +10,7 @@ public function new(){
   transpilers =new  Array<Transpiler>();
 };
 
-dynamic public function push(transpiler : Transpiler) : TranspilerGroup{
+public function push(transpiler : Transpiler) : TranspilerGroup{
   transpilers.push(transpiler);
   return this;
 };

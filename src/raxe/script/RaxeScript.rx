@@ -47,7 +47,7 @@ def parse(s : String) : Expr
   return parser.parseString(content)
 end
 
-fixed override def get(o : Dynamic, f : String ) : Dynamic
+override def get(o : Dynamic, f : String ) : Dynamic
   if(o == null)
     #if debug
     trace("Null error when doing get #{f}")
@@ -58,7 +58,7 @@ fixed override def get(o : Dynamic, f : String ) : Dynamic
   return Reflect.getProperty(o,f)
 end
 
-fixed override def set( o : Dynamic, f : String, v : Dynamic ) : Dynamic
+override def set( o : Dynamic, f : String, v : Dynamic ) : Dynamic
   if(o == null)
     #if debug
     trace("Null error when doing set #{f}")

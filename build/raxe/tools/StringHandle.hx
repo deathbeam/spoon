@@ -19,28 +19,28 @@ public function new(content : String, ?tokens : Array<String>, position : Int = 
   this.position = position;
 };
 
-dynamic public function reset(){
+public function reset(){
   position = 0;
   current = null;
 };
 
-dynamic public function atStart() : Bool{
+public function atStart() : Bool{
   return position <= 0;
 };
 
-dynamic public function atEnd() : Bool{
+public function atEnd() : Bool{
   return position >= content.length;
 };
 
-dynamic public function nearStart(tolerance : Int) : Bool{
+public function nearStart(tolerance : Int) : Bool{
   return (position - tolerance) <= 0;
 };
 
-dynamic public function nearEnd(tolerance : Int) : Bool{
+public function nearEnd(tolerance : Int) : Bool{
   return (position + tolerance) >= content.length;
 };
 
-dynamic public function closest(content : String) : Bool{
+public function closest(content : String) : Bool{
   var divided = divide();
   var regex =new  EReg("[^\\w][ \t]*" + content, "");
 
@@ -59,11 +59,11 @@ dynamic public function closest(content : String) : Bool{
   return regex.match(sub.substr(0, count));
 };
 
-dynamic public function is(content : String) : Bool{
+public function is(content : String) : Bool{
   return current == content;
 };
 
-dynamic public function isOne(content : Array<String>) : Bool{
+public function isOne(content : Array<String>) : Bool{
   var contains = false;
 
   for(cnt in content){
@@ -73,7 +73,7 @@ dynamic public function isOne(content : Array<String>) : Bool{
   return contains;
 };
 
-dynamic public function safeisStart(content : String) : Bool{
+public function safeisStart(content : String) : Bool{
   var regex =new  EReg("[^\\w]" + content, "");
 
   if(nearStart(1)){
@@ -91,7 +91,7 @@ dynamic public function safeisStart(content : String) : Bool{
   return regex.match(sub);
 };
 
-dynamic public function safeisEnd(content : String) : Bool{
+public function safeisEnd(content : String) : Bool{
   var regex =new  EReg(content + "[^\\w]", "");
 
   if(nearEnd(content.length + 2)){
@@ -105,7 +105,7 @@ dynamic public function safeisEnd(content : String) : Bool{
   return regex.match(sub);
 };
 
-dynamic public function safeis(content : String) : Bool{
+public function safeis(content : String) : Bool{
   var regex =new  EReg("[^\\w]" + content + "[^\\w]", "");
 
   if(nearStart(1)){
@@ -123,7 +123,7 @@ dynamic public function safeis(content : String) : Bool{
   return regex.match(sub);
 };
 
-dynamic public function at(content : String) : Bool{
+public function at(content : String) : Bool{
   var divided = divide();
 
   if(divided.right.substr(0, content.length) == content){
@@ -133,7 +133,7 @@ dynamic public function at(content : String) : Bool{
   return false;
 };
 
-dynamic public function prev(?content : String) : Bool{
+public function prev(?content : String) : Bool{
   if(content == null){
     if(current != null){
       return prev(current);
@@ -153,7 +153,7 @@ dynamic public function prev(?content : String) : Bool{
   return true;
 };
 
-dynamic public function next(?content : String) : Bool{
+public function next(?content : String) : Bool{
   if(content == null){
     if(current != null){
       return next(current);
@@ -173,7 +173,7 @@ dynamic public function next(?content : String) : Bool{
   return true;
 };
 
-dynamic public function prevToken() : Bool{
+public function prevToken() : Bool{
   var newPos = position + 1;
   var currentToken = "";
 
@@ -195,7 +195,7 @@ dynamic public function prevToken() : Bool{
   return true;
 };
 
-dynamic public function prevTokenLine() : Bool{
+public function prevTokenLine() : Bool{
   var newPos = position + 1;
   var currentToken = "";
 
@@ -224,7 +224,7 @@ dynamic public function prevTokenLine() : Bool{
   return true;
 };
 
-dynamic public function nextTokenLine() : Bool{
+public function nextTokenLine() : Bool{
   var newPos = -1;
   var currentToken = "";
 
@@ -253,7 +253,7 @@ dynamic public function nextTokenLine() : Bool{
   return true;
 };
 
-dynamic public function nextToken() : Bool{
+public function nextToken() : Bool{
   var newPos = -1;
   var currentToken = "";
 
@@ -275,7 +275,7 @@ dynamic public function nextToken() : Bool{
   return true;
 };
 
-dynamic public function increment(?content : String) : StringHandle{
+public function increment(?content : String) : StringHandle{
   if(content == null){
     if(current != null){
       increment(current);
@@ -295,7 +295,7 @@ dynamic public function increment(?content : String) : StringHandle{
   return this;
 };
 
-dynamic public function decrement(?content : String) : StringHandle{
+public function decrement(?content : String) : StringHandle{
   if(content == null){
     if(current != null){
       decrement(current);
@@ -315,7 +315,7 @@ dynamic public function decrement(?content : String) : StringHandle{
   return this;
 };
 
-dynamic public function insert(?content : String, ?after : Bool) : StringHandle{
+public function insert(?content : String, ?after : Bool) : StringHandle{
   if(content == null){
     if(current != null){
       insert(current);
@@ -337,7 +337,7 @@ dynamic public function insert(?content : String, ?after : Bool) : StringHandle{
   return this;
 };
 
-dynamic public function remove(?content : String) : StringHandle{
+public function remove(?content : String) : StringHandle{
   if(content == null){
     if(current != null){
       remove(current);
@@ -358,7 +358,7 @@ dynamic public function remove(?content : String) : StringHandle{
   return this;
 };
 
-private dynamic function divide(?offset: Int = 0){
+private function divide(?offset: Int = 0){
   return {
     left: position > 0 ? content.substr(0, position + offset) : "",
     right: position < content.length ? content.substring(position + offset) : "",

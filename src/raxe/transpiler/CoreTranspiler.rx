@@ -44,23 +44,18 @@ def tokens() : Array(:String:)
     "-", "require", "def", "self", ".new", "new", "end", "do",
 
     -- Haxe keywords
-    "using", "inline", "typedef", "try", "catch",
+    "typedef", "try", "catch",
 
     -- Expressions
     "elsif", "if", "else", "while", "for",
 
     -- Types
     "class", "enum", "abstract", "interface",
-
-    -- Modifiers
-    "private", "public", "fixed", "inline",
   ]
 end
 
 def transpile(handle : StringHandle)
   def alreadyDefined = script
-  def isFixed = false
-  def fullyFixed = false
   def type = ""
 
   if(!script)
@@ -216,18 +211,9 @@ def transpile(handle : StringHandle)
         safeNextToken(handle)
       end
 
-      def insertDynamic = true
-
       if(handle.safeis("new"))
-        insertDynamic = false
         handle.increment()
         handle.nextToken()
-      end
-
-      insertDynamic = insertDynamic && !script
-
-      if(fullyFixed || isFixed)
-        insertDynamic = false
       end
 
       if(handle.is("(:"))
@@ -238,13 +224,7 @@ def transpile(handle : StringHandle)
 
       if(handle.is("("))
         handle.position = position
-
-        if(insertDynamic)
-          handle.insert("dynamic function")
-        else
-          handle.insert("function")
-        end
-
+        handle.insert("function")
         consumeCurlys(handle)
         handle.next("\n")
 
@@ -258,8 +238,6 @@ def transpile(handle : StringHandle)
         handle.insert("var")
         handle.increment()
       end
-
-      isFixed = false
     -- Closures and blocks
     elsif(handle.safeis("do"))
       var position = handle.position
@@ -309,21 +287,10 @@ def transpile(handle : StringHandle)
       handle.increment("else")
       handle.insert("{")
       handle.increment()
-    elsif(handle.safeis("fixed"))
-      handle.remove()
-      isFixed = true
-    elsif(handle.safeis("inline"))
-      isFixed = true
-      handle.increment()
     -- [abstract] class/interface/enum
     elsif (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum"))
       type = handle.current
       handle.increment()
-
-      if(isFixed)
-        fullyFixed = true
-        isFixed = false
-      end
 
       while(handle.nextToken())
         if(handle.is("self"))

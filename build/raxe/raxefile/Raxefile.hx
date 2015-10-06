@@ -13,12 +13,12 @@ public function new(path : String){
   script.execute(script.parse(File.getContent(path)));
 };
 
-dynamic public function run(task : String){
+public function run(task : String){
   var fn = script.variables.get(task);
   fn();
 };
 
-dynamic public function createScript() : RaxeScript{
+public function createScript() : RaxeScript{
   var script =new  RaxeScript();
 
   script.variables.set("sh", function(cmd : String, ?args : Array<String>){

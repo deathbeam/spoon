@@ -52,12 +52,12 @@ public var all: Bool;
   Show this message
   @alias h
  **/
-dynamic public function help(){
+public function help(){
   Sys.println(this.showUsage());
   Sys.exit(0);
 };
 
-dynamic public function runDefault(){
+public function runDefault(){
   try{
     if(this.src != null){
       this.transpile();
@@ -73,7 +73,7 @@ dynamic public function runDefault(){
   }
 };
 
-private dynamic function transpile(){
+private function transpile(){
   if(this.src != null){
     if(!FileSystem.exists(src)){
       Error.create(ERROR_TYPE, "Source not found");

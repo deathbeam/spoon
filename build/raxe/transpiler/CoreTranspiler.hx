@@ -11,22 +11,22 @@ public var script : Bool = false;
 public var path : String = "";
 public var name : String = "";
 
-dynamic public function setIsScript(script : Bool) : CoreTranspiler{
+public function setIsScript(script : Bool) : CoreTranspiler{
   this.script = script;
   return this;
 };
 
-dynamic public function setPath(path : String) : CoreTranspiler{
+public function setPath(path : String) : CoreTranspiler{
   this.path = path;
   return this;
 };
 
-dynamic public function setName(name : String) : CoreTranspiler{
+public function setName(name : String) : CoreTranspiler{
   this.name = name;
   return this;
 };
 
-dynamic public function tokens() : Array<String>{
+public function tokens() : Array<String>{
   return [
     // Line break
     "\n",
@@ -44,23 +44,18 @@ dynamic public function tokens() : Array<String>{
     "-", "require", "def", "self", ".new", "new", "end", "do",
 
     // Haxe keywords
-    "using", "inline", "typedef", "try", "catch",
+    "typedef", "try", "catch",
 
     // Expressions
     "elsif", "if", "else", "while", "for",
 
     // Types
     "class", "enum", "abstract", "interface",
-
-    // Modifiers
-    "private", "public", "fixed", "inline",
   ];
 };
 
-dynamic public function transpile(handle : StringHandle){
+public function transpile(handle : StringHandle){
   var alreadyDefined = script;
-  var isFixed = false;
-  var fullyFixed = false;
   var type = "";
 
   if(!script){
@@ -216,18 +211,9 @@ dynamic public function transpile(handle : StringHandle){
         safeNextToken(handle);
       }
 
-      var insertDynamic = true;
-
       if(handle.safeis("new")){
-        insertDynamic = false;
         handle.increment();
         handle.nextToken();
-      }
-
-      insertDynamic = insertDynamic && !script;
-
-      if(fullyFixed || isFixed){
-        insertDynamic = false;
       }
 
       if(handle.is("(:")){
@@ -238,13 +224,7 @@ dynamic public function transpile(handle : StringHandle){
 
       if(handle.is("(")){
         handle.position = position;
-
-        if(insertDynamic){
-          handle.insert("dynamic function");
-        }else{
-          handle.insert("function");
-        }
-
+        handle.insert("function");
         consumeCurlys(handle);
         handle.next("\n");
 
@@ -258,8 +238,6 @@ dynamic public function transpile(handle : StringHandle){
         handle.insert("var");
         handle.increment();
       }
-
-      isFixed = false;
     // Closures and blocks
     }else if(handle.safeis("do")){
       var position = handle.position;
@@ -309,21 +287,10 @@ dynamic public function transpile(handle : StringHandle){
       handle.increment("else");
       handle.insert("{");
       handle.increment();
-    }else if(handle.safeis("fixed")){
-      handle.remove();
-      isFixed = true;
-    }else if(handle.safeis("inline")){
-      isFixed = true;
-      handle.increment();
     // [abstract] class/interface/enum
     }else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum")){
       type = handle.current;
       handle.increment();
-
-      if(isFixed){
-        fullyFixed = true;
-        isFixed = false;
-      }
 
       while(handle.nextToken()){
         if(handle.is("self")){
@@ -358,7 +325,7 @@ dynamic public function transpile(handle : StringHandle){
   return handle.content;
 };
 
-private dynamic function safeNextToken(handle : StringHandle) : Bool{
+private function safeNextToken(handle : StringHandle) : Bool{
   handle.nextToken();
 
   if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
@@ -371,7 +338,7 @@ private dynamic function safeNextToken(handle : StringHandle) : Bool{
   }
 };
 
-private dynamic function safeCheck(handle : StringHandle, content : String) : Bool{
+private function safeCheck(handle : StringHandle, content : String) : Bool{
   if(handle.is(content)){
     return handle.safeis(content);
   }
@@ -379,7 +346,7 @@ private dynamic function safeCheck(handle : StringHandle, content : String) : Bo
   return true;
 };
 
-private dynamic function consumeCurlys(handle : StringHandle){
+private function consumeCurlys(handle : StringHandle){
   var count = 0;
 
   while(handle.nextToken()){

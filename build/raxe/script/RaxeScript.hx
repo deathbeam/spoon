@@ -41,13 +41,13 @@ public function new(){
   });
 };
 
-dynamic public function parse(s : String) : Expr{
+public function parse(s : String) : Expr{
   var content = group.transpile(s);
   trace(content);
   return parser.parseString(content);
 };
 
- override public function get(o : Dynamic, f : String ) : Dynamic{
+override public function get(o : Dynamic, f : String ) : Dynamic{
   if(o == null){
     #if debug
     trace("Null error when doing get ${f}");
@@ -58,7 +58,7 @@ dynamic public function parse(s : String) : Expr{
   return Reflect.getProperty(o,f);
 };
 
- override public function set( o : Dynamic, f : String, v : Dynamic ) : Dynamic{
+override public function set( o : Dynamic, f : String, v : Dynamic ) : Dynamic{
   if(o == null){
     #if debug
     trace("Null error when doing set ${f}");

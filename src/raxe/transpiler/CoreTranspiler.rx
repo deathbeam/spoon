@@ -41,7 +41,7 @@ def tokens() : Array(:String:)
     "\"", "(", ")", "/", "=", "#", ",", "@", "]", "[",
 
     -- Raxe keywords
-    "-", "require", "def", "self.new", ".new", "self.", "self", "new", "end", "do",
+    "-", "require", "def", "self", ".new", "new", "end", "do",
 
     -- Haxe keywords
     "using", "inline", "typedef", "try", "catch",
@@ -142,10 +142,6 @@ def transpile(handle : StringHandle)
       end
 
       handle.increment()
-    elsif(handle.is("self.new"))
-      handle.remove()
-      handle.insert("new " + name)
-      handle.increment()
     elsif(handle.is(".new"))
       handle.remove()
       handle.prevTokenLine()
@@ -211,8 +207,8 @@ def transpile(handle : StringHandle)
       def position = handle.position
       safeNextToken(handle)
 
-      if(handle.safeisStart("self."))
-        handle.remove()
+      if(handle.safeis("self"))
+        handle.remove("self.")
         handle.position = position
         handle.insert("static ")
         handle.increment()
@@ -346,9 +342,9 @@ def transpile(handle : StringHandle)
 
         handle.increment()
       end
-    elsif(handle.safeisStart("self."))
+    elsif(handle.safeis("self"))
       handle.remove()
-      handle.insert(name + ".")
+      handle.insert(name)
       handle.increment()
     else
       handle.increment() -- Skip this token

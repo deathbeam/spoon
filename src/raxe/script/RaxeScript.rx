@@ -43,7 +43,6 @@ end
 
 def parse(s : String) : Expr
   def content = group.transpile(s)
-  trace(content)
   return parser.parseString(content)
 end
 

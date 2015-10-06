@@ -4,6 +4,7 @@ require "mcli/CommandLine"
 require "sys/FileSystem"
 require "raxe/raxefile/Raxefile"
 require "raxe/tools/Error"
+require "raxe/script/RaxeScript"
 
 ---
   8b,dPPYba,  ,adPPYYba,  8b,     ,d8  ,adPPYba,
@@ -49,6 +50,12 @@ def watch : Bool
 def all: Bool
 
 ---
+  Evaluate Raxe snippet
+  @alias i
+---
+def interp: String
+
+---
   Show this message
   @alias h
 ---
@@ -59,7 +66,10 @@ end
 
 def runDefault()
   try
-    if(this.src != null)
+    if(interp != null && interp != "")
+      def script = RaxeScript.new()
+      Sys.println(script.execute(script.parse(interp)))
+    elsif(this.src != null)
       this.transpile()
     elsif(FileSystem.exists("Raxefile"))
       def rf = Raxefile.new("Raxefile")

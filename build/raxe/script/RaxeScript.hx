@@ -43,7 +43,6 @@ public function new(){
 
 public function parse(s : String) : Expr{
   var content = group.transpile(s);
-  trace(content);
   return parser.parseString(content);
 };
 

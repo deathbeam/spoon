@@ -4,6 +4,7 @@ import mcli.CommandLine;
 import sys.FileSystem;
 import raxe.raxefile.Raxefile;
 import raxe.tools.Error;
+import raxe.script.RaxeScript;
 
 /** 
   8b,dPPYba,  ,adPPYYba,  8b,     ,d8  ,adPPYba,
@@ -49,6 +50,12 @@ public var watch : Bool;
 public var all: Bool;
 
 /** 
+  Evaluate Raxe snippet
+  @alias i
+ **/
+public var interp: String;
+
+/** 
   Show this message
   @alias h
  **/
@@ -59,7 +66,10 @@ public function help(){
 
 public function runDefault(){
   try{
-    if(this.src != null){
+    if(interp != null && interp != ""){
+      var script =new  RaxeScript();
+      Sys.println(script.execute(script.parse(interp)));
+    }else if(this.src != null){
       this.transpile();
     }else if(FileSystem.exists("Raxefile")){
       var rf =new  Raxefile("Raxefile");

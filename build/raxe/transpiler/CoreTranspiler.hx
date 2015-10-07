@@ -41,7 +41,7 @@ public function tokens() : Array<String> return{
     "\"", "(", ")", "/", "=", "#", ",", "@", "]", "[",
 
     // Raxe keywords
-    "-", "require", "def", "self", ".new", "new", "end", "do",
+    "-", "require", "include", "def", "self", ".new", "new", "end", "do",
 
     // Haxe keywords
     "typedef", "try", "catch",
@@ -70,11 +70,16 @@ public function transpile(handle : StringHandle) return{
       var position = handle.position;
 
       while(handle.nextTokenLine()){
-        handle.increment();
-
         if(handle.is("-")){
-          comment += "-";
+          if (comment != "" && handle.content.charAt(handle.position - 1) != "-"){
+            handle.increment();
+            break;
+          }else{
+            comment += "-";
+            handle.increment();
+          }
         }else{
+          handle.increment();
           break;
         }
       }
@@ -167,7 +172,10 @@ public function transpile(handle : StringHandle) return{
       handle.insert("}");
       handle.increment();
     // Change require to classic imports
-    }else if(handle.safeis("require")){
+    }else if(handle.safeis("require") || handle.safeis("include")){
+      var isInclude = handle.is("include");
+      var toUsing = "";
+
       if(script){
         handle.increment();
         continue;
@@ -184,13 +192,30 @@ public function transpile(handle : StringHandle) return{
           handle.remove();
 
           if(!firstQuote){
-            handle.increment();
+            if(isInclude){
+              handle.insert(".*;using " + toUsing + ";");
+              handle.increment();
+            }
+
+            handle.increment("\"");
             break;
           }
 
           firstQuote = false;
         }else if(handle.is("/")){
-          handle.remove();
+          if (isInclude){
+            var position = handle.position;
+            handle.increment();
+            safeNextToken(handle);
+
+            if(handle.is("\"")){
+              toUsing = handle.content.substr(position + 1, handle.position - position - 1);
+            }
+
+            handle.position = position;
+          }
+
+          handle.remove("/");
           handle.insert(".");
         }
 
@@ -337,7 +362,7 @@ private function safeNextToken(handle : StringHandle) : Bool return{
 
   if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
       safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "require") &&
-      safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch")){
+      safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch") && safeCheck(handle, "include")){
     return true;
   }else{
     handle.increment();

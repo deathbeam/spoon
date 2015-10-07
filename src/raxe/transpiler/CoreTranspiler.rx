@@ -41,7 +41,7 @@ def tokens() : Array(:String:)
     "\"", "(", ")", "/", "=", "#", ",", "@", "]", "[",
 
     -- Raxe keywords
-    "-", "require", "def", "self", ".new", "new", "end", "do",
+    "-", "require", "include", "def", "self", ".new", "new", "end", "do",
 
     -- Haxe keywords
     "typedef", "try", "catch",
@@ -70,11 +70,16 @@ def transpile(handle : StringHandle)
       def position = handle.position
 
       while(handle.nextTokenLine())
-        handle.increment()
-
         if(handle.is("-"))
-          comment += "-"
+          if (comment != "" && handle.content.charAt(handle.position - 1) != "-")
+            handle.increment()
+            break
+          else
+            comment += "-"
+            handle.increment()
+          end
         else
+          handle.increment()
           break
         end
       end
@@ -167,7 +172,10 @@ def transpile(handle : StringHandle)
       handle.insert("}")
       handle.increment()
     -- Change require to classic imports
-    elsif(handle.safeis("require"))
+    elsif(handle.safeis("require") || handle.safeis("include"))
+      def isInclude = handle.is("include")
+      def toUsing = ""
+
       if(script)
         handle.increment()
         continue
@@ -184,13 +192,30 @@ def transpile(handle : StringHandle)
           handle.remove()
 
           if(!firstQuote)
-            handle.increment()
+            if(isInclude)
+              handle.insert(".*;using " + toUsing + ";")
+              handle.increment()
+            end
+
+            handle.increment("\"")
             break
           end
 
           firstQuote = false
         elsif(handle.is("/"))
-          handle.remove()
+          if (isInclude)
+            def position = handle.position
+            handle.increment()
+            safeNextToken(handle)
+
+            if(handle.is("\""))
+              toUsing = handle.content.substr(position + 1, handle.position - position - 1)
+            end
+
+            handle.position = position
+          end
+
+          handle.remove("/")
           handle.insert(".")
         end
 
@@ -337,7 +362,7 @@ private def safeNextToken(handle : StringHandle) : Bool
 
   if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
       safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "require") &&
-      safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch"))
+      safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch") && safeCheck(handle, "include"))
     return true
   else
     handle.increment()

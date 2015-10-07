@@ -11,16 +11,22 @@ public function tokens() : Array<String> return{
   return [
     "{", "}", "[", "]", "(", ")", "@",
     "//", "/*", "*/", "\"",
-    "var", "function", "public", "private",
+    "var", "function", "public", "private", "module", "new",
   ];
 };
 
 public function transpile(handle : StringHandle) return{
   var count = -1;
-  var notPublic = false;
+  var isPrivate = false;
+  var isStatic = false;
 
   while(handle.nextToken()){
-    if(handle.is("\"")){
+    if(handle.safeis("module")){
+      handle.remove();
+      handle.insert("class");
+      handle.increment();
+      isStatic = true;
+    }else if(handle.is("\"")){
       handle.increment();
 
       while(handle.nextToken()){
@@ -47,18 +53,31 @@ public function transpile(handle : StringHandle) return{
     }else if(handle.is("]") || handle.is("}")){
       count = count - 1;
       handle.increment();
-    }else if(handle.is("public") || handle.is("private")){
-      notPublic = true;
+    }else if(handle.safeis("public") || handle.safeis("private")){
+      isPrivate = true;
       handle.increment();
-    }else if(handle.is("var") || handle.is("function")){
+    }else if(handle.safeis("var") || handle.safeis("function")){
       var current = handle.current;
 
-      if(count == 0 && !notPublic){
-        handle.insert("public ");
-        handle.increment();
+      if(count == 0){
+        if(!isPrivate){
+          handle.insert("public ");
+          handle.increment();
+        }
+
+        if(isStatic){
+          var position = handle.position;
+          handle.nextToken();
+          handle.position = position;
+
+          if(!handle.safeis("new")){
+            handle.insert("static ");
+            handle.increment();
+          }
+        }
       }
 
-      notPublic = false;
+      isPrivate = false;
       handle.increment(current);
     }else{
       handle.increment();

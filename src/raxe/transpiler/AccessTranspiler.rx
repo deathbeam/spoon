@@ -11,16 +11,22 @@ def tokens() : Array(:String:)
   return [
     "{", "}", "[", "]", "(", ")", "@",
     "//", "/*", "*/", "\"",
-    "var", "function", "public", "private",
+    "var", "function", "public", "private", "module", "new",
   ]
 end
 
 def transpile(handle : StringHandle)
   def count = -1
-  def notPublic = false
+  def isPrivate = false
+  def isStatic = false
 
   while(handle.nextToken())
-    if(handle.is("\""))
+    if(handle.safeis("module"))
+      handle.remove()
+      handle.insert("class")
+      handle.increment()
+      isStatic = true
+    elsif(handle.is("\""))
       handle.increment()
 
       while(handle.nextToken())
@@ -47,18 +53,31 @@ def transpile(handle : StringHandle)
     elsif(handle.is("]") || handle.is("}"))
       count = count - 1
       handle.increment()
-    elsif(handle.is("public") || handle.is("private"))
-      notPublic = true
+    elsif(handle.safeis("public") || handle.safeis("private"))
+      isPrivate = true
       handle.increment()
-    elsif(handle.is("var") || handle.is("function"))
+    elsif(handle.safeis("var") || handle.safeis("function"))
       def current = handle.current
 
-      if(count == 0 && !notPublic)
-        handle.insert("public ")
-        handle.increment()
+      if(count == 0)
+        if(!isPrivate)
+          handle.insert("public ")
+          handle.increment()
+        end
+
+        if(isStatic)
+          def position = handle.position
+          handle.nextToken()
+          handle.position = position
+
+          if(!handle.safeis("new"))
+            handle.insert("static ")
+            handle.increment()
+          end
+        end
       end
 
-      notPublic = false
+      isPrivate = false
       handle.increment(current)
     else
       handle.increment()

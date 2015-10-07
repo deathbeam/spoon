@@ -50,7 +50,7 @@ def tokens() : Array(:String:)
     "elsif", "if", "else", "while", "for",
 
     -- Types
-    "class", "enum", "abstract", "interface",
+    "class", "enum", "abstract", "interface", "module",
   ]
 end
 
@@ -231,7 +231,7 @@ def transpile(handle : StringHandle)
         consumeCurlys(handle)
         handle.next("\n")
 
-        if(type == "class")
+        if(type == "class" || type == "module")
           if (implicit)
             handle.insert(" return{")
           else
@@ -295,7 +295,7 @@ def transpile(handle : StringHandle)
       handle.insert("{")
       handle.increment()
     -- [abstract] class/interface/enum
-    elsif (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum"))
+    elsif (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum") || handle.safeis("module"))
       type = handle.current
       handle.increment()
 

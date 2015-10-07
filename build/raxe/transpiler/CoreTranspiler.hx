@@ -50,7 +50,7 @@ public function tokens() : Array<String> return{
     "elsif", "if", "else", "while", "for",
 
     // Types
-    "class", "enum", "abstract", "interface",
+    "class", "enum", "abstract", "interface", "module",
   ];
 };
 
@@ -231,7 +231,7 @@ public function transpile(handle : StringHandle) return{
         consumeCurlys(handle);
         handle.next("\n");
 
-        if(type == "class"){
+        if(type == "class" || type == "module"){
           if (implicit){
             handle.insert(" return{");
           }else{
@@ -295,7 +295,7 @@ public function transpile(handle : StringHandle) return{
       handle.insert("{");
       handle.increment();
     // [abstract] class/interface/enum
-    }else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum")){
+    }else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum") || handle.safeis("module")){
       type = handle.current;
       handle.increment();
 

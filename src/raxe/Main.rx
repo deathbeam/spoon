@@ -8,5 +8,10 @@ class self
 def self.main()
   def args = Sys.args()
   Sys.setCwd(args.pop())
+
+  if (args[0] == "-i" || args[0] == "--interp")
+    args = [args.shift(), args.join(" ")]
+  end
+
   Dispatch.new(args).dispatch(Cli.new())
 end

@@ -36,7 +36,7 @@ public function new(src: String, ?dest: String){
  *
  * @return Bool transpilation has been done or not
  **/
-public function transpile(all: Bool) : Bool{
+public function transpile(all: Bool) : Bool return{
   var src = this.src;
   var dest = this.dest;
   var dir = src;
@@ -123,7 +123,7 @@ public function transpile(all: Bool) : Bool{
  *
  * @return String content
  **/
-public function transpileFile(dir : String, file: String): String{
+public function transpileFile(dir : String, file: String): String return{
   var group =new  RaxeTranspilerGroup();
   dir = dir != null ? FileSystem.fullPath(dir) : Sys.getCwd();
   file = FileSystem.fullPath(file);
@@ -135,7 +135,7 @@ public function transpileFile(dir : String, file: String): String{
 /** 
  * Checks if the given file is a raxefile
  **/
-public function isRaxeFile(filename: String): Bool{
+public function isRaxeFile(filename: String): Bool return{
   return filename.endsWith(".rx");
 };
 
@@ -148,7 +148,7 @@ public function isRaxeFile(filename: String): Bool{
  *
  * @return String destination file path
  **/
-public function getDestinationFile(file: String, src: String, dest: String) : String{
+public function getDestinationFile(file: String, src: String, dest: String) : String return{
   var parts : Array<String> = file.split("/");
   var fileName : String = parts.pop();
 

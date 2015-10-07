@@ -10,16 +10,16 @@ def self.main()
 
   -- test if all numbers are greater/smaller than 20
   trace(numbers.foreach(do(v)
-    return v < 20
+    v < 20
   end)) -- true
 
   trace(numbers.foreach(do(v)
-    return v > 20
+    v > 20
   end)) -- false
 
   -- sum all the numbers
   def sum = do(num, total)
-    return total += num
+    total += num
   end
 
   trace(numbers.fold(sum, 0)) -- 30

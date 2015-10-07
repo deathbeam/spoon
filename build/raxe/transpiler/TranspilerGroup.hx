@@ -10,7 +10,7 @@ public function new(){
   transpilers =new  Array<Transpiler>();
 };
 
-public function push(transpiler : Transpiler) : TranspilerGroup{
+public function push(transpiler : Transpiler) : TranspilerGroup return{
   transpilers.push(transpiler);
   return this;
 };

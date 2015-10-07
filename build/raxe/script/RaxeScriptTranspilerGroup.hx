@@ -13,7 +13,7 @@ public function new(){
   super();
 };
 
-public function transpile(content : String) : String{
+public function transpile(content : String) : String return{
   push(new CoreTranspiler().setIsScript(true));
   push(new SemicolonTranspiler());
 

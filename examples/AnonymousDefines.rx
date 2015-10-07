@@ -33,7 +33,7 @@ def self.struct = {
   a: "hello",
   b: "yolo",
   callback: do(event)
-    return event + " World"
+    event + " World"
   end,
 }
 

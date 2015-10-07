@@ -19,28 +19,28 @@ public function new(content : String, ?tokens : Array<String>, position : Int = 
   this.position = position;
 };
 
-public function reset(){
+public function reset() return{
   position = 0;
   current = null;
 };
 
-public function atStart() : Bool{
+public function atStart() : Bool return{
   return position <= 0;
 };
 
-public function atEnd() : Bool{
+public function atEnd() : Bool return{
   return position >= content.length;
 };
 
-public function nearStart(tolerance : Int) : Bool{
+public function nearStart(tolerance : Int) : Bool return{
   return (position - tolerance) <= 0;
 };
 
-public function nearEnd(tolerance : Int) : Bool{
+public function nearEnd(tolerance : Int) : Bool return{
   return (position + tolerance) >= content.length;
 };
 
-public function closest(content : String) : Bool{
+public function closest(content : String) : Bool return{
   var divided = divide();
   var regex =new  EReg("[^\\w][ \t]*" + content, "");
 
@@ -59,11 +59,11 @@ public function closest(content : String) : Bool{
   return regex.match(sub.substr(0, count));
 };
 
-public function is(content : String) : Bool{
+public function is(content : String) : Bool return{
   return current == content;
 };
 
-public function isOne(content : Array<String>) : Bool{
+public function isOne(content : Array<String>) : Bool return{
   var contains = false;
 
   for(cnt in content){
@@ -73,7 +73,7 @@ public function isOne(content : Array<String>) : Bool{
   return contains;
 };
 
-public function safeisStart(content : String) : Bool{
+public function safeisStart(content : String) : Bool return{
   var regex =new  EReg("[^\\w]" + content, "");
 
   if(nearStart(1)){
@@ -91,7 +91,7 @@ public function safeisStart(content : String) : Bool{
   return regex.match(sub);
 };
 
-public function safeisEnd(content : String) : Bool{
+public function safeisEnd(content : String) : Bool return{
   var regex =new  EReg(content + "[^\\w]", "");
 
   if(nearEnd(content.length + 2)){
@@ -105,7 +105,7 @@ public function safeisEnd(content : String) : Bool{
   return regex.match(sub);
 };
 
-public function safeis(content : String) : Bool{
+public function safeis(content : String) : Bool return{
   var regex =new  EReg("[^\\w]" + content + "[^\\w]", "");
 
   if(nearStart(1)){
@@ -123,7 +123,7 @@ public function safeis(content : String) : Bool{
   return regex.match(sub);
 };
 
-public function at(content : String) : Bool{
+public function at(content : String) : Bool return{
   var divided = divide();
 
   if(divided.right.substr(0, content.length) == content){
@@ -133,7 +133,7 @@ public function at(content : String) : Bool{
   return false;
 };
 
-public function prev(?content : String) : Bool{
+public function prev(?content : String) : Bool return{
   if(content == null){
     if(current != null){
       return prev(current);
@@ -153,7 +153,7 @@ public function prev(?content : String) : Bool{
   return true;
 };
 
-public function next(?content : String) : Bool{
+public function next(?content : String) : Bool return{
   if(content == null){
     if(current != null){
       return next(current);
@@ -173,7 +173,7 @@ public function next(?content : String) : Bool{
   return true;
 };
 
-public function prevToken() : Bool{
+public function prevToken() : Bool return{
   var newPos = position + 1;
   var currentToken = "";
 
@@ -195,7 +195,7 @@ public function prevToken() : Bool{
   return true;
 };
 
-public function prevTokenLine() : Bool{
+public function prevTokenLine() : Bool return{
   var newPos = position + 1;
   var currentToken = "";
 
@@ -224,7 +224,7 @@ public function prevTokenLine() : Bool{
   return true;
 };
 
-public function nextTokenLine() : Bool{
+public function nextTokenLine() : Bool return{
   var newPos = -1;
   var currentToken = "";
 
@@ -253,7 +253,7 @@ public function nextTokenLine() : Bool{
   return true;
 };
 
-public function nextToken() : Bool{
+public function nextToken() : Bool return{
   var newPos = -1;
   var currentToken = "";
 
@@ -275,7 +275,7 @@ public function nextToken() : Bool{
   return true;
 };
 
-public function increment(?content : String) : StringHandle{
+public function increment(?content : String) : StringHandle return{
   if(content == null){
     if(current != null){
       increment(current);
@@ -295,7 +295,7 @@ public function increment(?content : String) : StringHandle{
   return this;
 };
 
-public function decrement(?content : String) : StringHandle{
+public function decrement(?content : String) : StringHandle return{
   if(content == null){
     if(current != null){
       decrement(current);
@@ -315,7 +315,7 @@ public function decrement(?content : String) : StringHandle{
   return this;
 };
 
-public function insert(?content : String, ?after : Bool) : StringHandle{
+public function insert(?content : String, ?after : Bool) : StringHandle return{
   if(content == null){
     if(current != null){
       insert(current);
@@ -337,7 +337,7 @@ public function insert(?content : String, ?after : Bool) : StringHandle{
   return this;
 };
 
-public function remove(?content : String) : StringHandle{
+public function remove(?content : String) : StringHandle return{
   if(content == null){
     if(current != null){
       remove(current);
@@ -358,7 +358,7 @@ public function remove(?content : String) : StringHandle{
   return this;
 };
 
-private function divide(?offset: Int = 0){
+private function divide(?offset: Int = 0) return{
   return {
     left: position > 0 ? content.substr(0, position + offset) : "",
     right: position < content.length ? content.substring(position + offset) : "",

@@ -13,27 +13,27 @@ public function new(path : String){
   script.execute(script.parse(File.getContent(path)));
 };
 
-public function run(task : String){
+public function run(task : String) return{
   var fn = script.variables.get(task);
   fn();
 };
 
-public function createScript() : RaxeScript{
+public function createScript() : RaxeScript return{
   var script =new  RaxeScript();
 
-  script.variables.set("sh", function(cmd : String, ?args : Array<String>){
+  script.variables.set("sh", function(cmd : String, ?args : Array<String>) return{
     Sys.command(cmd, args);
   });
 
-  script.variables.set("cp", function(from : String, to : String){
+  script.variables.set("cp", function(from : String, to : String) return{
     File.copy(from, to);
   });
 
-  script.variables.set("mv", function(from : String, to : String){
+  script.variables.set("mv", function(from : String, to : String) return{
     FileSystem.rename(from, to);
   });
 
-  script.variables.set("rm", function(path : String){
+  script.variables.set("rm", function(path : String) return{
     if(FileSystem.isDirectory(path)){
       FileSystem.deleteDirectory(path);
     }else{
@@ -42,10 +42,10 @@ public function createScript() : RaxeScript{
   });
 
   script.variables.set("env", {
-    get: function(key : String){
+    get: function(key : String) return{
       return Sys.getEnv(key);
     },
-    set: function(key : String, value : String){
+    set: function(key : String, value : String) return{
       Sys.putEnv(key, value);
     },
   });

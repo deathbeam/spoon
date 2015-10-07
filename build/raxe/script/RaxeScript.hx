@@ -18,7 +18,7 @@ public function new(){
   parser =new  Parser();
   group =new  RaxeScriptTranspilerGroup();
 
-  variables.set("require", function(thing : String){
+  variables.set("require", function(thing : String) return{
     var path = thing + ".rx";
 
     if(FileSystem.exists(path)){
@@ -41,12 +41,12 @@ public function new(){
   });
 };
 
-public function parse(s : String) : Expr{
+public function parse(s : String) : Expr return{
   var content = group.transpile(s);
   return parser.parseString(content);
 };
 
-override public function get(o : Dynamic, f : String ) : Dynamic{
+override public function get(o : Dynamic, f : String ) : Dynamic return{
   if(o == null){
     #if debug
     trace("Null error when doing get ${f}");
@@ -57,7 +57,7 @@ override public function get(o : Dynamic, f : String ) : Dynamic{
   return Reflect.getProperty(o,f);
 };
 
-override public function set( o : Dynamic, f : String, v : Dynamic ) : Dynamic{
+override public function set( o : Dynamic, f : String, v : Dynamic ) : Dynamic return{
   if(o == null){
     #if debug
     trace("Null error when doing set ${f}");

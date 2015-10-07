@@ -10,7 +10,7 @@ def self.main()
   def enabled = true
 
   -- Here we will chain some expressions
-  def name = do(protected) return if(protected)
+  def name = do(protected) if(protected)
       "Nope"
     else
       "John Snow"

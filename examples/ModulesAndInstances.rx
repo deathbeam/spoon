@@ -7,7 +7,7 @@ def self.instance = self.new()
 
 -- Self keyword before defines basically means that define is static
 def self.getInstance()
-  return instance
+  instance
 end
 
 def self.main()

@@ -20,5 +20,5 @@ Also, to define param or variable type,
 simply add : <YourType> after it's name
 ---
 def self.toLowerCase(message : String) : String
-  return message.toLowerCase()
+  message.toLowerCase()
 end

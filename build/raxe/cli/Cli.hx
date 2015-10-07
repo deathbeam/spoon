@@ -59,12 +59,12 @@ public var interp: String;
   Show this message
   @alias h
  **/
-public function help(){
+public function help() return{
   Sys.println(this.showUsage());
   Sys.exit(0);
 };
 
-public function runDefault(){
+public function runDefault() return{
   try{
     if(interp != null && interp != ""){
       var script =new  RaxeScript();
@@ -83,7 +83,7 @@ public function runDefault(){
   }
 };
 
-private function transpile(){
+private function transpile() return{
   if(this.src != null){
     if(!FileSystem.exists(src)){
       Error.create(ERROR_TYPE, "Source not found");

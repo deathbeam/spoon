@@ -10,7 +10,7 @@ public function new(){
   counter =new  Array<Int>();
 };
 
-public function tokens() : Array<String>{
+public function tokens() : Array<String> return{
   return [
     ")", "}", ";",
     "(:", ":)", "#", "\"",
@@ -20,7 +20,7 @@ public function tokens() : Array<String>{
   ];
 };
 
-public function transpile(handle : StringHandle){
+public function transpile(handle : StringHandle) return{
   while(handle.nextTokenLine()){
     skipLines(handle);
 
@@ -49,7 +49,7 @@ public function transpile(handle : StringHandle){
   return handle.content;
 };
 
-public function skipLines(handle : StringHandle){
+public function skipLines(handle : StringHandle) return{
   while(handle.nextTokenLine()){
     if(handle.is("\n") || handle.is("//")){
       var isComment = handle.is("//");
@@ -166,7 +166,7 @@ public function skipLines(handle : StringHandle){
   handle.nextTokenLine();
 };
 
-public function onlyWhitespace(content : String, from : Int, to : Int){
+public function onlyWhitespace(content : String, from : Int, to : Int) return{
   var sub = content.substr(from, to - from);
   var regex =new  EReg("^\\s*$", "");
   return regex.match(sub);

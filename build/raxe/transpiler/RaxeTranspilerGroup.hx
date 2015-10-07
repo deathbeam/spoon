@@ -9,7 +9,7 @@ public function new(){
   super();
 };
 
-public function transpile(directory : String, file : String) : String{
+public function transpile(directory : String, file : String) : String return{
   var currentPackage = file.replace(directory, "");
   currentPackage = currentPackage.replace("\\", "/");
   var currentModule = currentPackage.substr(currentPackage.lastIndexOf("/") + 1).replace(".rx", "");

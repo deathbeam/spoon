@@ -211,7 +211,10 @@ def transpile(handle : StringHandle)
         safeNextToken(handle)
       end
 
+      def implicit = true
+
       if(handle.safeis("new"))
+        implicit = false
         handle.increment()
         handle.nextToken()
       end
@@ -229,7 +232,11 @@ def transpile(handle : StringHandle)
         handle.next("\n")
 
         if(type == "class")
-          handle.insert("{")
+          if (implicit)
+            handle.insert(" return{")
+          else
+            handle.insert("{")
+          end
         end
 
         handle.increment()
@@ -250,7 +257,7 @@ def transpile(handle : StringHandle)
         handle.insert("function")
         handle.increment()
         consumeCurlys(handle)
-        handle.insert("{")
+        handle.insert(" return{")
       else
         handle.remove("do")
         handle.insert("{")

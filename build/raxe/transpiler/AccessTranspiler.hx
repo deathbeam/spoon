@@ -7,7 +7,7 @@ class AccessTranspiler implements Transpiler{
 public function new(){
 };
 
-public function tokens() : Array<String>{
+public function tokens() : Array<String> return{
   return [
     "{", "}", "[", "]", "(", ")", "@",
     "//", "/*", "*/", "\"",
@@ -15,7 +15,7 @@ public function tokens() : Array<String>{
   ];
 };
 
-public function transpile(handle : StringHandle){
+public function transpile(handle : StringHandle) return{
   var count = -1;
   var notPublic = false;
 

@@ -11,22 +11,22 @@ public var script : Bool = false;
 public var path : String = "";
 public var name : String = "";
 
-public function setIsScript(script : Bool) : CoreTranspiler{
+public function setIsScript(script : Bool) : CoreTranspiler return{
   this.script = script;
   return this;
 };
 
-public function setPath(path : String) : CoreTranspiler{
+public function setPath(path : String) : CoreTranspiler return{
   this.path = path;
   return this;
 };
 
-public function setName(name : String) : CoreTranspiler{
+public function setName(name : String) : CoreTranspiler return{
   this.name = name;
   return this;
 };
 
-public function tokens() : Array<String>{
+public function tokens() : Array<String> return{
   return [
     // Line break
     "\n",
@@ -54,7 +54,7 @@ public function tokens() : Array<String>{
   ];
 };
 
-public function transpile(handle : StringHandle){
+public function transpile(handle : StringHandle) return{
   var alreadyDefined = script;
   var type = "";
 
@@ -211,7 +211,10 @@ public function transpile(handle : StringHandle){
         safeNextToken(handle);
       }
 
+      var implicit = true;
+
       if(handle.safeis("new")){
+        implicit = false;
         handle.increment();
         handle.nextToken();
       }
@@ -229,7 +232,11 @@ public function transpile(handle : StringHandle){
         handle.next("\n");
 
         if(type == "class"){
-          handle.insert("{");
+          if (implicit){
+            handle.insert(" return{");
+          }else{
+            handle.insert("{");
+          }
         }
 
         handle.increment();
@@ -250,7 +257,7 @@ public function transpile(handle : StringHandle){
         handle.insert("function");
         handle.increment();
         consumeCurlys(handle);
-        handle.insert("{");
+        handle.insert(" return{");
       }else{
         handle.remove("do");
         handle.insert("{");
@@ -325,7 +332,7 @@ public function transpile(handle : StringHandle){
   return handle.content;
 };
 
-private function safeNextToken(handle : StringHandle) : Bool{
+private function safeNextToken(handle : StringHandle) : Bool return{
   handle.nextToken();
 
   if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
@@ -338,7 +345,7 @@ private function safeNextToken(handle : StringHandle) : Bool{
   }
 };
 
-private function safeCheck(handle : StringHandle, content : String) : Bool{
+private function safeCheck(handle : StringHandle, content : String) : Bool return{
   if(handle.is(content)){
     return handle.safeis(content);
   }
@@ -346,7 +353,7 @@ private function safeCheck(handle : StringHandle, content : String) : Bool{
   return true;
 };
 
-private function consumeCurlys(handle : StringHandle){
+private function consumeCurlys(handle : StringHandle) return{
   var count = 0;
 
   while(handle.nextToken()){

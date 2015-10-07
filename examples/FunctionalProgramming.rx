@@ -33,9 +33,11 @@ def compute(n: Int, f: Int -> Int): Int
 end
 
 def main()
-  def result = compute(10, factorial)
-  trace(result)
+  def number = 10 -- Compute factorials for number 10
 
-  result = compute(10, factorial2)
-  trace(result)
+  -- Compute with recursive factorial method
+  trace(compute(number, factorial))
+  -- Compute with loop factorial method
+  trace(compute(number, factorial2))
+  -- Result should be 3628800
 end

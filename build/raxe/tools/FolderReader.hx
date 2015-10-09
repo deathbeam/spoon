@@ -36,7 +36,7 @@ public static function getFiles(rootFolder: String) : Array<String> return{
   }
 
   return files;
-};
+}
 
 /** 
  * Creates a file to the given path, with the given content
@@ -56,7 +56,7 @@ public static function createFile(path : String, ?content : String) : Void retur
   }
 
   File.saveContent(path, content);
-};
+}
 
 /** 
  * Creates the given directory (and all path's directories if needed)
@@ -73,7 +73,7 @@ public static function createDirectory(path : String) : Void return{
       FileSystem.createDirectory(done);
     }
   }
-};
+}
 
 /** 
  * Copy all files from source to destination
@@ -104,6 +104,6 @@ public static function copyFileSystem(source : String, destination : String) : V
   }catch(ex: String){
     throw "Unable to copy " + source + " to " + destination + " : " + ex;
   }
-};
+}
 
 }

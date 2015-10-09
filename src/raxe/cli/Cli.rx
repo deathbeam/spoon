@@ -1,10 +1,10 @@
 -- vim: set ft=rb:
 
-require "mcli/CommandLine"
-require "sys/FileSystem"
-require "raxe/raxefile/Raxefile"
-require "raxe/tools/Error"
-require "raxe/script/RaxeScript"
+import mcli.CommandLine
+import sys.FileSystem
+import raxe.raxefile.Raxefile
+import raxe.tools.Error
+import raxe.script.RaxeScript
 
 ---
   8b,dPPYba,  ,adPPYYba,  8b,     ,d8  ,adPPYba,

@@ -1,12 +1,12 @@
 -- vim: set ft=rb:
 
 -- Load OpenFL libraries
-require "openfl/display/Bitmap"
-require "openfl/display/Sprite"
-require "openfl/events/Event"
-require "openfl/events/KeyboardEvent"
-require "openfl/ui/Keyboard"
-require "openfl/Assets"
+import openfl.display.Bitmap
+import openfl.display.Sprite
+import openfl.events.Event
+import openfl.events.KeyboardEvent
+import openfl.ui.Keyboard
+import openfl.Assets
 
 -- Extend self by OpenFL Sprite
 class self < Sprite

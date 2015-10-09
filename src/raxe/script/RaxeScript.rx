@@ -1,22 +1,24 @@
 -- vim: set ft=rb:
 
-require "haxe/io/Input"
-require "hscript/Parser"
-require "hscript/Interp"
-require "hscript/Expr"
-require "sys/io/File"
-require "sys/FileSystem"
+import haxe.io.Input
+import hscript.Parser
+import hscript.Interp
+import hscript.Expr
+import sys.io.File
+import sys.FileSystem
+import raxe.transpiler.Transpiler
+import raxe.tools.StringHandle
 
 class self < Interp
 
 def parser : Parser
-def group : RaxeScriptTranspilerGroup
+def transpiler : Transpiler
 
 def new()
   super()
 
   parser = Parser.new()
-  group = RaxeScriptTranspilerGroup.new()
+  transpiler = Transpiler.new()
 
   variables.set("require", do(thing : String)
     def path = thing + ".rx"
@@ -42,7 +44,8 @@ def new()
 end
 
 def parse(s : String) : Expr
-  def content = group.transpile(s)
+  def handle = StringHandle.new(s, transpiler.tokens)
+  def content = transpiler.run(true, handle)
   return parser.parseString(content)
 end
 

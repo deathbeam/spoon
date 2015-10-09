@@ -1,7 +1,7 @@
 -- vim: set ft=rb:
 
-require "sys/FileSystem"
-require "sys/io/File"
+import sys.FileSystem
+import sys.io.File
 
 ---
  * Utility to deal with folders
@@ -14,17 +14,17 @@ class self
  * @param rootFolder : String Root folder for the search
  * @return Files found
 ---
-def self.getFiles(rootFolder: String) : Array(:String:)
-  def files : Array(:String:) = Array(:String:).new()
+def self.getFiles(rootFolder: String) : Array<String>
+  def files : Array<String> = Array<String>.new()
 
   if(FileSystem.exists(rootFolder))
-    def folders : Array(:String:) = FileSystem.readDirectory(rootFolder)
+    def folders : Array<String> = FileSystem.readDirectory(rootFolder)
 
     for(file in folders.iterator())
       def path : String = rootFolder + "/" + file
 
       if(FileSystem.isDirectory(path))
-        def data : Array(:String:) = getFiles(path)
+        def data : Array<String> = getFiles(path)
 
         for(i in data)
           files.push(i)
@@ -45,7 +45,7 @@ end
  * @param  ?content : String File's content
 ---
 def self.createFile(path : String, ?content : String) : Void
-  def parts : Array(:String:) = path.split("/")
+  def parts : Array<String> = path.split("/")
   def fileName : String = parts.pop()
 
   -- Create all directories necessaries
@@ -63,7 +63,7 @@ end
  * @param  path : String Path to the given directory
 ---
 def self.createDirectory(path : String) : Void
-  def parts : Array(:String:) = path.split("/")
+  def parts : Array<String> = path.split("/")
   def done : String = null
 
   for(part in parts.iterator())

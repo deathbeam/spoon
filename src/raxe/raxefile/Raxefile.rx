@@ -1,8 +1,8 @@
 -- vim: set ft=rb:
 
-require "raxe/script/RaxeScript"
-require "sys/io/File"
-require "sys/FileSystem"
+import raxe.script.RaxeScript
+import sys.io.File
+import sys.FileSystem
 
 class self
 
@@ -14,14 +14,14 @@ def new(path : String)
 end
 
 def run(task : String)
-  var fn = script.variables.get(task)
+  def fn = script.variables.get(task)
   fn()
 end
 
 def createScript() : RaxeScript
   def script = RaxeScript.new()
 
-  script.variables.set("sh", do(cmd : String, ?args : Array(:String:))
+  script.variables.set("sh", do(cmd : String, ?args : Array<String>)
     Sys.command(cmd, args)
   end)
 

@@ -17,28 +17,28 @@ public function new(content : String, ?tokens : Array<String>, position : Int = 
   }
 
   this.position = position;
-};
+}
 
 public function reset() return{
   position = 0;
   current = null;
-};
+}
 
 public function atStart() : Bool return{
   return position <= 0;
-};
+}
 
 public function atEnd() : Bool return{
   return position >= content.length;
-};
+}
 
 public function nearStart(tolerance : Int) : Bool return{
   return (position - tolerance) <= 0;
-};
+}
 
 public function nearEnd(tolerance : Int) : Bool return{
   return (position + tolerance) >= content.length;
-};
+}
 
 public function closest(content : String) : Bool return{
   var divided = divide();
@@ -57,11 +57,11 @@ public function closest(content : String) : Bool return{
   }
 
   return regex.match(sub.substr(0, count));
-};
+}
 
 public function is(content : String) : Bool return{
   return current == content;
-};
+}
 
 public function isOne(content : Array<String>) : Bool return{
   var contains = false;
@@ -71,7 +71,7 @@ public function isOne(content : Array<String>) : Bool return{
   }
 
   return contains;
-};
+}
 
 public function safeisStart(content : String) : Bool return{
   var regex =new  EReg("[^\\w]" + content, "");
@@ -89,7 +89,7 @@ public function safeisStart(content : String) : Bool return{
     nearEnd(content.length + 1) ? content.length : content.length + 1);
 
   return regex.match(sub);
-};
+}
 
 public function safeisEnd(content : String) : Bool return{
   var regex =new  EReg(content + "[^\\w]", "");
@@ -103,7 +103,7 @@ public function safeisEnd(content : String) : Bool return{
     nearEnd(content.length + 2) ? content.length : content.length + 2);
 
   return regex.match(sub);
-};
+}
 
 public function safeis(content : String) : Bool return{
   var regex =new  EReg("[^\\w]" + content + "[^\\w]", "");
@@ -121,7 +121,7 @@ public function safeis(content : String) : Bool return{
     content.length + 2);
 
   return regex.match(sub);
-};
+}
 
 public function at(content : String) : Bool return{
   var divided = divide();
@@ -131,7 +131,7 @@ public function at(content : String) : Bool return{
   }
 
   return false;
-};
+}
 
 public function prev(?content : String) : Bool return{
   if(content == null){
@@ -151,7 +151,7 @@ public function prev(?content : String) : Bool return{
   position = newPos;
   current = content;
   return true;
-};
+}
 
 public function next(?content : String) : Bool return{
   if(content == null){
@@ -171,7 +171,7 @@ public function next(?content : String) : Bool return{
   position = newPos;
   current = content;
   return true;
-};
+}
 
 public function prevToken() : Bool return{
   var newPos = position + 1;
@@ -193,7 +193,7 @@ public function prevToken() : Bool return{
   position = newPos;
   current = currentToken;
   return true;
-};
+}
 
 public function prevTokenLine() : Bool return{
   var newPos = position + 1;
@@ -222,7 +222,7 @@ public function prevTokenLine() : Bool return{
   position = newPos;
   current = currentToken;
   return true;
-};
+}
 
 public function nextTokenLine() : Bool return{
   var newPos = -1;
@@ -251,7 +251,7 @@ public function nextTokenLine() : Bool return{
   position = newPos;
   current = currentToken;
   return true;
-};
+}
 
 public function nextToken() : Bool return{
   var newPos = -1;
@@ -273,7 +273,7 @@ public function nextToken() : Bool return{
   position = newPos;
   current = currentToken;
   return true;
-};
+}
 
 public function increment(?content : String) : StringHandle return{
   if(content == null){
@@ -293,7 +293,7 @@ public function increment(?content : String) : StringHandle return{
   position = newPos;
   current = content;
   return this;
-};
+}
 
 public function decrement(?content : String) : StringHandle return{
   if(content == null){
@@ -313,7 +313,7 @@ public function decrement(?content : String) : StringHandle return{
   position = newPos;
   current = content;
   return this;
-};
+}
 
 public function insert(?content : String, ?after : Bool) : StringHandle return{
   if(content == null){
@@ -335,7 +335,7 @@ public function insert(?content : String, ?after : Bool) : StringHandle return{
   this.content = divided.left + content + divided.right;
   current = content;
   return this;
-};
+}
 
 public function remove(?content : String) : StringHandle return{
   if(content == null){
@@ -356,13 +356,13 @@ public function remove(?content : String) : StringHandle return{
   this.content = divided.left + divided.right.substr(length);
   current = content;
   return this;
-};
+}
 
 private function divide(?offset: Int = 0) return{
   return {
     left: position > 0 ? content.substr(0, position + offset) : "",
     right: position < content.length ? content.substring(position + offset) : "",
-  };
-};
+  }
+}
 
 }

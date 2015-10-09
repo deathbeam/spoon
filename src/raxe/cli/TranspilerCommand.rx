@@ -1,24 +1,16 @@
 -- vim: set ft=rb:
 
-require "sys/FileSystem"
-require "raxe/tools/Error"
-require "raxe/tools/FolderReader"
-require "raxe/transpiler/RaxeTranspilerGroup"
+import sys.FileSystem
+import raxe.tools.Error
+import raxe.tools.FolderReader
+import raxe.transpiler.Transpiler
 
 class self
 
----
- * @var files
- *
- * Size of the files (file_size) for files
----
-private def files = Map(:String, Int:).new()
-
-private def src : String
-
-private def dest: String
-
 def response : String
+private def files = Map<String, Int>.new()
+private def src : String
+private def dest: String
 
 ---
  * @param String src   Source file or directory
@@ -76,7 +68,7 @@ def transpile(all: Bool) : Bool
       dest = dest.substr(0, dest.length - 1)
     end
 
-    def currentFiles = Map(:String, Int:).new()
+    def currentFiles = Map<String, Int>.new()
 
     for(file in files.iterator())
       def oldFileSize : Int = this.files.get(file)
@@ -124,12 +116,12 @@ end
  * @return String content
 ---
 def transpileFile(dir : String, file: String): String
-  def group = RaxeTranspilerGroup.new()
+  def transpiler = Transpiler.new()
   dir = dir != null ? FileSystem.fullPath(dir) : Sys.getCwd()
   file = FileSystem.fullPath(file)
 
   Sys.println("Compiling " + file)
-  return group.transpile(dir, file)
+  return transpiler.transpile(dir, file)
 end
 
 ---
@@ -149,7 +141,7 @@ end
  * @return String destination file path
 ---
 def getDestinationFile(file: String, src: String, dest: String) : String
-  def parts : Array(:String:) = file.split("/")
+  def parts : Array<String> = file.split("/")
   def fileName : String = parts.pop()
 
   def newPath = parts.join("/") + "/" + fileName.replace(".rx", ".hx")

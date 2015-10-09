@@ -6,17 +6,19 @@ import hscript.Interp;
 import hscript.Expr;
 import sys.io.File;
 import sys.FileSystem;
+import raxe.transpiler.Transpiler;
+import raxe.tools.StringHandle;
 
 class RaxeScript extends Interp{
 
 public var parser : Parser;
-public var group : RaxeScriptTranspilerGroup;
+public var transpiler : Transpiler;
 
 public function new(){
   super();
 
   parser =new  Parser();
-  group =new  RaxeScriptTranspilerGroup();
+  transpiler =new  Transpiler();
 
   variables.set("require", function(thing : String) return{
     var path = thing + ".rx";
@@ -39,12 +41,13 @@ public function new(){
 
     return clazz;
   });
-};
+}
 
 public function parse(s : String) : Expr return{
-  var content = group.transpile(s);
+  var handle =new  StringHandle(s, transpiler.tokens);
+  var content = transpiler.run(true, handle);
   return parser.parseString(content);
-};
+}
 
 override public function get(o : Dynamic, f : String ) : Dynamic return{
   if(o == null){
@@ -55,7 +58,7 @@ override public function get(o : Dynamic, f : String ) : Dynamic return{
   }
 
   return Reflect.getProperty(o,f);
-};
+}
 
 override public function set( o : Dynamic, f : String, v : Dynamic ) : Dynamic return{
   if(o == null){
@@ -67,6 +70,6 @@ override public function set( o : Dynamic, f : String, v : Dynamic ) : Dynamic r
 
   Reflect.setProperty(o,f,v);
   return v;
-};
+}
 
 }

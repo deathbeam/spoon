@@ -1,8 +1,448 @@
 -- vim: set ft=rb:
 
-require "raxe/tools/StringHandle"
+import raxe.tools.StringHandle
+import sys.io.File
 
-interface self
+class self
 
-def tokens() : Array(:String:)
-def transpile(handle : StringHandle) : String
+def new()
+end
+
+private def path : String = ""
+private def name : String = ""
+private def currentType : String = ""
+private def hasVisibility : Bool = false
+private def opened : Int = -1
+
+def tokens = [
+  -- Line break
+  "\n", ";",
+
+  -- Whitespace skip
+  "#", "@", "\"",
+
+  -- Types
+  "::", "class", "enum", "abstract", "interface",
+
+  -- Modifiers
+  "public", "private",
+
+  -- Special keywords
+  "import", "def", "self", ".new", "new", "end", "do", "typedef", "try", "catch",
+
+  -- Brackets
+  "{", "}", "(", ")", "[", "]",
+
+  -- Operators (- is also used for comments, < is also used for inheritance)
+  ":", "?", "=", "+", "-", "*", ".", "/", "," , "|", "&",  "^", "%", "<", ">", "~",
+
+  -- Expressions
+  "elsif", "if", "else", "while", "for",
+]
+
+def transpile(directory : String, file : String) : String
+  def currentPackage = file.replace(directory, "")
+  currentPackage = currentPackage.replace("\\", "/")
+  def currentModule = currentPackage.substr(currentPackage.lastIndexOf("/") + 1).replace(".rx", "")
+  currentPackage = currentPackage.replace(currentPackage.substr(currentPackage.lastIndexOf("/")), "")
+  currentPackage = currentPackage.replace("/", ".")
+
+  if(currentPackage.charAt(0) == ".")
+    currentPackage = currentPackage.substr(1)
+  end
+
+  def content = File.getContent(file)
+  def handle = StringHandle.new(content, tokens)
+
+  name = currentModule
+  path = currentPackage
+
+  return run(false, handle)
+end
+
+def run(script : Bool, handle : StringHandle)
+  if(!script)
+    handle.insert("package " + path + ";using Lambda;using StringTools;").increment()
+  end
+
+  while (handle.nextToken())
+    if(script)
+      opened = -1
+    end
+
+    -- Skip compiler defines
+    if (handle.is("#") || handle.is("@"))
+      handle.next("\n")
+      handle.increment()
+    -- Step over things in strings (" ") and process multiline strings
+    elsif(handle.is("\""))
+      consumeStrings(handle)
+    -- Correct access
+    elsif(handle.safeis("public") || handle.safeis("private"))
+      hasVisibility = true
+      handle.increment()
+    elsif(handle.is("{"))
+      opened = opened + 1
+      handle.increment()
+    elsif(handle.is("}"))
+      opened = opened - 1
+      handle.increment()
+    elsif(handle.is(".new"))
+      handle.remove()
+      handle.prevTokenLine()
+
+      while(true)
+        if (!handle.isOne(["=", ":", "\n", ".", "(", "[", ";", ","]))
+        
+          if(handle.is(">"))
+            handle.prev("<")
+            handle.increment()
+          end
+
+          handle.prevTokenLine()
+        else
+          break
+        end
+      end
+
+      handle.increment()
+      handle.insert("new ")
+      handle.increment()
+    elsif(handle.safeis("try"))
+      handle.increment()
+      handle.insert("{")
+      handle.increment()
+      opened = opened + 1
+    elsif(handle.safeis("catch"))
+      handle.insert("}")
+      handle.increment()
+      handle.increment("catch")
+      handle.nextToken()
+      consumeBrackets(handle, "(", ")")
+      handle.insert("{")
+      handle.increment()
+    -- Change end to classic bracket end
+    elsif(handle.safeis("end"))
+      handle.remove()
+      handle.insert("}")
+      handle.increment()
+      opened = opened - 1
+    -- Change require to classic imports
+    elsif(handle.safeis("import"))
+      handle.next("\n")
+      handle.insert(";")
+      handle.increment()
+    -- Defines to variables and functions
+    elsif(handle.safeis("def"))
+      handle.remove("def")
+
+      if(opened == 0)
+        if(!hasVisibility)
+          handle.insert("public ")
+          handle.increment()
+        end
+      end
+
+      hasVisibility = false
+
+      def position = handle.position
+      safeNextToken(handle)
+
+      if(handle.safeis("self"))
+        handle.remove("self.")
+        handle.position = position
+        handle.insert("static ")
+        handle.increment()
+        position = handle.position
+        safeNextToken(handle)
+      end
+
+      def implicit = true
+
+      if(handle.safeis("new"))
+        implicit = false
+        handle.increment()
+        handle.nextToken()
+      end
+
+      if(handle.is("("))
+        handle.position = position
+        handle.insert("function")
+        consumeBrackets(handle, "(", ")")
+        handle.next("\n")
+
+        if(currentType == "class")
+          if (implicit)
+            handle.insert(" return{")
+          else
+            handle.insert("{")
+          end
+
+          opened = opened + 1
+        elsif(currentType == "interface")
+          handle.insert(";")
+        end
+
+        handle.increment()
+      else
+        handle.position = position
+        handle.insert("var")
+        handle.increment()
+      end
+    -- Closures and blocks
+    elsif(handle.safeis("do"))
+      def position = handle.position
+      handle.increment()
+      handle.nextToken()
+      handle.position = position
+
+      if(handle.is("("))
+        handle.remove("do")
+        handle.insert("function")
+        handle.increment()
+        consumeBrackets(handle, "(", ")")
+        handle.insert(" return{")
+      else
+        handle.remove("do")
+        handle.insert("{")
+      end
+
+      opened = opened + 1
+
+      handle.increment()
+    -- Insert begin bracket after if and while
+    elsif(handle.safeis("if"))
+      handle.increment()
+      handle.nextToken()
+      consumeBrackets(handle, "(", ")")
+      handle.insert("{")
+      handle.increment()
+      opened = opened + 1
+    -- Change elseif to else if and insert begin and end brackets around it
+    elsif(handle.safeis("elsif"))
+      handle.remove()
+      handle.insert("}else if")
+      handle.increment()
+      handle.nextToken()
+      consumeBrackets(handle, "(", ")")
+      handle.insert("{")
+      handle.increment()
+    elsif(handle.safeis("while") || handle.safeis("for"))
+      handle.increment()
+      handle.nextToken()
+      consumeBrackets(handle, "(", ")")
+      handle.insert("{")
+      opened = opened + 1
+      handle.increment()
+    -- Inser begin and end brackets around else but do not try to
+    -- process curlys because there will not be any
+    elsif(handle.safeis("else"))
+      handle.insert("}")
+      handle.increment()
+      handle.increment("else")
+      handle.insert("{")
+      handle.increment()
+    -- [abstract] class/interface/enum
+    elsif (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum"))
+      currentType = handle.current
+      handle.increment()
+
+      while(handle.nextToken())
+        if(handle.is("self"))
+          handle.remove()
+          handle.insert(name)
+        elsif(handle.is("<"))
+          handle.remove()
+          handle.insert("extends")
+        elsif(handle.is("::"))
+          handle.remove()
+          handle.insert("implements")
+        elsif(handle.is("\n"))
+          handle.insert("{")
+          break
+        end
+
+        handle.increment()
+      end
+    elsif(handle.safeis("self"))
+      handle.remove()
+      handle.insert(name)
+      handle.increment()
+      -- Process comments and ignore everything in
+      -- them until end of line or until next match if multiline
+    elsif(handle.is("\n") || handle.is("-"))
+      def pos = handle.position
+      def insert = true
+      def isComment = handle.is("-")
+
+      if (isComment && !handle.at("--"))
+        handle.increment()
+        continue
+      end
+
+      handle.prevTokenLine()
+
+      if (handle.isOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":"]) && onlyWhitespace(handle.content, handle.position + 1, pos))
+          insert = false
+      end
+
+      handle.position = pos
+
+      if(!isComment)
+        handle.increment("\n")
+        handle.nextToken()
+
+        if (handle.isOne(["?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "~"]) && onlyWhitespace(handle.content, pos + 1, handle.position - 1))
+            if(handle.is("-") && !handle.at("--"))
+              insert = false
+            end
+        end
+
+        handle.prev("\n")
+      end
+
+      if (insert)
+        handle.insert(";")
+        handle.increment()
+      end
+
+      if(isComment)
+        def comment = ""
+        def position = handle.position
+
+        while(handle.nextTokenLine())
+          if(handle.is("-"))
+            if (comment != "" && handle.content.charAt(handle.position - 1) != "-")
+              handle.increment()
+              break
+            else
+              comment += "-"
+              handle.increment()
+            end
+          else
+            handle.increment()
+            break
+          end
+        end
+
+        handle.position = position
+        handle.current = "-"
+
+        if(comment.length > 2)
+          handle.remove(comment)
+          handle.insert("/** ")
+          handle.increment()
+          handle.next(comment)
+          handle.remove(comment)
+          handle.insert(" **/")
+          handle.increment()
+        elsif(comment.length == 2)
+          handle.remove(comment)
+          handle.insert("//")
+          handle.increment()
+          handle.next("\n")
+          handle.increment()
+        else
+          handle.increment()
+        end
+      else
+        handle.increment()
+      end
+    -- Skip this token
+    else
+      handle.increment()
+    end
+  end
+
+  if(!script)
+    handle.content = handle.content + "\n}"
+  end
+
+  return handle.content
+end
+
+private def safeNextToken(handle : StringHandle) : Bool
+  handle.nextToken()
+
+  if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
+      safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "import") &&
+      safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch") &&
+      safeCheck(handle, "private") && safeCheck(handle, "public"))
+    return true
+  else
+    handle.increment()
+    return safeNextToken(handle)
+  end
+end
+
+private def safeCheck(handle : StringHandle, content : String) : Bool
+  if(handle.is(content))
+    return handle.safeis(content)
+  end
+
+  return true
+end
+
+private def consumeBrackets(handle : StringHandle, startSymbol : String, endSymbol : String)
+  def count = 0
+
+  while(handle.nextToken())
+    if(handle.is("\""))
+      consumeStrings(handle)
+    elsif(handle.is(startSymbol))
+      count = count + 1
+      handle.increment()
+    elsif(handle.is(endSymbol))
+      count = count - 1
+      handle.increment()
+    else
+      handle.increment()
+    end
+
+    if (count == 0)
+      break
+    end
+  end
+end
+
+private def consumeStrings(handle : StringHandle)
+  if(handle.at("\"\"\""))
+    handle.remove("\"\"\"")
+    handle.insert("\"")
+  end
+
+  handle.increment()
+
+  while(handle.nextToken())
+    if(handle.is("#"))
+      if(handle.content.charAt(handle.position + 1) == "{")
+        handle.remove()
+        handle.insert("$")
+      end
+
+      handle.increment()
+    else
+      if(handle.is("\"") &&
+          (handle.content.charAt(handle.position -1) != "\\" ||
+          (handle.content.charAt(handle.position -1) == "\\" &&
+          handle.content.charAt(handle.position -2) == "\\")))
+        break
+      end
+
+      handle.increment()
+    end
+  end
+
+  if(handle.at("\"\"\""))
+    handle.remove("\"\"\"")
+    handle.insert("\"")
+  end
+
+  handle.increment()
+end
+
+def onlyWhitespace(content : String, from : Int, to : Int)
+  def sub = content.substr(from, to - from)
+  def regex = EReg.new("^\\s*$", "")
+  return regex.match(sub)
+end

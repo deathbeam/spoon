@@ -1,7 +1,0 @@
--cmd neko run-last -a -s src -d build `pwd`
---next
--lib mcli
--lib hscript
--cp build
--main raxe.Main
--neko run.n

@@ -62,7 +62,7 @@ public var interp: String;
 public function help() return{
   Sys.println(this.showUsage());
   Sys.exit(0);
-};
+}
 
 public function runDefault() return{
   try{
@@ -81,7 +81,7 @@ public function runDefault() return{
     Sys.println(err);
     Sys.exit(0);
   }
-};
+}
 
 private function transpile() return{
   if(this.src != null){
@@ -108,6 +108,6 @@ private function transpile() return{
   }
 
   Sys.exit(0);
-};
+}
 
 }

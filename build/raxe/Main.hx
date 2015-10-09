@@ -14,6 +14,6 @@ public static function main() return{
   }
 
 new   Dispatch(args).dispatch(new Cli());
-};
+}
 
 }

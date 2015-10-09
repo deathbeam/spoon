@@ -1,7 +1,7 @@
 -- vim: set ft=rb:
 
-require "mcli/Dispatch"
-require "raxe/cli/Cli"
+import mcli.Dispatch
+import raxe.cli.Cli
 
 class self
 

@@ -3,22 +3,14 @@ package raxe.cli;using Lambda;using StringTools;// vim: set ft=rb:
 import sys.FileSystem;
 import raxe.tools.Error;
 import raxe.tools.FolderReader;
-import raxe.transpiler.RaxeTranspilerGroup;
+import raxe.transpiler.Transpiler;
 
 class TranspilerCommand{
 
-/** 
- * @var files
- *
- * Size of the files (file_size) for files
- **/
-private var files =new  Map<String, Int>();
-
-private var src : String;
-
-private var dest: String;
-
 public var response : String;
+private var files =new  Map<String, Int>();
+private var src : String;
+private var dest: String;
 
 /** 
  * @param String src   Source file or directory
@@ -27,7 +19,7 @@ public var response : String;
 public function new(src: String, ?dest: String){
   this.src = src;
   this.dest = dest;
-};
+}
 
 /** 
  * Transpile a file or a whole directory
@@ -111,10 +103,10 @@ public function transpile(all: Bool) : Bool return{
     }
 
     return hasTranspile;
-  };
+  }
 
   return false;
-};
+}
 
 /** 
  * Transpile one file
@@ -124,20 +116,20 @@ public function transpile(all: Bool) : Bool return{
  * @return String content
  **/
 public function transpileFile(dir : String, file: String): String return{
-  var group =new  RaxeTranspilerGroup();
+  var transpiler =new  Transpiler();
   dir = dir != null ? FileSystem.fullPath(dir) : Sys.getCwd();
   file = FileSystem.fullPath(file);
 
   Sys.println("Compiling " + file);
-  return group.transpile(dir, file);
-};
+  return transpiler.transpile(dir, file);
+}
 
 /** 
  * Checks if the given file is a raxefile
  **/
 public function isRaxeFile(filename: String): Bool return{
   return filename.endsWith(".rx");
-};
+}
 
 /** 
  * Get the path the destination file
@@ -159,6 +151,6 @@ public function getDestinationFile(file: String, src: String, dest: String) : St
   }
 
   return newPath;
-};
+}
 
 }

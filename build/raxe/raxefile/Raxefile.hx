@@ -11,12 +11,12 @@ public var script : RaxeScript;
 public function new(path : String){
   script = createScript();
   script.execute(script.parse(File.getContent(path)));
-};
+}
 
 public function run(task : String) return{
   var fn = script.variables.get(task);
   fn();
-};
+}
 
 public function createScript() : RaxeScript return{
   var script =new  RaxeScript();
@@ -51,6 +51,6 @@ public function createScript() : RaxeScript return{
   });
 
   return script;
-};
+}
 
 }

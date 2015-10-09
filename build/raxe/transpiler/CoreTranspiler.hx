@@ -109,39 +109,7 @@ public function transpile(handle : StringHandle) return{
       handle.next("\n");
     // Step over things in strings (" ") and process multiline strings
     }else if(handle.is("\"")){
-      if(handle.at("\"\"\"")){
-        handle.remove("\"\"\"");
-        handle.insert("\"");
-      }
-
-      handle.increment();
-
-      while(handle.nextToken()){
-        if(handle.is("#")){
-          if(handle.content.charAt(handle.position + 1) == "{"){
-            handle.remove();
-            handle.insert("$");
-          }
-
-          handle.increment();
-        }else{
-          if(handle.is("\"") &&
-              (handle.content.charAt(handle.position -1) != "\\" ||
-              (handle.content.charAt(handle.position -1) == "\\" &&
-              handle.content.charAt(handle.position -2) == "\\"))){
-            break;
-          }
-
-          handle.increment();
-        }
-      }
-
-      if(handle.at("\"\"\"")){
-        handle.remove("\"\"\"");
-        handle.insert("\"");
-      }
-
-      handle.increment();
+      consumeStrings(handle);
     }else if(handle.is(".new")){
       handle.remove();
       handle.prevTokenLine();
@@ -163,7 +131,7 @@ public function transpile(handle : StringHandle) return{
       handle.increment();
       handle.increment("catch");
       handle.nextToken();
-      consumeCurlys(handle);
+      consumeBrackets(handle, "(", ")");
       handle.insert("{");
       handle.increment();
     // Change end to classic bracket end
@@ -253,7 +221,7 @@ public function transpile(handle : StringHandle) return{
       if(handle.is("(")){
         handle.position = position;
         handle.insert("function");
-        consumeCurlys(handle);
+        consumeBrackets(handle, "(", ")");
         handle.next("\n");
 
         if(type == "class" || type == "module"){
@@ -281,7 +249,7 @@ public function transpile(handle : StringHandle) return{
         handle.remove("do");
         handle.insert("function");
         handle.increment();
-        consumeCurlys(handle);
+        consumeBrackets(handle, "(", ")");
         handle.insert(" return{");
       }else{
         handle.remove("do");
@@ -293,7 +261,7 @@ public function transpile(handle : StringHandle) return{
     }else if(handle.safeis("if")){
       handle.increment();
       handle.nextToken();
-      consumeCurlys(handle);
+      consumeBrackets(handle, "(", ")");
       handle.insert("{");
       handle.increment();
     // Change elseif to else if and insert begin and end brackets around it
@@ -302,13 +270,13 @@ public function transpile(handle : StringHandle) return{
       handle.insert("}else if");
       handle.increment();
       handle.nextToken();
-      consumeCurlys(handle);
+      consumeBrackets(handle, "(", ")");
       handle.insert("{");
       handle.increment();
     }else if(handle.safeis("while") || handle.safeis("for")){
       handle.increment();
       handle.nextToken();
-      consumeCurlys(handle);
+      consumeBrackets(handle, "(", ")");
       handle.insert("{");
       handle.increment();
     // Inser begin and end brackets around else but do not try to
@@ -378,51 +346,62 @@ private function safeCheck(handle : StringHandle, content : String) : Bool retur
   return true;
 };
 
-private function consumeCurlys(handle : StringHandle) return{
+private function consumeBrackets(handle : StringHandle, startSymbol : String, endSymbol : String) return{
   var count = 0;
 
   while(handle.nextToken()){
     if(handle.is("\"")){
-      if(handle.at("\"\"\"")){
-        handle.remove("\"\"\"");
-        handle.insert("\"");
-      }
-
-      handle.increment();
-
-      while(handle.nextToken()){
-        if(handle.is("#")){
-          if(handle.content.charAt(handle.position + 1) == "{"){
-            handle.remove();
-            handle.insert("$");
-          }
-
-          handle.increment();
-        }else{
-          if (handle.is("\"") && (handle.content.charAt(handle.position -1) != "\\" ||
-              (handle.content.charAt(handle.position -1) == "\\" && handle.content.charAt(handle.position -2) == "\\"))){
-            break;
-          }
-
-          handle.increment();
-        }
-      }
-
-      if(handle.at("\"\"\"")){
-        handle.remove("\"\"\"");
-        handle.insert("\"");
-      }
-    }else if(handle.is("(")){
+      consumeStrings(handle);
+    }else if(handle.is(startSymbol)){
       count = count + 1;
-    }else if(handle.is(")")){
+      handle.increment();
+    }else if(handle.is(endSymbol)){
       count = count - 1;
+      handle.increment();
+    }else{
+      handle.increment();
     }
 
-    handle.increment();
     if (count == 0){
       break;
     }
   };
+};
+
+private function consumeStrings(handle : StringHandle) return{
+  if(handle.at("\"\"\"")){
+    handle.remove("\"\"\"");
+    handle.insert("\"");
+  }
+
+  handle.increment();
+
+  while(handle.nextToken()){
+    if(handle.is("#")){
+      if(handle.content.charAt(handle.position + 1) == "{"){
+        handle.remove();
+        handle.insert("$");
+      }
+
+      handle.increment();
+    }else{
+      if(handle.is("\"") &&
+          (handle.content.charAt(handle.position -1) != "\\" ||
+          (handle.content.charAt(handle.position -1) == "\\" &&
+          handle.content.charAt(handle.position -2) == "\\"))){
+        break;
+      }
+
+      handle.increment();
+    }
+  }
+
+  if(handle.at("\"\"\"")){
+    handle.remove("\"\"\"");
+    handle.insert("\"");
+  }
+
+  handle.increment();
 };
 
 }

@@ -23,7 +23,6 @@ public function transpile(directory : String, file : String) : String return{
   var content = File.getContent(file);
 
   push(new CoreTranspiler().setName(currentModule).setPath(currentPackage));
-  push(new AccessTranspiler());
   push(new SemicolonTranspiler());
 
   for(transpiler in transpilers){

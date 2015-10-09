@@ -5,7 +5,7 @@ import raxe.cli.Cli;
 
 class Main{
 
-static public function main() return{
+public static function main() return{
   var args = Sys.args();
   Sys.setCwd(args.pop());
 

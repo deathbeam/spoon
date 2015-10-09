@@ -17,7 +17,7 @@ import raxe.script.RaxeScript;
  **/
 class Cli extends CommandLine{
 
-inline static public var ERROR_TYPE = "transpile_error";
+inline public static var ERROR_TYPE = "transpile_error";
 
 /** 
   Source directory or file

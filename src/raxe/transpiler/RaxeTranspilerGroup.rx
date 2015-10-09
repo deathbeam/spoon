@@ -23,7 +23,6 @@ def transpile(directory : String, file : String) : String
   def content = File.getContent(file)
 
   push(CoreTranspiler.new().setName(currentModule).setPath(currentPackage))
-  push(AccessTranspiler.new())
   push(SemicolonTranspiler.new())
 
   for(transpiler in transpilers)

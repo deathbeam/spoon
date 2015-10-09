@@ -1,4 +1,4 @@
--cmd neko run -a -s src -d build `pwd`
+-cmd neko run-last -a -s src -d build `pwd`
 --next
 -lib mcli
 -lib hscript

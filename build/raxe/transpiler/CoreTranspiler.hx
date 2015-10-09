@@ -38,7 +38,7 @@ public function tokens() : Array<String> return{
     "(:", ":)",
 
     // Standard keywords
-    "\"", "(", ")", "/", "=", "#", ",", "@", "]", "[",
+    "\"", "(", ")", "/", "=", "#", ",", "@", "]", "[", "{", "}",
 
     // Raxe keywords
     "-", "require", "include", "def", "self", ".new", "new", "end", "do",
@@ -50,13 +50,17 @@ public function tokens() : Array<String> return{
     "elsif", "if", "else", "while", "for",
 
     // Types
-    "class", "enum", "abstract", "interface", "module",
+    "class", "enum", "abstract", "interface",
+
+    // Modifiers
+    "public", "private",
   ];
 };
 
 public function transpile(handle : StringHandle) return{
-  var alreadyDefined = script;
   var type = "";
+  var isPrivate = false;
+  var count = -1;
 
   if(!script){
     handle.insert("package " + path + ";using Lambda;using StringTools;").increment();
@@ -110,6 +114,16 @@ public function transpile(handle : StringHandle) return{
     // Step over things in strings (" ") and process multiline strings
     }else if(handle.is("\"")){
       consumeStrings(handle);
+    // Correct access
+    }else if(handle.safeis("public") || handle.safeis("private")){
+      isPrivate = true;
+      handle.increment();
+    }else if(handle.is("{")){
+      count = count + 1;
+      handle.increment();
+    }else if(handle.is("}")){
+      count = count - 1;
+      handle.increment();
     }else if(handle.is(".new")){
       handle.remove();
       handle.prevTokenLine();
@@ -126,6 +140,7 @@ public function transpile(handle : StringHandle) return{
       handle.increment();
       handle.insert("{");
       handle.increment();
+      count = count + 1;
     }else if(handle.safeis("catch")){
       handle.insert("}");
       handle.increment();
@@ -139,6 +154,7 @@ public function transpile(handle : StringHandle) return{
       handle.remove();
       handle.insert("}");
       handle.increment();
+      count = count - 1;
     // Change require to classic imports
     }else if(handle.safeis("require") || handle.safeis("include")){
       var isInclude = handle.is("include");
@@ -192,6 +208,16 @@ public function transpile(handle : StringHandle) return{
     // Defines to variables and functions
     }else if(handle.safeis("def")){
       handle.remove("def");
+
+      if(count == 0){
+        if(!isPrivate){
+          handle.insert("public ");
+          handle.increment();
+        }
+      }
+
+      isPrivate = false;
+
       var position = handle.position;
       safeNextToken(handle);
 
@@ -230,6 +256,8 @@ public function transpile(handle : StringHandle) return{
           }else{
             handle.insert("{");
           }
+
+          count = count + 1;
         }
 
         handle.increment();
@@ -256,6 +284,8 @@ public function transpile(handle : StringHandle) return{
         handle.insert("{");
       }
 
+      count = count + 1;
+
       handle.increment();
     // Insert begin bracket after if and while
     }else if(handle.safeis("if")){
@@ -264,6 +294,7 @@ public function transpile(handle : StringHandle) return{
       consumeBrackets(handle, "(", ")");
       handle.insert("{");
       handle.increment();
+      count = count + 1;
     // Change elseif to else if and insert begin and end brackets around it
     }else if(handle.safeis("elsif")){
       handle.remove();
@@ -278,6 +309,7 @@ public function transpile(handle : StringHandle) return{
       handle.nextToken();
       consumeBrackets(handle, "(", ")");
       handle.insert("{");
+      count = count + 1;
       handle.increment();
     // Inser begin and end brackets around else but do not try to
     // process curlys because there will not be any
@@ -288,7 +320,7 @@ public function transpile(handle : StringHandle) return{
       handle.insert("{");
       handle.increment();
     // [abstract] class/interface/enum
-    }else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum") || handle.safeis("module")){
+    }else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum")){
       type = handle.current;
       handle.increment();
 
@@ -330,7 +362,8 @@ private function safeNextToken(handle : StringHandle) : Bool return{
 
   if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
       safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "require") &&
-      safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch") && safeCheck(handle, "include")){
+      safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch") &&
+      safeCheck(handle, "include") && safeCheck(handle, "private") && safeCheck(handle, "public")){
     return true;
   }else{
     handle.increment();

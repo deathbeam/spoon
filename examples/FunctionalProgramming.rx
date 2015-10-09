@@ -1,9 +1,9 @@
 -- vim: set ft=rb:
 
-module self
+class self
 
 -- A definition of factorial, using a local, tail recursive function
-def factorial(n: Int): Int
+def self.factorial(n: Int): Int
   def go(n: Int, acc: Int): Int
     if (n <= 0)
       acc
@@ -16,7 +16,7 @@ def factorial(n: Int): Int
 end
 
 -- Another implementation of `factorial`, this time with a `while` loop
-def factorial2(n: Int): Int
+def self.factorial2(n: Int): Int
   def acc = 1
   def i = n
 
@@ -28,11 +28,11 @@ def factorial2(n: Int): Int
   acc
 end
 
-def compute(n: Int, f: Int -> Int): Int
+def self.compute(n: Int, f: Int -> Int): Int
   f(n)
 end
 
-def main()
+def self.main()
   def number = 10 -- Compute factorials for number 10
 
   -- Compute with recursive factorial method

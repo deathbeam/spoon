@@ -1,7 +1,6 @@
 package raxe.script;using Lambda;using StringTools;// vim: set ft=rb:
 
 import raxe.transpiler.CoreTranspiler;
-import raxe.transpiler.AccessTranspiler;
 import raxe.transpiler.SemicolonTranspiler;
 import raxe.transpiler.TranspilerGroup;
 import raxe.tools.StringHandle;

@@ -1,6 +1,6 @@
 -- vim: set ft=rb:
 
-module self
+class self
 
 def main()
   trace("Hello World")

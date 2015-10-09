@@ -6,7 +6,7 @@ package raxe.tools;using Lambda;using StringTools;// vim: set ft=rb:
 class Error{
 
 // Raise a new error formatted into json to be able to parse it everywhere
-static public function create(errorType: String, error: String) return{
+public static function create(errorType: String, error: String) return{
   throw("{\"type\": ${errorType},\"error\": ${error}}");
 };
 

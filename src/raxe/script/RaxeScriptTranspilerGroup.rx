@@ -1,7 +1,6 @@
 -- vim: set ft=rb:
 
 require "raxe/transpiler/CoreTranspiler"
-require "raxe/transpiler/AccessTranspiler"
 require "raxe/transpiler/SemicolonTranspiler"
 require "raxe/transpiler/TranspilerGroup"
 require "raxe/tools/StringHandle"

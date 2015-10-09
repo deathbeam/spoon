@@ -14,7 +14,7 @@ class FolderReader{
  * @param rootFolder : String Root folder for the search
  * @return Files found
  **/
-static public function getFiles(rootFolder: String) : Array<String> return{
+public static function getFiles(rootFolder: String) : Array<String> return{
   var files : Array<String> =new  Array<String>();
 
   if(FileSystem.exists(rootFolder)){
@@ -44,7 +44,7 @@ static public function getFiles(rootFolder: String) : Array<String> return{
  * @param  path     : String Path to the file (each folders separated by '/')
  * @param  ?content : String File's content
  **/
-static public function createFile(path : String, ?content : String) : Void return{
+public static function createFile(path : String, ?content : String) : Void return{
   var parts : Array<String> = path.split("/");
   var fileName : String = parts.pop();
 
@@ -62,7 +62,7 @@ static public function createFile(path : String, ?content : String) : Void retur
  * Creates the given directory (and all path's directories if needed)
  * @param  path : String Path to the given directory
  **/
-static public function createDirectory(path : String) : Void return{
+public static function createDirectory(path : String) : Void return{
   var parts : Array<String> = path.split("/");
   var done : String = null;
 
@@ -80,7 +80,7 @@ static public function createDirectory(path : String) : Void return{
  * @param  source      : String Source's path
  * @param  destination : String Destination's path
  **/
-static public function copyFileSystem(source : String, destination : String) : Void return{
+public static function copyFileSystem(source : String, destination : String) : Void return{
   try{
     if(source.endsWith("/")){
       source = source.substr(0, -1);

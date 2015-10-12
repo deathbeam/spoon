@@ -1,9 +1,9 @@
 -- vim: set ft=rb:
 
 enum Schema
-    TInt
-    TString
-    TArray(elem : Schema)
+  TInt
+  TString
+  TArray(elem : Schema)
 end
 
 class self

@@ -8,7 +8,7 @@ class self
     def args = Sys.args()
     Sys.setCwd(args.pop())
 
-    if (args[0] == "-i" || args[0] == "--interp")
+    if(args[0] == "-i" || args[0] == "--interp")
       args = [args.shift(), args.join(" ")]
     end
 

@@ -10,64 +10,64 @@ import raxe.transpiler.Transpiler
 import raxe.tools.StringHandle
 
 class self < Interp
+  def parser : Parser
+  def transpiler : Transpiler
 
-def parser : Parser
-def transpiler : Transpiler
+  def new()
+    super()
 
-def new()
-  super()
+    parser = Parser.new()
+    transpiler = Transpiler.new()
 
-  parser = Parser.new()
-  transpiler = Transpiler.new()
+    variables.set("require", do(thing : String)
+      def path = thing + ".rx"
 
-  variables.set("require", do(thing : String)
-    def path = thing + ".rx"
+      if(FileSystem.exists(path))
+        return execute(parse(File.getContent(path)))
+      end
 
-    if(FileSystem.exists(path))
-      return execute(parse(File.getContent(path)))
-    end
+      path = thing.replace("/", ".")
 
-    path = thing.replace("/", ".")
-
-    def clazz : Dynamic = Type.resolveClass(path)
-
-    if(clazz == null)
-      clazz = Type.resolveEnum(path)
+      def clazz : Dynamic = Type.resolveClass(path)
 
       if(clazz == null)
-        trace("Failed to resolve type #{thing}")
+        clazz = Type.resolveEnum(path)
+
+        if(clazz == null)
+          trace("Failed to resolve type #{thing}")
+        end
       end
+
+      return clazz
+    end)
+  end
+
+  def parse(s : String) : Expr
+    def handle = StringHandle.new(s, transpiler.tokens)
+    def content = transpiler.run(true, handle)
+    return parser.parseString(content)
+  end
+
+  override def get(o : Dynamic, f : String ) : Dynamic
+    if(o == null)
+      #if debug
+      trace("Null error when doing get #{f}")
+      #end
+      error(EInvalidAccess(f))
     end
 
-    return clazz
-  end)
-end
-
-def parse(s : String) : Expr
-  def handle = StringHandle.new(s, transpiler.tokens)
-  def content = transpiler.run(true, handle)
-  return parser.parseString(content)
-end
-
-override def get(o : Dynamic, f : String ) : Dynamic
-  if(o == null)
-    #if debug
-    trace("Null error when doing get #{f}")
-    #end
-    error(EInvalidAccess(f))
+    return Reflect.getProperty(o,f)
   end
 
-  return Reflect.getProperty(o,f)
-end
+  override def set( o : Dynamic, f : String, v : Dynamic ) : Dynamic
+    if(o == null)
+      #if debug
+      trace("Null error when doing set #{f}")
+      #end
+      error(EInvalidAccess(f))
+    end
 
-override def set( o : Dynamic, f : String, v : Dynamic ) : Dynamic
-  if(o == null)
-    #if debug
-    trace("Null error when doing set #{f}")
-    #end
-    error(EInvalidAccess(f))
+    Reflect.setProperty(o,f,v)
+    return v
   end
-
-  Reflect.setProperty(o,f,v)
-  return v
 end

@@ -1,11 +1,11 @@
 -- vim: set ft=rb:
 
 class self
-
-def self.main()
-  try
-    throw("Error")
-  catch(msg : String)
-    trace("Error occurred: #{msg}")
+  def self.main()
+    try
+      throw("Error")
+    catch(msg : String)
+      trace("Error occurred: #{msg}")
+    end
   end
 end

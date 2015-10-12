@@ -4,14 +4,14 @@ import mcli.Dispatch
 import raxe.cli.Cli
 
 class self
+  def self.main()
+    def args = Sys.args()
+    Sys.setCwd(args.pop())
 
-def self.main()
-  def args = Sys.args()
-  Sys.setCwd(args.pop())
+    if (args[0] == "-i" || args[0] == "--interp")
+      args = [args.shift(), args.join(" ")]
+    end
 
-  if (args[0] == "-i" || args[0] == "--interp")
-    args = [args.shift(), args.join(" ")]
+    Dispatch.new(args).dispatch(Cli.new())
   end
-
-  Dispatch.new(args).dispatch(Cli.new())
 end

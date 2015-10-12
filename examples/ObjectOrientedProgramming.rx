@@ -1,34 +1,34 @@
 -- vim: set ft=rb:
 
 class self
+  -- You can use self world to reference current class name
+  def self.instance = self.new()
 
--- You can use self world to reference current class name
-def self.instance = self.new()
+  -- Self keyword before defines basically means that define is static
+  def self.getInstance()
+    instance
+  end
 
--- Self keyword before defines basically means that define is static
-def self.getInstance()
-  instance
-end
+  def self.main()
+    -- Get instance of self
+    def myInstance = getInstance()
 
-def self.main()
-  -- Get instance of self
-  def myInstance = getInstance()
+    -- Type class name directly
+    def myAnotherInstance = ModulesAndInstances.new()
 
-  -- Type class name directly
-  def myAnotherInstance = ModulesAndInstances.new()
+    ModulesAndInstances.new().instanceFunction()
 
-  ModulesAndInstances.new().instanceFunction()
+    -- Call instance function
+    myInstance.instanceFunction()
+  end
 
-  -- Call instance function
-  myInstance.instanceFunction()
-end
+  -- Create the constructor method so we can make instances
+  def new()
+    trace("Instance created")
+  end
 
--- Create the constructor method so we can make instances
-def new()
-  trace("Instance created")
-end
-
-def instanceFunction()
-  trace(this) -- print this instance to console
-  trace(self) -- print this module to console
+  def instanceFunction()
+    trace(this) -- print this instance to console
+    trace(self) -- print this module to console
+  end
 end

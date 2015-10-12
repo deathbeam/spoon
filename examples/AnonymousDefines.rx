@@ -1,50 +1,50 @@
 -- vim: set ft=rb:
 
 class self
+  ---
+  Anonymous array declaration is not dynamic by default.
+  You can have array of only one type.
+  ---
+  def self.array = [
+    "a", "b", "c",
+  ]
 
----
-Anonymous array declaration is not dynamic by default.
-You can have array of only one type.
----
-def self.array = [
-  "a", "b", "c",
-]
+  ---
+  Anonymous maps, not dynamic by default too
+  ---
+  def self.map = [
+    "a" => do(test)
+      trace(test)
+    end,
+  ]
 
----
-Anonymous maps, not dynamic by default too
----
-def self.map = [
-  "a" => do(test)
-    trace(test)
-  end,
-]
+  ---
+  And this is dynamic anonymous array, so you can put anything in there
+  ---
+  def self.dynarray : Array<Dynamic> = [
+    "a", "b", "c", 6, 7, array,
+  ]
 
----
-And this is dynamic anonymous array, so you can put anything in there
----
-def self.dynarray : Array<Dynamic> = [
-  "a", "b", "c", 6, 7, array,
-]
+  ---
+  Same applies to anonymous structures.
+  ---
+  def self.struct = {
+    a: "hello",
+    b: "yolo",
+    callback: do(event)
+      event + " World"
+    end,
+  }
 
----
-Same applies to anonymous structures.
----
-def self.struct = {
-  a: "hello",
-  b: "yolo",
-  callback: do(event)
-    event + " World"
-  end,
-}
+  def self.main()
+    -- Here we will call our anonymous function
+    def result = struct.callback("Hello")
 
-def self.main()
-  -- Here we will call our anonymous function
-  def result = struct.callback("Hello")
-
-  -- And now, print everything to console
-  trace(result)
-  trace(dynarray)
-  trace(map)
-  trace(array)
-  trace(struct)
+    -- And now, print everything to console
+    trace(result)
+    trace(dynarray)
+    trace(map)
+    trace(array)
+    trace(struct)
+  end
 end

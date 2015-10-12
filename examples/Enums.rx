@@ -1,0 +1,31 @@
+enum Schema
+    TInt
+    TString
+    TArray(elem : Schema)
+end
+
+class self
+  def self.main()
+      validate([1,2,3], TArray(TInt))
+  end
+
+  def self.validate(value: Dynamic, schema: Schema)
+    case(schema)
+      when(TInt)
+        if(!Std.is(value, Int))
+          throw("not an int")
+        end
+      when(TString)
+        if(!Std.is(value, String))
+          throw("not a string")
+        end
+      when(TArray(elemSchema))
+        if(!Std.is(value, Array))
+          throw("not an array")
+        end
+        for(elem in (value : Array<Dynamic>))
+          validate(elem, elemSchema)
+        end
+    end
+  end
+end

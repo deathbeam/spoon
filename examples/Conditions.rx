@@ -1,24 +1,24 @@
 -- vim: set ft=rb:
 
 class self
+  def self.main()
+    def myvar : String = null
+    def myarray = Array<String>.new()
 
-def self.main()
-  def myvar : String = null
-  def myarray = Array<String>.new()
-
-  if(myvar != null && myvar.charAt(10) == "p")
-    for(i in myarray.iterator())
-      trace("Wouhou")
+    if(myvar != null && myvar.charAt(10) == "p")
+      for(i in myarray.iterator())
+        trace("Wouhou")
+      end
+    elsif(myvar != null && myvar.charAt(20) == "c")
+      trace("no")
+    else
+      trace("coco")
     end
-  elsif(myvar != null && myvar.charAt(20) == "c")
-    trace("no")
-  else
-    trace("coco")
-  end
 
-  if(myvar != null &&
-      myvar.charAt(0) == "x" &&
-      myvar.charAt(2) == "x")
-    trace("ok")
+    if(myvar != null &&
+        myvar.charAt(0) == "x" &&
+        myvar.charAt(2) == "x")
+      trace("ok")
+    end
   end
 end

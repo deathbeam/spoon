@@ -21,7 +21,7 @@ class Transpiler{
     "#", "@", "\"",
 
     // Types
-    "::", "class", "enum", "abstract", "interface",
+    "::", "class", "enum", "abstract", "interface", "module",
 
     // Modifiers
     "public", "private",
@@ -161,6 +161,11 @@ class Transpiler{
             handle.insert("public ");
             handle.increment();
           }
+
+          if(currentType == "module"){
+            handle.insert("static ");
+            handle.increment();
+          }
         }
 
         hasVisibility = false;
@@ -191,7 +196,7 @@ class Transpiler{
           consumeBrackets(handle, "(", ")");
           handle.next("\n");
 
-          if(currentType == "class"){
+          if(currentType != "interface"){
             if (implicit){
               handle.insert(" return{");
             }else{
@@ -199,7 +204,7 @@ class Transpiler{
             }
 
             opened = opened + 1;
-          }else if(currentType == "interface"){
+          }else{
             handle.insert(";");
           }
 
@@ -263,8 +268,14 @@ class Transpiler{
         handle.insert("{");
         handle.increment();
       // [abstract] class/interface/enum
-      }else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum")){
+      }else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum") || handle.safeis("module")){
         currentType = handle.current;
+
+        if(currentType == "module"){
+          handle.remove();
+          handle.insert("class");
+        }
+        
         handle.increment();
 
         while(handle.nextToken()){

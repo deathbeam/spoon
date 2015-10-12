@@ -2,7 +2,7 @@ package raxe.cli;using Lambda;using StringTools;// vim: set ft=rb:
 
 import mcli.CommandLine;
 import sys.FileSystem;
-import raxe.raxefile.Raxefile;
+import raxe.raxefile.RaxeFile;
 import raxe.tools.Error;
 import raxe.script.RaxeScript;
 
@@ -71,7 +71,7 @@ class Cli extends CommandLine{
       }else if(this.src != null){
         this.transpile();
       }else if(FileSystem.exists("Raxefile")){
-        var rf =new  Raxefile("Raxefile");
+        var rf =new  RaxeFile("Raxefile");
         rf.run(this.task);
       }else{
         this.help();

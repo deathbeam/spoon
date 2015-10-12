@@ -2,7 +2,7 @@
 
 import mcli.CommandLine
 import sys.FileSystem
-import raxe.raxefile.Raxefile
+import raxe.raxefile.RaxeFile
 import raxe.tools.Error
 import raxe.script.RaxeScript
 
@@ -71,7 +71,7 @@ class self < CommandLine
       elsif(this.src != null)
         this.transpile()
       elsif(FileSystem.exists("Raxefile"))
-        def rf = Raxefile.new("Raxefile")
+        def rf = RaxeFile.new("Raxefile")
         rf.run(this.task)
       else
         this.help()

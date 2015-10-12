@@ -16,7 +16,7 @@ class self < Interp
   def new()
     super()
 
-    variables.set("require", do(thing : String)
+    variables.set("import", do(thing : String)
       def path = thing + ".rx"
 
       if(FileSystem.exists(path))

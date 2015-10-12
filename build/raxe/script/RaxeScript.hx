@@ -10,16 +10,13 @@ import raxe.transpiler.Transpiler;
 import raxe.tools.StringHandle;
 
 class RaxeScript extends Interp{
-  public var parser : Parser;
-  public var transpiler : Transpiler;
+  public var parser : Parser =new  Parser();
+  public var transpiler : Transpiler =new  Transpiler();
 
   public function new(){
     super();
 
-    parser =new  Parser();
-    transpiler =new  Transpiler();
-
-    variables.set("require", function(thing : String) return{
+    variables.set("import", function(thing : String) return{
       var path = thing + ".rx";
 
       if(FileSystem.exists(path)){

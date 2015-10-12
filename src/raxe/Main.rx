@@ -6,8 +6,8 @@ import raxe.cli.Cli
 ---
 Entry point for Raxe CLI
 ---
-class self
-  def self.main()
+module self
+  def main()
     def args = Sys.args()
     Sys.setCwd(args.pop()) -- Workaround for correct working directory when running from `haxelib`
 

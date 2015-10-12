@@ -28,7 +28,24 @@ class self < Sprite
 
     stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown)
     stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp)
-    stage.addEventListener(Event.ENTER_FRAME, onEnterFrame)
+
+    stage.addEventListener(Event.ENTER_FRAME, do(event)
+      if(movingDown)
+        logo.y += 5
+      end
+
+      if(movingLeft)
+        logo.x -= 5
+      end
+
+      if(movingRight)
+        logo.x += 5
+      end
+
+      if(movingUp)
+        logo.y -= 5
+      end
+    end)
   end
 
   ---
@@ -36,44 +53,28 @@ class self < Sprite
   ---
 
   def onKeyDown(event)
-    if(event.keyCode == Keyboard.DOWN)
-      movingDown = true
-    elsif(event.keyCode == Keyboard.LEFT)
-      movingLeft = true
-    elsif(event.keyCode == Keyboard.RIGHT)
-      movingRight = true
-    elsif(event.keyCode == Keyboard.UP)
-      movingUp = true
+    case(event.keyCode)
+      when(Keyboard.DOWN)
+        movingDown = true
+      when(Keyboard.LEFT)
+        movingLeft = true
+      when(Keyboard.RIGHT)
+        movingRight = true
+      when(Keyboard.UP)
+        movingUp = true
     end
   end
 
   def onKeyUp(event)
-    if(event.keyCode == Keyboard.DOWN)
-      movingDown = false
-    elsif(event.keyCode == Keyboard.LEFT)
-      movingLeft = false
-    elsif(event.keyCode == Keyboard.RIGHT)
-      movingRight = false
-    elsif(event.keyCode == Keyboard.UP)
-      movingUp = false
-    end
-  end
-
-  def onEnterFrame(event)
-    if(movingDown)
-      logo.y += 5
-    end
-
-    if(movingLeft)
-      logo.x -= 5
-    end
-
-    if(movingRight)
-      logo.x += 5
-    end
-
-    if(movingUp)
-      logo.y -= 5
+    case(event.keyCode)
+      when(Keyboard.DOWN)
+        movingDown = false
+      when(Keyboard.LEFT)
+        movingLeft = false
+      when(Keyboard.RIGHT)
+        movingRight = false
+      when(Keyboard.UP)
+        movingUp = false
     end
   end
 end

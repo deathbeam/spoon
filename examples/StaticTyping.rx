@@ -1,14 +1,14 @@
 -- vim: set ft=rb:
 
-class self
-  def self.array : Array<String>
-  def self.message : String
+module self
+  def array : Array<String>
+  def message : String
 
   ---
   To define return type, we can add : <YourType>
   after method definition
   ---
-  def self.main() : Void
+  def main() : Void
     message = toLowerCase("Hello World")
 
     trace(message)
@@ -18,7 +18,7 @@ class self
   Also, to define param or variable type,
   simply add : <YourType> after it's name
   ---
-  def self.toLowerCase(message : String) : String
+  def toLowerCase(message : String) : String
     message.toLowerCase()
   end
 end

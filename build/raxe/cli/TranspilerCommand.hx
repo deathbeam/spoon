@@ -12,8 +12,8 @@ class TranspilerCommand{
   private var dest: String;
 
   /** 
-  @param String src   Source file or directory
-  @param String ?dest Destination file or directory (optional)
+  @param src : String   Source file or directory
+  @param ?dest : String Destination file or directory (optional)
    **/
   public function new(src: String, ?dest: String){
     this.src = src;
@@ -23,7 +23,7 @@ class TranspilerCommand{
   /** 
   Transpile a file or a whole directory
 
-  @param raxeOnly Bool Must only copy to the dest directory, raxe files
+  @param raxeOnly : Bool Must only copy to the dest directory, raxe files
   @return Bool transpilation has been done or not
    **/
   public function transpile(all: Bool) : Bool return{
@@ -109,7 +109,7 @@ class TranspilerCommand{
   /** 
   Transpile one file
 
-  @param String file Transpile a file and returns its content
+  @param file : String Transpile a file and returns its content
   @return String content
    **/
   public function transpileFile(dir : String, file: String): String return{
@@ -131,9 +131,9 @@ class TranspilerCommand{
   /** 
   Get the path the destination file
 
-  @param String file Path to the file
-  @param String src  Source directory
-  @param String dest Destination directory
+  @param file : String Path to the file
+  @param src : String  Source directory
+  @param dest : String Destination directory
   @return String destination file path
    **/
   public function getDestinationFile(file: String, src: String, dest: String) : String return{

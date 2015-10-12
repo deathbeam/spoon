@@ -21,16 +21,7 @@ class MyTests < TestCase
   end
 
   -- Every test function name has to start with 'test'
-
-  def testValue()
-    assertEquals("foo", myVal)
-  end
-
-  def testMath1()
-    assertTrue(myInt == 2)
-  end
-
-  def testMath2()
-    assertFalse(myInt == 3)
-  end
+  def testValue() => assertEquals("foo", myVal)
+  def testMath1() => assertTrue(myInt == 2)
+  def testMath2() => assertFalse(myInt == 3)
 end

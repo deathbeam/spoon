@@ -31,9 +31,7 @@ module self
     acc
   end
 
-  def compute(n: Int, f: Int -> Int): Int
-    f(n)
-  end
+  def compute(n: Int, f: Int -> Int): Int => f(n)
 
   def main()
     def number = 10 -- Compute factorials for number 10

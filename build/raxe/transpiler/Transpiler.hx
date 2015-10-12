@@ -28,7 +28,7 @@ class Transpiler{
     "import", "def", "self", ".new", "new", "end", "do", "typedef", "try", "catch",
 
     // Brackets
-    "{", "}", "(", ")", "[", "]",
+    "{", "}", "(", ")", "[", "]", "=>",
 
     // Operators (- is also used for comments, < is also used for inheritance)
     ":", "?", "=", "+", "-", "*", ".", "/", "," , "|", "&",  "^", "%", "<", ">", "~",
@@ -192,21 +192,34 @@ class Transpiler{
           handle.position = position;
           handle.insert("function");
           consumeBrackets(handle, "(", ")");
-          handle.next("\n");
 
           if(currentType != "interface"){
-            if (implicit){
-              handle.insert(" return{");
-            }else{
-              handle.insert("{");
-            }
+            while(safeNextToken(handle)){
+              if(handle.is("=>")){
+                handle.remove();
 
-            opened = opened + 1;
+                if(implicit){
+                  handle.insert("return");
+                }
+
+                break;
+              }else if(handle.isOne(["\n", "--"])){
+                if(implicit){
+                  handle.insert(" return{");
+                }else{
+                  handle.insert("{");
+                }
+                handle.increment();
+                opened = opened + 1;
+                break;
+              }else{
+                handle.increment();
+              }
+            }
           }else{
             handle.insert(";");
+            handle.increment();
           }
-
-          handle.increment();
         }else{
           handle.position = position;
           handle.insert("var");
@@ -224,13 +237,26 @@ class Transpiler{
           handle.insert("function");
           handle.increment();
           consumeBrackets(handle, "(", ")");
-          handle.insert(" return{");
+          position = handle.position;
+
+          while(safeNextToken(handle)){
+            if(handle.is("=>")){
+              handle.remove();
+              handle.insert("return");
+              break;
+            }else if(handle.isOne(["\n", "--"])){
+              handle.insert(" return{");
+              opened = opened + 1;
+              break;
+            }else{
+              handle.increment();
+            }
+          }
         }else{
           handle.remove("do");
           handle.insert("{");
+          opened = opened + 1;
         }
-
-        opened = opened + 1;
 
         handle.increment();
       // Insert begin bracket after if and while

@@ -1,0 +1,36 @@
+-- vim: set ft=rb:
+
+import haxe.unit.TestCase
+import haxe.unit.TestRunner
+
+module self
+  def main()
+    def r = TestRunner.new()
+    r.add(MyTests.new())
+    r.run()
+  end
+end
+
+class MyTests < TestCase
+  def myVal : String
+  def myInt : Int
+
+  override def setup()
+    myVal = "foo"
+    myInt = 1 + 1
+  end
+
+  -- Every test function name has to start with 'test'
+
+  def testValue()
+    assertEquals("foo", myVal)
+  end
+
+  def testMath1()
+    assertTrue(myInt == 2)
+  end
+
+  def testMath2()
+    assertFalse(myInt == 3)
+  end
+end

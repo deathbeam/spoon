@@ -1,6 +1,4 @@
-package raxe;using Lambda;using StringTools;// vim: set ft=rb:
-
-import mcli.Dispatch;
+package raxe;using Lambda;using StringTools;import mcli.Dispatch;
 import raxe.cli.Cli;
 
 /** 

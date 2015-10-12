@@ -1,10 +1,8 @@
-package raxe.raxefile;using Lambda;using StringTools;// vim: set ft=rb:
-
-import raxe.script.RaxeScript;
+package raxe.raxefile;using Lambda;using StringTools;import raxe.script.RaxeScript;
 import sys.io.File;
 import sys.FileSystem;
 
-class Raxefile{
+class RaxeFile{
   public var script : RaxeScript;
 
   public function new(path : String){

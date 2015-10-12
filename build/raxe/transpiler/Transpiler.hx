@@ -1,6 +1,4 @@
-package raxe.transpiler;using Lambda;using StringTools;// vim: set ft=rb:
-
-import raxe.tools.StringHandle;
+package raxe.transpiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
 import sys.io.File;
 
 class Transpiler{
@@ -275,7 +273,7 @@ class Transpiler{
           handle.remove();
           handle.insert("class");
         }
-        
+
         handle.increment();
 
         while(handle.nextToken()){

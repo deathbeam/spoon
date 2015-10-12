@@ -1,5 +1,3 @@
--- vim: set ft=rb:
-
 import sys.FileSystem
 import raxe.tools.Error
 import raxe.tools.FolderReader

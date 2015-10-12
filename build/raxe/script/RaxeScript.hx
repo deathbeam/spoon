@@ -1,6 +1,4 @@
-package raxe.script;using Lambda;using StringTools;// vim: set ft=rb:
-
-import haxe.io.Input;
+package raxe.script;using Lambda;using StringTools;import haxe.io.Input;
 import hscript.Parser;
 import hscript.Interp;
 import hscript.Expr;

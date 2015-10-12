@@ -1,6 +1,4 @@
-package raxe.cli;using Lambda;using StringTools;// vim: set ft=rb:
-
-import mcli.CommandLine;
+package raxe.cli;using Lambda;using StringTools;import mcli.CommandLine;
 import sys.FileSystem;
 import raxe.raxefile.RaxeFile;
 import raxe.tools.Error;

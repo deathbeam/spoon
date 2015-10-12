@@ -1,5 +1,3 @@
--- vim: set ft=rb:
-
 import haxe.io.Input
 import hscript.Parser
 import hscript.Interp

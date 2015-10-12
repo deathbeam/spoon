@@ -1,5 +1,3 @@
--- vim: set ft=rb:
-
 import mcli.CommandLine
 import sys.FileSystem
 import raxe.raxefile.RaxeFile

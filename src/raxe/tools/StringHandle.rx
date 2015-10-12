@@ -1,5 +1,3 @@
--- vim: set ft=rb:
-
 class self
   def content : String
   def position : Int

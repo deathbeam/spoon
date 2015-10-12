@@ -1,6 +1,4 @@
-package raxe.tools;using Lambda;using StringTools;// vim: set ft=rb:
-
-class StringHandle{
+package raxe.tools;using Lambda;using StringTools;class StringHandle{
   public var content : String;
   public var position : Int;
   public var current : String;

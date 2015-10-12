@@ -1,6 +1,4 @@
-package raxe.tools;using Lambda;using StringTools;// vim: set ft=rb:
-
-/** 
+package raxe.tools;using Lambda;using StringTools;/** 
   Error handling
  **/
 class Error{

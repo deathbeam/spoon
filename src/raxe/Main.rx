@@ -1,5 +1,3 @@
--- vim: set ft=rb:
-
 import mcli.Dispatch
 import raxe.cli.Cli
 

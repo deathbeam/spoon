@@ -1,5 +1,3 @@
--- vim: set ft=rb:
-
 import raxe.tools.StringHandle
 import sys.io.File
 
@@ -275,7 +273,7 @@ class self
           handle.remove()
           handle.insert("class")
         end
-        
+
         handle.increment()
 
         while(handle.nextToken())

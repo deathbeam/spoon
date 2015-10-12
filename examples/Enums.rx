@@ -1,3 +1,5 @@
+-- vim: set ft=rb:
+
 enum Schema
     TInt
     TString

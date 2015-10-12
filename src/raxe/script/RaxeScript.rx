@@ -10,14 +10,11 @@ import raxe.transpiler.Transpiler
 import raxe.tools.StringHandle
 
 class self < Interp
-  def parser : Parser
-  def transpiler : Transpiler
+  def parser : Parser = Parser.new()
+  def transpiler : Transpiler = Transpiler.new()
 
   def new()
     super()
-
-    parser = Parser.new()
-    transpiler = Transpiler.new()
 
     variables.set("require", do(thing : String)
       def path = thing + ".rx"

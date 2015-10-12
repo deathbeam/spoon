@@ -12,8 +12,8 @@ class TranspilerCommand{
   private var dest: String;
 
   /** 
-   * @param String src   Source file or directory
-   * @param String ?dest Destination file or directory (optional)
+  @param String src   Source file or directory
+  @param String ?dest Destination file or directory (optional)
    **/
   public function new(src: String, ?dest: String){
     this.src = src;
@@ -21,11 +21,10 @@ class TranspilerCommand{
   }
 
   /** 
-   * Transpile a file or a whole directory
-   *
-   * @param raxeOnly Bool Must only copy to the dest directory, raxe files
-   *
-   * @return Bool transpilation has been done or not
+  Transpile a file or a whole directory
+
+  @param raxeOnly Bool Must only copy to the dest directory, raxe files
+  @return Bool transpilation has been done or not
    **/
   public function transpile(all: Bool) : Bool return{
     var src = this.src;
@@ -108,11 +107,10 @@ class TranspilerCommand{
   }
 
   /** 
-   * Transpile one file
-   *
-   * @param String file Transpile a file and returns its content
-   *
-   * @return String content
+  Transpile one file
+
+  @param String file Transpile a file and returns its content
+  @return String content
    **/
   public function transpileFile(dir : String, file: String): String return{
     var transpiler =new  Transpiler();
@@ -124,20 +122,19 @@ class TranspilerCommand{
   }
 
   /** 
-   * Checks if the given file is a raxefile
+  Checks if the given file is a raxefile
    **/
   public function isRaxeFile(filename: String): Bool return{
     return filename.endsWith(".rx");
   }
 
   /** 
-   * Get the path the destination file
-   *
-   * @param String file Path to the file
-   * @param String src  Source directory
-   * @param String dest Destination directory
-   *
-   * @return String destination file path
+  Get the path the destination file
+
+  @param String file Path to the file
+  @param String src  Source directory
+  @param String dest Destination directory
+  @return String destination file path
    **/
   public function getDestinationFile(file: String, src: String, dest: String) : String return{
     var parts : Array<String> = file.split("/");

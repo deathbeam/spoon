@@ -7,56 +7,56 @@ import raxe.tools.Error;
 import raxe.script.RaxeScript;
 
 /** 
-  8b,dPPYba,  ,adPPYYba,  8b,     ,d8  ,adPPYba,
-  88P'   "Y8  ""     `Y8   `Y8, ,8P'  a8P_____88
-  88          ,adPPPPP88     )888(    8PP"""""""
-  88          88,    ,88   ,d8" "8b,  "8b,   ,aa
-  88          `"8bbdP"Y8  8P'     `Y8  `"Ybbd8"'
+8b,dPPYba,  ,adPPYYba,  8b,     ,d8  ,adPPYba,
+88P'   "Y8  ""     `Y8   `Y8, ,8P'  a8P_____88
+88          ,adPPPPP88     )888(    8PP"""""""
+88          88,    ,88   ,d8" "8b,  "8b,   ,aa
+88          `"8bbdP"Y8  8P'     `Y8  `"Ybbd8"'
 
-  Raxe 0.0.1 - https://raxe-lang.org
+Raxe 0.0.1 - https://raxe-lang.org
  **/
 class Cli extends CommandLine{
   inline public static var ERROR_TYPE = "transpile_error";
 
   /** 
-    Source directory or file
-    @alias s
+  Source directory or file
+  @alias s
    **/
   public var src : String;
 
   /** 
-    Destination directory or file
-    @alias d
+  Destination directory or file
+  @alias d
    **/
   public var dest : String;
 
   /** 
-    Task to execute when running Raxefile
-    @alias t
+  Task to execute when running Raxefile
+  @alias t
    **/
   public var task : String = "default";
 
   /** 
-    Execute the command when source file(s) are changed
-    @alias w
+  Execute the command when source file(s) are changed
+  @alias w
    **/
   public var watch : Bool;
 
   /** 
-    Copy all (not only .rx) files to dest directory
-    @alias a
+  Copy all (not only .rx) files to dest directory
+  @alias a
    **/
   public var all: Bool;
 
   /** 
-    Evaluate Raxe snippet
-    @alias i
+  Evaluate Raxe snippet
+  @alias i
    **/
   public var interp: String;
 
   /** 
-    Show this message
-    @alias h
+  Show this message
+  @alias h
    **/
   public function help() return{
     Sys.println(this.showUsage());

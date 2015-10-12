@@ -237,7 +237,6 @@ class self
           handle.insert("function")
           handle.increment()
           consumeBrackets(handle, "(", ")")
-          position = handle.position
 
           while(safeNextToken(handle))
             if(handle.is("=>"))

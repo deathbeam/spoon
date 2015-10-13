@@ -8,8 +8,10 @@ class self
   private def path : String = ""
   private def name : String = ""
   private def currentType : String = ""
+  private def currentExpression : String = ""
   private def hasVisibility : Bool = false
   private def opened : Int = -1
+  private def currentOpened : Int = -1
 
   def tokens = [
     -- Line break
@@ -78,6 +80,7 @@ class self
       elsif(handle.safeis("public") || handle.safeis("private"))
         hasVisibility = true
         handle.increment()
+      -- Structures
       elsif(handle.is("{"))
         opened = opened + 1
         handle.increment()
@@ -110,6 +113,8 @@ class self
         handle.insert("new ")
         handle.increment()
       elsif(handle.safeis("case"))
+        currentExpression = handle.current
+        currentOpened = opened
         handle.remove()
         handle.insert("switch")
         handle.increment()
@@ -145,6 +150,11 @@ class self
         handle.insert("}")
         handle.increment()
         opened = opened - 1
+
+        if(currentOpened == opened)
+          currentOpened = -1
+          currentExpression = ""
+        end
       -- Change require to classic imports
       elsif(handle.safeis("import"))
         handle.next("\n")
@@ -285,10 +295,16 @@ class self
       -- Inser begin and end brackets around else but do not try to
       -- process curlys because there will not be any
       elsif(handle.safeis("else"))
-        handle.insert("}")
-        handle.increment()
-        handle.increment("else")
-        handle.insert("{")
+        if(currentExpression == "case")
+          handle.remove()
+          handle.insert("default:")
+        else
+          handle.insert("}")
+          handle.increment()
+          handle.increment("else")
+          handle.insert("{")
+        end
+
         handle.increment()
       -- [abstract] class/interface/enum
       elsif (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum") || handle.safeis("module"))

@@ -8,8 +8,10 @@ class Transpiler{
   private var path : String = "";
   private var name : String = "";
   private var currentType : String = "";
+  private var currentExpression : String = "";
   private var hasVisibility : Bool = false;
   private var opened : Int = -1;
+  private var currentOpened : Int = -1;
 
   public var tokens = [
     // Line break
@@ -110,6 +112,8 @@ class Transpiler{
         handle.insert("new ");
         handle.increment();
       }else if(handle.safeis("case")){
+        currentExpression = handle.current;
+        currentOpened = opened;
         handle.remove();
         handle.insert("switch");
         handle.increment();
@@ -145,6 +149,11 @@ class Transpiler{
         handle.insert("}");
         handle.increment();
         opened = opened - 1;
+
+        if(currentOpened == opened){
+          currentOpened = -1;
+          currentExpression = "";
+        }
       // Change require to classic imports
       }else if(handle.safeis("import")){
         handle.next("\n");
@@ -237,7 +246,6 @@ class Transpiler{
           handle.insert("function");
           handle.increment();
           consumeBrackets(handle, "(", ")");
-          position = handle.position;
 
           while(safeNextToken(handle)){
             if(handle.is("=>")){
@@ -286,10 +294,16 @@ class Transpiler{
       // Inser begin and end brackets around else but do not try to
       // process curlys because there will not be any
       }else if(handle.safeis("else")){
-        handle.insert("}");
-        handle.increment();
-        handle.increment("else");
-        handle.insert("{");
+        if(currentExpression == "case"){
+          handle.remove();
+          handle.insert("default:");
+        }else{
+          handle.insert("}");
+          handle.increment();
+          handle.increment("else");
+          handle.insert("{");
+        }
+
         handle.increment();
       // [abstract] class/interface/enum
       }else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum") || handle.safeis("module")){

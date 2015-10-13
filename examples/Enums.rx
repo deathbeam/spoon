@@ -28,6 +28,8 @@ module self
         for(elem in (value : Array<Dynamic>))
           validate(elem, elemSchema)
         end
+      else
+        throw("unsupported type")
     end
   end
 end

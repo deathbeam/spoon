@@ -12,7 +12,7 @@ module self
     trace(numbers.foreach(do(v) => v > 20)) -- false
 
     -- sum all the numbers
-    def sum = do(num, total) => total += num
+    def sum(num, total) => total += num
 
     trace(numbers.fold(sum, 0)) -- 30
   end

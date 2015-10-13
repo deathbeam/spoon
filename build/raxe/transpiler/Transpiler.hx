@@ -379,7 +379,7 @@ class Transpiler{
           handle.prev("\n");
         }
 
-        if (insert){
+        if (insert && !handle.atStart()){
           handle.insert(";");
           handle.increment();
         }

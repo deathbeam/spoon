@@ -379,7 +379,7 @@ class self
           handle.prev("\n")
         end
 
-        if (insert)
+        if (insert && !handle.atStart())
           handle.insert(";")
           handle.increment()
         end

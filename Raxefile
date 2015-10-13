@@ -1,0 +1,28 @@
+def src = "src/"
+def dest = "build/"
+def bin = "run.n"
+def main = "raxe.Main"
+def libs = ["hscript", "mcli"]
+
+def default()
+  compileRaxe()
+  compileBinary()
+end
+
+def compileRaxe()
+  echo("> Compiling Raxe source files")
+  sh("haxelib", ["run", "raxe", "-a", "-s", src, "-d", dest])
+end
+
+def compileBinary()
+  echo("> Building neko binary")
+
+  def args = ["-cp", dest, "-main", main, "-neko", bin]
+
+  for(lib in libs)
+    args.push("-lib")
+    args.push(lib)
+  end
+
+  sh("haxe", args)
+end

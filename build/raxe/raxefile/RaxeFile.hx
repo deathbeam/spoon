@@ -18,6 +18,10 @@ class RaxeFile{
   public function createScript() : RaxeScript return{
     var script =new  RaxeScript();
 
+    script.variables.set("echo", function(msg : String) return{
+      Sys.println(msg);
+    });
+
     script.variables.set("sh", function(cmd : String, ?args : Array<String>) return{
       Sys.command(cmd, args);
     });

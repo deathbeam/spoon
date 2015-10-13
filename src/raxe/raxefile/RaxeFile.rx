@@ -18,6 +18,10 @@ class self
   def createScript() : RaxeScript
     def script = RaxeScript.new()
 
+    script.variables.set("echo", do(msg : String)
+      Sys.println(msg)
+    end)
+
     script.variables.set("sh", do(cmd : String, ?args : Array<String>)
       Sys.command(cmd, args)
     end)

@@ -49,6 +49,12 @@ Now, compile the project with
 haxe build.hxml
 ```
 
+or, if you have already previous version of Raxe installed, just execute `Raxefile` via
+
+```
+haxelib run raxe
+```
+
 A binary `run.n` will be available
 
 # Command line tool

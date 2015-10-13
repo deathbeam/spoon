@@ -33,12 +33,19 @@ You'll need these libraries installed:
 ```
 haxelib install mcli
 haxelib install hscript
+haxelib install dox
 ```
 
 or you can just run
 
 ```
 haxelib install build.hxml
+```
+
+or, if you have already previous version of Raxe installed, just execute `Raxefile` task `installLibs` via
+
+```
+haxelib run raxe -t installLibs
 ```
 
 to install all required dependencies.

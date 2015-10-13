@@ -1,14 +1,24 @@
 -- vim: set ft=rb:
 
-def src = "src/"
+def src  = "src/"
 def dest = "build/"
-def bin = "run.n"
+def xml  = "docs/index.xml"
+def docs = "docs/build"
+def bin  = "run.n"
 def main = "raxe.Main"
-def libs = ["hscript", "mcli"]
+def libs = ["hscript", "mcli", "dox"]
 
 def default()
   compileRaxe()
   compileBinary()
+end
+
+def installLibs()
+  echo("> Installing Raxe dependencies")
+
+  for(lib in libs)
+    sh("haxelib", ["install", lib])
+  end
 end
 
 def compileRaxe()
@@ -27,4 +37,18 @@ def compileBinary()
   end
 
   sh("haxe", args)
+end
+
+def generateDocs()
+  echo("> Generating documentation")
+
+  def args = ["-cp", dest, "-main", main, "-xml", xml]
+
+  for(lib in libs)
+    args.push("-lib")
+    args.push(lib)
+  end
+
+  sh("haxe", args)
+  sh("haxelib", ["run", "dox", "-i", xml, "-o", docs])
 end

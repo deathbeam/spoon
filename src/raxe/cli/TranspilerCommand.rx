@@ -34,7 +34,7 @@ class self
       def oldFileSize : Int = this.files.get(this.src)
       def currentSize : Int = FileSystem.stat(this.src).size
 
-      if(oldFileSize == null || oldFileSize != currentSize)
+      if(oldFileSize != currentSize)
         def result = transpileFile(dest, src)
 
         if(dest == null)

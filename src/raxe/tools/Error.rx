@@ -9,6 +9,6 @@ class self
   @param String error Error message to be sent
   ---
   def self.create(errorType: String, error: String)
-    throw("{\"type\": #{errorType},\"error\": #{error}}")
+    throw("{\"type\": \"" + errorType + "\",\"error\": \"" + error + "\"}")
   end
 end

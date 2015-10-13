@@ -5,7 +5,6 @@ class self
   def new()
   end
 
-  private def path : String = ""
   private def name : String = ""
   private def currentType : String = ""
   private def currentExpression : String = ""
@@ -13,6 +12,9 @@ class self
   private def opened : Int = -1
   private def currentOpened : Int = -1
 
+  ---
+  Array of tokens used for StringHandle to correctly parse Raxe files
+  ---
   def tokens = [
     -- Line break
     "\n", ";",
@@ -39,6 +41,13 @@ class self
     "elsif", "if", "else", "while", "for", "case", "when",
   ]
 
+  ---
+  Compile Raxe file and returns Haxe result
+
+  @param directory : String root project directory, needed for correct package names
+  @param file      : String file path to compile
+  @return String Raxe file compiled to it's Haxe equivalent
+  ---
   def transpile(directory : String, file : String) : String
     def currentPackage = file.replace(directory, "")
     currentPackage = currentPackage.replace("\\", "/")
@@ -52,23 +61,22 @@ class self
 
     def content = File.getContent(file)
     def handle = StringHandle.new(content, tokens)
+    handle.insert("package " + currentPackage + ";using Lambda;using StringTools;").increment()
 
     name = currentModule
-    path = currentPackage
 
-    return run(false, handle)
+    return run(handle).content
   end
 
-  def run(script : Bool, handle : StringHandle)
-    if(!script)
-      handle.insert("package " + path + ";using Lambda;using StringTools;").increment()
-    end
+  ---
+  Process content of StringHandle and return it modified
 
-    while (handle.nextToken())
-      if(script)
-        opened = -1
-      end
-
+  @param script         : Bool Determine if automatically insert package and class names
+  @param handle : StringHandle Handle with initial content and position
+  @return StringHandle modified string handle with adjusted position and content
+  ---
+  def run(handle : StringHandle, script : Bool = false) : StringHandle
+    while(handle.nextToken())
       -- Skip compiler defines
       if (handle.is("#") || handle.is("@"))
         handle.next("\n")
@@ -164,7 +172,7 @@ class self
       elsif(handle.safeis("def"))
         handle.remove("def")
 
-        if(opened == 0)
+        if(opened == 0 && !script)
           if(!hasVisibility)
             handle.insert("public ")
             handle.increment()
@@ -424,7 +432,7 @@ class self
       end
     end
 
-    return handle.content
+    return handle
   end
 
   private def safeNextToken(handle : StringHandle) : Bool
@@ -507,7 +515,7 @@ class self
     handle.increment()
   end
 
-  def onlyWhitespace(content : String, from : Int, to : Int)
+  private def onlyWhitespace(content : String, from : Int, to : Int)
     def sub = content.substr(from, to - from)
     def regex = EReg.new("^\\s*$", "")
     return regex.match(sub)

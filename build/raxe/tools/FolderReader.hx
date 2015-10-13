@@ -104,7 +104,7 @@ class FolderReader{
         }
       }
     }catch(ex: String){
-      throw "Unable to copy " + source + " to " + destination + " : " + ex;
+      throw("Unable to copy " + source + " to " + destination + " : " + ex);
     }
   }
 }

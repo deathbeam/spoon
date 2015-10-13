@@ -5,7 +5,6 @@ class Transpiler{
   public function new(){
   }
 
-  private var path : String = "";
   private var name : String = "";
   private var currentType : String = "";
   private var currentExpression : String = "";
@@ -13,6 +12,9 @@ class Transpiler{
   private var opened : Int = -1;
   private var currentOpened : Int = -1;
 
+  /** 
+  Array of tokens used for StringHandle to correctly parse Raxe files
+   **/
   public var tokens = [
     // Line break
     "\n", ";",
@@ -39,6 +41,13 @@ class Transpiler{
     "elsif", "if", "else", "while", "for", "case", "when",
   ];
 
+  /** 
+  Compile Raxe file and returns Haxe result
+
+  @param directory : String root project directory, needed for correct package names
+  @param file      : String file path to compile
+  @return String Raxe file compiled to it's Haxe equivalent
+   **/
   public function transpile(directory : String, file : String) : String return{
     var currentPackage = file.replace(directory, "");
     currentPackage = currentPackage.replace("\\", "/");
@@ -52,23 +61,22 @@ class Transpiler{
 
     var content = File.getContent(file);
     var handle =new  StringHandle(content, tokens);
+    handle.insert("package " + currentPackage + ";using Lambda;using StringTools;").increment();
 
     name = currentModule;
-    path = currentPackage;
 
-    return run(false, handle);
+    return run(handle).content;
   }
 
-  public function run(script : Bool, handle : StringHandle) return{
-    if(!script){
-      handle.insert("package " + path + ";using Lambda;using StringTools;").increment();
-    }
+  /** 
+  Process content of StringHandle and return it modified
 
-    while (handle.nextToken()){
-      if(script){
-        opened = -1;
-      }
-
+  @param script         : Bool Determine if automatically insert package and class names
+  @param handle : StringHandle Handle with initial content and position
+  @return StringHandle modified string handle with adjusted position and content
+   **/
+  public function run(handle : StringHandle, script : Bool = false) : StringHandle return{
+    while(handle.nextToken()){
       // Skip compiler defines
       if (handle.is("#") || handle.is("@")){
         handle.next("\n");
@@ -80,6 +88,7 @@ class Transpiler{
       }else if(handle.safeis("public") || handle.safeis("private")){
         hasVisibility = true;
         handle.increment();
+      // Structures
       }else if(handle.is("{")){
         opened = opened + 1;
         handle.increment();
@@ -163,7 +172,7 @@ class Transpiler{
       }else if(handle.safeis("def")){
         handle.remove("def");
 
-        if(opened == 0){
+        if(opened == 0 && !script){
           if(!hasVisibility){
             handle.insert("public ");
             handle.increment();
@@ -423,7 +432,7 @@ class Transpiler{
       }
     }
 
-    return handle.content;
+    return handle;
   }
 
   private function safeNextToken(handle : StringHandle) : Bool return{
@@ -506,7 +515,7 @@ class Transpiler{
     handle.increment();
   }
 
-  public function onlyWhitespace(content : String, from : Int, to : Int) return{
+  private function onlyWhitespace(content : String, from : Int, to : Int) return{
     var sub = content.substr(from, to - from);
     var regex =new  EReg("^\\s*$", "");
     return regex.match(sub);

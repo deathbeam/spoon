@@ -29,7 +29,7 @@ class self < Interp
         clazz = Type.resolveEnum(path)
 
         if(clazz == null)
-          trace("Failed to resolve type #{thing}")
+          trace("Failed to resolve type " + thing)
         end
       end
 
@@ -39,14 +39,14 @@ class self < Interp
 
   def parse(s : String) : Expr
     def handle = StringHandle.new(s, transpiler.tokens)
-    def content = transpiler.run(true, handle)
+    def content = transpiler.run(handle, true).content
     return parser.parseString(content)
   end
 
   override def get(o : Dynamic, f : String ) : Dynamic
     if(o == null)
       #if debug
-      trace("Null error when doing get #{f}")
+      trace("Null error when doing get " + f)
       #end
       error(EInvalidAccess(f))
     end
@@ -57,7 +57,7 @@ class self < Interp
   override def set( o : Dynamic, f : String, v : Dynamic ) : Dynamic
     if(o == null)
       #if debug
-      trace("Null error when doing set #{f}")
+      trace("Null error when doing set " + f)
       #end
       error(EInvalidAccess(f))
     end

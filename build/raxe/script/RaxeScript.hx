@@ -29,7 +29,7 @@ class RaxeScript extends Interp{
         clazz = Type.resolveEnum(path);
 
         if(clazz == null){
-          trace("Failed to resolve type ${thing}");
+          trace("Failed to resolve type " + thing);
         }
       }
 
@@ -39,14 +39,14 @@ class RaxeScript extends Interp{
 
   public function parse(s : String) : Expr return{
     var handle =new  StringHandle(s, transpiler.tokens);
-    var content = transpiler.run(true, handle);
+    var content = transpiler.run(handle, true).content;
     return parser.parseString(content);
   }
 
   override public function get(o : Dynamic, f : String ) : Dynamic return{
     if(o == null){
       #if debug
-      trace("Null error when doing get ${f}");
+      trace("Null error when doing get " + f);
       #end
       error(EInvalidAccess(f));
     }
@@ -57,7 +57,7 @@ class RaxeScript extends Interp{
   override public function set( o : Dynamic, f : String, v : Dynamic ) : Dynamic return{
     if(o == null){
       #if debug
-      trace("Null error when doing set ${f}");
+      trace("Null error when doing set " + f);
       #end
       error(EInvalidAccess(f));
     }

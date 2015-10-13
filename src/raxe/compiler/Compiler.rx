@@ -48,7 +48,7 @@ class self
   @param file      : String file path to compile
   @return String Raxe file compiled to it's Haxe equivalent
   ---
-  def transpile(directory : String, file : String) : String
+  def compile(directory : String, file : String) : String
     def currentPackage = file.replace(directory, "")
     currentPackage = currentPackage.replace("\\", "/")
     def currentModule = currentPackage.substr(currentPackage.lastIndexOf("/") + 1).replace(".rx", "")

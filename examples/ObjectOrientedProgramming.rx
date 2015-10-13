@@ -2,21 +2,20 @@
 
 class self
   -- You can use self world to reference current class name
-  def self.instance = self.new()
+  -- Below we will create simple singleton
+  private def self.instance = self.new()
+  def self.getInstance() => instance
 
-  -- Self keyword before defines basically means that define is static
-  def self.getInstance()
-    instance
-  end
+  -- Simple static counter
+  private def self.index = 0
 
   def self.main()
     -- Get instance of self
     def myInstance = getInstance()
 
     -- Type class name directly
-    def myAnotherInstance = ModulesAndInstances.new()
-
-    ModulesAndInstances.new().instanceFunction()
+    def myAnotherInstance = ObjectOrientedProgramming.new()
+    ObjectOrientedProgramming.new().instanceFunction()
 
     -- Call instance function
     myInstance.instanceFunction()
@@ -24,7 +23,8 @@ class self
 
   -- Create the constructor method so we can make instances
   def new()
-    trace("Instance created")
+    trace("Instance " + index + " created")
+    index += 1
   end
 
   def instanceFunction()

@@ -5,7 +5,7 @@ def dest = "build/"
 def xml  = "docs/index.xml"
 def docs = "docs/build"
 def bin  = "run.n"
-def main = "raxe.Main"
+def main = "raxe.cli.Main"
 def libs = ["hscript", "mcli", "dox"]
 
 def default()

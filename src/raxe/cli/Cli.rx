@@ -1,6 +1,6 @@
 import mcli.CommandLine
 import sys.FileSystem
-import raxe.raxefile.RaxeFile
+import raxe.file.RaxeFile
 import raxe.tools.Error
 import raxe.script.RaxeScript
 
@@ -14,7 +14,7 @@ import raxe.script.RaxeScript
 Raxe 0.0.1 - https://raxe-lang.org
 ---
 class self < CommandLine
-  inline def self.ERROR_TYPE = "transpile_error"
+  inline def self.ERROR_TYPE = "compile_error"
 
   ---
   Source directory or file
@@ -67,7 +67,7 @@ class self < CommandLine
         def script = RaxeScript.new()
         Sys.println(script.execute(script.parse(interp)))
       elsif(this.src != null)
-        this.transpile()
+        this.compile()
       elsif(FileSystem.exists("Raxefile"))
         def rf = RaxeFile.new("Raxefile")
         rf.run(this.task)
@@ -80,18 +80,18 @@ class self < CommandLine
     end
   end
 
-  private def transpile()
+  private def compile()
     if(this.src != null)
       if(!FileSystem.exists(src))
         Error.create(ERROR_TYPE, "Source not found")
       end
 
-      def transpiler = TranspilerCommand.new(this.src, this.dest)
+      def compiler = CompilerCommand.new(this.src, this.dest)
       while(true)
         try
-          if(transpiler.transpile(this.all))
-            if(transpiler.response != null && transpiler.response != "")
-              Sys.println(transpiler.response)
+          if(compiler.compile(this.all))
+            if(compiler.response != null && compiler.response != "")
+              Sys.println(compiler.response)
             end
           end
         catch(err : String)

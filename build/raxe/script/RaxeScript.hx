@@ -4,12 +4,12 @@ import hscript.Interp;
 import hscript.Expr;
 import sys.io.File;
 import sys.FileSystem;
-import raxe.transpiler.Transpiler;
+import raxe.compiler.Compiler;
 import raxe.tools.StringHandle;
 
 class RaxeScript extends Interp{
   public var parser : Parser =new  Parser();
-  public var transpiler : Transpiler =new  Transpiler();
+  public var compiler : Compiler =new  Compiler();
 
   public function new(){
     super();
@@ -38,8 +38,8 @@ class RaxeScript extends Interp{
   }
 
   public function parse(s : String) : Expr return{
-    var handle =new  StringHandle(s, transpiler.tokens);
-    var content = transpiler.run(handle, true).content;
+    var handle =new  StringHandle(s, compiler.tokens);
+    var content = compiler.run(handle, true).content;
     return parser.parseString(content);
   }
 

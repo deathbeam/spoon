@@ -1,6 +1,6 @@
 package raxe.cli;using Lambda;using StringTools;import mcli.CommandLine;
 import sys.FileSystem;
-import raxe.raxefile.RaxeFile;
+import raxe.file.RaxeFile;
 import raxe.tools.Error;
 import raxe.script.RaxeScript;
 
@@ -14,7 +14,7 @@ import raxe.script.RaxeScript;
 Raxe 0.0.1 - https://raxe-lang.org
  **/
 class Cli extends CommandLine{
-  inline public static var ERROR_TYPE = "transpile_error";
+  inline public static var ERROR_TYPE = "compile_error";
 
   /** 
   Source directory or file
@@ -67,7 +67,7 @@ class Cli extends CommandLine{
         var script =new  RaxeScript();
         Sys.println(script.execute(script.parse(interp)));
       }else if(this.src != null){
-        this.transpile();
+        this.compile();
       }else if(FileSystem.exists("Raxefile")){
         var rf =new  RaxeFile("Raxefile");
         rf.run(this.task);
@@ -80,18 +80,18 @@ class Cli extends CommandLine{
     }
   }
 
-  private function transpile() return{
+  private function compile() return{
     if(this.src != null){
       if(!FileSystem.exists(src)){
         Error.create(ERROR_TYPE, "Source not found");
       }
 
-      var transpiler =new  TranspilerCommand(this.src, this.dest);
+      var compiler =new  CompilerCommand(this.src, this.dest);
       while(true){
         try{
-          if(transpiler.transpile(this.all)){
-            if(transpiler.response != null && transpiler.response != ""){
-              Sys.println(transpiler.response);
+          if(compiler.compile(this.all)){
+            if(compiler.response != null && compiler.response != ""){
+              Sys.println(compiler.response);
             }
           }
         }catch(err : String){

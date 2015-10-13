@@ -3,5 +3,5 @@
 -lib mcli
 -lib hscript
 -cp build
--main raxe.Main
+-main raxe.cli.Main
 -neko run.n

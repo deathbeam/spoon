@@ -1,9 +1,9 @@
 package raxe.cli;using Lambda;using StringTools;import sys.FileSystem;
 import raxe.tools.Error;
 import raxe.tools.FolderReader;
-import raxe.transpiler.Transpiler;
+import raxe.compiler.Compiler;
 
-class TranspilerCommand{
+class CompilerCommand{
   public var response : String;
   private var files =new  Map<String, Int>();
   private var src : String;
@@ -19,23 +19,23 @@ class TranspilerCommand{
   }
 
   /** 
-  Transpile a file or a whole directory
+  Compile a file or a whole directory
 
   @param raxeOnly : Bool Must only copy to the dest directory, raxe files
   @return Bool transpilation has been done or not
    **/
-  public function transpile(all: Bool) : Bool return{
+  public function compile(all: Bool) : Bool return{
     var src = this.src;
     var dest = this.dest;
     var dir = src;
 
-    // Transpile one file
+    // Compile one file
     if(!FileSystem.isDirectory(this.src)){
       var oldFileSize : Int = this.files.get(this.src);
       var currentSize : Int = FileSystem.stat(this.src).size;
 
       if(oldFileSize != currentSize){
-        var result = transpileFile(dest, src);
+        var result = compileFile(dest, src);
 
         if(dest == null){
             this.response = result;
@@ -48,10 +48,10 @@ class TranspilerCommand{
       }
 
       return false;
-    // Transpile a whole folder
+    // Compile a whole folder
     }else{
       var files = FolderReader.getFiles(src);
-      var hasTranspile : Bool = false;
+      var hasCompile : Bool = false;
 
       // To have the same pattern between src and dest (avoid src/ and dist instead of dist/)
       if(src.endsWith("/")){
@@ -73,9 +73,9 @@ class TranspilerCommand{
         if(oldFileSize != currentSize && (all || isRaxeFile(file))){
           var newPath = this.getDestinationFile(file, src, dest);
 
-          // If it's a raxe file, we transpile it
+          // If it's a raxe file, we compile it
           if(isRaxeFile(file)){
-            var result = transpileFile(dir, file);
+            var result = compileFile(dir, file);
             FolderReader.createFile(newPath, result);
             this.files.set(file, currentSize);
 
@@ -85,7 +85,7 @@ class TranspilerCommand{
           }
 
           this.files.set(file, currentSize);
-          hasTranspile = true;
+          hasCompile = true;
         }
 
         currentFiles.set(file, currentSize);
@@ -98,29 +98,29 @@ class TranspilerCommand{
         }
       }
 
-      return hasTranspile;
+      return hasCompile;
     }
 
     return false;
   }
 
   /** 
-  Transpile one file
+  Compile one file
 
-  @param file : String Transpile a file and returns its content
+  @param file : String Compile a file and returns its content
   @return String content
    **/
-  public function transpileFile(dir : String, file: String): String return{
-    var transpiler =new  Transpiler();
+  public function compileFile(dir : String, file: String): String return{
+    var compiler =new  Compiler();
     dir = dir != null ? FileSystem.fullPath(dir) : Sys.getCwd();
     file = FileSystem.fullPath(file);
 
     Sys.println("Compiling " + file);
-    return transpiler.transpile(dir, file);
+    return compiler.compile(dir, file);
   }
 
   /** 
-  Checks if the given file is a raxefile
+  Checks if the given file is a raxe file
    **/
   public function isRaxeFile(filename: String): Bool return{
     return filename.endsWith(".rx");

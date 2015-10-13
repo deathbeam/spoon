@@ -1,4 +1,4 @@
-package raxe.raxefile;using Lambda;using StringTools;import raxe.script.RaxeScript;
+package raxe.file;using Lambda;using StringTools;import raxe.script.RaxeScript;
 import sys.io.File;
 import sys.FileSystem;
 

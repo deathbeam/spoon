@@ -1,7 +1,7 @@
-package raxe.transpiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
+package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
 import sys.io.File;
 
-class Transpiler{
+class Compiler{
   public function new(){
   }
 
@@ -48,7 +48,7 @@ class Transpiler{
   @param file      : String file path to compile
   @return String Raxe file compiled to it's Haxe equivalent
    **/
-  public function transpile(directory : String, file : String) : String return{
+  public function compile(directory : String, file : String) : String return{
     var currentPackage = file.replace(directory, "");
     currentPackage = currentPackage.replace("\\", "/");
     var currentModule = currentPackage.substr(currentPackage.lastIndexOf("/") + 1).replace(".rx", "");

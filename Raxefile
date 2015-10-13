@@ -1,3 +1,5 @@
+-- vim: set ft=rb:
+
 def src = "src/"
 def dest = "build/"
 def bin = "run.n"

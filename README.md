@@ -82,7 +82,7 @@ neko run <commands> <cwd>
 
 `<cwd>` stands for current working directory, so on Unix systems, you can simply pass `pwd` here.
 
-Transpile
+Compile
 --
 
 ```
@@ -95,7 +95,7 @@ Arguments:
 
 Example : `haxelib run raxe -s examples/ -d dist/`
 
-Will transpile all raxe files from examples to dist directory. Non raxe files will be just copy/paste to the new directory
+Will compile all raxe files from examples to dist directory. Non raxe files will be just copy/paste to the new directory
 
 Watch
 --
@@ -105,4 +105,4 @@ Example : `haxelib run raxe -s examples/ -d dist/ -w`
 
 All files
 --
-If also want to copy other files other than raxe files, you can add the option `-a or --all`. So, if you have an image inside your raxe directories, it will be copied by the transpiler (by default, it's skipped). With this, you can have mixed project with both Haxe and Raxe source code.
+If also want to copy other files other than raxe files, you can add the option `-a or --all`. So, if you have an image inside your raxe directories, it will be copied by the compiler (by default, it's skipped). With this, you can have mixed project with both Haxe and Raxe source code.

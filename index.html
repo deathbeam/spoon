@@ -50,7 +50,7 @@
 
 <body>
 
-    <!-- Navigation 
+    <!-- Navigation
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
@@ -105,165 +105,90 @@
       <div class="row">
         <div class="col-md-6 left">
           <h2><b>Main</b>.rx</h2>
-          <pre><span style="color: #75715e">-- Load OpenFL libraries</span>
-<span style="color: #f8f8f2">require</span> <span style="color: #e6db74">&quot;openfl/display/Bitmap&quot;</span>
-<span style="color: #f8f8f2">require</span> <span style="color: #e6db74">&quot;openfl/display/Sprite&quot;</span>
-<span style="color: #f8f8f2">require</span> <span style="color: #e6db74">&quot;openfl/events/Event&quot;</span>
-<span style="color: #f8f8f2">require</span> <span style="color: #e6db74">&quot;openfl/events/KeyboardEvent&quot;</span>
-<span style="color: #f8f8f2">require</span> <span style="color: #e6db74">&quot;openfl/ui/Keyboard&quot;</span>
-<span style="color: #f8f8f2">require</span> <span style="color: #e6db74">&quot;openfl/Assets&quot;</span>
-
-<span style="color: #75715e">-- Extend self by OpenFL Sprite</span>
-<span style="color: #66d9ef">class</span> <span style="color: #f8f8f2">self</span> <span style="color: #f92672">&lt;</span> <span style="color: #66d9ef">Sprite</span>
-
-<span style="color: #66d9ef">def</span> <span style="color: #a6e22e">logo</span> <span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Sprite</span>
-<span style="color: #66d9ef">def</span> <span style="color: #a6e22e">movingDown</span> <span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Bool</span>
-<span style="color: #66d9ef">def</span> <span style="color: #a6e22e">movingLeft</span> <span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Bool</span>
-<span style="color: #66d9ef">def</span> <span style="color: #a6e22e">movingRight</span> <span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Bool</span>
-<span style="color: #66d9ef">def</span> <span style="color: #a6e22e">movingUp</span> <span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Bool</span>
-
-<span style="color: #66d9ef">def</span> <span style="color: #a6e22e">new</span><span style="color: #f8f8f2">()</span>
-  <span style="color: #66d9ef">super</span><span style="color: #f8f8f2">()</span>
-
-  <span style="color: #f8f8f2">logo</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">Sprite</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">new()</span>
-  <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">addChild(
-    </span><span style="color: #66d9ef">Bitmap</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">new(</span><span style="color: #66d9ef">Assets</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">getBitmapData(</span><span style="color: #e6db74">&quot;assets/openfl.png&quot;</span><span style="color: #f8f8f2">)))</span>
-  <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">x</span> <span style="color: #f92672">=</span> <span style="color: #ae81ff">100</span>
-  <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">y</span> <span style="color: #f92672">=</span> <span style="color: #ae81ff">100</span>
-  <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">buttonMode</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">true</span>
-  <span style="color: #f8f8f2">addChild(</span><span style="color: #66d9ef">logo</span><span style="color: #f8f8f2">)</span>
-
-  <span style="color: #f8f8f2">stage</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">addEventListener(</span><span style="color: #66d9ef">KeyboardEvent</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">KEY_DOWN,</span> <span style="color: #f8f8f2">onKeyDown)</span>
-  <span style="color: #f8f8f2">stage</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">addEventListener(</span><span style="color: #66d9ef">KeyboardEvent</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">KEY_UP,</span> <span style="color: #f8f8f2">onKeyUp)</span>
-  <span style="color: #f8f8f2">stage</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">addEventListener(</span><span style="color: #66d9ef">Event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">ENTER_FRAME,</span> <span style="color: #f8f8f2">onEnterFrame)</span>
-<span style="color: #66d9ef">end</span>
-
-<span style="color: #75715e">---
-Event handlers
+          <pre><span style="color: #75715e">---
+We will use module here, because in modules, everything is static
+and that is what we need for functional programming
 ---</span>
+<span style="color: #66d9ef">module</span> <span style="color: #f8f8f2">self</span>
+  <span style="color: #75715e">-- A definition of factorial, using a local, tail recursive function</span>
+  <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">factorial</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">n</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">):</span> <span style="color: #66d9ef">Int</span>
+    <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">go</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">n</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">acc</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">):</span> <span style="color: #66d9ef">Int</span>
+      <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(n</span> <span style="color: #f92672">&lt;=</span> <span style="color: #ae81ff">0</span><span style="color: #f8f8f2">)</span>
+        <span style="color: #f8f8f2">acc</span>
+      <span style="color: #66d9ef">else</span>
+        <span style="color: #f8f8f2">go(n</span><span style="color: #f92672">-</span><span style="color: #ae81ff">1</span><span style="color: #f8f8f2">,</span> <span style="color: #f8f8f2">n</span><span style="color: #f92672">*</span><span style="color: #f8f8f2">acc)</span>
+      <span style="color: #66d9ef">end</span>
+    <span style="color: #66d9ef">end</span>
 
-<span style="color: #66d9ef">def</span> <span style="color: #a6e22e">onKeyDown</span><span style="color: #f8f8f2">(event)</span>
-  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">DOWN</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">movingDown</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">true</span>
-  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">LEFT</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">movingLeft</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">true</span>
-  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">RIGHT</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">movingRight</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">true</span>
-  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">UP</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">movingUp</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">true</span>
-  <span style="color: #66d9ef">end</span>
-<span style="color: #66d9ef">end</span>
-
-<span style="color: #66d9ef">def</span> <span style="color: #a6e22e">onKeyUp</span><span style="color: #f8f8f2">(event)</span>
-  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">DOWN</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">movingDown</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">false</span>
-  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">LEFT</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">movingLeft</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">false</span>
-  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">RIGHT</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">movingRight</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">false</span>
-  <span style="color: #66d9ef">elsif</span> <span style="color: #f8f8f2">event</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">keyCode</span> <span style="color: #f92672">==</span> <span style="color: #66d9ef">Keyboard</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">UP</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">movingUp</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">false</span>
-  <span style="color: #66d9ef">end</span>
-<span style="color: #66d9ef">end</span>
-
-<span style="color: #66d9ef">def</span> <span style="color: #a6e22e">onEnterFrame</span><span style="color: #f8f8f2">(event)</span>
-  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">movingDown</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">y</span> <span style="color: #f92672">+=</span> <span style="color: #ae81ff">5</span>
+    <span style="color: #f8f8f2">go(n,</span> <span style="color: #ae81ff">1</span><span style="color: #f8f8f2">)</span>
   <span style="color: #66d9ef">end</span>
 
-  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">movingLeft</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">x</span> <span style="color: #f92672">-=</span> <span style="color: #ae81ff">5</span>
+  <span style="color: #75715e">-- Another implementation of `factorial`, this time with a `while` loop</span>
+  <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">factorial2</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">n</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">):</span> <span style="color: #66d9ef">Int</span>
+    <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">acc</span> <span style="color: #f92672">=</span> <span style="color: #ae81ff">1</span>
+    <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">i</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">n</span>
+
+    <span style="color: #66d9ef">while</span> <span style="color: #f8f8f2">(i</span> <span style="color: #f92672">&gt;</span> <span style="color: #ae81ff">0</span><span style="color: #f8f8f2">)</span>
+      <span style="color: #f8f8f2">acc</span> <span style="color: #f92672">*=</span> <span style="color: #f8f8f2">i</span>
+      <span style="color: #f8f8f2">i</span> <span style="color: #f92672">-=</span> <span style="color: #ae81ff">1</span>
+    <span style="color: #66d9ef">end</span>
+
+    <span style="color: #f8f8f2">acc</span>
   <span style="color: #66d9ef">end</span>
 
-  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">movingRight</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">x</span> <span style="color: #f92672">+=</span> <span style="color: #ae81ff">5</span>
-  <span style="color: #66d9ef">end</span>
+  <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">compute</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">n</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">f</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span> <span style="color: #f92672">-&gt;</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">):</span> <span style="color: #66d9ef">Int</span> <span style="color: #f92672">=&gt;</span> <span style="color: #f8f8f2">f(n)</span>
 
-  <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">movingUp</span> <span style="color: #66d9ef">then</span>
-    <span style="color: #f8f8f2">logo</span><span style="color: #f92672">.</span><span style="color: #f8f8f2">y</span> <span style="color: #f92672">-=</span> <span style="color: #ae81ff">5</span>
+  <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">main</span><span style="color: #f8f8f2">()</span>
+    <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">number</span> <span style="color: #f92672">=</span> <span style="color: #ae81ff">10</span> <span style="color: #75715e">-- Compute factorials for number 10</span>
+
+    <span style="color: #f8f8f2">trace(compute(number,</span> <span style="color: #f8f8f2">factorial))</span> <span style="color: #75715e">-- Compute with recursive factorial method</span>
+    <span style="color: #f8f8f2">trace(compute(number,</span> <span style="color: #f8f8f2">factorial2))</span> <span style="color: #75715e">-- Compute with loop factorial method</span>
+    <span style="color: #75715e">-- Result should be 3628800 in both</span>
   <span style="color: #66d9ef">end</span>
 <span style="color: #66d9ef">end</span></pre>
           </div>
           <div class="col-md-6 right">
             <h2><b>Main</b>.hx</h2>
-            <pre><span style="color: #a61717; background-color: #e3d2d2">package</span> <span style="color: #a61717; background-color: #e3d2d2">;</span><span style="color: #008800; font-weight: bold">using</span> <span style="color: #bb0066; font-weight: bold">Lambda</span>;<span style="color: #008800; font-weight: bold">using</span> <span style="color: #bb0066; font-weight: bold">StringTools</span>;<span style="color: #888888">// Load OpenFL libraries</span>
-<span style="color: #008800; font-weight: bold">import</span> <span style="color: #bb0066; font-weight: bold">openfl.display.Bitmap</span>;
-<span style="color: #008800; font-weight: bold">import</span> <span style="color: #bb0066; font-weight: bold">openfl.display.Sprite</span>;
-<span style="color: #008800; font-weight: bold">import</span> <span style="color: #bb0066; font-weight: bold">openfl.events.Event</span>;
-<span style="color: #008800; font-weight: bold">import</span> <span style="color: #bb0066; font-weight: bold">openfl.events.KeyboardEvent</span>;
-<span style="color: #008800; font-weight: bold">import</span> <span style="color: #bb0066; font-weight: bold">openfl.ui.Keyboard</span>;
-<span style="color: #008800; font-weight: bold">import</span> <span style="color: #bb0066; font-weight: bold">openfl.Assets</span>;
+            <pre><span style="color: #AA22FF; font-weight: bold">package</span>;<span style="color: #AA22FF; font-weight: bold">using</span> <span style="color: #0000FF; font-weight: bold">Lambda</span>;<span style="color: #AA22FF; font-weight: bold">using</span> <span style="color: #0000FF; font-weight: bold">StringTools</span>;<span style="color: #008800; font-style: italic">/** </span>
+<span style="color: #008800; font-style: italic">We will use module here, because in modules, everything is static</span>
+<span style="color: #008800; font-style: italic">and that is what we need for functional programming</span>
+<span style="color: #008800; font-style: italic"> **/</span>
+<span style="color: #AA22FF; font-weight: bold">class</span> <span style="color: #0000FF">Main</span>{
+  <span style="color: #008800; font-style: italic">// A definition of factorial, using a local, tail recursive function</span>
+  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">static</span> <span style="color: #AA22FF; font-weight: bold">function</span> <span style="color: #00A000">factorial</span>(<span style="color: #B8860B">n</span>: <span style="color: #0000FF">Int</span>): <span style="color: #0000FF">Int</span> <span style="border: 1px solid #FF0000">return</span>{
+    <span style="color: #AA22FF; font-weight: bold">function</span> go(n<span style="color: #666666">:</span> Int, acc<span style="color: #666666">:</span> Int)<span style="color: #666666">:</span> Int <span style="color: #AA22FF; font-weight: bold">return</span>{
+      <span style="color: #AA22FF; font-weight: bold">if</span> (n <span style="color: #666666">&lt;=</span> <span style="color: #666666">0</span>){
+        acc;
+      }<span style="color: #AA22FF; font-weight: bold">else</span>{
+        go(n<span style="color: #666666">-1</span>, n<span style="color: #666666">*</span>acc);
+      }
+    }
 
-<span style="color: #888888">// Extend self by OpenFL Sprite</span>
-<span style="color: #008800; font-weight: bold">class</span> <span style="color: #bb0066; font-weight: bold">OpenFL</span> <span style="color: #008800; font-weight: bold">extends</span> <span style="color: #bb0066; font-weight: bold">Sprite</span>{
-
-<span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">var</span> <span style="color: #3333bb">logo</span> : <span style="color: #bb0066; font-weight: bold">Sprite</span>;
-<span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">var</span> <span style="color: #3333bb">movingDown</span> : <span style="color: #bb0066; font-weight: bold">Bool</span>;
-<span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">var</span> <span style="color: #3333bb">movingLeft</span> : <span style="color: #bb0066; font-weight: bold">Bool</span>;
-<span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">var</span> <span style="color: #3333bb">movingRight</span> : <span style="color: #bb0066; font-weight: bold">Bool</span>;
-<span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">var</span> <span style="color: #3333bb">movingUp</span> : <span style="color: #bb0066; font-weight: bold">Bool</span>;
-
-<span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">function</span> <span style="color: #0066bb; font-weight: bold">new</span>(){
-  <span style="color: #008800; font-weight: bold">super</span>();
-
-  logo =<span style="color: #008800; font-weight: bold">new</span>  <span style="color: #bb0066; font-weight: bold">Sprite</span>();
-  logo.addChild(
-    <span style="color: #008800; font-weight: bold">new</span> <span style="color: #bb0066; font-weight: bold">Bitmap</span>(Assets.getBitmapData(<span style="color: #dd2200; background-color: #fff0f0">&quot;assets/openfl.png&quot;</span>)));
-  logo.x = <span style="color: #0000DD; font-weight: bold">100</span>;
-  logo.y = <span style="color: #0000DD; font-weight: bold">100</span>;
-  logo.buttonMode = <span style="color: #008800; font-weight: bold">true</span>;
-  addChild(logo);
-
-  stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-  stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
-  stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-};
-
-<span style="color: #888888">/* </span>
-<span style="color: #888888">Event handlers</span>
-<span style="color: #888888"> */</span>
-
-<span style="color: #008800; font-weight: bold">dynamic public</span> <span style="color: #008800; font-weight: bold">function</span> <span style="color: #0066bb; font-weight: bold">onKeyDown</span>(<span style="color: #336699">event</span>){
-  <span style="color: #008800; font-weight: bold">if</span>( event.keyCode == Keyboard.DOWN){
-    movingDown = <span style="color: #008800; font-weight: bold">true</span>;
-  }<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span>( event.keyCode == Keyboard.LEFT){
-    movingLeft = <span style="color: #008800; font-weight: bold">true</span>;
-  }<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span>( event.keyCode == Keyboard.RIGHT){
-    movingRight = <span style="color: #008800; font-weight: bold">true</span>;
-  }<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span>( event.keyCode == Keyboard.UP){
-    movingUp = <span style="color: #008800; font-weight: bold">true</span>;
-  }
-};
-
-<span style="color: #008800; font-weight: bold">dynamic public</span> <span style="color: #008800; font-weight: bold">function</span> <span style="color: #0066bb; font-weight: bold">onKeyUp</span>(<span style="color: #336699">event</span>){
-  <span style="color: #008800; font-weight: bold">if</span>( event.keyCode == Keyboard.DOWN){
-    movingDown = <span style="color: #008800; font-weight: bold">false</span>;
-  }<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span>( event.keyCode == Keyboard.LEFT){
-    movingLeft = <span style="color: #008800; font-weight: bold">false</span>;
-  }<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span>( event.keyCode == Keyboard.RIGHT){
-    movingRight = <span style="color: #008800; font-weight: bold">false</span>;
-  }<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span>( event.keyCode == Keyboard.UP){
-    movingUp = <span style="color: #008800; font-weight: bold">false</span>;
-  }
-};
-
-<span style="color: #008800; font-weight: bold">dynamic public</span> <span style="color: #008800; font-weight: bold">function</span> <span style="color: #0066bb; font-weight: bold">onEnterFrame</span>(<span style="color: #336699">event</span>){
-  <span style="color: #008800; font-weight: bold">if</span>( movingDown){
-    logo.y += <span style="color: #0000DD; font-weight: bold">5</span>;
+    go(n, <span style="color: #666666">1</span>);
   }
 
-  <span style="color: #008800; font-weight: bold">if</span>( movingLeft){
-    logo.x -= <span style="color: #0000DD; font-weight: bold">5</span>;
+  <span style="color: #008800; font-style: italic">// Another implementation of `factorial`, this time with a `while` loop</span>
+  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">static</span> <span style="color: #AA22FF; font-weight: bold">function</span> <span style="color: #00A000">factorial2</span>(<span style="color: #B8860B">n</span>: <span style="color: #0000FF">Int</span>): <span style="color: #0000FF">Int</span> <span style="border: 1px solid #FF0000">return</span>{
+    <span style="color: #AA22FF; font-weight: bold">var</span> <span style="color: #B8860B">acc</span> <span style="color: #666666">=</span> <span style="color: #666666">1</span>;
+    <span style="color: #AA22FF; font-weight: bold">var</span> <span style="color: #B8860B">i</span> <span style="color: #666666">=</span> n;
+
+    <span style="color: #AA22FF; font-weight: bold">while</span> (i <span style="color: #666666">&gt;</span> <span style="color: #666666">0</span>){
+      acc <span style="color: #666666">*=</span> i;
+      i <span style="color: #666666">-=</span> <span style="color: #666666">1</span>;
+    }
+
+    acc;
   }
 
-  <span style="color: #008800; font-weight: bold">if</span>( movingRight){
-    logo.x += <span style="color: #0000DD; font-weight: bold">5</span>;
-  }
+  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">static</span> <span style="color: #AA22FF; font-weight: bold">function</span> <span style="color: #00A000">compute</span>(<span style="color: #B8860B">n</span>: <span style="color: #0000FF">Int</span>, <span style="color: #B8860B">f</span>: <span style="color: #0000FF">Int</span> <span style="color: #00BB00; font-weight: bold">-&gt;</span> <span style="color: #0000FF">Int</span>): <span style="color: #0000FF">Int</span> <span style="border: 1px solid #FF0000">return</span> <span style="border: 1px solid #FF0000">f</span>(<span style="color: #B8860B">n</span>);
 
-  <span style="color: #008800; font-weight: bold">if</span>( movingUp){
-    logo.y -= <span style="color: #0000DD; font-weight: bold">5</span>;
+  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">static</span> <span style="color: #AA22FF; font-weight: bold">function</span> <span style="color: #00A000">main</span>() <span style="color: #AA22FF; font-weight: bold">return</span>{
+    <span style="color: #AA22FF; font-weight: bold">var</span> <span style="color: #B8860B">number</span> <span style="color: #666666">=</span> <span style="color: #666666">10</span> ;<span style="color: #008800; font-style: italic">// Compute factorials for number 10</span>
+
+    <span style="color: #AA22FF; font-weight: bold">trace</span>(compute(number, factorial)) ;<span style="color: #008800; font-style: italic">// Compute with recursive factorial method</span>
+    <span style="color: #AA22FF; font-weight: bold">trace</span>(compute(number, factorial2)) ;<span style="color: #008800; font-style: italic">// Compute with loop factorial method</span>
+    <span style="color: #008800; font-style: italic">// Result should be 3628800 in both</span>
   }
-};
 }</pre>
           </div>
         </div>
@@ -271,13 +196,13 @@ Event handlers
     </div>
 
     <!--googleon: index-->
-    
+
     <div class="jumbotron jumbotron-footer">
       <div class="container">
         <span class="pull-left">
-          <a href="https://nondev.io" title="Raxe blog">DEV</a> 
-          <a href="https://github.com/nondev/raxe" title="Raxe GitHub"><i class="fa fa-fw fa-github"></i></a> 
-          <a href="https://twitter.com/_deathbeam" title="Raxe Twitter"><i class="fa fa-fw fa-twitter"></i></a> 
+          <a href="https://nondev.io" title="Raxe blog">DEV</a>
+          <a href="https://github.com/nondev/raxe" title="Raxe GitHub"><i class="fa fa-fw fa-github"></i></a>
+          <a href="https://twitter.com/_deathbeam" title="Raxe Twitter"><i class="fa fa-fw fa-twitter"></i></a>
           <a href="https://gitter.im/nondev/raxe" title="Raxe Gitter"><i class="fa fa-fw fa-comments"></i></a>
         </span>
         <span class="pull-right">
@@ -299,7 +224,7 @@ Event handlers
 
       ga('create', 'UA-68102301-1', 'auto');
       ga('send', 'pageview');
-      
+
       var xmlhttp = new XMLHttpRequest();
       var url = "https://api.github.com/repos/nondev/raxe/commits";
 

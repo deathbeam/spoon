@@ -79,6 +79,12 @@ class Compiler{
     while(handle.nextToken()){
       // Skip compiler defines
       if (handle.is("#") || handle.is("@")){
+        // Use same syntax everywhere
+        if(handle.at("#elsif")){
+          handle.remove("#elsif");
+          handle.insert("#elseif");
+        }
+
         handle.next("\n");
         handle.increment();
       // Step over things in strings (" ") and process multiline strings

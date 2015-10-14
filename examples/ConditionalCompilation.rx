@@ -2,9 +2,9 @@
 
 module self
   def main()
-    #if !debug
+    #if(!debug)
       trace("ok")
-    #elseif (debug_level > 3)
+    #elsif(debug_level > 3)
       trace(3)
     #else
       trace("debug level too low")

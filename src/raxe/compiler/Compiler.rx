@@ -2,8 +2,7 @@ import raxe.tools.StringHandle
 import sys.io.File
 
 class self
-  def new()
-  end
+  def new() => null
 
   private def name : String = ""
   private def currentType : String = ""
@@ -29,7 +28,7 @@ class self
     "public", "private",
 
     -- Special keywords
-    "import", "def", "self", ".new", "new", "end", "do", "typedef", "try", "catch",
+    "import", "def", "self", ".new", "new", "end", "do", "typedef", "try", "catch", "empty",
 
     -- Brackets
     "{", "}", "(", ")", "[", "]", "=>",
@@ -75,7 +74,7 @@ class self
   @param handle : StringHandle Handle with initial content and position
   @return StringHandle modified string handle with adjusted position and content
   ---
-  def run(handle : StringHandle, script : Bool = false) : StringHandle
+  def run(handle : StringHandle, script : Bool = false, endPosition : Int = -1) : StringHandle
     while(handle.nextToken())
       -- Skip compiler defines
       if (handle.is("#") || handle.is("@"))
@@ -93,6 +92,11 @@ class self
       -- Correct access
       elsif(handle.safeis("public") || handle.safeis("private"))
         hasVisibility = true
+        handle.increment()
+      -- Empty operator (null)
+      elsif(handle.safeis("empty"))
+        handle.remove()
+        handle.insert("null")
         handle.increment()
       -- Structures
       elsif(handle.is("{"))
@@ -133,7 +137,8 @@ class self
         handle.insert("switch")
         handle.increment()
         handle.nextToken()
-        consumeBrackets(handle, "(", ")")
+        consumeBrackets(handle, script, "(", ")")
+        handle.next("\n")
         handle.insert("{")
         handle.increment()
         opened = opened + 1
@@ -142,7 +147,8 @@ class self
         handle.insert("case")
         handle.increment()
         handle.nextToken()
-        consumeBrackets(handle, "(", ")")
+        consumeBrackets(handle, script, "(", ")")
+        handle.next("\n")
         handle.insert(":")
         handle.increment()
       elsif(handle.safeis("try"))
@@ -155,7 +161,8 @@ class self
         handle.increment()
         handle.increment("catch")
         handle.nextToken()
-        consumeBrackets(handle, "(", ")")
+        consumeBrackets(handle, script, "(", ")")
+        handle.next("\n")
         handle.insert("{")
         handle.increment()
       -- Change end to classic bracket end
@@ -215,7 +222,7 @@ class self
         if(handle.is("("))
           handle.position = position
           handle.insert("function")
-          consumeBrackets(handle, "(", ")")
+          consumeBrackets(handle, script, "(", ")")
 
           if(currentType != "interface")
             while(safeNextToken(handle))
@@ -260,7 +267,7 @@ class self
           handle.remove("do")
           handle.insert("function")
           handle.increment()
-          consumeBrackets(handle, "(", ")")
+          consumeBrackets(handle, script, "(", ")")
 
           while(safeNextToken(handle))
             if(handle.is("=>"))
@@ -286,7 +293,8 @@ class self
       elsif(handle.safeis("if"))
         handle.increment()
         handle.nextToken()
-        consumeBrackets(handle, "(", ")")
+        consumeBrackets(handle, script, "(", ")")
+        handle.next("\n")
         handle.insert("{")
         handle.increment()
         opened = opened + 1
@@ -296,13 +304,15 @@ class self
         handle.insert("}else if")
         handle.increment()
         handle.nextToken()
-        consumeBrackets(handle, "(", ")")
+        consumeBrackets(handle, script, "(", ")")
+        handle.next("\n")
         handle.insert("{")
         handle.increment()
       elsif(handle.safeis("while") || handle.safeis("for"))
         handle.increment()
         handle.nextToken()
-        consumeBrackets(handle, "(", ")")
+        consumeBrackets(handle, script, "(", ")")
+        handle.next("\n")
         handle.insert("{")
         opened = opened + 1
         handle.increment()
@@ -436,6 +446,10 @@ class self
       else
         handle.increment()
       end
+
+      if(endPosition > -1 && endPosition == handle.position)
+        break
+      end
     end
 
     return handle
@@ -447,7 +461,7 @@ class self
     if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
         safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "import") &&
         safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch") &&
-        safeCheck(handle, "private") && safeCheck(handle, "public"))
+        safeCheck(handle, "private") && safeCheck(handle, "public") && safeCheck(handle, "empty"))
       return true
     else
       handle.increment()
@@ -463,8 +477,9 @@ class self
     return true
   end
 
-  private def consumeBrackets(handle : StringHandle, startSymbol : String, endSymbol : String)
+  private def consumeBrackets(handle : StringHandle, script : Bool, startSymbol : String, endSymbol : String)
     def count = 0
+    def startPosition = handle.position
 
     while(handle.nextToken())
       if(handle.is("\""))
@@ -479,7 +494,10 @@ class self
         handle.increment()
       end
 
-      if (count == 0)
+      if(count == 0)
+        def endPosition = handle.position
+        handle.position = startPosition + 1
+        run(handle, script, endPosition)
         break
       end
     end

@@ -2,8 +2,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
 import sys.io.File;
 
 class Compiler{
-  public function new(){
-  }
+  public function new()  null;
 
   private var name : String = "";
   private var currentType : String = "";
@@ -29,7 +28,7 @@ class Compiler{
     "public", "private",
 
     // Special keywords
-    "import", "def", "self", ".new", "new", "end", "do", "typedef", "try", "catch",
+    "import", "def", "self", ".new", "new", "end", "do", "typedef", "try", "catch", "empty",
 
     // Brackets
     "{", "}", "(", ")", "[", "]", "=>",
@@ -75,7 +74,7 @@ class Compiler{
   @param handle : StringHandle Handle with initial content and position
   @return StringHandle modified string handle with adjusted position and content
    **/
-  public function run(handle : StringHandle, script : Bool = false) : StringHandle return{
+  public function run(handle : StringHandle, script : Bool = false, endPosition : Int = -1) : StringHandle return{
     while(handle.nextToken()){
       // Skip compiler defines
       if (handle.is("#") || handle.is("@")){
@@ -93,6 +92,11 @@ class Compiler{
       // Correct access
       }else if(handle.safeis("public") || handle.safeis("private")){
         hasVisibility = true;
+        handle.increment();
+      // Empty operator (null)
+      }else if(handle.safeis("empty")){
+        handle.remove();
+        handle.insert("null");
         handle.increment();
       // Structures
       }else if(handle.is("{")){
@@ -133,7 +137,8 @@ class Compiler{
         handle.insert("switch");
         handle.increment();
         handle.nextToken();
-        consumeBrackets(handle, "(", ")");
+        consumeBrackets(handle, script, "(", ")");
+        handle.next("\n");
         handle.insert("{");
         handle.increment();
         opened = opened + 1;
@@ -142,7 +147,8 @@ class Compiler{
         handle.insert("case");
         handle.increment();
         handle.nextToken();
-        consumeBrackets(handle, "(", ")");
+        consumeBrackets(handle, script, "(", ")");
+        handle.next("\n");
         handle.insert(":");
         handle.increment();
       }else if(handle.safeis("try")){
@@ -155,7 +161,8 @@ class Compiler{
         handle.increment();
         handle.increment("catch");
         handle.nextToken();
-        consumeBrackets(handle, "(", ")");
+        consumeBrackets(handle, script, "(", ")");
+        handle.next("\n");
         handle.insert("{");
         handle.increment();
       // Change end to classic bracket end
@@ -215,7 +222,7 @@ class Compiler{
         if(handle.is("(")){
           handle.position = position;
           handle.insert("function");
-          consumeBrackets(handle, "(", ")");
+          consumeBrackets(handle, script, "(", ")");
 
           if(currentType != "interface"){
             while(safeNextToken(handle)){
@@ -260,7 +267,7 @@ class Compiler{
           handle.remove("do");
           handle.insert("function");
           handle.increment();
-          consumeBrackets(handle, "(", ")");
+          consumeBrackets(handle, script, "(", ")");
 
           while(safeNextToken(handle)){
             if(handle.is("=>")){
@@ -286,7 +293,8 @@ class Compiler{
       }else if(handle.safeis("if")){
         handle.increment();
         handle.nextToken();
-        consumeBrackets(handle, "(", ")");
+        consumeBrackets(handle, script, "(", ")");
+        handle.next("\n");
         handle.insert("{");
         handle.increment();
         opened = opened + 1;
@@ -296,13 +304,15 @@ class Compiler{
         handle.insert("}else if");
         handle.increment();
         handle.nextToken();
-        consumeBrackets(handle, "(", ")");
+        consumeBrackets(handle, script, "(", ")");
+        handle.next("\n");
         handle.insert("{");
         handle.increment();
       }else if(handle.safeis("while") || handle.safeis("for")){
         handle.increment();
         handle.nextToken();
-        consumeBrackets(handle, "(", ")");
+        consumeBrackets(handle, script, "(", ")");
+        handle.next("\n");
         handle.insert("{");
         opened = opened + 1;
         handle.increment();
@@ -436,6 +446,10 @@ class Compiler{
       }else{
         handle.increment();
       }
+
+      if(endPosition > -1 && endPosition == handle.position){
+        break;
+      }
     }
 
     return handle;
@@ -447,7 +461,7 @@ class Compiler{
     if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
         safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "import") &&
         safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch") &&
-        safeCheck(handle, "private") && safeCheck(handle, "public")){
+        safeCheck(handle, "private") && safeCheck(handle, "public") && safeCheck(handle, "empty")){
       return true;
     }else{
       handle.increment();
@@ -463,8 +477,9 @@ class Compiler{
     return true;
   }
 
-  private function consumeBrackets(handle : StringHandle, startSymbol : String, endSymbol : String) return{
+  private function consumeBrackets(handle : StringHandle, script : Bool, startSymbol : String, endSymbol : String) return{
     var count = 0;
+    var startPosition = handle.position;
 
     while(handle.nextToken()){
       if(handle.is("\"")){
@@ -479,7 +494,10 @@ class Compiler{
         handle.increment();
       }
 
-      if (count == 0){
+      if(count == 0){
+        var endPosition = handle.position;
+        handle.position = startPosition + 1;
+        run(handle, script, endPosition);
         break;
       }
     }

@@ -447,7 +447,7 @@ class self
         handle.increment()
       end
 
-      if(endPosition > -1 && endPosition >= handle.position)
+      if(endPosition > -1 && handle.position >= endPosition)
         break
       end
     end
@@ -495,7 +495,7 @@ class self
       end
 
       if(count == 0)
-        def endPosition = handle.position
+        def endPosition = handle.position - 1
 
         if(startPosition < endPosition)
           handle.position = startPosition

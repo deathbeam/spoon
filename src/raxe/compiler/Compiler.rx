@@ -37,7 +37,7 @@ class self
     ":", "?", "=", "+", "-", "*", ".", "/", "," , "|", "&",  "^", "%", "<", ">", "~",
 
     -- Expressions
-    "elsif", "if", "else", "while", "for", "case", "when",
+    "elsif", "if", "else", "while", "for", "switch", "when",
   ]
 
   ---
@@ -130,11 +130,9 @@ class self
         handle.increment()
         handle.insert("new ")
         handle.increment()
-      elsif(handle.safeis("case"))
+      elsif(handle.safeis("switch"))
         currentExpression = handle.current
         currentOpened = opened
-        handle.remove()
-        handle.insert("switch")
         handle.increment()
         handle.nextToken()
         consumeBrackets(handle, script, "(", ")")
@@ -319,7 +317,7 @@ class self
       -- Inser begin and end brackets around else but do not try to
       -- process curlys because there will not be any
       elsif(handle.safeis("else"))
-        if(currentExpression == "case")
+        if(currentExpression == "switch")
           handle.remove()
           handle.insert("default:")
         else
@@ -461,7 +459,8 @@ class self
     if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
         safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "import") &&
         safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch") &&
-        safeCheck(handle, "private") && safeCheck(handle, "public") && safeCheck(handle, "empty"))
+        safeCheck(handle, "private") && safeCheck(handle, "public") && safeCheck(handle, "empty") && safeCheck(handle, "switch") &&
+        safeCheck(handle, "when"))
       return true
     else
       handle.increment()

@@ -4,6 +4,12 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
   public var current : String;
   public var tokens : Array<String>;
 
+  public function atStart() : Bool return position <= 0;
+  public function atEnd() : Bool return position >= content.length;
+  public function nearStart(tolerance : Int) : Bool return (position - tolerance) <= 0;
+  public function nearEnd(tolerance : Int) : Bool return (position + tolerance) >= content.length;
+  public function is(content : String) : Bool return current == content;
+
   public function new(content : String, ?tokens : Array<String>, position : Int = 0){
     this.content = content;
 
@@ -19,22 +25,6 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
   public function reset() return{
     position = 0;
     current = null;
-  }
-
-  public function atStart() : Bool return{
-    return position <= 0;
-  }
-
-  public function atEnd() : Bool return{
-    return position >= content.length;
-  }
-
-  public function nearStart(tolerance : Int) : Bool return{
-    return (position - tolerance) <= 0;
-  }
-
-  public function nearEnd(tolerance : Int) : Bool return{
-    return (position + tolerance) >= content.length;
   }
 
   public function closest(content : String) : Bool return{
@@ -54,10 +44,6 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
     }
 
     return regex.match(sub.substr(0, count));
-  }
-
-  public function is(content : String) : Bool return{
-    return current == content;
   }
 
   public function isOne(content : Array<String>) : Bool return{
@@ -356,7 +342,7 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
   }
 
   private function divide(?offset: Int = 0) return{
-    return {
+    {
       left: position > 0 ? content.substr(0, position + offset) : "",
       right: position < content.length ? content.substring(position + offset) : "",
     }

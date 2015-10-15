@@ -447,7 +447,7 @@ class Compiler{
         handle.increment();
       }
 
-      if(endPosition > -1 && endPosition == handle.position){
+      if(endPosition > -1 && endPosition >= handle.position){
         break;
       }
     }
@@ -496,8 +496,13 @@ class Compiler{
 
       if(count == 0){
         var endPosition = handle.position;
-        handle.position = startPosition + 1;
-        run(handle, script, endPosition);
+
+        if(startPosition < endPosition){
+          handle.position = startPosition;
+          handle = run(handle, script, endPosition);
+          handle.position = endPosition;
+        }
+
         break;
       }
     }

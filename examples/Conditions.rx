@@ -2,20 +2,20 @@
 
 module self
   def main()
-    def myvar : String = null
+    def myvar : String = empty
     def myarray = Array<String>.new()
 
-    if(myvar != null && myvar.charAt(10) == "p")
+    if(myvar != empty && myvar.charAt(10) == "p")
       for(i in myarray.iterator())
         trace("Wouhou")
       end
-    elsif(myvar != null && myvar.charAt(20) == "c")
+    elsif(myvar != empty && myvar.charAt(20) == "c")
       trace("no")
     else
       trace("coco")
     end
 
-    if(myvar != null &&
+    if(myvar != empty &&
         myvar.charAt(0) == "x" &&
         myvar.charAt(2) == "x")
       trace("ok")

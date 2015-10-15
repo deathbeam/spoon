@@ -11,8 +11,8 @@ module self
     validate([1,2,3], TArray(TInt))
   end
 
-  def validate(value: Dynamic, schema: Schema)
-    case(schema)
+  def validate(value : Dynamic, schema : Schema)
+    switch(schema)
       when(TInt)
         if(!Std.is(value, Int))
           throw("not an int")

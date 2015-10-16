@@ -76,7 +76,7 @@ class Compiler{
    **/
   public function run(handle : StringHandle, script : Bool = false, endPosition : Int = -1) : StringHandle return{
     while(handle.nextToken()){
-      // Skip compiler defines
+      // Skip compiler defines and annotations
       if (handle.is("#") || handle.is("@")){
         // Use same syntax everywhere
         if(handle.at("#elsif")){
@@ -93,16 +93,26 @@ class Compiler{
       }else if(handle.safeis("public") || handle.safeis("private")){
         hasVisibility = true;
         handle.increment();
+      // Change require to classic imports
+      }else if(handle.safeis("import")){
+        handle.next("\n");
+        handle.insert(";");
+        handle.increment();
       // Empty operator (null)
       }else if(handle.safeis("empty")){
         handle.remove();
         handle.insert("null");
         handle.increment();
-      // Structures
-      }else if(handle.is("{")){
+      // Replace self with current module name
+      }else if(handle.safeis("self")){
+        handle.remove();
+        handle.insert(name);
+        handle.increment();
+      // Structures and arrays
+      }else if(handle.is("{") || handle.is("[")){
         opened = opened + 1;
         handle.increment();
-      }else if(handle.is("}")){
+      }else if(handle.is("}") || handle.is("]")){
         opened = opened - 1;
 
         if(opened == -1){
@@ -110,6 +120,19 @@ class Compiler{
         }
 
         handle.increment();
+      // Change end to classic bracket end
+      }else if(handle.safeis("end")){
+        handle.remove();
+        handle.insert("}");
+        handle.increment();
+        opened = opened - 1;
+
+        if(currentOpened == opened){
+          currentOpened = -1;
+          currentExpression = "";
+        }
+      // Replace OO-like method for creating new objects with normal
+      // special "new" keyword
       }else if(handle.is(".new")){
         handle.remove();
         handle.prevTokenLine();
@@ -130,6 +153,7 @@ class Compiler{
         handle.increment();
         handle.insert("new ");
         handle.increment();
+      // Insert begin bracket after switch
       }else if(handle.safeis("switch")){
         currentExpression = handle.current;
         currentOpened = opened;
@@ -140,6 +164,7 @@ class Compiler{
         handle.insert("{");
         handle.increment();
         opened = opened + 1;
+      // Replaced when with Haxe "case"
       }else if(handle.safeis("when")){
         handle.remove();
         handle.insert("case");
@@ -149,11 +174,13 @@ class Compiler{
         handle.next("\n");
         handle.insert(":");
         handle.increment();
+      // Insert begin bracket after try
       }else if(handle.safeis("try")){
         handle.increment();
         handle.insert("{");
         handle.increment();
         opened = opened + 1;
+      // Insert brackets around catch
       }else if(handle.safeis("catch")){
         handle.insert("}");
         handle.increment();
@@ -163,21 +190,47 @@ class Compiler{
         handle.next("\n");
         handle.insert("{");
         handle.increment();
-      // Change end to classic bracket end
-      }else if(handle.safeis("end")){
-        handle.remove();
-        handle.insert("}");
+      // Insert begin bracket after if and while
+      }else if(handle.safeis("if")){
         handle.increment();
-        opened = opened - 1;
-
-        if(currentOpened == opened){
-          currentOpened = -1;
-          currentExpression = "";
-        }
-      // Change require to classic imports
-      }else if(handle.safeis("import")){
+        handle.nextToken();
+        consumeBrackets(handle, script, "(", ")");
         handle.next("\n");
-        handle.insert(";");
+        handle.insert("{");
+        handle.increment();
+        opened = opened + 1;
+      // Change elseif to else if and insert begin and end brackets around it
+      }else if(handle.safeis("elsif")){
+        handle.remove();
+        handle.insert("}else if");
+        handle.increment();
+        handle.nextToken();
+        consumeBrackets(handle, script, "(", ")");
+        handle.next("\n");
+        handle.insert("{");
+        handle.increment();
+      // Insert begin brackets after loops declaration
+      }else if(handle.safeis("while") || handle.safeis("for")){
+        handle.increment();
+        handle.nextToken();
+        consumeBrackets(handle, script, "(", ")");
+        handle.next("\n");
+        handle.insert("{");
+        opened = opened + 1;
+        handle.increment();
+      // Inser begin and end brackets around else but do not try to
+      // process curlys because there will not be any
+      }else if(handle.safeis("else")){
+        if(currentExpression == "switch"){
+          handle.remove();
+          handle.insert("default:");
+        }else{
+          handle.insert("}");
+          handle.increment();
+          handle.increment("else");
+          handle.insert("{");
+        }
+
         handle.increment();
       // Defines to variables and functions
       }else if(handle.safeis("def")){
@@ -287,47 +340,6 @@ class Compiler{
         }
 
         handle.increment();
-      // Insert begin bracket after if and while
-      }else if(handle.safeis("if")){
-        handle.increment();
-        handle.nextToken();
-        consumeBrackets(handle, script, "(", ")");
-        handle.next("\n");
-        handle.insert("{");
-        handle.increment();
-        opened = opened + 1;
-      // Change elseif to else if and insert begin and end brackets around it
-      }else if(handle.safeis("elsif")){
-        handle.remove();
-        handle.insert("}else if");
-        handle.increment();
-        handle.nextToken();
-        consumeBrackets(handle, script, "(", ")");
-        handle.next("\n");
-        handle.insert("{");
-        handle.increment();
-      }else if(handle.safeis("while") || handle.safeis("for")){
-        handle.increment();
-        handle.nextToken();
-        consumeBrackets(handle, script, "(", ")");
-        handle.next("\n");
-        handle.insert("{");
-        opened = opened + 1;
-        handle.increment();
-      // Inser begin and end brackets around else but do not try to
-      // process curlys because there will not be any
-      }else if(handle.safeis("else")){
-        if(currentExpression == "switch"){
-          handle.remove();
-          handle.insert("default:");
-        }else{
-          handle.insert("}");
-          handle.increment();
-          handle.increment("else");
-          handle.insert("{");
-        }
-
-        handle.increment();
       // [abstract] class/interface/enum
       }else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum") || handle.safeis("module")){
         currentType = handle.current;
@@ -356,12 +368,7 @@ class Compiler{
 
           handle.increment();
         }
-      }else if(handle.safeis("self")){
-        handle.remove();
-        handle.insert(name);
-        handle.increment();
-        // Process comments and ignore everything in
-        // them until end of line or until next match if multiline
+      // Process comments and newlines. Also, insert semicolons when needed
       }else if(handle.is("\n") || handle.is("-")){
         var pos = handle.position;
         var insert = true;
@@ -494,7 +501,7 @@ class Compiler{
       }
 
       if(count == 0){
-        var endPosition = handle.position - 1;
+        var endPosition = handle.position - endSymbol.length;
 
         if(startPosition < endPosition){
           handle.position = startPosition;

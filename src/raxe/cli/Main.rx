@@ -1,7 +1,7 @@
 import mcli.Dispatch
 
 ---
-Entry point for Raxe CLI
+- Entry point for Raxe CLI
 ---
 module self
   def main()

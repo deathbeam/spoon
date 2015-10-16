@@ -10,8 +10,8 @@ class CompilerCommand{
   private var dest: String;
 
   /** 
-  @param src : String   Source file or directory
-  @param ?dest : String Destination file or directory (optional)
+  * @param src : String   Source file or directory
+  * @param ?dest : String Destination file or directory (optional)
    **/
   public function new(src: String, ?dest: String){
     this.src = src;
@@ -19,10 +19,9 @@ class CompilerCommand{
   }
 
   /** 
-  Compile a file or a whole directory
-
-  @param raxeOnly : Bool Must only copy to the dest directory, raxe files
-  @return Bool transpilation has been done or not
+  * Compile a file or a whole directory
+  * @param raxeOnly : Bool Must only copy to the dest directory, raxe files
+  * @return Bool transpilation has been done or not
    **/
   public function compile(all: Bool) : Bool return{
     var src = this.src;
@@ -105,10 +104,9 @@ class CompilerCommand{
   }
 
   /** 
-  Compile one file
-
-  @param file : String Compile a file and returns its content
-  @return String content
+  * Compile one file
+  * @param file : String Compile a file and returns its content
+  * @return String content
    **/
   public function compileFile(dir : String, file: String): String return{
     var compiler =new  Compiler();
@@ -120,19 +118,18 @@ class CompilerCommand{
   }
 
   /** 
-  Checks if the given file is a raxe file
+  * Checks if the given file is a raxe file
    **/
   public function isRaxeFile(filename: String): Bool return{
     return filename.endsWith(".rx");
   }
 
   /** 
-  Get the path the destination file
-
-  @param file : String Path to the file
-  @param src : String  Source directory
-  @param dest : String Destination directory
-  @return String destination file path
+  * Get the path the destination file
+  * @param file : String Path to the file
+  * @param src : String  Source directory
+  * @param dest : String Destination directory
+  * @return String destination file path
    **/
   public function getDestinationFile(file: String, src: String, dest: String) : String return{
     var parts : Array<String> = file.split("/");

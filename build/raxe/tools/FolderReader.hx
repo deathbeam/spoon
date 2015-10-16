@@ -2,16 +2,14 @@ package raxe.tools;using Lambda;using StringTools;import sys.FileSystem;
 import sys.io.File;
 
 /** 
-Utility to deal with folders
-
-@author Axel Anceau (Peekmo)
+* Utility to deal with folders
+* @author Axel Anceau (Peekmo)
  **/
 class FolderReader{
   /** 
-  Returns an array of all files which are in the given folder and its subfolders
-
-  @param rootFolder : String Root folder for the search
-  @return Files found
+  * Returns an array of all files which are in the given folder and its subfolders
+  * @param rootFolder : String Root folder for the search
+  * @return Files found
    **/
   public static function getFiles(rootFolder: String) : Array<String> return{
     var files : Array<String> =new  Array<String>();
@@ -38,11 +36,10 @@ class FolderReader{
   }
 
   /** 
-  Creates a file to the given path, with the given content
-  (Creates all directories if they not exists)
-
-  @param  path     : String Path to the file (each folders separated by '/')
-  @param  ?content : String File's content
+  * Creates a file to the given path, with the given content
+  * (Creates all directories if they not exists)
+  * @param  path     : String Path to the file (each folders separated by '/')
+  * @param  ?content : String File's content
    **/
   public static function createFile(path : String, ?content : String) : Void return{
     var parts : Array<String> = path.split("/");
@@ -59,9 +56,8 @@ class FolderReader{
   }
 
   /** 
-  Creates the given directory (and all path's directories if needed)
-
-  @param  path : String Path to the given directory
+  * Creates the given directory (and all path's directories if needed)
+  * @param  path : String Path to the given directory
    **/
   public static function createDirectory(path : String) : Void return{
     var parts : Array<String> = path.split("/");
@@ -77,10 +73,9 @@ class FolderReader{
   }
 
   /** 
-  Copy all files from source to destination
-
-  @param  source      : String Source's path
-  @param  destination : String Destination's path
+  * Copy all files from source to destination
+  * @param  source      : String Source's path
+  * @param  destination : String Destination's path
    **/
   public static function copyFileSystem(source : String, destination : String) : Void return{
     try{

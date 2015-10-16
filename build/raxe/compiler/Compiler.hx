@@ -41,11 +41,10 @@ class Compiler{
   ];
 
   /** 
-  Compile Raxe file and returns Haxe result
-
-  @param directory : String root project directory, needed for correct package names
-  @param file      : String file path to compile
-  @return String Raxe file compiled to it's Haxe equivalent
+  * Compile Raxe file and returns Haxe result
+  * @param directory : String root project directory, needed for correct package names
+  * @param file      : String file path to compile
+  * @return String Raxe file compiled to it's Haxe equivalent
    **/
   public function compile(directory : String, file : String) : String return{
     var currentPackage = file.replace(directory, "");
@@ -68,11 +67,10 @@ class Compiler{
   }
 
   /** 
-  Process content of StringHandle and return it modified
-
-  @param script         : Bool Determine if automatically insert package and class names
-  @param handle : StringHandle Handle with initial content and position
-  @return StringHandle modified string handle with adjusted position and content
+  * Process content of StringHandle and return it modified
+  * @param script         : Bool Determine if automatically insert package and class names
+  * @param handle : StringHandle Handle with initial content and position
+  * @return StringHandle modified string handle with adjusted position and content
    **/
   public function run(handle : StringHandle, script : Bool = false, endPosition : Int = -1) : StringHandle return{
     while(handle.nextToken()){
@@ -431,10 +429,30 @@ class Compiler{
             handle.remove(comment);
             handle.insert("/** ");
             handle.increment();
-            handle.next(comment);
-            handle.remove(comment);
-            handle.insert(" **/");
-            handle.increment();
+
+            while(handle.nextToken()){
+              if(handle.at(comment)){
+                handle.remove(comment);
+                handle.insert(" **/");
+                handle.increment();
+                break;
+              }else if(handle.is("-")){
+                position = handle.position;
+                handle.prevToken();
+
+                if(handle.is("\n") && onlyWhitespace(handle.content, position + 1, handle.position - 1)){
+                  handle.position = position;
+                  handle.remove("-");
+                  handle.insert("*");
+                }else{
+                  handle.position = position;
+                }
+
+                handle.increment();
+              }else{
+                handle.increment();
+              }
+            }
           }else if(comment.length == 2){
             handle.remove(comment);
             handle.insert("//");

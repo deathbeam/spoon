@@ -1,7 +1,7 @@
 package raxe.cli;using Lambda;using StringTools;import mcli.Dispatch;
 
 /** 
-Entry point for Raxe CLI
+* Entry point for Raxe CLI
  **/
 class Main{
   public static function main() return{

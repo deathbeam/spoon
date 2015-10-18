@@ -28,41 +28,29 @@ apm install language-raxe
 
 # Build the project
 
-You'll need these libraries installed:
+You'll need to have previous version of Raxe installed before building Raxe from soure.
+
+First run this Raxefile task
 
 ```
-haxelib install mcli
-haxelib install hscript
-haxelib install dox
-```
-
-or you can just run
-
-```
-haxelib install build.hxml
-```
-
-or, if you have already previous version of Raxe installed, just execute `Raxefile` task `installLibs` via
-
-```
-haxelib run raxe -t installLibs
+haxelib run raxe -f -t installLibs
 ```
 
 to install all required dependencies.
 
-Now, compile the project with
+Now, compile the project with default Raxefile task
 
 ```
-haxe build.hxml
+haxelib run raxe -f
 ```
 
-or, if you have already previous version of Raxe installed, just execute `Raxefile` via
+A binary `run.n` will be available now. You can use
 
 ```
-haxelib run raxe
+haxelib run raxe -f -t generateDocs
 ```
 
-A binary `run.n` will be available
+to generate documentation for Raxe.
 
 # Command line tool
 

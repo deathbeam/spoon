@@ -44,13 +44,35 @@ class self < CommandLine
   Copy all (not only .rx) files to dest directory
   @alias a
   ---
-  def all: Bool
+  def all : Bool
+
+  ---
+  Show more info about compilation process
+  @alias v
+  ---
+  def verbose : Bool
 
   ---
   Evaluate Raxe snippet
   @alias i
   ---
-  def interp: String
+  def interp : String
+
+  ---
+  Execute Raxefile in this directory
+  @alias f
+  ---
+  def file()
+    if(FileSystem.exists("Raxefile"))
+      def rf = RaxeFile.new("Raxefile")
+      rf.run(task)
+    else
+      Sys.println("Raxefile not found in this directory.")
+      help()
+    end
+
+    Sys.exit(0)
+  end
 
   ---
   Show this message
@@ -66,44 +88,39 @@ class self < CommandLine
       if(interp != null && interp != "")
         def script = RaxeScript.new()
         Sys.println(script.execute(script.parse(interp)))
-      elsif(this.src != null)
-        this.compile()
-      elsif(FileSystem.exists("Raxefile"))
-        def rf = RaxeFile.new("Raxefile")
-        rf.run(this.task)
+      elsif(src != null)
+        compile()
       else
-        this.help()
+        help()
       end
     catch(err : String)
       Sys.println(err)
-      Sys.exit(0)
-    end
-  end
-
-  private def compile()
-    if(this.src != null)
-      if(!FileSystem.exists(src))
-        Error.create(ERROR_TYPE, "Source not found")
-      end
-
-      def compiler = CompilerCommand.new(this.src, this.dest)
-      while(true)
-        try
-          if(compiler.compile(this.all))
-            if(compiler.response != null && compiler.response != "")
-              Sys.println(compiler.response)
-            end
-          end
-        catch(err : String)
-          Sys.println(err)
-        end
-
-        if(!this.watch)
-          break
-        end
-      end
     end
 
     Sys.exit(0)
+  end
+
+  private def compile()
+    if(!FileSystem.exists(src))
+      Error.create(ERROR_TYPE, "Source not found")
+    end
+
+    def compiler = CompilerCommand.new(src, dest, all, verbose)
+
+    while(true)
+      try
+        if(compiler.compile())
+          if(compiler.response != null && compiler.response != "")
+            Sys.println(compiler.response)
+          end
+        end
+      catch(err : String)
+        Sys.println(err)
+      end
+
+      if(!watch)
+        break
+      end
+    end
   end
 end

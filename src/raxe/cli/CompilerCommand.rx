@@ -7,15 +7,19 @@ class self
   def response : String
   private def files = Map<String, Int>.new()
   private def src : String
-  private def dest: String
+  private def dest : String
+  private def all : Bool
+  private def verbose : Bool
 
   ---
   - @param src : String   Source file or directory
   - @param ?dest : String Destination file or directory (optional)
   ---
-  def new(src: String, ?dest: String)
+  def new(src: String, dest: String, all : Bool, verbose : Bool)
     this.src = src
     this.dest = dest
+    this.all = all
+    this.verbose = verbose
   end
 
   ---
@@ -23,7 +27,7 @@ class self
   - @param raxeOnly : Bool Must only copy to the dest directory, raxe files
   - @return Bool transpilation has been done or not
   ---
-  def compile(all: Bool) : Bool
+  def compile() : Bool
     def src = this.src
     def dest = this.dest
     def dir = src
@@ -34,9 +38,11 @@ class self
       def currentSize : Int = FileSystem.stat(this.src).size
 
       if(oldFileSize != currentSize)
+        src = getSourceFile(src)
+        printVerbose(src, dest)
         def result = compileFile(dest, src)
 
-        if(dest == null)
+        if(dest == null || dest == "")
             this.response = result
         else
             FolderReader.createFile(dest, result)
@@ -57,7 +63,7 @@ class self
         src = src.substr(0, src.length - 1)
       end
 
-      if(dest == null)
+      if(dest == null || dest == "")
         dest = src
       elsif(dest.endsWith("/"))
         dest = dest.substr(0, dest.length - 1)
@@ -74,6 +80,8 @@ class self
 
           -- If it's a raxe file, we compile it
           if(isRaxeFile(file))
+            file = getSourceFile(file)
+            printVerbose(file, newPath)
             def result = compileFile(dir, file)
             FolderReader.createFile(newPath, result)
             this.files.set(file, currentSize)
@@ -104,34 +112,52 @@ class self
   end
 
   ---
+  - Print verbose info to console
+  - @param src : String Source file
+  - @param dest : String Destination file
+  ---
+  private def printVerbose(src : String, dest : String)
+    if(verbose)
+      Sys.println("Compiling " + src + "\n" + "       to " + dest)
+    end
+  end
+
+  ---
   - Compile one file
   - @param file : String Compile a file and returns its content
   - @return String content
   ---
-  def compileFile(dir : String, file: String): String
+  private def compileFile(dir : String, file: String): String
     def compiler = Compiler.new()
     dir = dir != null ? FileSystem.fullPath(dir) : Sys.getCwd()
-    file = FileSystem.fullPath(file)
 
-    Sys.println("Compiling " + file)
     return compiler.compile(dir, file)
   end
 
   ---
   - Checks if the given file is a raxe file
   ---
-  def isRaxeFile(filename: String): Bool
+  private def isRaxeFile(filename: String): Bool
     return filename.endsWith(".rx")
   end
 
   ---
-  - Get the path the destination file
+  - Get the path to the source file
+  - @param file : String Path to the file
+  - @return String source file path
+  ---
+  private def getSourceFile(file : String) : String
+    FileSystem.fullPath(file)
+  end
+
+  ---
+  - Get the path to the destination file
   - @param file : String Path to the file
   - @param src : String  Source directory
   - @param dest : String Destination directory
   - @return String destination file path
   ---
-  def getDestinationFile(file: String, src: String, dest: String) : String
+  private def getDestinationFile(file: String, src: String, dest: String) : String
     def parts : Array<String> = file.split("/")
     def fileName : String = parts.pop()
 

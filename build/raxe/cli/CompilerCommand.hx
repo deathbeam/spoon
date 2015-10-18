@@ -7,15 +7,19 @@ class CompilerCommand{
   public var response : String;
   private var files =new  Map<String, Int>();
   private var src : String;
-  private var dest: String;
+  private var dest : String;
+  private var all : Bool;
+  private var verbose : Bool;
 
   /** 
   * @param src : String   Source file or directory
   * @param ?dest : String Destination file or directory (optional)
    **/
-  public function new(src: String, ?dest: String){
+  public function new(src: String, dest: String, all : Bool, verbose : Bool){
     this.src = src;
     this.dest = dest;
+    this.all = all;
+    this.verbose = verbose;
   }
 
   /** 
@@ -23,7 +27,7 @@ class CompilerCommand{
   * @param raxeOnly : Bool Must only copy to the dest directory, raxe files
   * @return Bool transpilation has been done or not
    **/
-  public function compile(all: Bool) : Bool return{
+  public function compile() : Bool return{
     var src = this.src;
     var dest = this.dest;
     var dir = src;
@@ -34,9 +38,11 @@ class CompilerCommand{
       var currentSize : Int = FileSystem.stat(this.src).size;
 
       if(oldFileSize != currentSize){
+        src = getSourceFile(src);
+        printVerbose(src, dest);
         var result = compileFile(dest, src);
 
-        if(dest == null){
+        if(dest == null || dest == ""){
             this.response = result;
         }else{
             FolderReader.createFile(dest, result);
@@ -57,7 +63,7 @@ class CompilerCommand{
         src = src.substr(0, src.length - 1);
       }
 
-      if(dest == null){
+      if(dest == null || dest == ""){
         dest = src;
       }else if(dest.endsWith("/")){
         dest = dest.substr(0, dest.length - 1);
@@ -74,6 +80,8 @@ class CompilerCommand{
 
           // If it's a raxe file, we compile it
           if(isRaxeFile(file)){
+            file = getSourceFile(file);
+            printVerbose(file, newPath);
             var result = compileFile(dir, file);
             FolderReader.createFile(newPath, result);
             this.files.set(file, currentSize);
@@ -104,34 +112,52 @@ class CompilerCommand{
   }
 
   /** 
+  * Print verbose info to console
+  * @param src : String Source file
+  * @param dest : String Destination file
+   **/
+  private function printVerbose(src : String, dest : String) return{
+    if(verbose){
+      Sys.println("Compiling " + src + "\n" + "       to " + dest);
+    }
+  }
+
+  /** 
   * Compile one file
   * @param file : String Compile a file and returns its content
   * @return String content
    **/
-  public function compileFile(dir : String, file: String): String return{
+  private function compileFile(dir : String, file: String): String return{
     var compiler =new  Compiler();
     dir = dir != null ? FileSystem.fullPath(dir) : Sys.getCwd();
-    file = FileSystem.fullPath(file);
 
-    Sys.println("Compiling " + file);
     return compiler.compile(dir, file);
   }
 
   /** 
   * Checks if the given file is a raxe file
    **/
-  public function isRaxeFile(filename: String): Bool return{
+  private function isRaxeFile(filename: String): Bool return{
     return filename.endsWith(".rx");
   }
 
   /** 
-  * Get the path the destination file
+  * Get the path to the source file
+  * @param file : String Path to the file
+  * @return String source file path
+   **/
+  private function getSourceFile(file : String) : String return{
+    FileSystem.fullPath(file);
+  }
+
+  /** 
+  * Get the path to the destination file
   * @param file : String Path to the file
   * @param src : String  Source directory
   * @param dest : String Destination directory
   * @return String destination file path
    **/
-  public function getDestinationFile(file: String, src: String, dest: String) : String return{
+  private function getDestinationFile(file: String, src: String, dest: String) : String return{
     var parts : Array<String> = file.split("/");
     var fileName : String = parts.pop();
 

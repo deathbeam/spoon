@@ -1,4 +1,4 @@
--cmd neko run -a -s src -d build `pwd`
+-cmd haxelib run raxe -a -v -s src -d build
 --next
 -lib mcli
 -lib hscript

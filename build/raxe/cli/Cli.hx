@@ -44,13 +44,35 @@ class Cli extends CommandLine{
   Copy all (not only .rx) files to dest directory
   @alias a
    **/
-  public var all: Bool;
+  public var all : Bool;
+
+  /** 
+  Show more info about compilation process
+  @alias v
+   **/
+  public var verbose : Bool;
 
   /** 
   Evaluate Raxe snippet
   @alias i
    **/
-  public var interp: String;
+  public var interp : String;
+
+  /** 
+  Execute Raxefile in this directory
+  @alias f
+   **/
+  public function file() return{
+    if(FileSystem.exists("Raxefile")){
+      var rf =new  RaxeFile("Raxefile");
+      rf.run(task);
+    }else{
+      Sys.println("Raxefile not found in this directory.");
+      help();
+    }
+
+    Sys.exit(0);
+  }
 
   /** 
   Show this message
@@ -66,44 +88,39 @@ class Cli extends CommandLine{
       if(interp != null && interp != ""){
         var script =new  RaxeScript();
         Sys.println(script.execute(script.parse(interp)));
-      }else if(this.src != null){
-        this.compile();
-      }else if(FileSystem.exists("Raxefile")){
-        var rf =new  RaxeFile("Raxefile");
-        rf.run(this.task);
+      }else if(src != null){
+        compile();
       }else{
-        this.help();
+        help();
       }
     }catch(err : String){
       Sys.println(err);
-      Sys.exit(0);
-    }
-  }
-
-  private function compile() return{
-    if(this.src != null){
-      if(!FileSystem.exists(src)){
-        Error.create(ERROR_TYPE, "Source not found");
-      }
-
-      var compiler =new  CompilerCommand(this.src, this.dest);
-      while(true){
-        try{
-          if(compiler.compile(this.all)){
-            if(compiler.response != null && compiler.response != ""){
-              Sys.println(compiler.response);
-            }
-          }
-        }catch(err : String){
-          Sys.println(err);
-        }
-
-        if(!this.watch){
-          break;
-        }
-      }
     }
 
     Sys.exit(0);
+  }
+
+  private function compile() return{
+    if(!FileSystem.exists(src)){
+      Error.create(ERROR_TYPE, "Source not found");
+    }
+
+    var compiler =new  CompilerCommand(src, dest, all, verbose);
+
+    while(true){
+      try{
+        if(compiler.compile()){
+          if(compiler.response != null && compiler.response != ""){
+            Sys.println(compiler.response);
+          }
+        }
+      }catch(err : String){
+        Sys.println(err);
+      }
+
+      if(!watch){
+        break;
+      }
+    }
   }
 }

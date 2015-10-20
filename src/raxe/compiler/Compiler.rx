@@ -347,7 +347,13 @@ class self
         handle.prevTokenLine()
 
         if(handle.isOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":"]) && onlyWhitespace(handle.content, handle.position + 1, pos))
-          insert = false
+          if(handle.is("-") || handle.is("+"))
+            if(handle.content.charAt(handle.position - 1) != handle.current)
+              insert = false
+            end
+          else
+            insert = false
+          end
         end
 
         handle.position = pos
@@ -357,13 +363,7 @@ class self
           handle.nextToken()
 
           if(handle.isOne(["?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "~"]) && onlyWhitespace(handle.content, pos + 1, handle.position - 1))
-            if(handle.is("-"))
-              if(!handle.at("--"))
-                insert = false
-              end
-            else
-              insert = false
-            end
+            insert = false
           end
 
           handle.prev("\n")

@@ -41,10 +41,10 @@ class Compiler{
   ];
 
   /** 
-  * Compile Raxe file and returns Haxe result
-  * @param directory : String root project directory, needed for correct package names
-  * @param file      : String file path to compile
-  * @return String Raxe file compiled to it's Haxe equivalent
+  - Compile Raxe file and returns Haxe result
+  - @param directory : String root project directory, needed for correct package names
+  - @param file      : String file path to compile
+  - @return String Raxe file compiled to it's Haxe equivalent
    **/
   public function compile(directory : String, file : String) : String return{
     var currentPackage = file.replace(directory, "");
@@ -67,21 +67,15 @@ class Compiler{
   }
 
   /** 
-  * Process content of StringHandle and return it modified
-  * @param script         : Bool Determine if automatically insert package and class names
-  * @param handle : StringHandle Handle with initial content and position
-  * @return StringHandle modified string handle with adjusted position and content
+  - Process content of StringHandle and return it modified
+  - @param script         : Bool Determine if automatically insert package and class names
+  - @param handle : StringHandle Handle with initial content and position
+  - @return StringHandle modified string handle with adjusted position and content
    **/
   public function run(handle : StringHandle, script : Bool = false, endPosition : Int = -1) : StringHandle return{
     while(handle.nextToken()){
       // Skip compiler defines and annotations
-      if (handle.is("#") || handle.is("@")){
-        // Use same syntax everywhere
-        if(handle.at("#elsif")){
-          handle.remove("#elsif");
-          handle.insert("#elseif");
-        }
-
+      if (handle.is("@")){
         handle.next("\n");
         handle.increment();
       // Step over things in strings (" ") and process multiline strings
@@ -261,7 +255,7 @@ class Compiler{
                 }
 
                 break;
-              }else if(handle.isOne(["\n", "--"])){
+              }else if(handle.isOne(["\n", "#"])){
                 if(implicit){
                   handle.insert(" return{");
                 }else{
@@ -301,7 +295,7 @@ class Compiler{
               handle.remove();
               handle.insert("return");
               break;
-            }else if(handle.isOne(["\n", "--"])){
+            }else if(handle.isOne(["\n", "#"])){
               handle.insert(" return{");
               opened = opened + 1;
               break;
@@ -345,15 +339,10 @@ class Compiler{
           handle.increment();
         }
       // Process comments and newlines. Also, insert semicolons when needed
-      }else if(handle.is("\n") || handle.is("-")){
+      }else if(handle.is("\n") || handle.is("#")){
         var pos = handle.position;
         var insert = true;
-        var isComment = handle.is("-");
-
-        if(isComment && !handle.at("--")){
-          handle.increment();
-          continue;
-        }
+        var isComment = handle.is("#");
 
         handle.prevTokenLine();
 
@@ -390,14 +379,9 @@ class Compiler{
           var position = handle.position;
 
           while(handle.nextTokenLine()){
-            if(handle.is("-")){
-              if (comment != "" && handle.content.charAt(handle.position - 1) != "-"){
-                handle.increment();
-                break;
-              }else{
-                comment += "-";
-                handle.increment();
-              }
+            if(handle.is("#")){
+              comment += "#";
+              handle.increment();
             }else{
               handle.increment();
               break;
@@ -405,9 +389,9 @@ class Compiler{
           }
 
           handle.position = position;
-          handle.current = "-";
+          handle.current = "#";
 
-          if(comment.length > 2){
+          if(comment.length > 1){
             handle.remove(comment);
             handle.insert("/** ");
             handle.increment();
@@ -418,13 +402,13 @@ class Compiler{
                 handle.insert(" **/");
                 handle.increment();
                 break;
-              }else if(handle.is("-")){
+              }else if(handle.is("#")){
                 position = handle.position;
                 handle.prevToken();
 
                 if(handle.is("\n") && onlyWhitespace(handle.content, position + 1, handle.position - 1)){
                   handle.position = position;
-                  handle.remove("-");
+                  handle.remove("#");
                   handle.insert("*");
                 }else{
                   handle.position = position;
@@ -435,13 +419,16 @@ class Compiler{
                 handle.increment();
               }
             }
-          }else if(comment.length == 2){
-            handle.remove(comment);
-            handle.insert("//");
-            handle.increment();
-            handle.next("\n");
-            handle.increment();
           }else{
+            if(handle.at("#elsif")){
+              handle.remove("#elsif");
+              handle.insert("#elseif");
+            }else if(!handle.at("#if") && !handle.at("#else") && !handle.at("#end")){
+              handle.remove(comment);
+              handle.insert("//");
+            }
+
+            handle.next("\n");
             handle.increment();
           }
         }else{

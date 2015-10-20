@@ -1,4 +1,4 @@
--- vim: set ft=rb:
+# vim: set ft=rb:
 
 module self
   def info = """

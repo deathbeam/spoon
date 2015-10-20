@@ -1,14 +1,14 @@
--- vim: set ft=rb:
+# vim: set ft=rb:
 
 module self
-  ---
+  ###
   In Raxe, everything is an expression. You can do
   really crazy stuff, but do not get too crazy.
-  ---
+  ###
   def main()
     def enabled = true
 
-    -- Here we will chain some expressions
+    # Here we will chain some expressions
     def name = do(protected) if(protected)
         "Nope"
       else
@@ -16,7 +16,7 @@ module self
       end
     end
 
-    -- Simple example on how to use `if` as expression
+    # Simple example on how to use `if` as expression
     def consider = if(enabled)
       "Your name is " + name(false)
     else

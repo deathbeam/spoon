@@ -4,7 +4,7 @@ module self
   def main()
     def x = 0
     def b = add(x++)
-    trace(x) -- 2
+    trace(x) # 2
   end
 
   macro def add(e : Expr) => macro $e + $e

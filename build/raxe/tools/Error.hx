@@ -1,5 +1,5 @@
 package raxe.tools;using Lambda;using StringTools;/** 
-  Error handling
+Error handling
  **/
 class Error{
   /** 

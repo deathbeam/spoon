@@ -1,11 +1,11 @@
--- vim: set ft=rb:
+# vim: set ft=rb:
 
----
+###
 We will use module here, because in modules, everything is static
 and that is what we need for functional programming
----
+###
 module self
-  -- A definition of factorial, using a local, tail recursive function
+  # A definition of factorial, using a local, tail recursive function
   def factorial(n: Int): Int
     def go(n: Int, acc: Int): Int
       if (n <= 0)
@@ -18,7 +18,7 @@ module self
     go(n, 1)
   end
 
-  -- Another implementation of `factorial`, this time with a `while` loop
+  # Another implementation of `factorial`, this time with a `while` loop
   def factorial2(n: Int): Int
     def acc = 1
     def i = n
@@ -34,10 +34,10 @@ module self
   def compute(n: Int, f: Int -> Int): Int => f(n)
 
   def main()
-    def number = 10 -- Compute factorials for number 10
+    def number = 10 # Compute factorials for number 10
 
-    trace(compute(number, factorial)) -- Compute with recursive factorial method
-    trace(compute(number, factorial2)) -- Compute with loop factorial method
-    -- Result should be 3628800 in both
+    trace(compute(number, factorial)) # Compute with recursive factorial method
+    trace(compute(number, factorial2)) # Compute with loop factorial method
+    # Result should be 3628800 in both
   end
 end

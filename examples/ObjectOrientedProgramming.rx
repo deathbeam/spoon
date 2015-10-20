@@ -1,34 +1,34 @@
--- vim: set ft=rb:
+# vim: set ft=rb:
 
 class self
-  -- You can use self world to reference current class name
-  -- Below we will create simple singleton
+  # You can use self world to reference current class name
+  # Below we will create simple singleton
   private def self.instance = new self()
   def self.getInstance() => instance
 
-  -- Simple static counter
+  # Simple static counter
   private def self.index = 0
 
   def self.main()
-    -- Get instance of self
+    # Get instance of self
     def myInstance = getInstance()
 
-    -- Type class name directly
+    # Type class name directly
     def myAnotherInstance = new ObjectOrientedProgramming()
     new ObjectOrientedProgramming().instanceFunction()
 
-    -- Call instance function
+    # Call instance function
     myInstance.instanceFunction()
   end
 
-  -- Create the constructor method so we can make instances
+  # Create the constructor method so we can make instances
   def new()
     trace("Instance " + index + " created")
     index += 1
   end
 
   def instanceFunction()
-    trace(this) -- print this instance to console
-    trace(self) -- print this module to console
+    trace(this) # print this instance to console
+    trace(self) # print this module to console
   end
 end

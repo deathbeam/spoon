@@ -1,33 +1,33 @@
--- vim: set ft=rb:
+# vim: set ft=rb:
 
 module self
-  ---
+  ###
   Anonymous array declaration is not dynamic by default.
   You can have array of only one type.
-  ---
+  ###
   def array = [
     "a", "b", "c",
   ]
 
-  ---
+  ###
   Anonymous maps, not dynamic by default too
-  ---
+  ###
   def map = [
     "a" => do(test)
       trace(test)
     end,
   ]
 
-  ---
+  ###
   And this is dynamic anonymous array, so you can put anything in there
-  ---
+  ###
   def dynarray : Array<Dynamic> = [
     "a", "b", "c", 6, 7, array,
   ]
 
-  ---
+  ###
   Same applies to anonymous structures.
-  ---
+  ###
   def struct = {
     a: "hello",
     b: "yolo",
@@ -37,10 +37,10 @@ module self
   }
 
   def main()
-    -- Here we will call our anonymous function
+    # Here we will call our anonymous function
     def result = struct.callback("Hello")
 
-    -- And now, print everything to console
+    # And now, print everything to console
     trace(result)
     trace(dynarray)
     trace(map)

@@ -1,6 +1,6 @@
--- vim: set ft=rb:
+# vim: set ft=rb:
 
--- Load OpenFL libraries
+# Load OpenFL libraries
 import openfl.display.Bitmap
 import openfl.display.Sprite
 import openfl.events.Event
@@ -8,7 +8,7 @@ import openfl.events.KeyboardEvent
 import openfl.ui.Keyboard
 import openfl.Assets
 
--- Extend self by OpenFL Sprite
+# Extend self by OpenFL Sprite
 class self < Sprite
   def logo : Sprite
   def movingDown : Bool
@@ -48,9 +48,9 @@ class self < Sprite
     end)
   end
 
-  ---
+  ###
   Event handlers
-  ---
+  ###
 
   def onKeyDown(event)
     switch(event.keyCode)

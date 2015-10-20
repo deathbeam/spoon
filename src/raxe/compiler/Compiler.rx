@@ -11,41 +11,41 @@ class self
   private def opened : Int = -1
   private def currentOpened : Int = -1
 
-  ---
+  ###
   Array of tokens used for StringHandle to correctly parse Raxe files
-  ---
+  ###
   def tokens = [
-    -- Line break
+    # Line break
     "\n", ";",
 
-    -- Whitespace skip
+    # Whitespace skip
     "#", "@", "\"",
 
-    -- Types
+    # Types
     "::", "class", "enum", "abstract", "interface", "module",
 
-    -- Modifiers
+    # Modifiers
     "public", "private",
 
-    -- Special keywords
+    # Special keywords
     "import", "def", "self", "new", "end", "do", "typedef", "try", "catch", "empty",
 
-    -- Brackets
+    # Brackets
     "{", "}", "(", ")", "[", "]", "=>",
 
-    -- Operators (- is also used for comments, < is also used for inheritance)
+    # Operators (- is also used for comments, < is also used for inheritance)
     ":", "?", "=", "+", "-", "*", ".", "/", "," , "|", "&",  "^", "%", "<", ">", "~",
 
-    -- Expressions
+    # Expressions
     "elsif", "if", "else", "while", "for", "switch", "when",
   ]
 
-  ---
+  ###
   - Compile Raxe file and returns Haxe result
   - @param directory : String root project directory, needed for correct package names
   - @param file      : String file path to compile
   - @return String Raxe file compiled to it's Haxe equivalent
-  ---
+  ###
   def compile(directory : String, file : String) : String
     def currentPackage = file.replace(directory, "")
     currentPackage = currentPackage.replace("\\", "/")
@@ -66,47 +66,41 @@ class self
     return run(handle).content
   end
 
-  ---
+  ###
   - Process content of StringHandle and return it modified
   - @param script         : Bool Determine if automatically insert package and class names
   - @param handle : StringHandle Handle with initial content and position
   - @return StringHandle modified string handle with adjusted position and content
-  ---
+  ###
   def run(handle : StringHandle, script : Bool = false, endPosition : Int = -1) : StringHandle
     while(handle.nextToken())
-      -- Skip compiler defines and annotations
-      if (handle.is("#") || handle.is("@"))
-        -- Use same syntax everywhere
-        if(handle.at("#elsif"))
-          handle.remove("#elsif")
-          handle.insert("#elseif")
-        end
-
+      # Skip compiler defines and annotations
+      if (handle.is("@"))
         handle.next("\n")
         handle.increment()
-      -- Step over things in strings (" ") and process multiline strings
+      # Step over things in strings (" ") and process multiline strings
       elsif(handle.is("\""))
         consumeStrings(handle)
-      -- Correct access
+      # Correct access
       elsif(handle.safeis("public") || handle.safeis("private"))
         hasVisibility = true
         handle.increment()
-      -- Change require to classic imports
+      # Change require to classic imports
       elsif(handle.safeis("import"))
         handle.next("\n")
         handle.insert(";")
         handle.increment()
-      -- Empty operator (null)
+      # Empty operator (null)
       elsif(handle.safeis("empty"))
         handle.remove()
         handle.insert("null")
         handle.increment()
-      -- Replace self with current module name
+      # Replace self with current module name
       elsif(handle.safeis("self"))
         handle.remove()
         handle.insert(name)
         handle.increment()
-      -- Structures and arrays
+      # Structures and arrays
       elsif(handle.is("{") || handle.is("["))
         opened = opened + 1
         handle.increment()
@@ -118,7 +112,7 @@ class self
         end
 
         handle.increment()
-      -- Change end to classic bracket end
+      # Change end to classic bracket end
       elsif(handle.safeis("end"))
         handle.remove()
         handle.insert("}")
@@ -129,7 +123,7 @@ class self
           currentOpened = -1
           currentExpression = ""
         end
-      -- Insert begin bracket after switch
+      # Insert begin bracket after switch
       elsif(handle.safeis("switch"))
         currentExpression = handle.current
         currentOpened = opened
@@ -140,7 +134,7 @@ class self
         handle.insert("{")
         handle.increment()
         opened = opened + 1
-      -- Replaced when with Haxe "case"
+      # Replaced when with Haxe "case"
       elsif(handle.safeis("when"))
         handle.remove()
         handle.insert("case")
@@ -150,13 +144,13 @@ class self
         handle.next("\n")
         handle.insert(":")
         handle.increment()
-      -- Insert begin bracket after try
+      # Insert begin bracket after try
       elsif(handle.safeis("try"))
         handle.increment()
         handle.insert("{")
         handle.increment()
         opened = opened + 1
-      -- Insert brackets around catch
+      # Insert brackets around catch
       elsif(handle.safeis("catch"))
         handle.insert("}")
         handle.increment()
@@ -166,7 +160,7 @@ class self
         handle.next("\n")
         handle.insert("{")
         handle.increment()
-      -- Insert begin bracket after if and while
+      # Insert begin bracket after if and while
       elsif(handle.safeis("if"))
         handle.increment()
         handle.nextToken()
@@ -175,7 +169,7 @@ class self
         handle.insert("{")
         handle.increment()
         opened = opened + 1
-      -- Change elseif to else if and insert begin and end brackets around it
+      # Change elseif to else if and insert begin and end brackets around it
       elsif(handle.safeis("elsif"))
         handle.remove()
         handle.insert("}else if")
@@ -185,7 +179,7 @@ class self
         handle.next("\n")
         handle.insert("{")
         handle.increment()
-      -- Insert begin brackets after loops declaration
+      # Insert begin brackets after loops declaration
       elsif(handle.safeis("while") || handle.safeis("for"))
         handle.increment()
         handle.nextToken()
@@ -194,8 +188,8 @@ class self
         handle.insert("{")
         opened = opened + 1
         handle.increment()
-      -- Inser begin and end brackets around else but do not try to
-      -- process curlys because there will not be any
+      # Inser begin and end brackets around else but do not try to
+      # process curlys because there will not be any
       elsif(handle.safeis("else"))
         if(currentExpression == "switch")
           handle.remove()
@@ -208,7 +202,7 @@ class self
         end
 
         handle.increment()
-      -- Defines to variables and functions
+      # Defines to variables and functions
       elsif(handle.safeis("def"))
         handle.remove("def")
 
@@ -261,7 +255,7 @@ class self
                 end
 
                 break
-              elsif(handle.isOne(["\n", "--"]))
+              elsif(handle.isOne(["\n", "#"]))
                 if(implicit)
                   handle.insert(" return{")
                 else
@@ -283,7 +277,7 @@ class self
           handle.insert("var")
           handle.increment()
         end
-      -- Closures and blocks
+      # Closures and blocks
       elsif(handle.safeis("do"))
         def position = handle.position
         handle.increment()
@@ -301,7 +295,7 @@ class self
               handle.remove()
               handle.insert("return")
               break
-            elsif(handle.isOne(["\n", "--"]))
+            elsif(handle.isOne(["\n", "#"]))
               handle.insert(" return{")
               opened = opened + 1
               break
@@ -316,7 +310,7 @@ class self
         end
 
         handle.increment()
-      -- [abstract] class/interface/enum
+      # [abstract] class/interface/enum
       elsif (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum") || handle.safeis("module"))
         currentType = handle.current
 
@@ -344,16 +338,11 @@ class self
 
           handle.increment()
         end
-      -- Process comments and newlines. Also, insert semicolons when needed
-      elsif(handle.is("\n") || handle.is("-"))
+      # Process comments and newlines. Also, insert semicolons when needed
+      elsif(handle.is("\n") || handle.is("#"))
         def pos = handle.position
         def insert = true
-        def isComment = handle.is("-")
-
-        if(isComment && !handle.at("--"))
-          handle.increment()
-          continue
-        end
+        def isComment = handle.is("#")
 
         handle.prevTokenLine()
 
@@ -390,14 +379,9 @@ class self
           def position = handle.position
 
           while(handle.nextTokenLine())
-            if(handle.is("-"))
-              if (comment != "" && handle.content.charAt(handle.position - 1) != "-")
-                handle.increment()
-                break
-              else
-                comment += "-"
-                handle.increment()
-              end
+            if(handle.is("#"))
+              comment += "#"
+              handle.increment()
             else
               handle.increment()
               break
@@ -405,9 +389,9 @@ class self
           end
 
           handle.position = position
-          handle.current = "-"
+          handle.current = "#"
 
-          if(comment.length > 2)
+          if(comment.length > 1)
             handle.remove(comment)
             handle.insert("/** ")
             handle.increment()
@@ -418,13 +402,13 @@ class self
                 handle.insert(" **/")
                 handle.increment()
                 break
-              elsif(handle.is("-"))
+              elsif(handle.is("#"))
                 position = handle.position
                 handle.prevToken()
 
                 if(handle.is("\n") && onlyWhitespace(handle.content, position + 1, handle.position - 1))
                   handle.position = position
-                  handle.remove("-")
+                  handle.remove("#")
                   handle.insert("*")
                 else
                   handle.position = position
@@ -435,19 +419,22 @@ class self
                 handle.increment()
               end
             end
-          elsif(comment.length == 2)
-            handle.remove(comment)
-            handle.insert("//")
-            handle.increment()
-            handle.next("\n")
-            handle.increment()
           else
+            if(handle.at("#elsif"))
+              handle.remove("#elsif")
+              handle.insert("#elseif")
+            elsif(!handle.at("#if") && !handle.at("#else") && !handle.at("#end"))
+              handle.remove(comment)
+              handle.insert("//")
+            end
+
+            handle.next("\n")
             handle.increment()
           end
         else
           handle.increment()
         end
-      -- Skip this token
+      # Skip this token
       else
         handle.increment()
       end

@@ -1,12 +1,12 @@
----
-  Error handling
----
+###
+Error handling
+###
 class self
-  ---
-  - Raise a new error formatted into json to be able to parse it everywhere
-  - @param String errorType Type of error to be thrown
-  - @param String error Error message to be sent
-  ---
+  ###
+  # Raise a new error formatted into json to be able to parse it everywhere
+  # @param String errorType Type of error to be thrown
+  # @param String error Error message to be sent
+  ###
   def self.create(errorType: String, error: String)
     throw("{\"type\": \"" + errorType + "\",\"error\": \"" + error + "\"}")
   end

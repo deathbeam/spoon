@@ -1,4 +1,4 @@
--- vim: set ft=rb:
+# vim: set ft=rb:
 
 import haxe.unit.TestCase
 import haxe.unit.TestRunner
@@ -20,7 +20,7 @@ class MyTests < TestCase
     myInt = 1 + 1
   end
 
-  -- Every test function name has to start with 'test'
+  # Every test function name has to start with 'test'
   def testValue() => assertEquals("foo", myVal)
   def testMath1() => assertTrue(myInt == 2)
   def testMath2() => assertFalse(myInt == 3)

@@ -1,19 +1,19 @@
 import mcli.Dispatch
 
----
-- Entry point for Raxe CLI
----
+###
+# Entry point for Raxe CLI
+###
 module self
   def main()
     def args = Sys.args()
-    Sys.setCwd(args.pop()) -- Workaround for correct working directory when running from `haxelib`
+    Sys.setCwd(args.pop()) # Workaround for correct working directory when running from `haxelib`
 
-    -- Workaround for weird quote handling when trying to run command with spaces from CLI
+    # Workaround for weird quote handling when trying to run command with spaces from CLI
     if(args[0] == "-i" || args[0] == "--interp")
       args = [args.shift(), args.join(" ")]
     end
 
-    -- Execute `mcli` argument dispatcher
+    # Execute `mcli` argument dispatcher
     new Dispatch(args).dispatch(new Cli())
   end
 end

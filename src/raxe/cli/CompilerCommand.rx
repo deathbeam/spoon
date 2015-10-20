@@ -11,10 +11,10 @@ class self
   private def all : Bool
   private def verbose : Bool
 
-  ---
-  - @param src : String   Source file or directory
-  - @param ?dest : String Destination file or directory (optional)
-  ---
+  ###
+  # @param src : String   Source file or directory
+  # @param ?dest : String Destination file or directory (optional)
+  ###
   def new(src: String, dest: String, all : Bool, verbose : Bool)
     this.src = src
     this.dest = dest
@@ -22,17 +22,17 @@ class self
     this.verbose = verbose
   end
 
-  ---
-  - Compile a file or a whole directory
-  - @param raxeOnly : Bool Must only copy to the dest directory, raxe files
-  - @return Bool transpilation has been done or not
-  ---
+  ###
+  # Compile a file or a whole directory
+  # @param raxeOnly : Bool Must only copy to the dest directory, raxe files
+  # @return Bool transpilation has been done or not
+  ###
   def compile() : Bool
     def src = this.src
     def dest = this.dest
     def dir = src
 
-    -- Compile one file
+    # Compile one file
     if(!FileSystem.isDirectory(this.src))
       def oldFileSize : Int = this.files.get(this.src)
       def currentSize : Int = FileSystem.stat(this.src).size
@@ -53,12 +53,12 @@ class self
       end
 
       return false
-    -- Compile a whole folder
+    # Compile a whole folder
     else
       def files = FolderReader.getFiles(src)
       def hasCompile : Bool = false
 
-      -- To have the same pattern between src and dest (avoid src/ and dist instead of dist/)
+      # To have the same pattern between src and dest (avoid src/ and dist instead of dist/)
       if(src.endsWith("/"))
         src = src.substr(0, src.length - 1)
       end
@@ -78,7 +78,7 @@ class self
         if(oldFileSize != currentSize && (all || isRaxeFile(file)))
           def newPath = this.getDestinationFile(file, src, dest)
 
-          -- If it's a raxe file, we compile it
+          # If it's a raxe file, we compile it
           if(isRaxeFile(file))
             file = getSourceFile(file)
             printVerbose(file, newPath)
@@ -86,7 +86,7 @@ class self
             FolderReader.createFile(newPath, result)
             this.files.set(file, currentSize)
 
-          -- If it's not a raxe file, we just copy/past it to the new folder
+          # If it's not a raxe file, we just copy/past it to the new folder
           else
               FolderReader.copyFileSystem(file, newPath)
           end
@@ -111,22 +111,22 @@ class self
     return false
   end
 
-  ---
-  - Print verbose info to console
-  - @param src : String Source file
-  - @param dest : String Destination file
-  ---
+  ###
+  # Print verbose info to console
+  # @param src : String Source file
+  # @param dest : String Destination file
+  ###
   private def printVerbose(src : String, dest : String)
     if(verbose)
       Sys.println("Compiling " + src + "\n" + "       to " + dest)
     end
   end
 
-  ---
-  - Compile one file
-  - @param file : String Compile a file and returns its content
-  - @return String content
-  ---
+  ###
+  # Compile one file
+  # @param file : String Compile a file and returns its content
+  # @return String content
+  ###
   private def compileFile(dir : String, file: String): String
     def compiler = new Compiler()
     dir = dir != null ? FileSystem.fullPath(dir) : Sys.getCwd()
@@ -134,29 +134,29 @@ class self
     return compiler.compile(dir, file)
   end
 
-  ---
-  - Checks if the given file is a raxe file
-  ---
+  ###
+  # Checks if the given file is a raxe file
+  ###
   private def isRaxeFile(filename: String): Bool
     return filename.endsWith(".rx")
   end
 
-  ---
-  - Get the path to the source file
-  - @param file : String Path to the file
-  - @return String source file path
-  ---
+  ###
+  # Get the path to the source file
+  # @param file : String Path to the file
+  # @return String source file path
+  ###
   private def getSourceFile(file : String) : String
     FileSystem.fullPath(file)
   end
 
-  ---
-  - Get the path to the destination file
-  - @param file : String Path to the file
-  - @param src : String  Source directory
-  - @param dest : String Destination directory
-  - @return String destination file path
-  ---
+  ###
+  # Get the path to the destination file
+  # @param file : String Path to the file
+  # @param src : String  Source directory
+  # @param dest : String Destination directory
+  # @return String destination file path
+  ###
   private def getDestinationFile(file: String, src: String, dest: String) : String
     def parts : Array<String> = file.split("/")
     def fileName : String = parts.pop()

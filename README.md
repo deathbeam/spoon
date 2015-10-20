@@ -5,7 +5,7 @@
 
 [![Build Status](https://travis-ci.org/nondev/raxe.svg)](https://travis-ci.org/nondev/raxe) [![Join the chat at https://gitter.im/nondev/raxe](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nondev/raxe?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-An awesome mix between Haxe and Ruby. Raxe is open source, cross-platform and compiles to Haxe without any performance penalty and runtime library.
+Raxe is awesome new programming language, what combines the best things from Haxe, Ruby and CoffeeScript. Raxe is open source, cross-platform and compiles to Haxe without any performance penalty and runtime library.
 <br/><br/>
 
 
@@ -26,9 +26,9 @@ You can install it from Atom by searching for `language-raxe` package, or via co
 apm install language-raxe
 ```
 
-# Build the project
+# Build from source
 
-You'll need to have previous version of Raxe installed before building Raxe from soure.
+You'll need to have previous version of Raxe installed before building Raxe from source.
 
 First run this Raxefile task
 

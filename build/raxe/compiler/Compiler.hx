@@ -372,15 +372,15 @@ class Compiler{
         var insert = true;
         var isComment = handle.is("-");
 
-        if (isComment && !handle.at("--")){
+        if(isComment && !handle.at("--")){
           handle.increment();
           continue;
         }
 
         handle.prevTokenLine();
 
-        if (handle.isOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":"]) && onlyWhitespace(handle.content, handle.position + 1, pos)){
-            insert = false;
+        if(handle.isOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":"]) && onlyWhitespace(handle.content, handle.position + 1, pos)){
+          insert = false;
         }
 
         handle.position = pos;
@@ -389,16 +389,20 @@ class Compiler{
           handle.increment("\n");
           handle.nextToken();
 
-          if (handle.isOne(["?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "~"]) && onlyWhitespace(handle.content, pos + 1, handle.position - 1)){
-              if(handle.is("-") && !handle.at("--")){
+          if(handle.isOne(["?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "~"]) && onlyWhitespace(handle.content, pos + 1, handle.position - 1)){
+            if(handle.is("-")){
+              if(!handle.at("--")){
                 insert = false;
               }
+            }else{
+              insert = false;
+            }
           }
 
           handle.prev("\n");
         }
 
-        if (insert && !handle.atStart()){
+        if(insert && !handle.atStart()){
           handle.insert(";");
           handle.increment();
         }

@@ -28,7 +28,7 @@ class Compiler{
     "public", "private",
 
     // Special keywords
-    "import", "def", "self", ".new", "new", "end", "do", "typedef", "try", "catch", "empty",
+    "import", "def", "self", "new", "end", "do", "typedef", "try", "catch", "empty",
 
     // Brackets
     "{", "}", "(", ")", "[", "]", "=>",
@@ -58,7 +58,7 @@ class Compiler{
     }
 
     var content = File.getContent(file);
-    var handle =new  StringHandle(content, tokens);
+    var handle = new StringHandle(content, tokens);
     handle.insert("package " + currentPackage + ";using Lambda;using StringTools;").increment();
 
     name = currentModule;
@@ -129,28 +129,6 @@ class Compiler{
           currentOpened = -1;
           currentExpression = "";
         }
-      // Replace OO-like method for creating new objects with normal
-      // special "new" keyword
-      }else if(handle.is(".new")){
-        handle.remove();
-        handle.prevTokenLine();
-
-        while(true){
-          if (!handle.isOne(["=", ":", "\n", ".", "(", "[", ";", ","])){
-            if(handle.is(">")){
-              handle.prev("<");
-              handle.increment();
-            }
-
-            handle.prevTokenLine();
-          }else{
-            break;
-          }
-        }
-
-        handle.increment();
-        handle.insert("new ");
-        handle.increment();
       // Insert begin bracket after switch
       }else if(handle.safeis("switch")){
         currentExpression = handle.current;
@@ -574,7 +552,7 @@ class Compiler{
 
   private function onlyWhitespace(content : String, from : Int, to : Int) return{
     var sub = content.substr(from, to - from);
-    var regex =new  EReg("^\\s*$", "");
+    var regex = new EReg("^\\s*$", "");
     return regex.match(sub);
   }
 }

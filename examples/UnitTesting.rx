@@ -5,8 +5,8 @@ import haxe.unit.TestRunner
 
 module self
   def main()
-    def r = TestRunner.new()
-    r.add(MyTests.new())
+    def r = new TestRunner()
+    r.add(new MyTests())
     r.run()
   end
 end

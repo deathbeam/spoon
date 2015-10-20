@@ -14,6 +14,6 @@ module self
     end
 
     -- Execute `mcli` argument dispatcher
-    Dispatch.new(args).dispatch(Cli.new())
+    new Dispatch(args).dispatch(new Cli())
   end
 end

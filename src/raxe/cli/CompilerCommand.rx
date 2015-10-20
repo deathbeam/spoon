@@ -5,7 +5,7 @@ import raxe.compiler.Compiler
 
 class self
   def response : String
-  private def files = Map<String, Int>.new()
+  private def files = new Map<String, Int>()
   private def src : String
   private def dest : String
   private def all : Bool
@@ -69,7 +69,7 @@ class self
         dest = dest.substr(0, dest.length - 1)
       end
 
-      def currentFiles = Map<String, Int>.new()
+      def currentFiles = new Map<String, Int>()
 
       for(file in files.iterator())
         def oldFileSize : Int = this.files.get(file)
@@ -128,7 +128,7 @@ class self
   - @return String content
   ---
   private def compileFile(dir : String, file: String): String
-    def compiler = Compiler.new()
+    def compiler = new Compiler()
     dir = dir != null ? FileSystem.fullPath(dir) : Sys.getCwd()
 
     return compiler.compile(dir, file)

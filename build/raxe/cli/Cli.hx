@@ -64,7 +64,7 @@ class Cli extends CommandLine{
    **/
   public function file() return{
     if(FileSystem.exists("Raxefile")){
-      var rf =new  RaxeFile("Raxefile");
+      var rf = new RaxeFile("Raxefile");
       rf.run(task);
     }else{
       Sys.println("Raxefile not found in this directory.");
@@ -86,7 +86,7 @@ class Cli extends CommandLine{
   public function runDefault() return{
     try{
       if(interp != null && interp != ""){
-        var script =new  RaxeScript();
+        var script = new RaxeScript();
         Sys.println(script.execute(script.parse(interp)));
       }else if(src != null){
         compile();
@@ -105,7 +105,7 @@ class Cli extends CommandLine{
       Error.create(ERROR_TYPE, "Source not found");
     }
 
-    var compiler =new  CompilerCommand(src, dest, all, verbose);
+    var compiler = new CompilerCommand(src, dest, all, verbose);
 
     while(true){
       try{

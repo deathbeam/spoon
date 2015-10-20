@@ -19,8 +19,8 @@ class self < Sprite
   def new()
     super()
 
-    logo = Sprite.new()
-    logo.addChild(Bitmap.new(Assets.getBitmapData("assets/openfl.png")))
+    logo = new Sprite()
+    logo.addChild(new Bitmap(Assets.getBitmapData("assets/openfl.png")))
     logo.x = 100
     logo.y = 100
     logo.buttonMode = true

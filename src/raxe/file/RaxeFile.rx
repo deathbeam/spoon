@@ -16,7 +16,7 @@ class self
   end
 
   def createScript() : RaxeScript
-    def script = RaxeScript.new()
+    def script = new RaxeScript()
 
     script.variables.set("echo", do(msg : String)
       Sys.println(msg)

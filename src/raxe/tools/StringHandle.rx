@@ -29,7 +29,7 @@ class self
 
   def closest(content : String) : Bool
     def divided = divide()
-    def regex = EReg.new("[^\\w][ \t]*" + content, "")
+    def regex = new EReg("[^\\w][ \t]*" + content, "")
 
     def sub = this.content.substr(position)
 
@@ -57,7 +57,7 @@ class self
   end
 
   def safeisStart(content : String) : Bool
-    def regex = EReg.new("[^\\w]" + content, "")
+    def regex = new EReg("[^\\w]" + content, "")
 
     if(nearStart(1))
       return is(content)
@@ -75,7 +75,7 @@ class self
   end
 
   def safeisEnd(content : String) : Bool
-    def regex = EReg.new(content + "[^\\w]", "")
+    def regex = new EReg(content + "[^\\w]", "")
 
     if(nearEnd(content.length + 2))
       return is(content)
@@ -89,7 +89,7 @@ class self
   end
 
   def safeis(content : String) : Bool
-    def regex = EReg.new("[^\\w]" + content + "[^\\w]", "")
+    def regex = new EReg("[^\\w]" + content + "[^\\w]", "")
 
     if(nearStart(1))
       return safeisEnd(content)

@@ -12,7 +12,7 @@ module self
   - @return Files found
   ---
   def getFiles(rootFolder: String) : Array<String>
-    def files : Array<String> = Array<String>.new()
+    def files : Array<String> = new Array<String>()
 
     if(FileSystem.exists(rootFolder))
       def folders : Array<String> = FileSystem.readDirectory(rootFolder)

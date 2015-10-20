@@ -29,7 +29,7 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
 
   public function closest(content : String) : Bool return{
     var divided = divide();
-    var regex =new  EReg("[^\\w][ \t]*" + content, "");
+    var regex = new EReg("[^\\w][ \t]*" + content, "");
 
     var sub = this.content.substr(position);
 
@@ -57,7 +57,7 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
   }
 
   public function safeisStart(content : String) : Bool return{
-    var regex =new  EReg("[^\\w]" + content, "");
+    var regex = new EReg("[^\\w]" + content, "");
 
     if(nearStart(1)){
       return is(content);
@@ -75,7 +75,7 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
   }
 
   public function safeisEnd(content : String) : Bool return{
-    var regex =new  EReg(content + "[^\\w]", "");
+    var regex = new EReg(content + "[^\\w]", "");
 
     if(nearEnd(content.length + 2)){
       return is(content);
@@ -89,7 +89,7 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
   }
 
   public function safeis(content : String) : Bool return{
-    var regex =new  EReg("[^\\w]" + content + "[^\\w]", "");
+    var regex = new EReg("[^\\w]" + content + "[^\\w]", "");
 
     if(nearStart(1)){
       return safeisEnd(content);

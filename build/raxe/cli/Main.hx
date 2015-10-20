@@ -14,6 +14,6 @@ class Main{
     }
 
     // Execute `mcli` argument dispatcher
-new     Dispatch(args).dispatch(new Cli());
+    new Dispatch(args).dispatch(new Cli());
   }
 }

@@ -16,7 +16,7 @@ class RaxeFile{
   }
 
   public function createScript() : RaxeScript return{
-    var script =new  RaxeScript();
+    var script = new RaxeScript();
 
     script.variables.set("echo", function(msg : String) return{
       Sys.println(msg);

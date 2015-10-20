@@ -5,7 +5,7 @@ import raxe.compiler.Compiler;
 
 class CompilerCommand{
   public var response : String;
-  private var files =new  Map<String, Int>();
+  private var files = new Map<String, Int>();
   private var src : String;
   private var dest : String;
   private var all : Bool;
@@ -69,7 +69,7 @@ class CompilerCommand{
         dest = dest.substr(0, dest.length - 1);
       }
 
-      var currentFiles =new  Map<String, Int>();
+      var currentFiles = new Map<String, Int>();
 
       for(file in files.iterator()){
         var oldFileSize : Int = this.files.get(file);
@@ -128,7 +128,7 @@ class CompilerCommand{
   * @return String content
    **/
   private function compileFile(dir : String, file: String): String return{
-    var compiler =new  Compiler();
+    var compiler = new Compiler();
     dir = dir != null ? FileSystem.fullPath(dir) : Sys.getCwd();
 
     return compiler.compile(dir, file);

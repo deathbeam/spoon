@@ -28,7 +28,7 @@ class self
     "public", "private",
 
     -- Special keywords
-    "import", "def", "self", ".new", "new", "end", "do", "typedef", "try", "catch", "empty",
+    "import", "def", "self", "new", "end", "do", "typedef", "try", "catch", "empty",
 
     -- Brackets
     "{", "}", "(", ")", "[", "]", "=>",
@@ -58,7 +58,7 @@ class self
     end
 
     def content = File.getContent(file)
-    def handle = StringHandle.new(content, tokens)
+    def handle = new StringHandle(content, tokens)
     handle.insert("package " + currentPackage + ";using Lambda;using StringTools;").increment()
 
     name = currentModule
@@ -129,28 +129,6 @@ class self
           currentOpened = -1
           currentExpression = ""
         end
-      -- Replace OO-like method for creating new objects with normal
-      -- special "new" keyword
-      elsif(handle.is(".new"))
-        handle.remove()
-        handle.prevTokenLine()
-
-        while(true)
-          if (!handle.isOne(["=", ":", "\n", ".", "(", "[", ";", ","]))
-            if(handle.is(">"))
-              handle.prev("<")
-              handle.increment()
-            end
-
-            handle.prevTokenLine()
-          else
-            break
-          end
-        end
-
-        handle.increment()
-        handle.insert("new ")
-        handle.increment()
       -- Insert begin bracket after switch
       elsif(handle.safeis("switch"))
         currentExpression = handle.current
@@ -574,7 +552,7 @@ class self
 
   private def onlyWhitespace(content : String, from : Int, to : Int)
     def sub = content.substr(from, to - from)
-    def regex = EReg.new("^\\s*$", "")
+    def regex = new EReg("^\\s*$", "")
     return regex.match(sub)
   end
 end

@@ -12,7 +12,7 @@ class FolderReader{
   * @return Files found
    **/
   public static function getFiles(rootFolder: String) : Array<String> return{
-    var files : Array<String> =new  Array<String>();
+    var files : Array<String> = new Array<String>();
 
     if(FileSystem.exists(rootFolder)){
       var folders : Array<String> = FileSystem.readDirectory(rootFolder);

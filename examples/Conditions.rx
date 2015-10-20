@@ -3,7 +3,7 @@
 module self
   def main()
     def myvar : String = empty
-    def myarray = Array<String>.new()
+    def myarray = new Array<String>()
 
     if(myvar != empty && myvar.charAt(10) == "p")
       for(i in myarray.iterator())

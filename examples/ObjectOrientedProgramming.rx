@@ -3,7 +3,7 @@
 class self
   -- You can use self world to reference current class name
   -- Below we will create simple singleton
-  private def self.instance = self.new()
+  private def self.instance = new self()
   def self.getInstance() => instance
 
   -- Simple static counter
@@ -14,8 +14,8 @@ class self
     def myInstance = getInstance()
 
     -- Type class name directly
-    def myAnotherInstance = ObjectOrientedProgramming.new()
-    ObjectOrientedProgramming.new().instanceFunction()
+    def myAnotherInstance = new ObjectOrientedProgramming()
+    new ObjectOrientedProgramming().instanceFunction()
 
     -- Call instance function
     myInstance.instanceFunction()

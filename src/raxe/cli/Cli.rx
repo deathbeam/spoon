@@ -64,7 +64,7 @@ class self < CommandLine
   ---
   def file()
     if(FileSystem.exists("Raxefile"))
-      def rf = RaxeFile.new("Raxefile")
+      def rf = new RaxeFile("Raxefile")
       rf.run(task)
     else
       Sys.println("Raxefile not found in this directory.")
@@ -86,7 +86,7 @@ class self < CommandLine
   def runDefault()
     try
       if(interp != null && interp != "")
-        def script = RaxeScript.new()
+        def script = new RaxeScript()
         Sys.println(script.execute(script.parse(interp)))
       elsif(src != null)
         compile()
@@ -105,7 +105,7 @@ class self < CommandLine
       Error.create(ERROR_TYPE, "Source not found")
     end
 
-    def compiler = CompilerCommand.new(src, dest, all, verbose)
+    def compiler = new CompilerCommand(src, dest, all, verbose)
 
     while(true)
       try

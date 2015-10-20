@@ -3,11 +3,11 @@
 
 <head>
     <script type="text/javascript">
-      var host = "raxe-lang.org";
+      var host = "raxe.rocks";
       if ((host == window.location.host) && (window.location.protocol != "https:"))
         window.location.protocol = "https";
     </script>
-    <link rel="canonical" href="https://raxe-lang.org" />
+    <link rel="canonical" href="https://raxe.rocks" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,7 +15,7 @@
     <meta name="author" content="Tomas Slusny">
     <meta name="keywords" content="raxe, raxe-lang, haxe, ruby, lang, language, programming, program, cross, platform"/>
 
-    <title>Raxe | Haxe + Ruby</title>
+    <title>Raxe | Rock 'n' Haxe</title>
 
     <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-touch-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-touch-icon-60x60.png">
@@ -83,7 +83,7 @@
       <div class="container">
         <img class="main" src="img/logo.png" alt="Raxe logo"/>
         <h1>raxe</h1>
-        <p style="margin-bottom: 30px">Raxe is an awesome programming language that combines best parts of Haxe and Ruby. Raxe is open source, cross-platform and compiles to Haxe without any performance penatly and runtime library.</p>
+        <p style="margin-bottom: 30px">Raxe is awesome new programming language, what combines the best things from Haxe, Ruby and CoffeeScript. Raxe is open source, cross-platform and compiles to Haxe without any performance penalty and runtime library.</p>
         <p class="hidden-xs">
           <a href="https://github.com/nondev/raxe" class="btn btn-lg btn-outlined btn-white btn-fixed" title="Learn how to install Raxe"><i class="fa fa-fw fa-gears"></i> Install</a>
           <b style="padding-left: 10px; padding-right: 10px;"> or </b>
@@ -105,12 +105,12 @@
       <div class="row">
         <div class="col-md-6 left">
           <h2><b>Main</b>.rx</h2>
-          <pre><span style="color: #75715e">---
+          <pre><span style="color: #75715e">###
 We will use module here, because in modules, everything is static
 and that is what we need for functional programming
----</span>
+###</span>
 <span style="color: #66d9ef">module</span> <span style="color: #f8f8f2">self</span>
-  <span style="color: #75715e">-- A definition of factorial, using a local, tail recursive function</span>
+  <span style="color: #75715e"># A definition of factorial, using a local, tail recursive function</span>
   <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">factorial</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">n</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">):</span> <span style="color: #66d9ef">Int</span>
     <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">go</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">n</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">acc</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">):</span> <span style="color: #66d9ef">Int</span>
       <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(n</span> <span style="color: #f92672">&lt;=</span> <span style="color: #ae81ff">0</span><span style="color: #f8f8f2">)</span>
@@ -123,7 +123,7 @@ and that is what we need for functional programming
     <span style="color: #f8f8f2">go(n,</span> <span style="color: #ae81ff">1</span><span style="color: #f8f8f2">)</span>
   <span style="color: #66d9ef">end</span>
 
-  <span style="color: #75715e">-- Another implementation of `factorial`, this time with a `while` loop</span>
+  <span style="color: #75715e"># Another implementation of `factorial`, this time with a `while` loop</span>
   <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">factorial2</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">n</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">):</span> <span style="color: #66d9ef">Int</span>
     <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">acc</span> <span style="color: #f92672">=</span> <span style="color: #ae81ff">1</span>
     <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">i</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">n</span>
@@ -139,11 +139,11 @@ and that is what we need for functional programming
   <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">compute</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">n</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">f</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span> <span style="color: #f92672">-&gt;</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">):</span> <span style="color: #66d9ef">Int</span> <span style="color: #f92672">=&gt;</span> <span style="color: #f8f8f2">f(n)</span>
 
   <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">main</span><span style="color: #f8f8f2">()</span>
-    <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">number</span> <span style="color: #f92672">=</span> <span style="color: #ae81ff">10</span> <span style="color: #75715e">-- Compute factorials for number 10</span>
+    <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">number</span> <span style="color: #f92672">=</span> <span style="color: #ae81ff">10</span> <span style="color: #75715e"># Compute factorials for number 10</span>
 
-    <span style="color: #f8f8f2">trace(compute(number,</span> <span style="color: #f8f8f2">factorial))</span> <span style="color: #75715e">-- Compute with recursive factorial method</span>
-    <span style="color: #f8f8f2">trace(compute(number,</span> <span style="color: #f8f8f2">factorial2))</span> <span style="color: #75715e">-- Compute with loop factorial method</span>
-    <span style="color: #75715e">-- Result should be 3628800 in both</span>
+    <span style="color: #f8f8f2">trace(compute(number,</span> <span style="color: #f8f8f2">factorial))</span> <span style="color: #75715e"># Compute with recursive factorial method</span>
+    <span style="color: #f8f8f2">trace(compute(number,</span> <span style="color: #f8f8f2">factorial2))</span> <span style="color: #75715e"># Compute with loop factorial method</span>
+    <span style="color: #75715e"># Result should be 3628800 in both</span>
   <span style="color: #66d9ef">end</span>
 <span style="color: #66d9ef">end</span></pre>
           </div>

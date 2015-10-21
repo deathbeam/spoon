@@ -1,3 +1,5 @@
+# vim: set ft=rb:
+
 import haxe.macro.Expr
 
 module self

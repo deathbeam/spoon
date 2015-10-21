@@ -1,4 +1,4 @@
-<img src="http://raxe-lang.org/img/logo.png"
+<img src="https://raxe.rocks/img/logo.png"
  alt="Raxe" title="Raxe" align="left" hspace="20" width="200px"/>
 
 ### Raxe

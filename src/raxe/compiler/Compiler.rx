@@ -1,5 +1,6 @@
 import raxe.tools.StringHandle
 import sys.io.File
+
 #############################################################################
 # The most important Raxe class, which compiles Raxe source to Haxe source
 #############################################################################
@@ -381,62 +382,7 @@ class self
         end
 
         if(isComment)
-          def comment = ""
-          def position = handle.position
-
-          while(handle.nextTokenLine())
-            if(handle.is("#"))
-              comment += "#"
-              handle.increment()
-            else
-              handle.increment()
-              break
-            end
-          end
-
-          handle.position = position
-          handle.current = "#"
-
-          if(comment.length > 1)
-            handle.remove(comment)
-            handle.insert("/** ")
-            handle.increment()
-
-            while(handle.nextToken())
-              if(handle.at(comment))
-                handle.remove(comment)
-                handle.insert(" **/")
-                handle.increment()
-                break
-              elsif(handle.is("#"))
-                position = handle.position
-                handle.prevToken()
-
-                if(handle.is("\n") && onlyWhitespace(handle.content, position + 1, handle.position - 1))
-                  handle.position = position
-                  handle.remove("#")
-                  handle.insert("*")
-                else
-                  handle.position = position
-                end
-
-                handle.increment()
-              else
-                handle.increment()
-              end
-            end
-          else
-            if(handle.at("#elsif"))
-              handle.remove("#elsif")
-              handle.insert("#elseif")
-            elsif(!handle.at("#if") && !handle.at("#else") && !handle.at("#end"))
-              handle.remove(comment)
-              handle.insert("//")
-            end
-
-            handle.next("\n")
-            handle.increment()
-          end
+          consumeComments(handle)
         else
           handle.increment()
         end
@@ -505,6 +451,67 @@ class self
         break
       end
     end
+  end
+
+  private def consumeComments(handle : StringHandle)
+    def comment = ""
+    def position = handle.position
+
+    while(handle.nextTokenLine())
+      if(handle.is("#"))
+        comment += "#"
+        handle.increment()
+      else
+        handle.increment()
+        break
+      end
+    end
+
+    handle.position = position
+    handle.current = "#"
+
+    if(comment.length > 1)
+      handle.remove(comment)
+      handle.insert("/** ")
+      handle.increment()
+
+      while(handle.nextToken())
+        if(handle.at(comment))
+          handle.remove(comment)
+          handle.insert(" **/")
+          handle.increment()
+          break
+        elsif(handle.is("#"))
+          position = handle.position
+          handle.prevToken()
+
+          if(handle.is("\n") && onlyWhitespace(handle.content, position + 1, handle.position - 1))
+            handle.position = position
+            handle.remove("#")
+            handle.insert("*")
+          else
+            handle.position = position
+          end
+
+          handle.increment()
+        else
+          handle.increment()
+        end
+      end
+    else
+      if(handle.at("#elsif"))
+        handle.remove("#elsif")
+        handle.insert("#elseif")
+      elsif(!handle.at("#if") && !handle.at("#else") && !handle.at("#end"))
+        handle.remove(comment)
+        handle.insert("//")
+      end
+
+      handle.next("\n")
+      handle.increment()
+    end
+
+    return handle
   end
 
   private def consumeStrings(handle : StringHandle)

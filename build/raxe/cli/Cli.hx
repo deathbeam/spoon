@@ -5,62 +5,62 @@ import raxe.tools.Error;
 import raxe.script.RaxeScript;
 
 /** 
-8b,dPPYba,  ,adPPYYba,  8b,     ,d8  ,adPPYba,
-88P'   "Y8  ""     `Y8   `Y8, ,8P'  a8P_____88
-88          ,adPPPPP88     )888(    8PP"""""""
-88          88,    ,88   ,d8" "8b,  "8b,   ,aa
-88          `"8bbdP"Y8  8P'     `Y8  `"Ybbd8"'
-
-Raxe 0.0.1 - https://raxe-lang.org
+* 8b,dPPYba,  ,adPPYYba,  8b,     ,d8  ,adPPYba,
+* 88P'   "Y8  ""     `Y8   `Y8, ,8P'  a8P_____88
+* 88          ,adPPPPP88     )888(    8PP"""""""
+* 88          88,    ,88   ,d8" "8b,  "8b,   ,aa
+* 88          `"8bbdP"Y8  8P'     `Y8  `"Ybbd8"'
+*
+* Raxe 0.0.1 - https://raxe-lang.org
  **/
 class Cli extends CommandLine{
   inline public static var ERROR_TYPE = "compile_error";
 
   /** 
-  Source directory or file
-  @alias s
+  * Source directory or file
+  * @alias s
    **/
   public var src : String;
 
   /** 
-  Destination directory or file
-  @alias d
+  * Destination directory or file
+  * @alias d
    **/
   public var dest : String;
 
   /** 
-  Task to execute when running Raxefile
-  @alias t
+  * Task to execute when running Raxefile
+  * @alias t
    **/
   public var task : String = "default";
 
   /** 
-  Execute the command when source file(s) are changed
-  @alias w
+  * Execute the command when source file(s) are changed
+  * @alias w
    **/
   public var watch : Bool;
 
   /** 
-  Copy all (not only .rx) files to dest directory
-  @alias a
+  * Copy all (not only .rx) files to dest directory
+  * @alias a
    **/
   public var all : Bool;
 
   /** 
-  Show more info about compilation process
-  @alias v
+  * Show more info about compilation process
+  * @alias v
    **/
   public var verbose : Bool;
 
   /** 
-  Evaluate Raxe snippet
-  @alias i
+  * Evaluate Raxe snippet
+  * @alias i
    **/
   public var interp : String;
 
   /** 
-  Execute Raxefile in this directory
-  @alias f
+  * Execute Raxefile in this directory
+  * @alias f
    **/
   public function file() return{
     if(FileSystem.exists("Raxefile")){
@@ -75,8 +75,8 @@ class Cli extends CommandLine{
   }
 
   /** 
-  Show this message
-  @alias h
+  * Show this message
+  * @alias h
    **/
   public function help() return{
     Sys.println(this.showUsage());
@@ -84,7 +84,7 @@ class Cli extends CommandLine{
   }
 
   /** 
-  Default task what is executed when none of above options is matched
+  * Default task what is executed when none of above options is matched
    **/
   public function runDefault() return{
     try{

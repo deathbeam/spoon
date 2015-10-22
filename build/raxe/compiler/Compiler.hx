@@ -381,62 +381,7 @@ class Compiler{
         }
 
         if(isComment){
-          var comment = "";
-          var position = handle.position;
-
-          while(handle.nextTokenLine()){
-            if(handle.is("#")){
-              comment += "#";
-              handle.increment();
-            }else{
-              handle.increment();
-              break;
-            }
-          }
-
-          handle.position = position;
-          handle.current = "#";
-
-          if(comment.length > 1){
-            handle.remove(comment);
-            handle.insert("/** ");
-            handle.increment();
-
-            while(handle.nextToken()){
-              if(handle.at(comment)){
-                handle.remove(comment);
-                handle.insert(" **/");
-                handle.increment();
-                break;
-              }else if(handle.is("#")){
-                position = handle.position;
-                handle.prevToken();
-
-                if(handle.is("\n") && onlyWhitespace(handle.content, position + 1, handle.position - 1)){
-                  handle.position = position;
-                  handle.remove("#");
-                  handle.insert("*");
-                }else{
-                  handle.position = position;
-                }
-
-                handle.increment();
-              }else{
-                handle.increment();
-              }
-            }
-          }else{
-            if(handle.at("#elsif")){
-              handle.remove("#elsif");
-              handle.insert("#elseif");
-            }else if(!handle.at("#if") && !handle.at("#else") && !handle.at("#end")){
-              handle.remove(comment);
-              handle.insert("//");
-            }
-
-            handle.next("\n");
-            handle.increment();
-          }
+          consumeComments(handle);
         }else{
           handle.increment();
         }
@@ -505,6 +450,67 @@ class Compiler{
         break;
       }
     }
+  }
+
+  private function consumeComments(handle : StringHandle) return{
+    var comment = "";
+    var position = handle.position;
+
+    while(handle.nextTokenLine()){
+      if(handle.is("#")){
+        comment += "#";
+        handle.increment();
+      }else{
+        handle.increment();
+        break;
+      }
+    }
+
+    handle.position = position;
+    handle.current = "#";
+
+    if(comment.length > 1){
+      handle.remove(comment);
+      handle.insert("/** ");
+      handle.increment();
+
+      while(handle.nextToken()){
+        if(handle.at(comment)){
+          handle.remove(comment);
+          handle.insert(" **/");
+          handle.increment();
+          break;
+        }else if(handle.is("#")){
+          position = handle.position;
+          handle.prevToken();
+
+          if(handle.is("\n") && onlyWhitespace(handle.content, position + 1, handle.position - 1)){
+            handle.position = position;
+            handle.remove("#");
+            handle.insert("*");
+          }else{
+            handle.position = position;
+          }
+
+          handle.increment();
+        }else{
+          handle.increment();
+        }
+      }
+    }else{
+      if(handle.at("#elsif")){
+        handle.remove("#elsif");
+        handle.insert("#elseif");
+      }else if(!handle.at("#if") && !handle.at("#else") && !handle.at("#end")){
+        handle.remove(comment);
+        handle.insert("//");
+      }
+
+      handle.next("\n");
+      handle.increment();
+    }
+
+    return handle;
   }
 
   private function consumeStrings(handle : StringHandle) return{

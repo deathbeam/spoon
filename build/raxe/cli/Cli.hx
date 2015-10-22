@@ -83,6 +83,9 @@ class Cli extends CommandLine{
     Sys.exit(0);
   }
 
+  /** 
+  Default task what is executed when none of above options is matched
+   **/
   public function runDefault() return{
     try{
       if(interp != null && interp != ""){

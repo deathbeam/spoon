@@ -1,6 +1,8 @@
 package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
 import sys.io.File;
-
+/** 
+* The most important Raxe class, which compiles Raxe source to Haxe source
+ **/
 class Compiler{
   public function new()  null;
 
@@ -12,7 +14,7 @@ class Compiler{
   private var currentOpened : Int = -1;
 
   /** 
-  Array of tokens used for StringHandle to correctly parse Raxe files
+  * Array of tokens used for StringHandle to correctly parse Raxe files
    **/
   public var tokens = [
     // Line break
@@ -41,17 +43,23 @@ class Compiler{
   ];
 
   /** 
-  - Compile Raxe file and returns Haxe result
-  - @param directory : String root project directory, needed for correct package names
-  - @param file      : String file path to compile
-  - @return String Raxe file compiled to it's Haxe equivalent
+  * Compile Raxe file and returns Haxe result
+  * @param directory root project directory, needed for correct package names
+  * @param file file path to compile
+  * @return Raxe file compiled to it's Haxe equivalent
    **/
   public function compile(directory : String, file : String) : String return{
-    var currentPackage = file.replace(directory, "");
-    currentPackage = currentPackage.replace("\\", "/");
-    var currentModule = currentPackage.substr(currentPackage.lastIndexOf("/") + 1).replace(".rx", "");
-    currentPackage = currentPackage.replace(currentPackage.substr(currentPackage.lastIndexOf("/")), "");
-    currentPackage = currentPackage.replace("/", ".");
+    var currentPackage = file
+      .replace(directory, "")
+      .replace("\\", "/");
+
+    name = currentPackage
+      .substr(currentPackage.lastIndexOf("/") + 1)
+      .replace(".rx", "");
+
+    currentPackage = currentPackage
+      .replace(currentPackage.substr(currentPackage.lastIndexOf("/")), "")
+      .replace("/", ".");
 
     if(currentPackage.charAt(0) == "."){
       currentPackage = currentPackage.substr(1);
@@ -61,16 +69,14 @@ class Compiler{
     var handle = new StringHandle(content, tokens);
     handle.insert("package " + currentPackage + ";using Lambda;using StringTools;").increment();
 
-    name = currentModule;
-
     return run(handle).content;
   }
 
   /** 
-  - Process content of StringHandle and return it modified
-  - @param script         : Bool Determine if automatically insert package and class names
-  - @param handle : StringHandle Handle with initial content and position
-  - @return StringHandle modified string handle with adjusted position and content
+  * Process content of StringHandle and return it modified
+  * @param script Determine if automatically insert package and class names
+  * @param handle Handle with initial content and position
+  * @return modified string handle with adjusted position and content
    **/
   public function run(handle : StringHandle, script : Bool = false, endPosition : Int = -1) : StringHandle return{
     while(handle.nextToken()){

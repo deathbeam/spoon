@@ -11,10 +11,12 @@ class self
   private def all : Bool
   private def verbose : Bool
 
-  ###
-  # @param src : String   Source file or directory
-  # @param ?dest : String Destination file or directory (optional)
-  ###
+  #############################################################################
+  # @param src     Source file or directory
+  # @param dest    Destination file or directory
+  # @param all     If true, include also non-raxe files
+  # @param verbose If true, display verbose info
+  #############################################################################
   def new(src: String, dest: String, all : Bool, verbose : Bool)
     this.src = src
     this.dest = dest
@@ -22,11 +24,10 @@ class self
     this.verbose = verbose
   end
 
-  ###
+  #############################################################################
   # Compile a file or a whole directory
-  # @param raxeOnly : Bool Must only copy to the dest directory, raxe files
-  # @return Bool transpilation has been done or not
-  ###
+  # @return transpilation has been done or not
+  #############################################################################
   def compile() : Bool
     def src = this.src
     def dest = this.dest
@@ -111,22 +112,22 @@ class self
     return false
   end
 
-  ###
+  #############################################################################
   # Print verbose info to console
-  # @param src : String Source file
-  # @param dest : String Destination file
-  ###
+  # @param src  Source file
+  # @param dest Destination file
+  #############################################################################
   private def printVerbose(src : String, dest : String)
     if(verbose)
       Sys.println("Compiling " + src + "\n" + "       to " + dest)
     end
   end
 
-  ###
+  #############################################################################
   # Compile one file
-  # @param file : String Compile a file and returns its content
-  # @return String content
-  ###
+  # @param file Compile a file and returns its content
+  # @return content
+  #############################################################################
   private def compileFile(dir : String, file: String): String
     def compiler = new Compiler()
     dir = dir != null ? FileSystem.fullPath(dir) : Sys.getCwd()
@@ -134,29 +135,31 @@ class self
     return compiler.compile(dir, file)
   end
 
-  ###
+  #############################################################################
   # Checks if the given file is a raxe file
-  ###
+  # @param filename Name of file to check for
+  # @return if it is raxe file or not
+  #############################################################################
   private def isRaxeFile(filename: String): Bool
     return filename.endsWith(".rx")
   end
 
-  ###
+  #############################################################################
   # Get the path to the source file
-  # @param file : String Path to the file
-  # @return String source file path
-  ###
+  # @param file Path to the file
+  # @return source file path
+  #############################################################################
   private def getSourceFile(file : String) : String
     FileSystem.fullPath(file)
   end
 
-  ###
+  #############################################################################
   # Get the path to the destination file
-  # @param file : String Path to the file
-  # @param src : String  Source directory
-  # @param dest : String Destination directory
-  # @return String destination file path
-  ###
+  # @param file Path to the file
+  # @param src  Source directory
+  # @param dest Destination directory
+  # @return destination file path
+  #############################################################################
   private def getDestinationFile(file: String, src: String, dest: String) : String
     def parts : Array<String> = file.split("/")
     def fileName : String = parts.pop()

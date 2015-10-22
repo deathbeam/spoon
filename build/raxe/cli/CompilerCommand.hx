@@ -12,8 +12,10 @@ class CompilerCommand{
   private var verbose : Bool;
 
   /** 
-  * @param src : String   Source file or directory
-  * @param ?dest : String Destination file or directory (optional)
+  * @param src     Source file or directory
+  * @param dest    Destination file or directory
+  * @param all     If true, include also non-raxe files
+  * @param verbose If true, display verbose info
    **/
   public function new(src: String, dest: String, all : Bool, verbose : Bool){
     this.src = src;
@@ -24,8 +26,7 @@ class CompilerCommand{
 
   /** 
   * Compile a file or a whole directory
-  * @param raxeOnly : Bool Must only copy to the dest directory, raxe files
-  * @return Bool transpilation has been done or not
+  * @return transpilation has been done or not
    **/
   public function compile() : Bool return{
     var src = this.src;
@@ -113,8 +114,8 @@ class CompilerCommand{
 
   /** 
   * Print verbose info to console
-  * @param src : String Source file
-  * @param dest : String Destination file
+  * @param src  Source file
+  * @param dest Destination file
    **/
   private function printVerbose(src : String, dest : String) return{
     if(verbose){
@@ -124,8 +125,8 @@ class CompilerCommand{
 
   /** 
   * Compile one file
-  * @param file : String Compile a file and returns its content
-  * @return String content
+  * @param file Compile a file and returns its content
+  * @return content
    **/
   private function compileFile(dir : String, file: String): String return{
     var compiler = new Compiler();
@@ -136,6 +137,8 @@ class CompilerCommand{
 
   /** 
   * Checks if the given file is a raxe file
+  * @param filename Name of file to check for
+  * @return if it is raxe file or not
    **/
   private function isRaxeFile(filename: String): Bool return{
     return filename.endsWith(".rx");
@@ -143,8 +146,8 @@ class CompilerCommand{
 
   /** 
   * Get the path to the source file
-  * @param file : String Path to the file
-  * @return String source file path
+  * @param file Path to the file
+  * @return source file path
    **/
   private function getSourceFile(file : String) : String return{
     FileSystem.fullPath(file);
@@ -152,10 +155,10 @@ class CompilerCommand{
 
   /** 
   * Get the path to the destination file
-  * @param file : String Path to the file
-  * @param src : String  Source directory
-  * @param dest : String Destination directory
-  * @return String destination file path
+  * @param file Path to the file
+  * @param src  Source directory
+  * @param dest Destination directory
+  * @return destination file path
    **/
   private function getDestinationFile(file: String, src: String, dest: String) : String return{
     var parts : Array<String> = file.split("/");

@@ -1,18 +1,26 @@
--- vim: set ft=rb:
+# vim: set ft=rb:
 
-def src  = "src/"
-def dest = "build/"
-def xml  = "docs/index.xml"
-def docs = "docs/build"
-def bin  = "run.n"
-def main = "raxe.cli.Main"
-def libs = ["hscript", "mcli", "dox"]
+def src  = "src/"                     # Path to Raxe source
+def dest = "build/"                   # Path to generate Haxe source
+def xml  = "docs/index.xml"           # Path to generate documentation XML
+def docs = "docs/build"               # Path to generate documentation HTML
+def bin  = "run.n"                    # Path to generate Neko binary
+def main = "raxe.cli.Main"            # Entry point for CLI
+def libs = ["hscript", "mcli", "dox"] # Haxelib libraries to use
 
+###############################################################################
+# Default task which is executed when no task is specified.
+# This task first compiles Raxe source to Haxe source and then generates
+# Neko binary.
+###############################################################################
 def default()
   compileRaxe()
   compileBinary()
 end
 
+###############################################################################
+# Install all missing dependencies for Raxe
+###############################################################################
 def installLibs()
   echo("> Installing Raxe dependencies")
 
@@ -21,11 +29,17 @@ def installLibs()
   end
 end
 
+###############################################################################
+# Compile Raxe source to Haxe source
+###############################################################################
 def compileRaxe()
   echo("> Compiling Raxe source files")
   sh("haxelib", ["run", "raxe", "-a", "-s", src, "-d", dest])
 end
 
+###############################################################################
+# Compile generated Haxe source to Neko binary
+###############################################################################
 def compileBinary()
   echo("> Building neko binary")
 
@@ -39,6 +53,9 @@ def compileBinary()
   sh("haxe", args)
 end
 
+###############################################################################
+# Generate documentation from RaxeDoc
+###############################################################################
 def generateDocs()
   echo("> Generating documentation")
 

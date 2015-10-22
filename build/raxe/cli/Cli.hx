@@ -50,7 +50,11 @@ class Cli extends CommandLine{
   * Evaluate Raxe snippet
   * @alias i
    **/
-  public var interp : String;
+  public function interp(snippet : String) return{
+    var script = new RaxeScript();
+    Sys.println(script.execute(script.parse(snippet)));
+    Sys.exit(0);
+  }
 
   /** 
   * Execute Raxefile task in this directory (default task is "default")
@@ -82,10 +86,7 @@ class Cli extends CommandLine{
    **/
   public function runDefault() return{
     try{
-      if(interp != null && interp != ""){
-        var script = new RaxeScript();
-        Sys.println(script.execute(script.parse(interp)));
-      }else if(src != null){
+      if(src != null){
         compile();
       }else{
         help();

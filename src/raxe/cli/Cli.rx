@@ -50,7 +50,11 @@ class self < CommandLine
   # Evaluate Raxe snippet
   # @alias i
   #############################################################################
-  def interp : String
+  def interp(snippet : String)
+    def script = new RaxeScript()
+    Sys.println(script.execute(script.parse(snippet)))
+    Sys.exit(0)
+  end
 
   #############################################################################
   # Execute Raxefile task in this directory (default task is "default")
@@ -82,10 +86,7 @@ class self < CommandLine
   #############################################################################
   def runDefault()
     try
-      if(interp != null && interp != "")
-        def script = new RaxeScript()
-        Sys.println(script.execute(script.parse(interp)))
-      elsif(src != null)
+      if(src != null)
         compile()
       else
         help()

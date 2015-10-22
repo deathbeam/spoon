@@ -7,7 +7,8 @@ import sys.io.File;
  **/
 class FolderReader{
   /** 
-  * Returns an array of all files which are in the given folder and its subfolders
+  * Returns an array of all files which are in the given folder and its
+  * subfolders
   * @param rootFolder Root folder for the search
   * @return Files found
    **/

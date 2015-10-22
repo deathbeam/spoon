@@ -40,7 +40,7 @@ class RaxeScript extends Interp{
   public function parse(s : String) : Expr return{
     var handle = new StringHandle(s, compiler.tokens);
     var content = compiler.run(handle, true).content;
-    return parser.parseString(content);
+    parser.parseString(content);
   }
 
   override public function get(o : Dynamic, f : String ) : Dynamic return{
@@ -51,7 +51,7 @@ class RaxeScript extends Interp{
       error(EInvalidAccess(f));
     }
 
-    return Reflect.getProperty(o,f);
+    Reflect.getProperty(o,f);
   }
 
   override public function set( o : Dynamic, f : String, v : Dynamic ) : Dynamic return{

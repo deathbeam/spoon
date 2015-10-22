@@ -33,7 +33,7 @@ You'll need to have previous version of Raxe installed before building Raxe from
 First run this Raxefile task
 
 ```
-haxelib run raxe -f -t installLibs
+haxelib run raxe --file installLibs
 ```
 
 to install all required dependencies.
@@ -41,13 +41,13 @@ to install all required dependencies.
 Now, compile the project with default Raxefile task
 
 ```
-haxelib run raxe -f
+haxelib run raxe --file
 ```
 
 A binary `run.n` will be available now. You can use
 
 ```
-haxelib run raxe -f -t generateDocs
+haxelib run raxe --file generateDocs
 ```
 
 to generate documentation for Raxe.

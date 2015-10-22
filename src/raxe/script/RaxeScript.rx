@@ -40,7 +40,7 @@ class self < Interp
   def parse(s : String) : Expr
     def handle = new StringHandle(s, compiler.tokens)
     def content = compiler.run(handle, true).content
-    return parser.parseString(content)
+    parser.parseString(content)
   end
 
   override def get(o : Dynamic, f : String ) : Dynamic
@@ -51,7 +51,7 @@ class self < Interp
       error(EInvalidAccess(f))
     end
 
-    return Reflect.getProperty(o,f)
+    Reflect.getProperty(o,f)
   end
 
   override def set( o : Dynamic, f : String, v : Dynamic ) : Dynamic

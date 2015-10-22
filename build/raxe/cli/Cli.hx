@@ -29,12 +29,6 @@ class Cli extends CommandLine{
   public var dest : String;
 
   /** 
-  * Task to execute when running Raxefile
-  * @alias t
-   **/
-  public var task : String = "default";
-
-  /** 
   * Execute the command when source file(s) are changed
   * @alias w
    **/
@@ -59,10 +53,10 @@ class Cli extends CommandLine{
   public var interp : String;
 
   /** 
-  * Execute Raxefile in this directory
+  * Execute Raxefile task in this directory (default task is "default")
   * @alias f
    **/
-  public function file() return{
+  public function file(task : String = "default") return{
     if(FileSystem.exists("Raxefile")){
       var rf = new RaxeFile("Raxefile");
       rf.run(task);

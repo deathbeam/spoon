@@ -66,11 +66,10 @@ class Compiler{
       currentPackage = currentPackage.substr(1);
     }
 
-    var content = File.getContent(file);
-    var handle = new StringHandle(content, tokens);
-    handle.insert("package " + currentPackage + ";using Lambda;using StringTools;").increment();
-
-    return run(handle).content;
+    return run(new StringHandle(File.getContent(file), tokens)
+      .insert("package " + currentPackage + ";using Lambda;using StringTools;")
+      .increment()
+    ).content;
   }
 
   /** 
@@ -402,7 +401,7 @@ class Compiler{
   private function safeNextToken(handle : StringHandle) : Bool return{
     handle.nextToken();
 
-    if (safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
+    if(safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
         safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "import") &&
         safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch") &&
         safeCheck(handle, "private") && safeCheck(handle, "public") && safeCheck(handle, "empty") && safeCheck(handle, "switch") &&

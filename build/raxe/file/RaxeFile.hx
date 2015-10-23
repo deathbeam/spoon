@@ -11,8 +11,7 @@ class RaxeFile{
   }
 
   public function run(task : String) return{
-    var fn = script.variables.get(task);
-    fn();
+    script.variables.get(task)();
   }
 
   public function createScript() : RaxeScript return{
@@ -43,12 +42,8 @@ class RaxeFile{
     });
 
     script.variables.set("env", {
-      get: function(key : String) return{
-        return Sys.getEnv(key);
-      },
-      set: function(key : String, value : String) return{
-        Sys.putEnv(key, value);
-      },
+      get: function(key : String) : String return Sys.getEnv(key),
+      set: function(key : String, value : String) return Sys.putEnv(key, value),
     });
 
     return script;

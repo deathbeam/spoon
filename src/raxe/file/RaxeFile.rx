@@ -11,8 +11,7 @@ class self
   end
 
   def run(task : String)
-    def fn = script.variables.get(task)
-    fn()
+    script.variables.get(task)()
   end
 
   def createScript() : RaxeScript
@@ -43,12 +42,8 @@ class self
     end)
 
     script.variables.set("env", {
-      get: do(key : String)
-        return Sys.getEnv(key)
-      end,
-      set: do(key : String, value : String)
-        Sys.putEnv(key, value)
-      end,
+      get: do(key : String) : String => Sys.getEnv(key),
+      set: do(key : String, value : String) => Sys.putEnv(key, value),
     })
 
     return script

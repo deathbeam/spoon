@@ -44,13 +44,19 @@ class Compiler{
     "elsif", "if", "else", "while", "for", "switch", "when",
   ];
 
+
+  public function compileString(code:String) return{
+    var raxeCode = new raxe.tools.StringHandle(code,tokens);
+		return run(raxeCode,false);
+  }
+
+
   /** 
   * Compile Raxe file and returns Haxe result
   * @param directory root project directory, needed for correct package names
   * @param file file path to compile
   * @return Raxe file compiled to it's Haxe equivalent
    **/
-
   #if !js
     public function compile(directory : String, file : String) : String return{
       var currentPackage = file

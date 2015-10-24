@@ -4,4 +4,4 @@
 -lib hscript
 -cp build
 -main raxe.cli.Main
-#-neko run.n
+-neko run.n

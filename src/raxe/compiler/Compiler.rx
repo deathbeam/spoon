@@ -18,7 +18,7 @@ class self
   #############################################################################
   # Array of tokens used for StringHandle to correctly parse Raxe files
   #############################################################################
-  public def tokens = [
+  def tokens = [
     # Line break
     "\n", ";",
 
@@ -44,13 +44,19 @@ class self
     "elsif", "if", "else", "while", "for", "switch", "when",
   ]
 
+
+  public def compileString(code:String)
+    def raxeCode = new raxe.tools.StringHandle(code,tokens)
+		return run(raxeCode,false)
+  end
+
+
   #############################################################################
   # Compile Raxe file and returns Haxe result
   # @param directory root project directory, needed for correct package names
   # @param file file path to compile
   # @return Raxe file compiled to it's Haxe equivalent
   #############################################################################
-
   #if !js
     def compile(directory : String, file : String) : String
       def currentPackage = file

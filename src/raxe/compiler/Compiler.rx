@@ -47,7 +47,7 @@ class self
 
   def compileString(code:String)
     def raxeCode = new raxe.tools.StringHandle(code,tokens)
-		return run(raxeCode,false)
+    return run(raxeCode,false)
   end
 
 

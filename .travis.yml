@@ -7,4 +7,4 @@ before_install:
   - yes | haxelib git raxe https://github.com/nondev/raxe
 
 script:
-  - neko run raxe --file `pwd`
+  - neko run --file `pwd`

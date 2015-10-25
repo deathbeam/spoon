@@ -2,6 +2,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
 #if !js
   import sys.io.File;
 #end
+
 /** 
 * The most important Raxe class, which compiles Raxe source to Haxe source
  **/
@@ -44,7 +45,6 @@ class Compiler{
     "elsif", "if", "else", "while", "for", "switch", "when",
   ];
 
-
   public function compileString(code:String) return{
     var raxeCode = new raxe.tools.StringHandle(code,tokens);
 		return run(raxeCode,false);
@@ -81,6 +81,7 @@ class Compiler{
       ).content;
     }
   #end
+
   /** 
   * Process content of StringHandle and return it modified
   * @param script Determine if automatically insert package and class names

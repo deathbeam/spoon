@@ -1,6 +1,7 @@
 package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
-import sys.io.File;
-
+#if !js
+  import sys.io.File;
+#end
 /** 
 * The most important Raxe class, which compiles Raxe source to Haxe source
  **/
@@ -43,35 +44,43 @@ class Compiler{
     "elsif", "if", "else", "while", "for", "switch", "when",
   ];
 
+
+  public function compileString(code:String) return{
+    var raxeCode = new raxe.tools.StringHandle(code,tokens);
+		return run(raxeCode,false);
+  }
+
+
   /** 
   * Compile Raxe file and returns Haxe result
   * @param directory root project directory, needed for correct package names
   * @param file file path to compile
   * @return Raxe file compiled to it's Haxe equivalent
    **/
-  public function compile(directory : String, file : String) : String return{
-    var currentPackage = file
-      .replace(directory, "")
-      .replace("\\", "/");
+  #if !js
+    public function compile(directory : String, file : String) : String return{
+      var currentPackage = file
+        .replace(directory, "")
+        .replace("\\", "/");
 
-    name = currentPackage
-      .substr(currentPackage.lastIndexOf("/") + 1)
-      .replace(".rx", "");
+      name = currentPackage
+        .substr(currentPackage.lastIndexOf("/") + 1)
+        .replace(".rx", "");
 
-    currentPackage = currentPackage
-      .replace(currentPackage.substr(currentPackage.lastIndexOf("/")), "")
-      .replace("/", ".");
+      currentPackage = currentPackage
+        .replace(currentPackage.substr(currentPackage.lastIndexOf("/")), "")
+        .replace("/", ".");
 
-    if(currentPackage.charAt(0) == "."){
-      currentPackage = currentPackage.substr(1);
+      if(currentPackage.charAt(0) == "."){
+        currentPackage = currentPackage.substr(1);
+      }
+
+      return run(new StringHandle(File.getContent(file), tokens)
+        .insert("package " + currentPackage + ";using Lambda;using StringTools;")
+        .increment()
+      ).content;
     }
-
-    return run(new StringHandle(File.getContent(file), tokens)
-      .insert("package " + currentPackage + ";using Lambda;using StringTools;")
-      .increment()
-    ).content;
-  }
-
+  #end
   /** 
   * Process content of StringHandle and return it modified
   * @param script Determine if automatically insert package and class names

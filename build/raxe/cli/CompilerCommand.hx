@@ -132,7 +132,7 @@ class CompilerCommand{
     var compiler = new Compiler();
     dir = dir != null ? FileSystem.fullPath(dir) : Sys.getCwd();
 
-    return compiler.compile(dir, file);
+    return compiler.compileFile(dir, file);
   }
 
   /** 

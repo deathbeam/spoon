@@ -9,7 +9,7 @@ import raxe.tools.StringHandle
 
 class self < Interp
   def parser : Parser = new Parser()
-  def compiler : Compiler = new Compiler()
+  def compiler : Compiler = new Compiler(true)
 
   def new()
     super()
@@ -38,8 +38,7 @@ class self < Interp
   end
 
   def parse(s : String) : Expr
-    def handle = new StringHandle(s, compiler.tokens)
-    def content = compiler.run(handle, true).content
+    def content = compiler.compileString(s)
     parser.parseString(content)
   end
 

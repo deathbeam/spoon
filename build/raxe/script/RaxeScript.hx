@@ -9,7 +9,7 @@ import raxe.tools.StringHandle;
 
 class RaxeScript extends Interp{
   public var parser : Parser = new Parser();
-  public var compiler : Compiler = new Compiler();
+  public var compiler : Compiler = new Compiler(true);
 
   public function new(){
     super();
@@ -38,8 +38,7 @@ class RaxeScript extends Interp{
   }
 
   public function parse(s : String) : Expr return{
-    var handle = new StringHandle(s, compiler.tokens);
-    var content = compiler.run(handle, true).content;
+    var content = compiler.compileString(s);
     parser.parseString(content);
   }
 

@@ -44,10 +44,13 @@ class Compiler{
     "elsif", "if", "else", "while", "for", "switch", "when",
   ];
 
+  /** 
+  * Create new instance of Raxe compiler
+  * @param script Specify if it is RaxeScript or Raxe compiler (default false)
+   **/
   public function new(script : Bool = false){
     this.script = script;
   }
-
 
   #if !js
     /** 
@@ -376,45 +379,7 @@ class Compiler{
       }
     // Process comments and newlines. Also, insert semicolons when needed
     }else if(handle.is("\n") || handle.is("#")){
-      var pos = handle.position;
-      var insert = true;
-      var isComment = handle.is("#");
-
-      handle.prevTokenLine();
-
-      if(handle.isOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":"]) && onlyWhitespace(handle.content, handle.position + 1, pos)){
-        if(handle.is("-") || handle.is("+")){
-          if(handle.content.charAt(handle.position - 1) != handle.current){
-            insert = false;
-          }
-        }else{
-          insert = false;
-        }
-      }
-
-      handle.position = pos;
-
-      if(!isComment){
-        handle.increment("\n");
-        handle.nextToken();
-
-        if(handle.isOne(["?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "~"]) && onlyWhitespace(handle.content, pos + 1, handle.position - 1)){
-          insert = false;
-        }
-
-        handle.prev("\n");
-      }
-
-      if(insert && !handle.atStart()){
-        handle.insert(";");
-        handle.increment();
-      }
-
-      if(isComment){
-        consumeComments(handle);
-      }else{
-        handle.increment();
-      }
+      consumeEndOfLine(handle);
     // Skip this token
     }else{
       handle.increment();
@@ -562,6 +527,50 @@ class Compiler{
     }
 
     handle.increment();
+  }
+
+  private function consumeEndOfLine(handle : StringHandle) return{
+    var pos = handle.position;
+    var insert = true;
+    var isComment = handle.is("#");
+
+    handle.prevTokenLine();
+
+    if(handle.isOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":"]) && onlyWhitespace(handle.content, handle.position + 1, pos)){
+      if(handle.is("-") || handle.is("+")){
+        if(handle.content.charAt(handle.position - 1) != handle.current){
+          insert = false;
+        }
+      }else{
+        insert = false;
+      }
+    }
+
+    handle.position = pos;
+
+    if(!isComment){
+      handle.increment("\n");
+      handle.nextToken();
+
+      if(handle.isOne(["?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "~"]) && onlyWhitespace(handle.content, pos + 1, handle.position - 1)){
+        insert = false;
+      }
+
+      handle.prev("\n");
+    }
+
+    if(insert && !handle.atStart()){
+      handle.insert(";");
+      handle.increment();
+    }
+
+    if(isComment){
+      consumeComments(handle);
+    }else{
+      handle.increment();
+    }
+
+    return handle;
   }
 
   private function onlyWhitespace(content : String, from : Int, to : Int) return{

@@ -3,9 +3,9 @@ import raxe.tools.StringHandle
   import sys.io.File
 #end
 
-#############################################################################
+###############################################################################
 # The most important Raxe class, which compiles Raxe source to Haxe source
-#############################################################################
+###############################################################################
 class self
   private def name : String = ""
   private def currentType : String = ""
@@ -44,6 +44,10 @@ class self
     "elsif", "if", "else", "while", "for", "switch", "when",
   ]
 
+  #############################################################################
+  # Create new instance of Raxe compiler
+  # @param script Specify if it is RaxeScript or Raxe compiler (default false)
+  #############################################################################
   def new(script : Bool = false)
     this.script = script
   end
@@ -94,7 +98,7 @@ class self
   # @param handle Handle with initial content and position
   # @return modified string handle with adjusted position and content
   #############################################################################
-  public def run(handle : StringHandle) : StringHandle
+  def run(handle : StringHandle) : StringHandle
     while(handle.nextToken())
       process(handle)
     end
@@ -375,45 +379,7 @@ class self
       end
     # Process comments and newlines. Also, insert semicolons when needed
     elsif(handle.is("\n") || handle.is("#"))
-      def pos = handle.position
-      def insert = true
-      def isComment = handle.is("#")
-
-      handle.prevTokenLine()
-
-      if(handle.isOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":"]) && onlyWhitespace(handle.content, handle.position + 1, pos))
-        if(handle.is("-") || handle.is("+"))
-          if(handle.content.charAt(handle.position - 1) != handle.current)
-            insert = false
-          end
-        else
-          insert = false
-        end
-      end
-
-      handle.position = pos
-
-      if(!isComment)
-        handle.increment("\n")
-        handle.nextToken()
-
-        if(handle.isOne(["?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "~"]) && onlyWhitespace(handle.content, pos + 1, handle.position - 1))
-          insert = false
-        end
-
-        handle.prev("\n")
-      end
-
-      if(insert && !handle.atStart())
-        handle.insert(";")
-        handle.increment()
-      end
-
-      if(isComment)
-        consumeComments(handle)
-      else
-        handle.increment()
-      end
+      consumeEndOfLine(handle)
     # Skip this token
     else
       handle.increment()
@@ -561,6 +527,50 @@ class self
     end
 
     handle.increment()
+  end
+
+  private def consumeEndOfLine(handle : StringHandle)
+    def pos = handle.position
+    def insert = true
+    def isComment = handle.is("#")
+
+    handle.prevTokenLine()
+
+    if(handle.isOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":"]) && onlyWhitespace(handle.content, handle.position + 1, pos))
+      if(handle.is("-") || handle.is("+"))
+        if(handle.content.charAt(handle.position - 1) != handle.current)
+          insert = false
+        end
+      else
+        insert = false
+      end
+    end
+
+    handle.position = pos
+
+    if(!isComment)
+      handle.increment("\n")
+      handle.nextToken()
+
+      if(handle.isOne(["?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "~"]) && onlyWhitespace(handle.content, pos + 1, handle.position - 1))
+        insert = false
+      end
+
+      handle.prev("\n")
+    end
+
+    if(insert && !handle.atStart())
+      handle.insert(";")
+      handle.increment()
+    end
+
+    if(isComment)
+      consumeComments(handle)
+    else
+      handle.increment()
+    end
+
+    return handle
   end
 
   private def onlyWhitespace(content : String, from : Int, to : Int)

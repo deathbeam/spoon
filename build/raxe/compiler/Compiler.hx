@@ -379,7 +379,7 @@ class Compiler{
       }
     // Process comments and newlines. Also, insert semicolons when needed
     }else if(handle.is("\n") || handle.is("#")){
-      consumeEndOfLine(handle);
+      consumeEndOfLine(handle, ";");
     // Skip this token
     }else{
       handle.increment();
@@ -409,6 +409,24 @@ class Compiler{
     }
 
     return true;
+  }
+
+  private function consumeCondition(handle : StringHandle, condition : String) return{
+    handle.increment();
+    handle.insert("(");
+    handle.increment();
+
+    var curLevel = opened;
+
+    while(handle.nextToken()){
+      if(curLevel == opened && (handle.is("\n") || handle.is("#"))){
+        if(consumeEndOfLine(handle, "){")){
+          break;
+        }
+      }else{
+        process(handle);
+      }
+    }
   }
 
   private function consumeBrackets(handle : StringHandle, startSymbol : String, endSymbol : String) return{
@@ -529,7 +547,7 @@ class Compiler{
     handle.increment();
   }
 
-  private function consumeEndOfLine(handle : StringHandle) return{
+  private function consumeEndOfLine(handle : StringHandle, toInsert : String) : Bool return{
     var pos = handle.position;
     var insert = true;
     var isComment = handle.is("#");
@@ -560,7 +578,7 @@ class Compiler{
     }
 
     if(insert && !handle.atStart()){
-      handle.insert(";");
+      handle.insert(toInsert);
       handle.increment();
     }
 
@@ -570,7 +588,7 @@ class Compiler{
       handle.increment();
     }
 
-    return handle;
+    return insert && !handle.atStart();
   }
 
   private function onlyWhitespace(content : String, from : Int, to : Int) return{

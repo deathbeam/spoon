@@ -379,7 +379,7 @@ class self
       end
     # Process comments and newlines. Also, insert semicolons when needed
     elsif(handle.is("\n") || handle.is("#"))
-      consumeEndOfLine(handle)
+      consumeEndOfLine(handle, ";")
     # Skip this token
     else
       handle.increment()
@@ -409,6 +409,24 @@ class self
     end
 
     return true
+  end
+
+  private def consumeCondition(handle : StringHandle, condition : String)
+    handle.increment()
+    handle.insert("(")
+    handle.increment()
+
+    def curLevel = opened
+
+    while(handle.nextToken())
+      if(curLevel == opened && (handle.is("\n") || handle.is("#")))
+        if(consumeEndOfLine(handle, "){"))
+          break
+        end
+      else
+        process(handle)
+      end
+    end
   end
 
   private def consumeBrackets(handle : StringHandle, startSymbol : String, endSymbol : String)
@@ -529,7 +547,7 @@ class self
     handle.increment()
   end
 
-  private def consumeEndOfLine(handle : StringHandle)
+  private def consumeEndOfLine(handle : StringHandle, toInsert : String) : Bool
     def pos = handle.position
     def insert = true
     def isComment = handle.is("#")
@@ -560,7 +578,7 @@ class self
     end
 
     if(insert && !handle.atStart())
-      handle.insert(";")
+      handle.insert(toInsert)
       handle.increment()
     end
 
@@ -570,7 +588,7 @@ class self
       handle.increment()
     end
 
-    return handle
+    return insert && !handle.atStart()
   end
 
   private def onlyWhitespace(content : String, from : Int, to : Int)

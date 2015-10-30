@@ -35,7 +35,7 @@ class self
     "import", "def", "self", "new", "end", "do", "typedef", "try", "catch", "empty",
 
     # Brackets
-    "{", "}", "(", ")", "[", "]", "=>",
+    "{", "}", "(", ")", "[", "]",
 
     # Operators (- is also used for comments, < is also used for inheritance)
     ":", "?", "=", "+", "-", "*", ".", "/", "," , "|", "&",  "^", "%", "<", ">", "~",
@@ -286,7 +286,7 @@ class self
 
         if(currentType != "interface")
           while(safeNextToken(handle))
-            if(handle.is("=>"))
+            if(handle.is("do"))
               handle.remove()
 
               if(implicit)
@@ -318,36 +318,9 @@ class self
       end
     # Closures and blocks
     elsif(handle.safeis("do"))
-      def position = handle.position
-      handle.increment()
-      handle.nextToken()
-      handle.position = position
-
-      if(handle.is("("))
-        handle.remove("do")
-        handle.insert("function")
-        handle.increment()
-        consumeBrackets(handle, "(", ")")
-
-        while(safeNextToken(handle))
-          if(handle.is("=>"))
-            handle.remove()
-            handle.insert("return")
-            break
-          elsif(handle.isOne(["\n", "#"]))
-            handle.insert(" return{")
-            opened = opened + 1
-            break
-          else
-            handle.increment()
-          end
-        end
-      else
-        handle.remove("do")
-        handle.insert("{")
-        opened = opened + 1
-      end
-
+      handle.remove("do")
+      handle.insert("{")
+      opened = opened + 1
       handle.increment()
     # [abstract] class/interface/enum
     elsif (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum") || handle.safeis("module"))

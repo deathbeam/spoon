@@ -17,23 +17,23 @@ class self
   def createScript() : RaxeScript
     def script = new RaxeScript()
 
-    script.variables.set("echo", do(msg : String)
+    script.variables.set("echo", def(msg : String)
       Sys.println(msg)
     end)
 
-    script.variables.set("sh", do(cmd : String, ?args : Array<String>)
+    script.variables.set("sh", def(cmd : String, ?args : Array<String>)
       Sys.command(cmd, args)
     end)
 
-    script.variables.set("cp", do(from : String, to : String)
+    script.variables.set("cp", def(from : String, to : String)
       File.copy(from, to)
     end)
 
-    script.variables.set("mv", do(from : String, to : String)
+    script.variables.set("mv", def(from : String, to : String)
       FileSystem.rename(from, to)
     end)
 
-    script.variables.set("rm", do(path : String)
+    script.variables.set("rm", def(path : String)
       if(FileSystem.isDirectory(path))
         FileSystem.deleteDirectory(path)
       else
@@ -42,8 +42,8 @@ class self
     end)
 
     script.variables.set("env", {
-      get: do(key : String) : String => Sys.getEnv(key),
-      set: do(key : String, value : String) => Sys.putEnv(key, value),
+      get: def(key : String) : String do Sys.getEnv(key),
+      set: def(key : String, value : String) do Sys.putEnv(key, value),
     })
 
     return script

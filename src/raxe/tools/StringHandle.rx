@@ -4,11 +4,11 @@ class self
   def current : String
   def tokens : Array<String>
 
-  def atStart() : Bool => position <= 0
-  def atEnd() : Bool => position >= content.length
-  def nearStart(tolerance : Int) : Bool => (position - tolerance) <= 0
-  def nearEnd(tolerance : Int) : Bool => (position + tolerance) >= content.length
-  def is(content : String) : Bool => current == content
+  def atStart() : Bool do position <= 0
+  def atEnd() : Bool do position >= content.length
+  def nearStart(tolerance : Int) : Bool do (position - tolerance) <= 0
+  def nearEnd(tolerance : Int) : Bool do (position + tolerance) >= content.length
+  def is(content : String) : Bool do current == content
 
   def new(content : String, ?tokens : Array<String>, position : Int = 0)
     this.content = content

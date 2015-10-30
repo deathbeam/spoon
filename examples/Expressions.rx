@@ -9,7 +9,7 @@ module self
     def enabled = true
 
     # Here we will chain some expressions
-    def name = do(protected) if(protected)
+    def name = def(protected) do if(protected)
         "Nope"
       else
         "John Snow"

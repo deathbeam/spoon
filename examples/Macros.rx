@@ -9,5 +9,5 @@ module self
     trace(x) # 2
   end
 
-  macro def add(e : Expr) => macro $e + $e
+  macro def add(e : Expr) do macro $e + $e
 end

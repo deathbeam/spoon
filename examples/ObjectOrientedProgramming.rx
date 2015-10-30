@@ -4,7 +4,7 @@ class self
   # You can use self world to reference current class name
   # Below we will create simple singleton
   private def self.instance = new self()
-  def self.getInstance() => instance
+  def self.getInstance() do instance
 
   # Simple static counter
   private def self.index = 0

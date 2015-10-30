@@ -13,7 +13,7 @@ module self
   Anonymous maps, not dynamic by default too
   ###
   def map = [
-    "a" => do(test)
+    "a" => def(test)
       trace(test)
     end,
   ]
@@ -31,7 +31,7 @@ module self
   def struct = {
     a: "hello",
     b: "yolo",
-    callback: do(event)
+    callback: def(event)
       event + " World"
     end,
   }

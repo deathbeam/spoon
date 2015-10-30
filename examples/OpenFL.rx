@@ -29,7 +29,7 @@ class self < Sprite
     stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown)
     stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp)
 
-    stage.addEventListener(Event.ENTER_FRAME, do(event)
+    stage.addEventListener(Event.ENTER_FRAME, def(event)
       if(movingDown)
         logo.y += 5
       end

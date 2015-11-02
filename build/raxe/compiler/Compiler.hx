@@ -23,10 +23,10 @@ class Compiler{
     "\n", ";",
 
     // Whitespace skip
-    "#", "@", "\"",
+    "#", "@", "\"", "$",
 
     // Types
-    "::", "class", "enum", "abstract", "interface", "module",
+    "::", "class", "enum", "abstract", "interface",
 
     // Modifiers
     "public", "private",
@@ -114,8 +114,19 @@ class Compiler{
    **/
   private function process(handle : StringHandle) : StringHandle return{
     // Skip compiler defines and annotations
-    if (handle.is("@")){
-      handle.next("\n");
+    if(handle.is("$") && handle.at("$[")){
+      handle.remove();
+      handle.insert("@");
+      handle.increment();
+      consumeBrackets(handle, "[", "]", true);
+      safeNextToken(handle);
+
+      if(handle.is("\n")){
+        handle.increment();
+      }
+    }else if(handle.is("@")){
+      handle.remove();
+      handle.insert("this.");
       handle.increment();
     // Step over things in strings (" ") and process multiline strings
     }else if(handle.is("\"")){
@@ -245,31 +256,29 @@ class Compiler{
     }else if(handle.safeis("def")){
       handle.remove("def");
 
+      var position = handle.position;
+
       if(opened == 0 && !script){
         if(!hasVisibility){
           handle.insert("public ");
           handle.increment();
         }
 
-        if(currentType == "module"){
+        position = handle.position;
+        safeNextToken(handle);
+
+        if(handle.is("@")){
+          handle.remove();
+          handle.position = position;
           handle.insert("static ");
           handle.increment();
+          position = handle.position;
+          safeNextToken(handle);
         }
       }
 
       hasVisibility = false;
-
-      var position = handle.position;
       safeNextToken(handle);
-
-      if(handle.safeis("self")){
-        handle.remove("self.");
-        handle.position = position;
-        handle.insert("static ");
-        handle.increment();
-        position = handle.position;
-        safeNextToken(handle);
-      }
 
       var implicit = true;
 
@@ -323,13 +332,8 @@ class Compiler{
       opened = opened + 1;
       handle.increment();
     // [abstract] class/interface/enum
-    }else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum") || handle.safeis("module")){
+    }else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum")){
       currentType = handle.current;
-
-      if(currentType == "module"){
-        handle.remove();
-        handle.insert("class");
-      }
 
       handle.increment();
 
@@ -402,17 +406,27 @@ class Compiler{
     }
   }
 
-  private function consumeBrackets(handle : StringHandle, startSymbol : String, endSymbol : String) return{
+  private function consumeBrackets(handle : StringHandle, startSymbol : String, endSymbol : String, remove : Bool = false) return{
     var count = 0;
     var startPosition = handle.position;
 
     while(handle.nextToken()){
       if(handle.is(startSymbol)){
+        if(count == 0 && remove){
+          handle.remove();
+        }else{
+          handle.increment();
+        }
+
         count = count + 1;
-        handle.increment();
       }else if(handle.is(endSymbol)){
         count = count - 1;
-        handle.increment();
+
+        if(count == 0 && remove){
+          handle.remove();
+        }else{
+          handle.increment();
+        }
       }else{
         process(handle);
       }

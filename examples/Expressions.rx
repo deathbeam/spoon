@@ -1,11 +1,11 @@
 # vim: set ft=rb:
 
-module self
+class self
   ###
   In Raxe, everything is an expression. You can do
   really crazy stuff, but do not get too crazy.
   ###
-  def main()
+  def @main()
     def enabled = true
 
     # Here we will chain some expressions

@@ -6,7 +6,7 @@ You can plase as much text here as you want, you just must
 terminate block comment with same number of hypnens as you
 initialized it.
 ###
-module self
+class self
   #####
   If you want to use nested block comments, you must initialize
   block comment with different number of hypnens as you use in
@@ -20,7 +20,7 @@ module self
   And now, we need to terminate it with same number of hypnens as
   we initialized it, in this case 5.
   #####
-  def main()
+  def @main()
     ###################################
     We can also do this :)
     ###################################

@@ -3,13 +3,13 @@
 class self
   # You can use self world to reference current class name
   # Below we will create simple singleton
-  private def self.instance = new self()
-  def self.getInstance() do instance
+  private def @instance = new self()
+  def @getInstance() do instance
 
   # Simple static counter
-  private def self.index = 0
+  private def @index = 0
 
-  def self.main()
+  def @main()
     # Get instance of self
     def myInstance = getInstance()
 

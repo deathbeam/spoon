@@ -6,12 +6,12 @@ enum Schema
   TArray(elem : Schema)
 end
 
-module self
-  def main()
+class self
+  def @main()
     validate([1,2,3], TArray(TInt))
   end
 
-  def validate(value : Dynamic, schema : Schema)
+  def @validate(value : Dynamic, schema : Schema)
     switch(schema)
       when(TInt)
         if(!Std.is(value, Int))

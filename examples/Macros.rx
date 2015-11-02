@@ -2,12 +2,12 @@
 
 import haxe.macro.Expr
 
-module self
-  def main()
+class self
+  def @main()
     def x = 0
     def b = add(x++)
     trace(x) # 2
   end
 
-  macro def add(e : Expr) do macro $e + $e
+  macro def @add(e : Expr) do macro $e + $e
 end

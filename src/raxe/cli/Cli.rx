@@ -14,7 +14,7 @@ import raxe.script.RaxeScript
 # Raxe 0.0.1 - https://raxe-lang.org
 ###############################################################################
 class self < CommandLine
-  inline def self.ERROR_TYPE = "compile_error"
+  inline def @ERROR_TYPE = "compile_error"
 
   #############################################################################
   # Source directory or file

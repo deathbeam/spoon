@@ -7,7 +7,7 @@ class self
   # @param errorType Type of error to be thrown
   # @param error Error message to be sent
   #############################################################################
-  def self.create(errorType: String, error: String)
+  def @create(errorType: String, error: String)
     throw("{\"type\": \"" + errorType + "\",\"error\": \"" + error + "\"}")
   end
 end

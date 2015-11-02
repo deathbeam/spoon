@@ -1,7 +1,7 @@
 # vim: set ft=rb:
 
-module self
-  def info = """
+class self
+  def @info = """
     This is multiline string.
     It automatically accepts all tabs, newlines
     and whitespace in general. Syntax for
@@ -9,7 +9,7 @@ module self
     triple quotes for terminating
   """
 
-  def main()
+  def @main()
     trace(info)
 
     trace("""

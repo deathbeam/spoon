@@ -1,7 +1,7 @@
 # vim: set ft=rb:
 
-module self
-  def main()
+class self
+  def @main()
     try
       throw("Error")
     catch(msg : String)

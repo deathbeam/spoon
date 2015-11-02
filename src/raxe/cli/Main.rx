@@ -3,8 +3,8 @@ import mcli.Dispatch
 #############################################################################
 # Entry point for Raxe CLI
 #############################################################################
-module self
-  def main()
+class self
+  def @main()
     def args = Sys.args()
     Sys.setCwd(args.pop()) # Workaround for correct working directory when running from `haxelib`
 

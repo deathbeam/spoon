@@ -3,8 +3,8 @@
 import haxe.unit.TestCase
 import haxe.unit.TestRunner
 
-module self
-  def main()
+class self
+  def @main()
     def r = new TestRunner()
     r.add(new MyTests())
     r.run()
@@ -16,12 +16,12 @@ class MyTests < TestCase
   def myInt : Int
 
   override def setup()
-    myVal = "foo"
-    myInt = 1 + 1
+    @myVal = "foo"
+    @myInt = 1 + 1
   end
 
   # Every test function name has to start with 'test'
-  def testValue() do assertEquals("foo", myVal)
-  def testMath1() do assertTrue(myInt == 2)
-  def testMath2() do assertFalse(myInt == 3)
+  def testValue() do @assertEquals("foo", myVal)
+  def testMath1() do @assertTrue(myInt == 2)
+  def testMath2() do @assertFalse(myInt == 3)
 end

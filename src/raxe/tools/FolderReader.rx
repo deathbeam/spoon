@@ -5,14 +5,14 @@ import sys.io.File
 # Utility to deal with folders
 # @author Axel Anceau (Peekmo)
 #############################################################################
-module self
+class self
   #############################################################################
   # Returns an array of all files which are in the given folder and its
   # subfolders
   # @param rootFolder Root folder for the search
   # @return Files found
   #############################################################################
-  def getFiles(rootFolder: String) : Array<String>
+  def @getFiles(rootFolder: String) : Array<String>
     def files : Array<String> = new Array<String>()
 
     if(FileSystem.exists(rootFolder))
@@ -42,7 +42,7 @@ module self
   # @param path     Path to the file (each folders separated by '/')
   # @param ?content File's content
   #############################################################################
-  def createFile(path : String, ?content : String) : Void
+  def @createFile(path : String, ?content : String) : Void
     def parts : Array<String> = path.split("/")
     def fileName : String = parts.pop()
 
@@ -60,7 +60,7 @@ module self
   # Creates the given directory (and all path's directories if needed)
   # @param path Path to the given directory
   #############################################################################
-  def createDirectory(path : String) : Void
+  def @createDirectory(path : String) : Void
     def parts : Array<String> = path.split("/")
     def done : String = null
 
@@ -78,7 +78,7 @@ module self
   # @param source      Source's path
   # @param destination Destination's path
   #############################################################################
-  def copyFileSystem(source : String, destination : String) : Void
+  def @copyFileSystem(source : String, destination : String) : Void
     try
       if(source.endsWith("/"))
         source = source.substr(0, -1)

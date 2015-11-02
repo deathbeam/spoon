@@ -1,7 +1,7 @@
 # vim: set ft=rb:
 
-module self
-  def main()
+class self
+  def @main()
     def myvar : String = empty
     def myarray = new Array<String>()
 

@@ -14,7 +14,7 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
     this.content = content;
 
     if(tokens == null){
-      this.tokens = [ "\n" ];
+      this.tokens = [ '\n' ];
     }else{
       this.tokens = tokens;
     }
@@ -29,14 +29,14 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
 
   public function closest(content : String) : Bool return{
     var divided = divide();
-    var regex = new EReg("[^\\w][ \t]*" + content, "");
+    var regex = new EReg('[^\\w][ \t]*' + content, '');
 
     var sub = this.content.substr(position);
 
     var count = 1;
 
     while(true){
-      if(sub.charAt(count) == " " || sub.charAt(count) == "\t" || sub.charAt(count) == "\n"){
+      if(sub.charAt(count) == ' ' || sub.charAt(count) == '\t' || sub.charAt(count) == '\n'){
         count = count + 1;
       }else{
         break;
@@ -57,7 +57,7 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
   }
 
   public function safeisStart(content : String) : Bool return{
-    var regex = new EReg("[^\\w]" + content, "");
+    var regex = new EReg('[^\\w]' + content, '');
 
     if(nearStart(1)){
       return is(content);
@@ -75,7 +75,7 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
   }
 
   public function safeisEnd(content : String) : Bool return{
-    var regex = new EReg(content + "[^\\w]", "");
+    var regex = new EReg(content + '[^\\w]', '');
 
     if(nearEnd(content.length + 2)){
       return is(content);
@@ -89,7 +89,7 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
   }
 
   public function safeis(content : String) : Bool return{
-    var regex = new EReg("[^\\w]" + content + "[^\\w]", "");
+    var regex = new EReg('[^\\w]' + content + '[^\\w]', '');
 
     if(nearStart(1)){
       return safeisEnd(content);
@@ -158,7 +158,7 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
 
   public function prevToken() : Bool return{
     var newPos = position + 1;
-    var currentToken = "";
+    var currentToken = '';
 
     for(token in tokens){
       var pos = this.content.substr(0, position).lastIndexOf(token);
@@ -180,7 +180,7 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
 
   public function prevTokenLine() : Bool return{
     var newPos = position + 1;
-    var currentToken = "";
+    var currentToken = '';
 
     for(token in tokens){
       var pos = this.content.substr(0, position).lastIndexOf(token);
@@ -191,11 +191,11 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
       }
     }
 
-    var pos = this.content.substr(0, position).lastIndexOf("\n");
+    var pos = this.content.substr(0, position).lastIndexOf('\n');
 
     if(pos != -1 && (pos > newPos || newPos == position + 1)){
       newPos = pos;
-      currentToken = "\n";
+      currentToken = '\n';
     }
 
     if(newPos == -1){
@@ -209,7 +209,7 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
 
   public function nextTokenLine() : Bool return{
     var newPos = -1;
-    var currentToken = "";
+    var currentToken = '';
 
     for(token in tokens){
       var pos = this.content.indexOf(token, position);
@@ -220,11 +220,11 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
       }
     }
 
-    var pos = this.content.indexOf("\n", position);
+    var pos = this.content.indexOf('\n', position);
 
     if(pos != -1 && (pos < newPos || newPos == -1)){
       newPos = pos;
-      currentToken = "\n";
+      currentToken = '\n';
     }
 
     if(newPos == -1){
@@ -238,7 +238,7 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
 
   public function nextToken() : Bool return{
     var newPos = -1;
-    var currentToken = "";
+    var currentToken = '';
 
     for(token in tokens){
       var pos = this.content.indexOf(token, position);
@@ -343,8 +343,8 @@ package raxe.tools;using Lambda;using StringTools;class StringHandle{
 
   private function divide(?offset: Int = 0) return{
     {
-      left: position > 0 ? content.substr(0, position + offset) : "",
-      right: position < content.length ? content.substring(position + offset) : "",
+      left: position > 0 ? content.substr(0, position + offset) : '',
+      right: position < content.length ? content.substring(position + offset) : '',
     }
   }
 }

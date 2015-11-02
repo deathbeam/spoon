@@ -7,9 +7,9 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
 * The most important Raxe class, which compiles Raxe source to Haxe source
  **/
 class Compiler{
-  private var name : String = "";
-  private var currentType : String = "";
-  private var currentExpression : String = "";
+  private var name : String = '';
+  private var currentType : String = '';
+  private var currentExpression : String = '';
   private var hasVisibility : Bool = false;
   private var opened : Int = -1;
   private var currentOpened : Int = -1;
@@ -20,28 +20,28 @@ class Compiler{
    **/
   public var tokens = [
     // Line break
-    "\n", ";",
+    '\n', ';',
 
     // Whitespace skip
-    "#", "@new", "@@", "@", "\"", "'", "$",
+    '#', '@new', '@@', '@', '"', '\'', '$',
 
     // Types
-    "::", "class", "enum", "abstract", "interface",
+    '::', 'class', 'enum', 'abstract', 'interface',
 
     // Modifiers
-    "public", "private",
+    'public', 'private',
 
     // Special keywords
-    "import", "def", "new", "end", "do", "typedef", "try", "catch", "empty",
+    'import', 'def', 'new', 'end', 'do', 'typedef', 'try', 'catch', 'empty',
 
     // Brackets
-    "{", "}", "(", ")", "[", "]",
+    '{', '}', '(', ')', '[', ']',
 
     // Operators (- is also used for comments, < is also used for inheritance)
-    ":", "?", "=", "+", "-", "*", ".", "/", "," , "|", "&",  "^", "%", "<", ">", "~",
+    ':', '?', '=', '+', '-', '*', '.', '/', ',' , '|', '&',  '^', '%', '<', '>', '~',
 
     // Expressions
-    "elsif", "if", "else", "while", "for", "switch", "when",
+    'elsif', 'if', 'else', 'while', 'for', 'switch', 'when',
   ];
 
   /** 
@@ -61,23 +61,23 @@ class Compiler{
      **/
     public function compileFile(directory : String, file : String) : String return{
       var currentPackage = file
-        .replace(directory, "")
-        .replace("\\", "/");
+        .replace(directory, '')
+        .replace('\\', '/');
 
       name = currentPackage
-        .substr(currentPackage.lastIndexOf("/") + 1)
-        .replace(".rx", "");
+        .substr(currentPackage.lastIndexOf('/') + 1)
+        .replace('.rx', '');
 
       currentPackage = currentPackage
-        .replace(currentPackage.substr(currentPackage.lastIndexOf("/")), "")
-        .replace("/", ".");
+        .replace(currentPackage.substr(currentPackage.lastIndexOf('/')), '')
+        .replace('/', '.');
 
-      if(currentPackage.charAt(0) == "."){
+      if(currentPackage.charAt(0) == '.'){
         currentPackage = currentPackage.substr(1);
       }
 
       run(new StringHandle(File.getContent(file), tokens)
-        .insert("package " + currentPackage + ";using Lambda;using StringTools;")
+        .insert('package ' + currentPackage + ';using Lambda;using StringTools;')
         .increment()
       ).content;
     }
@@ -114,179 +114,179 @@ class Compiler{
    **/
   private function process(handle : StringHandle) : StringHandle return{
     // Skip compiler defines and annotations
-    if(handle.is("$") && handle.at("$[")){
+    if(handle.is('$') && handle.at('$[')){
       handle.remove();
-      handle.insert("@");
+      handle.insert('@');
       handle.increment();
-      consumeBrackets(handle, "[", "]", true);
+      consumeBrackets(handle, '[', ']', true);
       safeNextToken(handle);
 
-      if(handle.is("\n")){
+      if(handle.is('\n')){
         handle.increment();
       }
-    }else if(handle.is("@@")){
-      if(handle.safeis("@@")){
+    }else if(handle.is('@@')){
+      if(handle.safeis('@@')){
         handle.remove();
         handle.insert(name);
       }else{
         handle.remove();
-        handle.insert(name + ".");
+        handle.insert(name + '.');
       }
 
       handle.increment();
-    }else if(handle.is("@")){
-      if(handle.safeis("@")){
+    }else if(handle.is('@')){
+      if(handle.safeis('@')){
         handle.remove();
-        handle.insert("this");
+        handle.insert('this');
       }else{
         handle.remove();
-        handle.insert("this.");
+        handle.insert('this.');
       }
 
       handle.increment();
     // Step over things in strings (" ") and process multiline strings
-    }else if(handle.is("\"")){
+    }else if(handle.is('"')){
       consumeStrings(handle);
     // Correct access
-    }else if(handle.safeis("public") || handle.safeis("private")){
+    }else if(handle.safeis('public') || handle.safeis('private')){
       hasVisibility = true;
       handle.increment();
     // Change require to classic imports
-    }else if(handle.safeis("import")){
-      handle.next("\n");
-      handle.insert(";");
+    }else if(handle.safeis('import')){
+      handle.next('\n');
+      handle.insert(';');
       handle.increment();
     // Empty operator (null)
-    }else if(handle.safeis("empty")){
+    }else if(handle.safeis('empty')){
       handle.remove();
-      handle.insert("null");
+      handle.insert('null');
       handle.increment();
     // Structures and arrays
-    }else if(handle.is("{") || handle.is("[")){
+    }else if(handle.is('{') || handle.is('[')){
       opened = opened + 1;
       handle.increment();
-    }else if(handle.is("}") || handle.is("]")){
+    }else if(handle.is('}') || handle.is(']')){
       opened = opened - 1;
 
       if(opened == -1){
-        currentType = "";
+        currentType = '';
       }
 
       handle.increment();
     // Change end to classic bracket end
-    }else if(handle.safeis("end")){
+    }else if(handle.safeis('end')){
       handle.remove();
-      handle.insert("}");
+      handle.insert('}');
       handle.increment();
       opened = opened - 1;
 
       if(currentOpened == opened){
         currentOpened = -1;
-        currentExpression = "";
+        currentExpression = '';
       }
     // Insert begin bracket after switch
-    }else if(handle.safeis("switch")){
+    }else if(handle.safeis('switch')){
       currentExpression = handle.current;
       currentOpened = opened;
       handle.increment();
       handle.nextToken();
-      consumeBrackets(handle, "(", ")");
-      handle.next("\n");
-      handle.insert("{");
+      consumeBrackets(handle, '(', ')');
+      handle.next('\n');
+      handle.insert('{');
       handle.increment();
       opened = opened + 1;
     // Replaced when with Haxe "case"
-    }else if(handle.safeis("when")){
+    }else if(handle.safeis('when')){
       handle.remove();
-      handle.insert("case");
+      handle.insert('case');
       handle.increment();
       handle.nextToken();
-      consumeBrackets(handle, "(", ")");
-      handle.next("\n");
-      handle.insert(":");
+      consumeBrackets(handle, '(', ')');
+      handle.next('\n');
+      handle.insert(':');
       handle.increment();
     // Insert begin bracket after try
-    }else if(handle.safeis("try")){
+    }else if(handle.safeis('try')){
       handle.increment();
-      handle.insert("{");
+      handle.insert('{');
       handle.increment();
       opened = opened + 1;
     // Insert brackets around catch
-    }else if(handle.safeis("catch")){
-      handle.insert("}");
+    }else if(handle.safeis('catch')){
+      handle.insert('}');
       handle.increment();
-      handle.increment("catch");
+      handle.increment('catch');
       handle.nextToken();
-      consumeBrackets(handle, "(", ")");
-      handle.next("\n");
-      handle.insert("{");
+      consumeBrackets(handle, '(', ')');
+      handle.next('\n');
+      handle.insert('{');
       handle.increment();
     // Insert begin bracket after if and while
-    }else if(handle.safeis("if")){
+    }else if(handle.safeis('if')){
       handle.increment();
       handle.nextToken();
-      consumeBrackets(handle, "(", ")");
-      handle.next("\n");
-      handle.insert("{");
+      consumeBrackets(handle, '(', ')');
+      handle.next('\n');
+      handle.insert('{');
       handle.increment();
       opened = opened + 1;
     // Change elseif to else if and insert begin and end brackets around it
-    }else if(handle.safeis("elsif")){
+    }else if(handle.safeis('elsif')){
       handle.remove();
-      handle.insert("}else if");
+      handle.insert('}else if');
       handle.increment();
       handle.nextToken();
-      consumeBrackets(handle, "(", ")");
-      handle.next("\n");
-      handle.insert("{");
+      consumeBrackets(handle, '(', ')');
+      handle.next('\n');
+      handle.insert('{');
       handle.increment();
     // Insert begin brackets after loops declaration
-    }else if(handle.safeis("while") || handle.safeis("for")){
+    }else if(handle.safeis('while') || handle.safeis('for')){
       handle.increment();
       handle.nextToken();
-      consumeBrackets(handle, "(", ")");
-      handle.next("\n");
-      handle.insert("{");
+      consumeBrackets(handle, '(', ')');
+      handle.next('\n');
+      handle.insert('{');
       opened = opened + 1;
       handle.increment();
     // Inser begin and end brackets around else but do not try to
     // process curlys because there will not be any
-    }else if(handle.safeis("else")){
-      if(currentExpression == "switch"){
+    }else if(handle.safeis('else')){
+      if(currentExpression == 'switch'){
         handle.remove();
-        handle.insert("default:");
+        handle.insert('default:');
       }else{
-        handle.insert("}");
+        handle.insert('}');
         handle.increment();
-        handle.increment("else");
-        handle.insert("{");
+        handle.increment('else');
+        handle.insert('{');
       }
 
       handle.increment();
     // Defines to variables and functions
-    }else if(handle.safeis("def")){
-      handle.remove("def");
+    }else if(handle.safeis('def')){
+      handle.remove('def');
 
       var position = handle.position;
 
       if(opened == 0 && !script){
         if(!hasVisibility){
-          handle.insert("public ");
+          handle.insert('public ');
           handle.increment();
         }
 
         position = handle.position;
         safeNextToken(handle);
 
-        if(handle.is("@new")){
+        if(handle.is('@new')){
           handle.remove();
-          handle.insert("static var __new = (function(){_new(); return true;})(); static  _new");
+          handle.insert('static var __new = (function(){_new(); return true;})(); static  _new');
           handle.increment();
           position = handle.position - 5;
-        }else if(handle.is("@")){
+        }else if(handle.is('@')){
           handle.remove();
           handle.position = position;
-          handle.insert("static ");
+          handle.insert('static ');
           handle.increment();
           position = handle.position;
           safeNextToken(handle);
@@ -298,32 +298,32 @@ class Compiler{
 
       var implicit = true;
 
-      if(handle.safeis("new")){
+      if(handle.safeis('new')){
         implicit = false;
         handle.increment();
         handle.nextToken();
       }
 
-      if(handle.is("(")){
+      if(handle.is('(')){
         handle.position = position;
-        handle.insert("function");
-        consumeBrackets(handle, "(", ")");
+        handle.insert('function');
+        consumeBrackets(handle, '(', ')');
 
-        if(currentType != "interface"){
+        if(currentType != 'interface'){
           while(safeNextToken(handle)){
-            if(handle.is("do")){
+            if(handle.is('do')){
               handle.remove();
 
               if(implicit){
-                handle.insert("return");
+                handle.insert('return');
               }
 
               break;
-            }else if(handle.isOne(["\n", "#"])){
+            }else if(handle.isOne(['\n', '#'])){
               if(implicit){
-                handle.insert(" return{");
+                handle.insert(' return{');
               }else{
-                handle.insert("{");
+                handle.insert('{');
               }
               handle.increment();
               opened = opened + 1;
@@ -333,46 +333,46 @@ class Compiler{
             }
           }
         }else{
-          handle.insert(";");
+          handle.insert(';');
           handle.increment();
         }
       }else{
         handle.position = position;
-        handle.insert("var");
+        handle.insert('var');
         handle.increment();
       }
     // Closures and blocks
-    }else if(handle.safeis("do")){
-      handle.remove("do");
-      handle.insert("{");
+    }else if(handle.safeis('do')){
+      handle.remove('do');
+      handle.insert('{');
       opened = opened + 1;
       handle.increment();
     // [abstract] class/interface/enum
-    }else if (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum")){
+    }else if (handle.safeis('class') || handle.safeis('interface') || handle.safeis('enum')){
       currentType = handle.current;
 
       handle.increment();
 
       while(handle.nextToken()){
-        if(handle.is("@")){
+        if(handle.is('@')){
           handle.remove();
           handle.insert(name);
-        }else if(handle.is("<")){
+        }else if(handle.is('<')){
           handle.remove();
-          handle.insert("extends");
-        }else if(handle.is("::")){
+          handle.insert('extends');
+        }else if(handle.is('::')){
           handle.remove();
-          handle.insert("implements");
-        }else if(handle.is("\n")){
-          handle.insert("{");
+          handle.insert('implements');
+        }else if(handle.is('\n')){
+          handle.insert('{');
           break;
         }
 
         handle.increment();
       }
     // Process comments and newlines. Also, insert semicolons when needed
-    }else if(handle.is("\n") || handle.is("#")){
-      consumeEndOfLine(handle, ";");
+    }else if(handle.is('\n') || handle.is('#')){
+      consumeEndOfLine(handle, ';');
     // Skip this token
     }else{
       handle.increment();
@@ -384,11 +384,11 @@ class Compiler{
   private function safeNextToken(handle : StringHandle) : Bool return{
     handle.nextToken();
 
-    if(safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
-        safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "import") &&
-        safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch") &&
-        safeCheck(handle, "private") && safeCheck(handle, "public") && safeCheck(handle, "empty") && safeCheck(handle, "switch") &&
-        safeCheck(handle, "when")){
+    if(safeCheck(handle, 'def') && safeCheck(handle, 'if') && safeCheck(handle, 'elsif') && safeCheck(handle, 'end')  &&
+        safeCheck(handle, 'while') && safeCheck(handle, 'for') && safeCheck(handle, 'import') &&
+        safeCheck(handle, 'do') && safeCheck(handle, 'else') && safeCheck(handle, 'try') && safeCheck(handle, 'catch') &&
+        safeCheck(handle, 'private') && safeCheck(handle, 'public') && safeCheck(handle, 'empty') && safeCheck(handle, 'switch') &&
+        safeCheck(handle, 'when')){
       return true;
     }else{
       handle.increment();
@@ -406,14 +406,14 @@ class Compiler{
 
   private function consumeCondition(handle : StringHandle, condition : String) return{
     handle.increment();
-    handle.insert("(");
+    handle.insert('(');
     handle.increment();
 
     var curLevel = opened;
 
     while(handle.nextToken()){
-      if(curLevel == opened && (handle.is("\n") || handle.is("#"))){
-        if(consumeEndOfLine(handle, "){")){
+      if(curLevel == opened && (handle.is('\n') || handle.is('#'))){
+        if(consumeEndOfLine(handle, '){')){
           break;
         }
       }else{
@@ -454,12 +454,12 @@ class Compiler{
   }
 
   private function consumeComments(handle : StringHandle) return{
-    var comment = "";
+    var comment = '';
     var position = handle.position;
 
     while(handle.nextTokenLine()){
-      if(handle.is("#")){
-        comment += "#";
+      if(handle.is('#')){
+        comment += '#';
         handle.increment();
       }else{
         handle.increment();
@@ -468,27 +468,27 @@ class Compiler{
     }
 
     handle.position = position;
-    handle.current = "#";
+    handle.current = '#';
 
     if(comment.length > 1){
       handle.remove(comment);
-      handle.insert("/** ");
+      handle.insert('/** ');
       handle.increment();
 
       while(handle.nextToken()){
         if(handle.at(comment)){
           handle.remove(comment);
-          handle.insert(" **/");
+          handle.insert(' **/');
           handle.increment();
           break;
-        }else if(handle.is("#")){
+        }else if(handle.is('#')){
           position = handle.position;
           handle.prevToken();
 
-          if(handle.is("\n") && onlyWhitespace(handle.content, position + 1, handle.position - 1)){
+          if(handle.is('\n') && onlyWhitespace(handle.content, position + 1, handle.position - 1)){
             handle.position = position;
-            handle.remove("#");
-            handle.insert("*");
+            handle.remove('#');
+            handle.insert('*');
           }else{
             handle.position = position;
           }
@@ -499,15 +499,15 @@ class Compiler{
         }
       }
     }else{
-      if(handle.at("#elsif")){
-        handle.remove("#elsif");
-        handle.insert("#elseif");
-      }else if(!handle.at("#if") && !handle.at("#else") && !handle.at("#end")){
+      if(handle.at('#elsif')){
+        handle.remove('#elsif');
+        handle.insert('#elseif');
+      }else if(!handle.at('#if') && !handle.at('#else') && !handle.at('#end')){
         handle.remove(comment);
-        handle.insert("//");
+        handle.insert('//');
       }
 
-      handle.next("\n");
+      handle.next('\n');
       handle.increment();
     }
 
@@ -515,52 +515,66 @@ class Compiler{
   }
 
   private function consumeStrings(handle : StringHandle) return{
-    if(handle.at("\"\"\"")){
-      handle.remove("\"\"\"");
-      handle.insert("\"");
+    if(handle.at('"""')){
+      handle.remove('"""');
+      handle.insert('\'');
+    }else{
+      handle.remove('"');
+      handle.insert('\'');
     }
 
     handle.increment();
 
     while(handle.nextToken()){
-      if(handle.is("#")){
-        if(handle.content.charAt(handle.position + 1) == "{"){
+      if(handle.is('#')){
+        if(handle.content.charAt(handle.position + 1) == '{'){
           handle.remove();
-          handle.insert("$");
+          handle.insert('$');
         }
 
         handle.increment();
-      }else{
-        if(handle.is("\"") && isNotEscaped(handle, "\"")){
+      }else if(handle.is('\'')){
+        handle.insert('\\');
+        handle.increment();
+        handle.increment('\'');
+      }else if(handle.is('"')){
+        if(isNotEscaped(handle, '"')){
           break;
+        }else{
+          handle.position -= 1;
+          handle.remove('\\');
+          handle.increment();
         }
-
+      }else{
         handle.increment();
       }
     }
 
-    if(handle.at("\"\"\"")){
-      handle.remove("\"\"\"");
-      handle.insert("\"");
+    if(handle.at('"""')){
+      handle.remove('"""');
+      handle.insert('\'');
+    }else{
+      handle.remove('"');
+      handle.insert('\'');
     }
 
     handle.increment();
   }
 
   private function isNotEscaped(handle : StringHandle, content : String) : Bool return{
-    return (handle.content.charAt(handle.position -1) != "\\" ||
-           (handle.content.charAt(handle.position -1) == "\\" && handle.content.charAt(handle.position -2) == "\\"));
+    return (handle.content.charAt(handle.position -1) != '\\' ||
+           (handle.content.charAt(handle.position -1) == '\\' && handle.content.charAt(handle.position -2) == '\\'));
   }
 
   private function consumeEndOfLine(handle : StringHandle, toInsert : String) : Bool return{
     var pos = handle.position;
     var insert = true;
-    var isComment = handle.is("#");
+    var isComment = handle.is('#');
 
     handle.prevTokenLine();
 
-    if(handle.isOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":"]) && onlyWhitespace(handle.content, handle.position + 1, pos)){
-      if(handle.is("-") || handle.is("+")){
+    if(handle.isOne(['=', ';', '+', '-', '*', '.', '/', ',' , '|', '&', '{', '(', '[', '^', '%', '~', '\n', '}', '?', ':']) && onlyWhitespace(handle.content, handle.position + 1, pos)){
+      if(handle.is('-') || handle.is('+')){
         if(handle.content.charAt(handle.position - 1) != handle.current){
           insert = false;
         }
@@ -572,14 +586,14 @@ class Compiler{
     handle.position = pos;
 
     if(!isComment){
-      handle.increment("\n");
+      handle.increment('\n');
       handle.nextToken();
 
-      if(handle.isOne(["?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "~"]) && onlyWhitespace(handle.content, pos + 1, handle.position - 1)){
+      if(handle.isOne(['?', ':', '=', '+', '-', '*', '.', '/', ',' , '|', '&', ')', ']', '^', '%', '~']) && onlyWhitespace(handle.content, pos + 1, handle.position - 1)){
         insert = false;
       }
 
-      handle.prev("\n");
+      handle.prev('\n');
     }
 
     if(insert && !handle.atStart()){
@@ -598,7 +612,7 @@ class Compiler{
 
   private function onlyWhitespace(content : String, from : Int, to : Int) return{
     var sub = content.substr(from, to - from);
-    var regex = new EReg("^\\s*$", "");
+    var regex = new EReg('^\\s*$', '');
     return regex.match(sub);
   }
 }

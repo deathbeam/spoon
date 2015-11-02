@@ -19,7 +19,7 @@ class FolderReader{
       var folders : Array<String> = FileSystem.readDirectory(rootFolder);
 
       for(file in folders.iterator()){
-        var path : String = rootFolder + "/" + file;
+        var path : String = rootFolder + '/' + file;
 
         if(FileSystem.isDirectory(path)){
           var data : Array<String> = getFiles(path);
@@ -43,14 +43,14 @@ class FolderReader{
   * @param ?content File's content
    **/
   public static function createFile(path : String, ?content : String) : Void return{
-    var parts : Array<String> = path.split("/");
+    var parts : Array<String> = path.split('/');
     var fileName : String = parts.pop();
 
     // Create all directories necessaries
-    createDirectory(parts.join("/"));
+    createDirectory(parts.join('/'));
 
     if(content == null){
-      content = "";
+      content = '';
     }
 
     File.saveContent(path, content);
@@ -61,11 +61,11 @@ class FolderReader{
   * @param path Path to the given directory
    **/
   public static function createDirectory(path : String) : Void return{
-    var parts : Array<String> = path.split("/");
+    var parts : Array<String> = path.split('/');
     var done : String = null;
 
     for(part in parts.iterator()){
-      done = done == null ? part : done + "/" + part;
+      done = done == null ? part : done + '/' + part;
 
       if(!FileSystem.exists(done)){
         FileSystem.createDirectory(done);
@@ -80,7 +80,7 @@ class FolderReader{
    **/
   public static function copyFileSystem(source : String, destination : String) : Void return{
     try{
-      if(source.endsWith("/")){
+      if(source.endsWith('/')){
         source = source.substr(0, -1);
       }
 
@@ -91,16 +91,16 @@ class FolderReader{
         var files : Array<String> = FileSystem.readDirectory(source);
 
         for(file in files.iterator()){
-          if(FileSystem.isDirectory(source + "/" + file)){
+          if(FileSystem.isDirectory(source + '/' + file)){
             createDirectory(destination);
           }
 
           // Recursive call
-          copyFileSystem(source + "/" + file, destination + "/" + file);
+          copyFileSystem(source + '/' + file, destination + '/' + file);
         }
       }
     }catch(ex: String){
-      throw("Unable to copy " + source + " to " + destination + " : " + ex);
+      throw('Unable to copy ' + source + ' to ' + destination + ' : ' + ex);
     }
   }
 }

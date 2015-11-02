@@ -23,7 +23,7 @@ class @
 
   # Create the constructor method so we can make instances
   def new()
-    trace("Instance " + index + " created")
+    trace("Instance #{index} created")
     index += 1
   end
 

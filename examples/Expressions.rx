@@ -18,9 +18,9 @@ class @
 
     # Simple example on how to use `if` as expression
     def consider = if(enabled)
-      "Your name is " + name(false)
+      "Your name is #{name(false)}"
     else
-      "Security issue, response is " + name(true)
+      "Security issue, response is #{name(true)}"
     end
 
     trace(consider)

@@ -8,6 +8,6 @@ class Error{
   * @param error Error message to be sent
    **/
   public static function create(errorType: String, error: String) return{
-    throw("{\"type\": \"" + errorType + "\",\"error\": \"" + error + "\"}");
+    throw('{"type": "' + errorType + '","error": "' + error + '"}');
   }
 }

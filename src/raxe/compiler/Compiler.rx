@@ -517,7 +517,10 @@ class @
   private def consumeStrings(handle : StringHandle)
     if(handle.at("\"\"\""))
       handle.remove("\"\"\"")
-      handle.insert("\"")
+      handle.insert("'")
+    else
+      handle.remove("\"")
+      handle.insert("'")
     end
 
     handle.increment()
@@ -530,18 +533,29 @@ class @
         end
 
         handle.increment()
-      else
-        if(handle.is("\"") && isNotEscaped(handle, "\""))
+      elsif(handle.is("'"))
+        handle.insert("\\")
+        handle.increment()
+        handle.increment("'")
+      elsif(handle.is("\""))
+        if(isNotEscaped(handle, "\""))
           break
+        else
+          handle.position -= 1
+          handle.remove("\\")
+          handle.increment()
         end
-
+      else
         handle.increment()
       end
     end
 
     if(handle.at("\"\"\""))
       handle.remove("\"\"\"")
-      handle.insert("\"")
+      handle.insert("'")
+    else
+      handle.remove("\"")
+      handle.insert("'")
     end
 
     handle.increment()

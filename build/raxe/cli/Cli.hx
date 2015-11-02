@@ -14,7 +14,7 @@ import raxe.script.RaxeScript;
 * Raxe 0.0.1 - https://raxe-lang.org
  **/
 class Cli extends CommandLine{
-  inline public static var ERROR_TYPE = "compile_error";
+  inline public static var ERROR_TYPE = 'compile_error';
 
   /** 
   * Source directory or file
@@ -60,12 +60,12 @@ class Cli extends CommandLine{
   * Execute Raxefile task in this directory (default task is "default")
   * @alias f
    **/
-  public function file(task : String = "default") return{
-    if(FileSystem.exists("Raxefile")){
-      var rf = new RaxeFile("Raxefile");
+  public function file(task : String = 'default') return{
+    if(FileSystem.exists('Raxefile')){
+      var rf = new RaxeFile('Raxefile');
       rf.run(task);
     }else{
-      Sys.println("Raxefile not found in this directory.");
+      Sys.println('Raxefile not found in this directory.');
       help();
     }
 
@@ -100,7 +100,7 @@ class Cli extends CommandLine{
 
   private function compile() return{
     if(!FileSystem.exists(src)){
-      Error.create(ERROR_TYPE, "Source not found");
+      Error.create(ERROR_TYPE, 'Source not found');
     }
 
     var compiler = new CompilerCommand(src, dest, all, verbose);
@@ -108,7 +108,7 @@ class Cli extends CommandLine{
     while(true){
       try{
         if(compiler.compile()){
-          if(compiler.response != null && compiler.response != ""){
+          if(compiler.response != null && compiler.response != ''){
             Sys.println(compiler.response);
           }
         }

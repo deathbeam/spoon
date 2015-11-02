@@ -43,7 +43,7 @@ class CompilerCommand{
         printVerbose(src, dest);
         var result = compileFile(dest, src);
 
-        if(dest == null || dest == ""){
+        if(dest == null || dest == ''){
             this.response = result;
         }else{
             FolderReader.createFile(dest, result);
@@ -60,13 +60,13 @@ class CompilerCommand{
       var hasCompile : Bool = false;
 
       // To have the same pattern between src and dest (avoid src/ and dist instead of dist/)
-      if(src.endsWith("/")){
+      if(src.endsWith('/')){
         src = src.substr(0, src.length - 1);
       }
 
-      if(dest == null || dest == ""){
+      if(dest == null || dest == ''){
         dest = src;
-      }else if(dest.endsWith("/")){
+      }else if(dest.endsWith('/')){
         dest = dest.substr(0, dest.length - 1);
       }
 
@@ -119,7 +119,7 @@ class CompilerCommand{
    **/
   private function printVerbose(src : String, dest : String) return{
     if(verbose){
-      Sys.println("Compiling " + src + "\n" + "       to " + dest);
+      Sys.println('Compiling ' + src + '\n' + '       to ' + dest);
     }
   }
 
@@ -141,7 +141,7 @@ class CompilerCommand{
   * @return if it is raxe file or not
    **/
   private function isRaxeFile(filename: String): Bool return{
-    return filename.endsWith(".rx");
+    return filename.endsWith('.rx');
   }
 
   /** 
@@ -161,10 +161,10 @@ class CompilerCommand{
   * @return destination file path
    **/
   private function getDestinationFile(file: String, src: String, dest: String) : String return{
-    var parts : Array<String> = file.split("/");
+    var parts : Array<String> = file.split('/');
     var fileName : String = parts.pop();
 
-    var newPath = parts.join("/") + "/" + fileName.replace(".rx", ".hx");
+    var newPath = parts.join('/') + '/' + fileName.replace('.rx', '.hx');
 
     if(dest != null){
       newPath = newPath.replace(src, dest);

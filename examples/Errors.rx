@@ -5,7 +5,7 @@ class @
     try
       throw("Error")
     catch(msg : String)
-      trace("Error occurred: " + msg)
+      trace("Error occurred: #{msg}")
     end
   end
 end

@@ -23,7 +23,7 @@ class @
     "\n", ";",
 
     # Whitespace skip
-    "#", "@new", "@@", "@", "\"", "'", "$", "/",
+    "\#", "@new", "@@", "@", "\"", "'", "$", "/",
 
     # Types
     "::", "class", "enum", "abstract", "interface",
@@ -139,7 +139,7 @@ class @
       handle.insert("~/")
 
       while(handle.nextToken())
-        if(handle.is("/") && isNotEscaped(handle, "/"))
+        if(handle.is("/") && isNotEscaped(handle))
           handle.increment()
           break
         end
@@ -331,7 +331,7 @@ class @
               end
 
               break
-            elsif(handle.isOne(["\n", "#"]))
+            elsif(handle.isOne(["\n", "\#"]))
               if(implicit)
                 handle.insert(" return{")
               else
@@ -383,7 +383,7 @@ class @
         handle.increment()
       end
     # Process comments and newlines. Also, insert semicolons when needed
-    elsif(handle.is("\n") || handle.is("#"))
+    elsif(handle.is("\n") || handle.is("\#"))
       consumeEndOfLine(handle, ";")
     # Skip this token
     else
@@ -424,7 +424,7 @@ class @
     def curLevel = opened
 
     while(handle.nextToken())
-      if(curLevel == opened && (handle.is("\n") || handle.is("#")))
+      if(curLevel == opened && (handle.is("\n") || handle.is("\#")))
         if(consumeEndOfLine(handle, "){"))
           break
         end
@@ -470,8 +470,8 @@ class @
     def position = handle.position
 
     while(handle.nextTokenLine())
-      if(handle.is("#"))
-        comment += "#"
+      if(handle.is("\#"))
+        comment += "\#"
         handle.increment()
       else
         handle.increment()
@@ -480,7 +480,7 @@ class @
     end
 
     handle.position = position
-    handle.current = "#"
+    handle.current = "\#"
 
     if(comment.length > 1)
       handle.remove(comment)
@@ -493,13 +493,13 @@ class @
           handle.insert(" **/")
           handle.increment()
           break
-        elsif(handle.is("#"))
+        elsif(handle.is("\#"))
           position = handle.position
           handle.prevToken()
 
           if(handle.is("\n") && onlyWhitespace(handle.content, position + 1, handle.position - 1))
             handle.position = position
-            handle.remove("#")
+            handle.remove("\#")
             handle.insert("*")
           else
             handle.position = position
@@ -511,10 +511,10 @@ class @
         end
       end
     else
-      if(handle.at("#elsif"))
-        handle.remove("#elsif")
-        handle.insert("#elseif")
-      elsif(!handle.at("#if") && !handle.at("#else") && !handle.at("#end"))
+      if(handle.at("\#elsif"))
+        handle.remove("\#elsif")
+        handle.insert("\#elseif")
+      elsif(!handle.at("\#if") && !handle.at("\#else") && !handle.at("\#end"))
         handle.remove(comment)
         handle.insert("//")
       end
@@ -538,19 +538,26 @@ class @
     handle.increment()
 
     while(handle.nextToken())
-      if(handle.is("#"))
-        if(handle.content.charAt(handle.position + 1) == "{")
+      if(handle.is("\#"))
+        if(isNotEscaped(handle))
           handle.remove()
           handle.insert("$")
+        else
+          handle.position -= 1
+          handle.remove("\\")
         end
 
+        handle.increment()
+      elsif(handle.is("$"))
+        handle.insert("$")
+        handle.increment()
         handle.increment()
       elsif(handle.is("'"))
         handle.insert("\\")
         handle.increment()
         handle.increment("'")
       elsif(handle.is("\""))
-        if(isNotEscaped(handle, "\""))
+        if(isNotEscaped(handle))
           break
         else
           handle.position -= 1
@@ -573,7 +580,7 @@ class @
     handle.increment()
   end
 
-  private def isNotEscaped(handle : StringHandle, content : String) : Bool
+  private def isNotEscaped(handle : StringHandle) : Bool
     return (handle.content.charAt(handle.position -1) != "\\" ||
            (handle.content.charAt(handle.position -1) == "\\" && handle.content.charAt(handle.position -2) == "\\"))
   end
@@ -581,7 +588,7 @@ class @
   private def consumeEndOfLine(handle : StringHandle, toInsert : String) : Bool
     def pos = handle.position
     def insert = true
-    def isComment = handle.is("#")
+    def isComment = handle.is("\#")
 
     handle.prevTokenLine()
 

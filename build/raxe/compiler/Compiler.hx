@@ -23,7 +23,7 @@ class Compiler{
     '\n', ';',
 
     // Whitespace skip
-    '#', '@new', '@@', '@', '"', '\'', '$', '/',
+    '#', '@new', '@@', '@', '"', '\'', '$$', '/',
 
     // Types
     '::', 'class', 'enum', 'abstract', 'interface',
@@ -114,7 +114,7 @@ class Compiler{
    **/
   private function process(handle : StringHandle) : StringHandle return{
     // Skip compiler defines and annotations
-    if(handle.is('$') && handle.at('$[')){
+    if(handle.is('$$') && handle.at('$$[')){
       handle.remove();
       handle.insert('@');
       handle.increment();
@@ -139,7 +139,7 @@ class Compiler{
       handle.insert('~/');
 
       while(handle.nextToken()){
-        if(handle.is('/') && isNotEscaped(handle, '/')){
+        if(handle.is('/') && isNotEscaped(handle)){
           handle.increment();
           break;
         }
@@ -539,18 +539,25 @@ class Compiler{
 
     while(handle.nextToken()){
       if(handle.is('#')){
-        if(handle.content.charAt(handle.position + 1) == '{'){
+        if(isNotEscaped(handle)){
           handle.remove();
-          handle.insert('$');
+          handle.insert('$$');
+        }else{
+          handle.position -= 1;
+          handle.remove('\\');
         }
 
+        handle.increment();
+      }else if(handle.is('$$')){
+        handle.insert('$$');
+        handle.increment();
         handle.increment();
       }else if(handle.is('\'')){
         handle.insert('\\');
         handle.increment();
         handle.increment('\'');
       }else if(handle.is('"')){
-        if(isNotEscaped(handle, '"')){
+        if(isNotEscaped(handle)){
           break;
         }else{
           handle.position -= 1;
@@ -573,7 +580,7 @@ class Compiler{
     handle.increment();
   }
 
-  private function isNotEscaped(handle : StringHandle, content : String) : Bool return{
+  private function isNotEscaped(handle : StringHandle) : Bool return{
     return (handle.content.charAt(handle.position -1) != '\\' ||
            (handle.content.charAt(handle.position -1) == '\\' && handle.content.charAt(handle.position -2) == '\\'));
   }
@@ -624,7 +631,7 @@ class Compiler{
 
   private function onlyWhitespace(content : String, from : Int, to : Int) return{
     var sub = content.substr(from, to - from);
-    var regex = new EReg('^\\s*$', '');
+    var regex = new EReg('^\\s*$$', '');
     return regex.match(sub);
   }
 }

@@ -8,8 +8,8 @@ import openfl.events.KeyboardEvent
 import openfl.ui.Keyboard
 import openfl.Assets
 
-# Extend self by OpenFL Sprite
-class self < Sprite
+# Extend @ by OpenFL Sprite
+class @ < Sprite
   def logo : Sprite
   def movingDown : Bool
   def movingLeft : Bool

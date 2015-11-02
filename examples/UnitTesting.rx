@@ -3,7 +3,7 @@
 import haxe.unit.TestCase
 import haxe.unit.TestRunner
 
-class self
+class @
   def @main()
     def r = new TestRunner()
     r.add(new MyTests())

@@ -1,16 +1,16 @@
 # vim: set ft=rb:
 
-class self
-  # You can use self world to reference current class name
+class @
+  # You can use @ world to reference current class name
   # Below we will create simple singleton
-  private def @instance = new self()
+  private def @instance = new @@()
   def @getInstance() do instance
 
   # Simple static counter
   private def @index = 0
 
   def @main()
-    # Get instance of self
+    # Get instance of @
     def myInstance = getInstance()
 
     # Type class name directly
@@ -28,7 +28,7 @@ class self
   end
 
   def instanceFunction()
-    trace(this) # print this instance to console
-    trace(self) # print this module to console
+    trace(@) # print this instance to console
+    trace(@@) # print this module to console
   end
 end

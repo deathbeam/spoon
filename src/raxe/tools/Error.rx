@@ -1,7 +1,7 @@
 #############################################################################
 Error handling
 #############################################################################
-class self
+class @
   #############################################################################
   # Raise a new error formatted into json to be able to parse it everywhere
   # @param errorType Type of error to be thrown

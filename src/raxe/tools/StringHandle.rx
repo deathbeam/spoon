@@ -1,4 +1,4 @@
-class self
+class @
   def content : String
   def position : Int
   def current : String
@@ -11,15 +11,15 @@ class self
   def is(content : String) : Bool do current == content
 
   def new(content : String, ?tokens : Array<String>, position : Int = 0)
-    this.content = content
+    @content = content
 
     if(tokens == empty)
-      this.tokens = [ "\n" ]
+      @tokens = [ "\n" ]
     else
-      this.tokens = tokens
+      @tokens = tokens
     end
 
-    this.position = position
+    @position = position
   end
 
   def reset()
@@ -31,7 +31,7 @@ class self
     def divided = divide()
     def regex = new EReg("[^\\w][ \t]*" + content, "")
 
-    def sub = this.content.substr(position)
+    def sub = @content.substr(position)
 
     def count = 1
 
@@ -67,7 +67,7 @@ class self
       return is(content)
     end
 
-    def sub = this.content.substr(
+    def sub = @content.substr(
       nearStart(1) ? position : position - 1,
       nearEnd(content.length + 1) ? content.length : content.length + 1)
 
@@ -81,7 +81,7 @@ class self
       return is(content)
     end
 
-    def sub = this.content.substr(
+    def sub = @content.substr(
       0,
       nearEnd(content.length + 2) ? content.length : content.length + 2)
 
@@ -99,7 +99,7 @@ class self
       return safeisStart(content)
     end
 
-    def sub = this.content.substr(
+    def sub = @content.substr(
       nearStart(1) ? position : position - 1,
       content.length + 2)
 
@@ -125,7 +125,7 @@ class self
       return false
     end
 
-    def newPos = this.content.substr(0, position).lastIndexOf(content)
+    def newPos = @content.substr(0, position).lastIndexOf(content)
 
     if(newPos == -1)
       return false
@@ -145,7 +145,7 @@ class self
       return false
     end
 
-    def newPos = this.content.indexOf(content, position)
+    def newPos = @content.indexOf(content, position)
 
     if(newPos == -1)
       return false
@@ -161,7 +161,7 @@ class self
     def currentToken = ""
 
     for(token in tokens)
-      def pos = this.content.substr(0, position).lastIndexOf(token)
+      def pos = @content.substr(0, position).lastIndexOf(token)
 
       if(pos != -1 && (pos > newPos || newPos == position + 1))
         newPos = pos
@@ -183,7 +183,7 @@ class self
     def currentToken = ""
 
     for(token in tokens)
-      def pos = this.content.substr(0, position).lastIndexOf(token)
+      def pos = @content.substr(0, position).lastIndexOf(token)
 
       if(pos != -1 && (pos > newPos || newPos == position + 1))
         newPos = pos
@@ -191,7 +191,7 @@ class self
       end
     end
 
-    def pos = this.content.substr(0, position).lastIndexOf("\n")
+    def pos = @content.substr(0, position).lastIndexOf("\n")
 
     if(pos != -1 && (pos > newPos || newPos == position + 1))
       newPos = pos
@@ -212,7 +212,7 @@ class self
     def currentToken = ""
 
     for(token in tokens)
-      def pos = this.content.indexOf(token, position)
+      def pos = @content.indexOf(token, position)
 
       if(pos != -1 && (pos < newPos || newPos == -1))
         newPos = pos
@@ -220,7 +220,7 @@ class self
       end
     end
 
-    def pos = this.content.indexOf("\n", position)
+    def pos = @content.indexOf("\n", position)
 
     if(pos != -1 && (pos < newPos || newPos == -1))
       newPos = pos
@@ -241,7 +241,7 @@ class self
     def currentToken = ""
 
     for(token in tokens)
-      def pos = this.content.indexOf(token, position)
+      def pos = @content.indexOf(token, position)
 
       if(pos != -1 && (pos < newPos || newPos == -1))
         newPos = pos
@@ -269,7 +269,7 @@ class self
 
     def newPos = position + content.length
 
-    if(newPos > this.content.length)
+    if(newPos > @content.length)
       return this
     end
 
@@ -315,7 +315,7 @@ class self
       divided = divide(1)
     end
 
-    this.content = divided.left + content + divided.right
+    @content = divided.left + content + divided.right
     current = content
     return this
   end
@@ -336,7 +336,7 @@ class self
       return this
     end
 
-    this.content = divided.left + divided.right.substr(length)
+    @content = divided.left + divided.right.substr(length)
     current = content
     return this
   end

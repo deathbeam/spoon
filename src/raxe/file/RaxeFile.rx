@@ -2,7 +2,7 @@ import raxe.script.RaxeScript
 import sys.io.File
 import sys.FileSystem
 
-class self
+class @
   def script : RaxeScript
 
   def new(path : String)

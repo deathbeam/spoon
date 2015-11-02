@@ -6,7 +6,7 @@ import raxe.tools.StringHandle
 ###############################################################################
 # The most important Raxe class, which compiles Raxe source to Haxe source
 ###############################################################################
-class self
+class @
   private def name : String = ""
   private def currentType : String = ""
   private def currentExpression : String = ""
@@ -23,7 +23,7 @@ class self
     "\n", ";",
 
     # Whitespace skip
-    "#", "@", "\"", "$",
+    "#", "@@", "@", "\"", "$",
 
     # Types
     "::", "class", "enum", "abstract", "interface",
@@ -32,7 +32,7 @@ class self
     "public", "private",
 
     # Special keywords
-    "import", "def", "self", "new", "end", "do", "typedef", "try", "catch", "empty",
+    "import", "def", "new", "end", "do", "typedef", "try", "catch", "empty",
 
     # Brackets
     "{", "}", "(", ")", "[", "]",
@@ -49,7 +49,7 @@ class self
   # @param script Specify if it is RaxeScript or Raxe compiler (default false)
   #############################################################################
   def new(script : Bool = false)
-    this.script = script
+    @script = script
   end
 
   #if !js
@@ -124,9 +124,25 @@ class self
       if(handle.is("\n"))
         handle.increment()
       end
+    elsif(handle.is("@@"))
+      if(handle.safeis("@@"))
+        handle.remove()
+        handle.insert(name)
+      else
+        handle.remove()
+        handle.insert(name + ".")
+      end
+
+      handle.increment()
     elsif(handle.is("@"))
-      handle.remove()
-      handle.insert("this.")
+      if(handle.safeis("@"))
+        handle.remove()
+        handle.insert("this")
+      else
+        handle.remove()
+        handle.insert("this.")
+      end
+
       handle.increment()
     # Step over things in strings (" ") and process multiline strings
     elsif(handle.is("\""))
@@ -144,11 +160,6 @@ class self
     elsif(handle.safeis("empty"))
       handle.remove()
       handle.insert("null")
-      handle.increment()
-    # Replace self with current module name
-    elsif(handle.safeis("self"))
-      handle.remove()
-      handle.insert(name)
       handle.increment()
     # Structures and arrays
     elsif(handle.is("{") || handle.is("["))
@@ -338,7 +349,7 @@ class self
       handle.increment()
 
       while(handle.nextToken())
-        if(handle.is("self"))
+        if(handle.is("@"))
           handle.remove()
           handle.insert(name)
         elsif(handle.is("<"))
@@ -369,7 +380,7 @@ class self
     handle.nextToken()
 
     if(safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
-        safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "import") &&
+        safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "import") &&
         safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch") &&
         safeCheck(handle, "private") && safeCheck(handle, "public") && safeCheck(handle, "empty") && safeCheck(handle, "switch") &&
         safeCheck(handle, "when"))

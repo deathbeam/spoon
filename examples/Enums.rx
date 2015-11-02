@@ -6,7 +6,7 @@ enum Schema
   TArray(elem : Schema)
 end
 
-class self
+class @
   def @main()
     validate([1,2,3], TArray(TInt))
   end

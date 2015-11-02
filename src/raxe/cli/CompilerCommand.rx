@@ -3,7 +3,7 @@ import raxe.tools.Error
 import raxe.tools.FolderReader
 import raxe.compiler.Compiler
 
-class self
+class @
   def response : String
   private def files = new Map<String, Int>()
   private def src : String
@@ -18,10 +18,10 @@ class self
   # @param verbose If true, display verbose info
   #############################################################################
   def new(src: String, dest: String, all : Bool, verbose : Bool)
-    this.src = src
-    this.dest = dest
-    this.all = all
-    this.verbose = verbose
+    @src = src
+    @dest = dest
+    @all = all
+    @verbose = verbose
   end
 
   #############################################################################
@@ -29,14 +29,14 @@ class self
   # @return transpilation has been done or not
   #############################################################################
   def compile() : Bool
-    def src = this.src
-    def dest = this.dest
+    def src = @src
+    def dest = @dest
     def dir = src
 
     # Compile one file
-    if(!FileSystem.isDirectory(this.src))
-      def oldFileSize : Int = this.files.get(this.src)
-      def currentSize : Int = FileSystem.stat(this.src).size
+    if(!FileSystem.isDirectory(@src))
+      def oldFileSize : Int = @files.get(@src)
+      def currentSize : Int = FileSystem.stat(@src).size
 
       if(oldFileSize != currentSize)
         src = getSourceFile(src)
@@ -44,12 +44,12 @@ class self
         def result = compileFile(dest, src)
 
         if(dest == null || dest == "")
-            this.response = result
+            @response = result
         else
             FolderReader.createFile(dest, result)
         end
 
-        this.files.set(this.src, currentSize)
+        @files.set(@src, currentSize)
         return true
       end
 
@@ -73,11 +73,11 @@ class self
       def currentFiles = new Map<String, Int>()
 
       for(file in files.iterator())
-        def oldFileSize : Int = this.files.get(file)
+        def oldFileSize : Int = @files.get(file)
         def currentSize : Int = FileSystem.stat(file).size
 
         if(oldFileSize != currentSize && (all || isRaxeFile(file)))
-          def newPath = this.getDestinationFile(file, src, dest)
+          def newPath = @getDestinationFile(file, src, dest)
 
           # If it's a raxe file, we compile it
           if(isRaxeFile(file))
@@ -85,24 +85,24 @@ class self
             printVerbose(file, newPath)
             def result = compileFile(dir, file)
             FolderReader.createFile(newPath, result)
-            this.files.set(file, currentSize)
+            @files.set(file, currentSize)
 
           # If it's not a raxe file, we just copy/past it to the new folder
           else
               FolderReader.copyFileSystem(file, newPath)
           end
 
-          this.files.set(file, currentSize)
+          @files.set(file, currentSize)
           hasCompile = true
         end
 
         currentFiles.set(file, currentSize)
       end
 
-      for(key in this.files.keys())
+      for(key in @files.keys())
         if(currentFiles.get(key) == null)
-          this.files.remove(key)
-          FileSystem.deleteFile(this.getDestinationFile(key, src, dest))
+          @files.remove(key)
+          FileSystem.deleteFile(@getDestinationFile(key, src, dest))
         end
       end
 

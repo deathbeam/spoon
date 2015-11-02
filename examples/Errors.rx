@@ -1,6 +1,6 @@
 # vim: set ft=rb:
 
-class self
+class @
   def @main()
     try
       throw("Error")

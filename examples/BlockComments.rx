@@ -6,7 +6,7 @@ You can plase as much text here as you want, you just must
 terminate block comment with same number of hypnens as you
 initialized it.
 ###
-class self
+class @
   #####
   If you want to use nested block comments, you must initialize
   block comment with different number of hypnens as you use in

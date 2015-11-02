@@ -1,6 +1,6 @@
 # vim: set ft=rb:
 
-class self
+class @
   ###
   Anonymous array declaration is not dynamic by default.
   You can have array of only one type.

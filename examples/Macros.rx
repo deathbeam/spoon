@@ -2,7 +2,7 @@
 
 import haxe.macro.Expr
 
-class self
+class @
   def @main()
     def x = 0
     def b = add(x++)

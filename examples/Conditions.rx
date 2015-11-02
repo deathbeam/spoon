@@ -1,6 +1,6 @@
 # vim: set ft=rb:
 
-class self
+class @
   def @main()
     def myvar : String = empty
     def myarray = new Array<String>()

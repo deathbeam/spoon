@@ -1,6 +1,6 @@
 # vim: set ft=rb:
 
-class self
+class @
   ###
   In Raxe, everything is an expression. You can do
   really crazy stuff, but do not get too crazy.

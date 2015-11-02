@@ -23,7 +23,7 @@ class Compiler{
     "\n", ";",
 
     // Whitespace skip
-    "#", "@", "\"", "$",
+    "#", "@@", "@", "\"", "$",
 
     // Types
     "::", "class", "enum", "abstract", "interface",
@@ -32,7 +32,7 @@ class Compiler{
     "public", "private",
 
     // Special keywords
-    "import", "def", "self", "new", "end", "do", "typedef", "try", "catch", "empty",
+    "import", "def", "new", "end", "do", "typedef", "try", "catch", "empty",
 
     // Brackets
     "{", "}", "(", ")", "[", "]",
@@ -124,9 +124,25 @@ class Compiler{
       if(handle.is("\n")){
         handle.increment();
       }
+    }else if(handle.is("@@")){
+      if(handle.safeis("@@")){
+        handle.remove();
+        handle.insert(name);
+      }else{
+        handle.remove();
+        handle.insert(name + ".");
+      }
+
+      handle.increment();
     }else if(handle.is("@")){
-      handle.remove();
-      handle.insert("this.");
+      if(handle.safeis("@")){
+        handle.remove();
+        handle.insert("this");
+      }else{
+        handle.remove();
+        handle.insert("this.");
+      }
+
       handle.increment();
     // Step over things in strings (" ") and process multiline strings
     }else if(handle.is("\"")){
@@ -144,11 +160,6 @@ class Compiler{
     }else if(handle.safeis("empty")){
       handle.remove();
       handle.insert("null");
-      handle.increment();
-    // Replace self with current module name
-    }else if(handle.safeis("self")){
-      handle.remove();
-      handle.insert(name);
       handle.increment();
     // Structures and arrays
     }else if(handle.is("{") || handle.is("[")){
@@ -338,7 +349,7 @@ class Compiler{
       handle.increment();
 
       while(handle.nextToken()){
-        if(handle.is("self")){
+        if(handle.is("@")){
           handle.remove();
           handle.insert(name);
         }else if(handle.is("<")){
@@ -369,7 +380,7 @@ class Compiler{
     handle.nextToken();
 
     if(safeCheck(handle, "def") && safeCheck(handle, "if") && safeCheck(handle, "elsif") && safeCheck(handle, "end")  &&
-        safeCheck(handle, "self")  && safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "import") &&
+        safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "import") &&
         safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch") &&
         safeCheck(handle, "private") && safeCheck(handle, "public") && safeCheck(handle, "empty") && safeCheck(handle, "switch") &&
         safeCheck(handle, "when")){

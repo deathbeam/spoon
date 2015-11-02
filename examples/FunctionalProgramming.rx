@@ -1,6 +1,6 @@
 # vim: set ft=rb:
 
-class self
+class @
   # A definition of factorial, using a local, tail recursive function
   def @factorial(n: Int): Int
     def go(n: Int, acc: Int): Int

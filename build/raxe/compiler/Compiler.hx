@@ -23,7 +23,7 @@ class Compiler{
     '\n', ';',
 
     // Whitespace skip
-    '#', '@new', '@@', '@', '"', '\'', '$',
+    '#', '@new', '@@', '@', '"', '\'', '$', '/',
 
     // Types
     '::', 'class', 'enum', 'abstract', 'interface',
@@ -134,6 +134,18 @@ class Compiler{
       }
 
       handle.increment();
+    }else if(handle.is('/')){
+      handle.remove();
+      handle.insert('~/');
+
+      while(handle.nextToken()){
+        if(handle.is('/') && isNotEscaped(handle, '/')){
+          handle.increment();
+          break;
+        }
+
+        handle.increment();
+      }
     }else if(handle.is('@')){
       if(handle.safeis('@')){
         handle.remove();

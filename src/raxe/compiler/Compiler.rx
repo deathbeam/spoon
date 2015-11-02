@@ -23,7 +23,7 @@ class @
     "\n", ";",
 
     # Whitespace skip
-    "#", "@new", "@@", "@", "\"", "'", "$",
+    "#", "@new", "@@", "@", "\"", "'", "$", "/",
 
     # Types
     "::", "class", "enum", "abstract", "interface",
@@ -134,6 +134,18 @@ class @
       end
 
       handle.increment()
+    elsif(handle.is("/"))
+      handle.remove()
+      handle.insert("~/")
+
+      while(handle.nextToken())
+        if(handle.is("/") && isNotEscaped(handle, "/"))
+          handle.increment()
+          break
+        end
+
+        handle.increment()
+      end
     elsif(handle.is("@"))
       if(handle.safeis("@"))
         handle.remove()

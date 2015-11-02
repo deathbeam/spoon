@@ -23,7 +23,7 @@ class Compiler{
     "\n", ";",
 
     // Whitespace skip
-    "#", "@@", "@", "\"", "$",
+    "#", "@new", "@@", "@", "\"", "$",
 
     // Types
     "::", "class", "enum", "abstract", "interface",
@@ -278,7 +278,12 @@ class Compiler{
         position = handle.position;
         safeNextToken(handle);
 
-        if(handle.is("@")){
+        if(handle.is("@new")){
+          handle.remove();
+          handle.insert("static var __new = (function(){_new(); return true;})(); static  _new");
+          handle.increment();
+          position = handle.position - 5;
+        }else if(handle.is("@")){
           handle.remove();
           handle.position = position;
           handle.insert("static ");

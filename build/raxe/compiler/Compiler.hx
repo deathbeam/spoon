@@ -23,7 +23,7 @@ class Compiler{
     "\n", ";",
 
     // Whitespace skip
-    "#", "@new", "@@", "@", "\"", "$",
+    "#", "@new", "@@", "@", "\"", "'", "$",
 
     // Types
     "::", "class", "enum", "abstract", "interface",
@@ -531,10 +531,7 @@ class Compiler{
 
         handle.increment();
       }else{
-        if(handle.is("\"") &&
-            (handle.content.charAt(handle.position -1) != "\\" ||
-            (handle.content.charAt(handle.position -1) == "\\" &&
-            handle.content.charAt(handle.position -2) == "\\"))){
+        if(handle.is("\"") && isNotEscaped(handle, "\"")){
           break;
         }
 
@@ -548,6 +545,11 @@ class Compiler{
     }
 
     handle.increment();
+  }
+
+  private function isNotEscaped(handle : StringHandle, content : String) : Bool return{
+    return (handle.content.charAt(handle.position -1) != "\\" ||
+           (handle.content.charAt(handle.position -1) == "\\" && handle.content.charAt(handle.position -2) == "\\"));
   }
 
   private function consumeEndOfLine(handle : StringHandle, toInsert : String) : Bool return{

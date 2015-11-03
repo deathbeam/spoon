@@ -43,7 +43,7 @@ import sys.FileSystem;
       Sys.println(msg);
     });
 
-    script.variables.set('sh', function(cmd : String, ?args : Array<String>) return{
+    script.variables.set('sh', function(cmd : String, ?args : Array<String> ) return{
       Sys.command(cmd, args);
     });
 

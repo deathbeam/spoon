@@ -2,7 +2,7 @@ class @
   def content : String
   def position : Int
   def current : String
-  def tokens : Array<String>
+  def tokens : Array@[String]
 
   def atStart() : Bool do position <= 0
   def atEnd() : Bool do position >= content.length
@@ -10,7 +10,7 @@ class @
   def nearEnd(tolerance : Int) : Bool do (position + tolerance) >= content.length
   def is(content : String) : Bool do current == content
 
-  def new(content : String, ?tokens : Array<String>, position : Int = 0)
+  def new(content : String, ?tokens : Array@[String], position : Int = 0)
     @content = content
 
     if(tokens == empty)
@@ -46,7 +46,7 @@ class @
     return regex.match(sub.substr(0, count))
   end
 
-  def isOne(content : Array<String>) : Bool
+  def isOne(content : Array@[String] ) : Bool
     def contains = false
 
     for(cnt in content)

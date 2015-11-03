@@ -46,7 +46,7 @@ package raxe.tools;using Lambda;using StringTools;@:tink class StringHandle{
     return regex.match(sub.substr(0, count));
   }
 
-  public function isOne(content : Array<String>) : Bool return{
+  public function isOne(content : Array<String> ) : Bool return{
     var contains = false;
 
     for(cnt in content){

@@ -26,7 +26,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     '#', '@new', '@@', '@', '"', '\'', '$$', '/',
 
     // Types
-    '::', 'class', 'enum', 'abstract', 'interface',
+    '::', 'class', 'enum', 'abstract', 'trait',
 
     // Modifiers
     'public', 'private',
@@ -321,32 +321,27 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
         handle.insert('function');
         consumeBrackets(handle, '(', ')');
 
-        if(currentType != 'interface'){
-          while(safeNextToken(handle)){
-            if(handle.is('do')){
-              handle.remove();
+        while(safeNextToken(handle)){
+          if(handle.is('do')){
+            handle.remove();
 
-              if(implicit){
-                handle.insert('return');
-              }
-
-              break;
-            }else if(handle.isOne(['\n', '#'])){
-              if(implicit){
-                handle.insert(' return{');
-              }else{
-                handle.insert('{');
-              }
-              handle.increment();
-              opened = opened + 1;
-              break;
-            }else{
-              handle.increment();
+            if(implicit){
+              handle.insert('return');
             }
+
+            break;
+          }else if(handle.isOne(['\n', '#'])){
+            if(implicit){
+              handle.insert(' return{');
+            }else{
+              handle.insert('{');
+            }
+            handle.increment();
+            opened = opened + 1;
+            break;
+          }else{
+            handle.increment();
           }
-        }else{
-          handle.insert(';');
-          handle.increment();
         }
       }else{
         handle.position = position;
@@ -359,12 +354,19 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       handle.insert('{');
       opened = opened + 1;
       handle.increment();
-    // [abstract] class/interface/enum
-    }else if (handle.safeis('class') || handle.safeis('interface') || handle.safeis('enum')){
+    // [abstract] class/trait/enum
+    }else if (handle.safeis('class') || handle.safeis('trait') || handle.safeis('enum')){
       currentType = handle.current;
       handle.insert('@:tink ');
       handle.increment();
-      handle.increment(currentType);
+
+      if(currentType == 'trait'){
+        handle.remove('trait');
+        handle.insert('interface');
+        handle.increment();
+      }else{
+        handle.increment(currentType);
+      }
 
       while(handle.nextToken()){
         if(handle.is('@')){

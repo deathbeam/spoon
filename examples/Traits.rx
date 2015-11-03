@@ -1,0 +1,23 @@
+# vim: set ft=rb:
+
+class @ :: Hello :: World
+  def @self = new @@()
+  def @main() do self
+
+  def new()
+    hello()
+    world()
+  end
+end
+
+trait Hello
+  def hello() : Void
+    Sys.print("Hello ")
+  end
+end
+
+trait World
+  def world() : Void
+    Sys.print("World\n")
+  end
+end

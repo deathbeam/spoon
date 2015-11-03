@@ -1,13 +1,7 @@
 # vim: set ft=rb:
 
-class @ :: Test
+class @
   def @main()
-    new @@().hello()
-  end
-end
-
-trait Test
-  def hello()
     trace("Hello World")
   end
 end

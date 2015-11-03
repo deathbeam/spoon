@@ -2,7 +2,7 @@ package raxe.file;using Lambda;using StringTools;import raxe.script.RaxeScript;
 import sys.io.File;
 import sys.FileSystem;
 
-class RaxeFile{
+@:tink class RaxeFile{
   public var script : RaxeScript;
 
   public function new(path : String){
@@ -16,6 +16,28 @@ class RaxeFile{
 
   public function createScript() : RaxeScript return{
     var script = new RaxeScript();
+
+    script.variables.set('import', function(thing : String) return{
+      var path = thing + '/Raxefile';
+
+      if(FileSystem.exists(path)){
+        return script.execute(script.parse(File.getContent(path)));
+      }
+
+      path = thing.replace('/', '.');
+
+      var clazz : Dynamic = Type.resolveClass(path);
+
+      if(clazz == null){
+        clazz = Type.resolveEnum(path);
+
+        if(clazz == null){
+          trace('Failed to resolve type ' + thing);
+        }
+      }
+
+      return clazz;
+    });
 
     script.variables.set('echo', function(msg : String) return{
       Sys.println(msg);

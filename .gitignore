@@ -1,4 +1,5 @@
 .raxecompletion
 docs/
+examples/build/
 .DS_Store
 Thumbs.db

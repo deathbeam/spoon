@@ -3,7 +3,7 @@ package raxe.cli;using Lambda;using StringTools;import mcli.Dispatch;
 /** 
 * Entry point for Raxe CLI
  **/
-class Main{
+@:tink class Main{
   public static function main() return{
     var args = Sys.args();
     Sys.setCwd(args.pop()) ;// Workaround for correct working directory when running from `haxelib`

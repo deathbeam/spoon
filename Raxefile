@@ -1,12 +1,12 @@
 # vim: set ft=rb:
 
-def src  = "src/"                     # Path to Raxe source
-def dest = "build/"                   # Path to generate Haxe source
-def xml  = "docs/index.xml"           # Path to generate documentation XML
-def docs = "docs/build"               # Path to generate documentation HTML
-def bin  = "run.n"                    # Path to generate Neko binary
-def main = "raxe.cli.Main"            # Entry point for CLI
-def libs = ["hscript", "mcli", "dox"] # Haxelib libraries to use
+def src  = "src/"                                  # Path to Raxe source
+def dest = "build/"                                # Path to generate Haxe source
+def xml  = "docs/index.xml"                        # Path to generate documentation XML
+def docs = "docs/build"                            # Path to generate documentation HTML
+def bin  = "run.n"                                 # Path to generate Neko binary
+def main = "raxe.cli.Main"                         # Entry point for CLI
+def libs = ["hscript", "mcli", "tink_lang", "dox"] # Haxelib libraries to use
 
 ###############################################################################
 # Default task which is executed when no task is specified.
@@ -68,4 +68,9 @@ def generateDocs()
 
   sh("haxe", args)
   sh("haxelib", ["run", "dox", "-i", xml, "-o", docs])
+end
+
+def compileExamples()
+  echo("> Compiling Raxe examples")
+  sh("haxelib", ["run", "raxe", "-s", "examples", "-d", "examples/build"])
 end

@@ -5,7 +5,7 @@ import sys.io.File;
 * Utility to deal with folders
 * @author Axel Anceau (Peekmo)
  **/
-class FolderReader{
+@:tink class FolderReader{
   /** 
   * Returns an array of all files which are in the given folder and its
   * subfolders

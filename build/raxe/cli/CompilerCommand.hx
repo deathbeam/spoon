@@ -3,7 +3,7 @@ import raxe.tools.Error;
 import raxe.tools.FolderReader;
 import raxe.compiler.Compiler;
 
-class CompilerCommand{
+@:tink class CompilerCommand{
   public var response : String;
   private var files = new Map<String, Int>();
   private var src : String;

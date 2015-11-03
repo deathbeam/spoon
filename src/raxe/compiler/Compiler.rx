@@ -362,8 +362,9 @@ class @
     # [abstract] class/interface/enum
     elsif (handle.safeis("class") || handle.safeis("interface") || handle.safeis("enum"))
       currentType = handle.current
-
+      handle.insert("@:tink ")
       handle.increment()
+      handle.increment(currentType)
 
       while(handle.nextToken())
         if(handle.is("@"))
@@ -527,9 +528,12 @@ class @
   end
 
   private def consumeStrings(handle : StringHandle)
+    def multiline = false
+
     if(handle.at("\"\"\""))
       handle.remove("\"\"\"")
       handle.insert("'")
+      multiline = true
     else
       handle.remove("\"")
       handle.insert("'")
@@ -558,6 +562,20 @@ class @
         handle.increment("'")
       elsif(handle.is("\""))
         if(isNotEscaped(handle))
+          if(multiline)
+            if(handle.at("\"\"\""))
+              handle.remove("\"\"\"")
+              handle.insert("'")
+            else
+              handle.insert("\\")
+              handle.increment()
+              handle.increment("\"")
+            end
+          else
+            handle.remove("\"")
+            handle.insert("'")
+          end
+
           break
         else
           handle.position -= 1
@@ -567,14 +585,6 @@ class @
       else
         handle.increment()
       end
-    end
-
-    if(handle.at("\"\"\""))
-      handle.remove("\"\"\"")
-      handle.insert("'")
-    else
-      handle.remove("\"")
-      handle.insert("'")
     end
 
     handle.increment()

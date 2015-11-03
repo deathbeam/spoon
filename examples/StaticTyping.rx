@@ -9,9 +9,7 @@ class @
   after method definition
   ###
   def @main() : Void
-    message = toLowerCase("Hello World")
-
-    trace(message)
+    trace(message = toLowerCase("Hello World"))
   end
 
   ###

@@ -17,6 +17,28 @@ class @
   def createScript() : RaxeScript
     def script = new RaxeScript()
 
+    script.variables.set("import", def(thing : String)
+      def path = thing + "/Raxefile"
+
+      if(FileSystem.exists(path))
+        return script.execute(script.parse(File.getContent(path)))
+      end
+
+      path = thing.replace("/", ".")
+
+      def clazz : Dynamic = Type.resolveClass(path)
+
+      if(clazz == null)
+        clazz = Type.resolveEnum(path)
+
+        if(clazz == null)
+          trace("Failed to resolve type " + thing)
+        end
+      end
+
+      return clazz
+    end)
+
     script.variables.set("echo", def(msg : String)
       Sys.println(msg)
     end)

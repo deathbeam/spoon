@@ -7,7 +7,7 @@ import sys.FileSystem;
 import raxe.compiler.Compiler;
 import raxe.tools.StringHandle;
 
-class RaxeScript extends Interp{
+@:tink class RaxeScript extends Interp{
   public var parser : Parser = new Parser();
   public var compiler : Compiler = new Compiler(true);
 

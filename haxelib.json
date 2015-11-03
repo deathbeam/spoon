@@ -10,6 +10,7 @@
   "contributors": ["deathbeam", "Peekmo"],
   "dependencies": {
     "mcli": "",
-    "hscript": ""
+    "hscript": "",
+    "tink_lang": ""
   }
 }

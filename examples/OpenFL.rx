@@ -19,38 +19,41 @@ class @ < Sprite
   def new()
     super()
 
-    logo = new Sprite()
-    logo.addChild(new Bitmap(Assets.getBitmapData("assets/openfl.png")))
-    logo.x = 100
-    logo.y = 100
-    logo.buttonMode = true
-    addChild(logo)
+    addChild() => logo = do
+      def s = new Sprite()
+      s.x = 100
+      s.y = 100
+      s.buttonMode = true
+      s.addChild() => new Bitmap(Assets.getBitmapData("assets/openfl.png"))
+      s
+    end
 
     stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown)
     stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp)
-
-    stage.addEventListener(Event.ENTER_FRAME, def(event)
-      if(movingDown)
-        logo.y += 5
-      end
-
-      if(movingLeft)
-        logo.x -= 5
-      end
-
-      if(movingRight)
-        logo.x += 5
-      end
-
-      if(movingUp)
-        logo.y -= 5
-      end
-    end)
+    stage.addEventListener(Event.ENTER_FRAME, onEnterFrame)
   end
 
   ###
   Event handlers
   ###
+
+  def onEnterFrame(event)
+    if(movingDown)
+      logo.y += 5
+    end
+
+    if(movingLeft)
+      logo.x -= 5
+    end
+
+    if(movingRight)
+      logo.x += 5
+    end
+
+    if(movingUp)
+      logo.y -= 5
+    end
+  end
 
   def onKeyDown(event)
     switch(event.keyCode)

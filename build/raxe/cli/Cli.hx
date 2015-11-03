@@ -13,7 +13,7 @@ import raxe.script.RaxeScript;
 *
 * Raxe 0.0.1 - https://raxe-lang.org
  **/
-class Cli extends CommandLine{
+@:tink class Cli extends CommandLine{
   inline public static var ERROR_TYPE = 'compile_error';
 
   /** 

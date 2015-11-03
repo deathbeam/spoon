@@ -1,7 +1,7 @@
 package raxe.tools;using Lambda;using StringTools;/** 
 Error handling
  **/
-class Error{
+@:tink class Error{
   /** 
   * Raise a new error formatted into json to be able to parse it everywhere
   * @param errorType Type of error to be thrown

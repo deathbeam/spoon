@@ -6,7 +6,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
 /** 
 * The most important Raxe class, which compiles Raxe source to Haxe source
  **/
-class Compiler{
+@:tink class Compiler{
   private var name : String = '';
   private var currentType : String = '';
   private var currentExpression : String = '';
@@ -362,8 +362,9 @@ class Compiler{
     // [abstract] class/interface/enum
     }else if (handle.safeis('class') || handle.safeis('interface') || handle.safeis('enum')){
       currentType = handle.current;
-
+      handle.insert('@:tink ');
       handle.increment();
+      handle.increment(currentType);
 
       while(handle.nextToken()){
         if(handle.is('@')){
@@ -527,9 +528,12 @@ class Compiler{
   }
 
   private function consumeStrings(handle : StringHandle) return{
+    var multiline = false;
+
     if(handle.at('"""')){
       handle.remove('"""');
       handle.insert('\'');
+      multiline = true;
     }else{
       handle.remove('"');
       handle.insert('\'');
@@ -558,6 +562,20 @@ class Compiler{
         handle.increment('\'');
       }else if(handle.is('"')){
         if(isNotEscaped(handle)){
+          if(multiline){
+            if(handle.at('"""')){
+              handle.remove('"""');
+              handle.insert('\'');
+            }else{
+              handle.insert('\\');
+              handle.increment();
+              handle.increment('"');
+            }
+          }else{
+            handle.remove('"');
+            handle.insert('\'');
+          }
+
           break;
         }else{
           handle.position -= 1;
@@ -567,14 +585,6 @@ class Compiler{
       }else{
         handle.increment();
       }
-    }
-
-    if(handle.at('"""')){
-      handle.remove('"""');
-      handle.insert('\'');
-    }else{
-      handle.remove('"');
-      handle.insert('\'');
     }
 
     handle.increment();

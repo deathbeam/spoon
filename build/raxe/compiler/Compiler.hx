@@ -7,7 +7,8 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
 * The most important Raxe class, which compiles Raxe source to Haxe source
  **/
 @:tink class Compiler{
-  private var name : String = '';
+  private var fileName : String = '';
+  private var currentName : String = '';
   private var currentType : String = '';
   private var currentExpression : String = '';
   private var hasVisibility : Bool = false;
@@ -64,9 +65,11 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
         .replace(directory, '')
         .replace('\\', '/');
 
-      name = currentPackage
+      fileName = currentPackage
         .substr(currentPackage.lastIndexOf('/') + 1)
         .replace('.rx', '');
+
+      currentName = fileName;
 
       currentPackage = currentPackage
         .replace(currentPackage.substr(currentPackage.lastIndexOf('/')), '')
@@ -127,10 +130,10 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     }else if(handle.is('@@')){
       if(handle.safeis('@@')){
         handle.remove();
-        handle.insert(name);
+        handle.insert(currentName);
       }else{
         handle.remove();
-        handle.insert(name + '.');
+        handle.insert(currentName + '.');
       }
 
       handle.increment();
@@ -380,8 +383,16 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
         handle.increment(currentType);
       }
 
-      while(handle.nextToken()){
+      var position = handle.position;
+      var nameSet = false;
+
+      while(safeNextToken(handle)){
         if(handle.is('@')){
+          if(!nameSet){
+            currentName = fileName;
+            nameSet = true;
+          }
+
           if(handle.at('@[')){
             consumeGenerics(handle);
 
@@ -390,15 +401,30 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
             }
           }else{
             handle.remove();
-            handle.insert(name);
+            handle.insert(currentName);
           }
         }else if(handle.is('<')){
+          if(!nameSet){
+            currentName = handle.content.substr(position, handle.position - position);
+            nameSet = true;
+          }
+
           handle.remove();
           handle.insert('extends');
         }else if(handle.is('::')){
+          if(!nameSet){
+            currentName = handle.content.substr(position, handle.position - position);
+            nameSet = true;
+          }
+
           handle.remove();
           handle.insert('implements');
         }else if(handle.is('\n')){
+          if(!nameSet){
+            currentName = handle.content.substr(position, handle.position - position);
+            nameSet = true;
+          }
+
           handle.insert('{');
           break;
         }

@@ -7,7 +7,8 @@ import raxe.tools.StringHandle
 # The most important Raxe class, which compiles Raxe source to Haxe source
 ###############################################################################
 class @
-  private def name : String = ""
+  private def fileName : String = ""
+  private def currentName : String = ""
   private def currentType : String = ""
   private def currentExpression : String = ""
   private def hasVisibility : Bool = false
@@ -64,9 +65,11 @@ class @
         .replace(directory, "")
         .replace("\\", "/")
 
-      name = currentPackage
+      fileName = currentPackage
         .substr(currentPackage.lastIndexOf("/") + 1)
         .replace(".rx", "")
+
+      currentName = fileName
 
       currentPackage = currentPackage
         .replace(currentPackage.substr(currentPackage.lastIndexOf("/")), "")
@@ -127,10 +130,10 @@ class @
     elsif(handle.is("@@"))
       if(handle.safeis("@@"))
         handle.remove()
-        handle.insert(name)
+        handle.insert(currentName)
       else
         handle.remove()
-        handle.insert(name + ".")
+        handle.insert(currentName + ".")
       end
 
       handle.increment()
@@ -380,8 +383,16 @@ class @
         handle.increment(currentType)
       end
 
-      while(handle.nextToken())
+      def position = handle.position
+      def nameSet = false
+
+      while(safeNextToken(handle))
         if(handle.is("@"))
+          if(!nameSet)
+            currentName = fileName
+            nameSet = true
+          end
+
           if(handle.at("@["))
             consumeGenerics(handle)
 
@@ -390,15 +401,30 @@ class @
             end
           else
             handle.remove()
-            handle.insert(name)
+            handle.insert(currentName)
           end
         elsif(handle.is("<"))
+          if(!nameSet)
+            currentName = handle.content.substr(position, handle.position - position)
+            nameSet = true
+          end
+
           handle.remove()
           handle.insert("extends")
         elsif(handle.is("::"))
+          if(!nameSet)
+            currentName = handle.content.substr(position, handle.position - position)
+            nameSet = true
+          end
+
           handle.remove()
           handle.insert("implements")
         elsif(handle.is("\n"))
+          if(!nameSet)
+            currentName = handle.content.substr(position, handle.position - position)
+            nameSet = true
+          end
+
           handle.insert("{")
           break
         end

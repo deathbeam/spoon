@@ -1,8 +1,7 @@
 # vim: set ft=rb:
 
 class @ :: Hello :: World
-  def @self = new @@()
-  def @main() do self
+  def @main() do new @@()
 
   def new()
     hello()

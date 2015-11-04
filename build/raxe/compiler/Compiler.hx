@@ -137,9 +137,8 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       }
 
       handle.increment();
-    }else if(handle.is('/')){
-      handle.remove();
-      handle.insert('~/');
+    }else if(handle.is('~') && handle.at('~/')){
+      handle.increment('~/');
 
       while(handle.nextToken()){
         if(handle.is('/') && isNotEscaped(handle)){

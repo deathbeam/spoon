@@ -137,9 +137,8 @@ class @
       end
 
       handle.increment()
-    elsif(handle.is("/"))
-      handle.remove()
-      handle.insert("~/")
+    elsif(handle.is("~") && handle.at("~/"))
+      handle.increment("~/")
 
       while(handle.nextToken())
         if(handle.is("/") && isNotEscaped(handle))

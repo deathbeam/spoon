@@ -27,7 +27,7 @@ class @
     "\#", "@new", "@@", "@", "\"", "'", "$", "/",
 
     # Types
-    "::", "class", "enum", "abstract", "trait",
+    "::", "class", "enum", "abstract", "trait", "interface",
 
     # Modifiers
     "public", "private",
@@ -38,7 +38,7 @@ class @
     # Brackets
     "{", "}", "(", ")", "[", "]",
 
-    # Operators (- is also used for comments, < is also used for inheritance)
+    # Operators (< is also used for inheritance)
     ":", "?", "=", "+", "-", "*", ".", "/", "," , "|", "&",  "^", "%", "<", ">", "~",
 
     # Expressions
@@ -369,10 +369,13 @@ class @
       opened = opened + 1
       handle.increment()
     # [abstract] class/trait/enum
-    elsif (handle.safeis("class") || handle.safeis("trait") || handle.safeis("enum"))
+    elsif (handle.safeis("class") || handle.safeis("trait") || handle.safeis("enum") || handle.safeis("interface") || handle.safeis("abstract"))
       currentType = handle.current
-      handle.insert("@:tink ")
-      handle.increment()
+
+      if(currentType != "enum" && currentType != "interface")
+        handle.insert("@:tink ")
+        handle.increment()
+      end
 
       if(currentType == "trait")
         handle.remove("trait")

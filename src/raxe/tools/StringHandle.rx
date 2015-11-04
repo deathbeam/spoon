@@ -13,7 +13,7 @@ class @
   def new(content : String, ?tokens : Array@[String], position : Int = 0)
     @content = content
 
-    if(tokens == empty)
+    if(tokens == null)
       @tokens = [ "\n" ]
     else
       @tokens = tokens
@@ -24,7 +24,7 @@ class @
 
   def reset()
     position = 0
-    current = empty
+    current = null
   end
 
   def closest(content : String) : Bool

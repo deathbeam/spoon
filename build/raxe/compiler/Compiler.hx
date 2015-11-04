@@ -33,7 +33,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     'public', 'private',
 
     // Special keywords
-    'import', 'def', 'new', 'end', 'do', 'typedef', 'try', 'catch', 'empty',
+    'import', 'def', 'new', 'end', 'do', 'typedef', 'try', 'catch', 'void',
 
     // Brackets
     '{', '}', '(', ')', '[', ']',
@@ -173,9 +173,9 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       handle.insert(';');
       handle.increment();
     // Empty operator (null)
-    }else if(handle.safeis('empty')){
+    }else if(handle.safeis('void')){
       handle.remove();
-      handle.insert('null');
+      handle.insert('(function(){})()');
       handle.increment();
     // Structures and arrays
     }else if(handle.is('{') || handle.is('[')){
@@ -460,7 +460,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     if(safeCheck(handle, 'def') && safeCheck(handle, 'if') && safeCheck(handle, 'elsif') && safeCheck(handle, 'end')  &&
         safeCheck(handle, 'while') && safeCheck(handle, 'for') && safeCheck(handle, 'import') &&
         safeCheck(handle, 'do') && safeCheck(handle, 'else') && safeCheck(handle, 'try') && safeCheck(handle, 'catch') &&
-        safeCheck(handle, 'private') && safeCheck(handle, 'public') && safeCheck(handle, 'empty') && safeCheck(handle, 'switch') &&
+        safeCheck(handle, 'private') && safeCheck(handle, 'public') && safeCheck(handle, 'void') && safeCheck(handle, 'switch') &&
         safeCheck(handle, 'when')){
       return true;
     }else{

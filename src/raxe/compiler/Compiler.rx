@@ -400,6 +400,16 @@ class @
 
             if(handle.is(";"))
               handle.remove(";")
+
+              def position = handle.position
+              handle.nextToken()
+
+              if(handle.is("\n"))
+                handle.insert("{")
+                break
+              else
+                handle.position = position
+              end
             end
           else
             handle.remove()

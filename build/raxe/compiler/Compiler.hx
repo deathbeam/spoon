@@ -400,6 +400,16 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
 
             if(handle.is(';')){
               handle.remove(';');
+
+              var position = handle.position;
+              handle.nextToken();
+
+              if(handle.is('\n')){
+                handle.insert('{');
+                break;
+              }else{
+                handle.position = position;
+              }
             }
           }else{
             handle.remove();

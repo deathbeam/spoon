@@ -1,3 +1,5 @@
+# vim: set ft=rb:
+
 class @
   def @main()
     def point2d = new Point2d(100, 200)

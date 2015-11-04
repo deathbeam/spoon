@@ -3,7 +3,7 @@
 class @
   def @main()
     def myvar : String = empty
-    def myarray = new Array<String>()
+    def myarray = new Array@[String]()
 
     if(myvar != empty && myvar.charAt(10) == "p")
       for(i in myarray.iterator())

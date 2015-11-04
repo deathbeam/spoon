@@ -25,7 +25,7 @@ class @
         if(!Std.is(value, Array))
           throw("not an array")
         end
-        for(elem in (value : Array<Dynamic>))
+        for(elem in (value : Array@[Dynamic]))
           validate(elem, elemSchema)
         end
       else

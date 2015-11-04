@@ -178,64 +178,6 @@ package raxe.tools;using Lambda;using StringTools;@:tink class StringHandle{
     return true;
   }
 
-  public function prevTokenLine() : Bool return{
-    var newPos = position + 1;
-    var currentToken = '';
-
-    for(token in tokens){
-      var pos = this.content.substr(0, position).lastIndexOf(token);
-
-      if(pos != -1 && (pos > newPos || newPos == position + 1)){
-        newPos = pos;
-        currentToken = token;
-      }
-    }
-
-    var pos = this.content.substr(0, position).lastIndexOf('\n');
-
-    if(pos != -1 && (pos > newPos || newPos == position + 1)){
-      newPos = pos;
-      currentToken = '\n';
-    }
-
-    if(newPos == -1){
-      return false;
-    }
-
-    position = newPos;
-    current = currentToken;
-    return true;
-  }
-
-  public function nextTokenLine() : Bool return{
-    var newPos = -1;
-    var currentToken = '';
-
-    for(token in tokens){
-      var pos = this.content.indexOf(token, position);
-
-      if(pos != -1 && (pos < newPos || newPos == -1)){
-        newPos = pos;
-        currentToken = token;
-      }
-    }
-
-    var pos = this.content.indexOf('\n', position);
-
-    if(pos != -1 && (pos < newPos || newPos == -1)){
-      newPos = pos;
-      currentToken = '\n';
-    }
-
-    if(newPos == -1){
-      return false;
-    }
-
-    position = newPos;
-    current = currentToken;
-    return true;
-  }
-
   public function nextToken() : Bool return{
     var newPos = -1;
     var currentToken = '';

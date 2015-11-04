@@ -521,7 +521,7 @@ class @
     def comment = ""
     def position = handle.position
 
-    while(handle.nextTokenLine())
+    while(handle.nextToken())
       if(handle.is("\#"))
         comment += "\#"
         handle.increment()
@@ -667,7 +667,7 @@ class @
     def insert = true
     def isComment = handle.is("\#")
 
-    handle.prevTokenLine()
+    handle.prevToken()
 
     if(handle.isOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":", "<", ">"]) && onlyWhitespace(handle.content, handle.position + 1, pos))
       if(handle.is("-") || handle.is("+"))

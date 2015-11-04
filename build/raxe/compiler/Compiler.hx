@@ -521,7 +521,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     var comment = '';
     var position = handle.position;
 
-    while(handle.nextTokenLine()){
+    while(handle.nextToken()){
       if(handle.is('#')){
         comment += '#';
         handle.increment();
@@ -667,7 +667,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     var insert = true;
     var isComment = handle.is('#');
 
-    handle.prevTokenLine();
+    handle.prevToken();
 
     if(handle.isOne(['=', ';', '+', '-', '*', '.', '/', ',' , '|', '&', '{', '(', '[', '^', '%', '~', '\n', '}', '?', ':', '<', '>']) && onlyWhitespace(handle.content, handle.position + 1, pos)){
       if(handle.is('-') || handle.is('+')){

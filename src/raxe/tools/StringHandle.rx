@@ -178,64 +178,6 @@ class @
     return true
   end
 
-  def prevTokenLine() : Bool
-    def newPos = position + 1
-    def currentToken = ""
-
-    for(token in tokens)
-      def pos = @content.substr(0, position).lastIndexOf(token)
-
-      if(pos != -1 && (pos > newPos || newPos == position + 1))
-        newPos = pos
-        currentToken = token
-      end
-    end
-
-    def pos = @content.substr(0, position).lastIndexOf("\n")
-
-    if(pos != -1 && (pos > newPos || newPos == position + 1))
-      newPos = pos
-      currentToken = "\n"
-    end
-
-    if(newPos == -1)
-      return false
-    end
-
-    position = newPos
-    current = currentToken
-    return true
-  end
-
-  def nextTokenLine() : Bool
-    def newPos = -1
-    def currentToken = ""
-
-    for(token in tokens)
-      def pos = @content.indexOf(token, position)
-
-      if(pos != -1 && (pos < newPos || newPos == -1))
-        newPos = pos
-        currentToken = token
-      end
-    end
-
-    def pos = @content.indexOf("\n", position)
-
-    if(pos != -1 && (pos < newPos || newPos == -1))
-      newPos = pos
-      currentToken = "\n"
-    end
-
-    if(newPos == -1)
-      return false
-    end
-
-    position = newPos
-    current = currentToken
-    return true
-  end
-
   def nextToken() : Bool
     def newPos = -1
     def currentToken = ""

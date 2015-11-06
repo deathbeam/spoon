@@ -181,7 +181,7 @@ class @
       safePrevToken(handle)
       handle.increment()
 
-      if(not onlyWhitespace(handle.content, handle.position, pos))
+      if(not onlyWhitespace(handle.content, handle.position, pos) or handle.matchOne({")", "]"}))
         handle.position = pos
         handle.current = "{"
         consumeBrackets(handle, "{", "}", "[", "]")

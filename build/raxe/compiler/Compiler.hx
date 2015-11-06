@@ -181,7 +181,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       safePrevToken(handle);
       handle.increment();
 
-      if(! onlyWhitespace(handle.content, handle.position, pos)){
+      if(! onlyWhitespace(handle.content, handle.position, pos) || handle.matchOne([')', ']'])){
         handle.position = pos;
         handle.current = '{';
         consumeBrackets(handle, '{', '}', '[', ']');

@@ -12,17 +12,17 @@ class @
   # @param rootFolder Root folder for the search
   # @return Files found
   #############################################################################
-  def @getFiles(rootFolder: String) : Array@[String]
-    def files : Array@[String] = new Array@[String]()
+  def @getFiles(rootFolder: String) : Array[String]
+    def files : Array[String] = new Array[String]()
 
     if(FileSystem.exists(rootFolder))
-      def folders : Array@[String] = FileSystem.readDirectory(rootFolder)
+      def folders : Array[String] = FileSystem.readDirectory(rootFolder)
 
       for(file in folders.iterator())
         def path : String = rootFolder + "/" + file
 
         if(FileSystem.isDirectory(path))
-          def data : Array@[String] = getFiles(path)
+          def data : Array[String] = getFiles(path)
 
           for(i in data)
             files.push(i)
@@ -43,7 +43,7 @@ class @
   # @param ?content File's content
   #############################################################################
   def @createFile(path : String, ?content : String) : Void
-    def parts : Array@[String] = path.split("/")
+    def parts : Array[String] = path.split("/")
     def fileName : String = parts.pop()
 
     # Create all directories necessaries
@@ -61,7 +61,7 @@ class @
   # @param path Path to the given directory
   #############################################################################
   def @createDirectory(path : String) : Void
-    def parts : Array@[String] = path.split("/")
+    def parts : Array[String] = path.split("/")
     def done : String = null
 
     for(part in parts.iterator())
@@ -88,7 +88,7 @@ class @
       if(!FileSystem.isDirectory(source))
         createFile(destination, File.getContent(source))
       else
-        def files : Array@[String] = FileSystem.readDirectory(source)
+        def files : Array[String] = FileSystem.readDirectory(source)
 
         for(file in files.iterator())
           if(FileSystem.isDirectory(source + "/" + file))

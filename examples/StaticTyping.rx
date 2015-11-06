@@ -1,7 +1,7 @@
 # vim: set ft=rb:
 
 class @
-  def @array : Array@[String]
+  def @array : Array[String]
   def @message : String
 
   ###

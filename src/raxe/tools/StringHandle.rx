@@ -2,7 +2,7 @@ class @
   def content : String
   def position : Int
   def current : String
-  def tokens : Array@[String]
+  def tokens : Array[String]
 
   def atStart() : Bool do position <= 0
   def atEnd() : Bool do position >= content.length
@@ -10,11 +10,11 @@ class @
   def nearEnd(tolerance : Int) : Bool do (position + tolerance) >= content.length
   def match(content : String) : Bool do current == content
 
-  def new(content : String, ?tokens : Array@[String], position : Int = 0)
+  def new(content : String, ?tokens : Array[String], position : Int = 0)
     @content = content
 
     if(tokens == null)
-      @tokens = [ "\n" ]
+      @tokens = { "\n" }
     else
       @tokens = tokens
     end
@@ -46,7 +46,7 @@ class @
     return regex.match(sub.substr(0, count))
   end
 
-  def matchOne(content : Array@[String] ) : Bool
+  def matchOne(content : Array[String] ) : Bool
     def contains = false
 
     for(cnt in content)
@@ -56,7 +56,7 @@ class @
     return contains
   end
 
-  def safeMatchOne(content : Array@[String] ) : Bool
+  def safeMatchOne(content : Array[String] ) : Bool
     def contains = false
 
     for(cnt in content)

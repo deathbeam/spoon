@@ -43,7 +43,7 @@ class @
       Sys.println(msg)
     end)
 
-    script.variables.set("sh", def(cmd : String, ?args : Array@[String] )
+    script.variables.set("sh", def(cmd : String, ?args : Array[String] )
       Sys.command(cmd, args)
     end)
 

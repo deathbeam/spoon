@@ -8,7 +8,7 @@ end
 
 class @
   def @main()
-    validate([1,2,3], TArray(TInt))
+    validate({1,2,3}, TArray(TInt))
   end
 
   def @validate(value : Dynamic, schema : Schema)
@@ -25,7 +25,7 @@ class @
         if(!Std.is(value, Array))
           throw("not an array")
         end
-        for(elem in (value : Array@[Dynamic]))
+        for(elem in (value : Array[Dynamic]))
           validate(elem, elemSchema)
         end
       else

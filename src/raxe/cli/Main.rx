@@ -9,8 +9,8 @@ class @
     Sys.setCwd(args.pop()) # Workaround for correct working directory when running from `haxelib`
 
     # Workaround for weird quote handling when trying to run command with spaces from CLI
-    if(args[0] == "-i" || args[0] == "--interp")
-      args = [args.shift(), args.join(" ")]
+    if(args{0} == "-i" || args{0} == "--interp")
+      args = {args.shift(), args.join(" ")}
     end
 
     # Execute `mcli` argument dispatcher

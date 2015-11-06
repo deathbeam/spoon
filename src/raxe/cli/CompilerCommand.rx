@@ -5,7 +5,7 @@ import raxe.compiler.Compiler
 
 class @
   def response : String
-  private def files = new Map@[String, Int]()
+  private def files = new Map[String, Int]()
   private def src : String
   private def dest : String
   private def all : Bool
@@ -70,7 +70,7 @@ class @
         dest = dest.substr(0, dest.length - 1)
       end
 
-      def currentFiles = new Map@[String, Int]()
+      def currentFiles = new Map[String, Int]()
 
       for(file in files.iterator())
         def oldFileSize : Int = @files.get(file)
@@ -161,7 +161,7 @@ class @
   # @return destination file path
   #############################################################################
   private def getDestinationFile(file: String, src: String, dest: String) : String
-    def parts : Array@[String] = file.split("/")
+    def parts : Array[String] = file.split("/")
     def fileName : String = parts.pop()
 
     def newPath = parts.join("/") + "/" + fileName.replace(".rx", ".hx")

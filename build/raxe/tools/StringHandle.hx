@@ -8,7 +8,7 @@ package raxe.tools;using Lambda;using StringTools;@:tink class StringHandle{
   public function atEnd() : Bool return position >= content.length;
   public function nearStart(tolerance : Int) : Bool return (position - tolerance) <= 0;
   public function nearEnd(tolerance : Int) : Bool return (position + tolerance) >= content.length;
-  public function is(content : String) : Bool return current == content;
+  public function match(content : String) : Bool return current == content;
 
   public function new(content : String, ?tokens : Array<String>, position : Int = 0){
     this.content = content;
@@ -46,7 +46,7 @@ package raxe.tools;using Lambda;using StringTools;@:tink class StringHandle{
     return regex.match(sub.substr(0, count));
   }
 
-  public function isOne(content : Array<String> ) : Bool return{
+  public function matchOne(content : Array<String> ) : Bool return{
     var contains = false;
 
     for(cnt in content){
@@ -56,15 +56,25 @@ package raxe.tools;using Lambda;using StringTools;@:tink class StringHandle{
     return contains;
   }
 
-  public function safeisStart(content : String) : Bool return{
+  public function safeMatchOne(content : Array<String> ) : Bool return{
+    var contains = false;
+
+    for(cnt in content){
+      contains = contains || safeMatch(cnt);
+    }
+
+    return contains;
+  }
+
+  public function safeMatchStart(content : String) : Bool return{
     var regex = new EReg('[^\\w]' + content, '');
 
     if(nearStart(1)){
-      return is(content);
+      return match(content);
     }
 
     if(nearEnd(content.length + 1)){
-      return is(content);
+      return match(content);
     }
 
     var sub = this.content.substr(
@@ -74,11 +84,11 @@ package raxe.tools;using Lambda;using StringTools;@:tink class StringHandle{
     return regex.match(sub);
   }
 
-  public function safeisEnd(content : String) : Bool return{
+  public function safeMatchEnd(content : String) : Bool return{
     var regex = new EReg(content + '[^\\w]', '');
 
     if(nearEnd(content.length + 2)){
-      return is(content);
+      return match(content);
     }
 
     var sub = this.content.substr(
@@ -88,15 +98,15 @@ package raxe.tools;using Lambda;using StringTools;@:tink class StringHandle{
     return regex.match(sub);
   }
 
-  public function safeis(content : String) : Bool return{
+  public function safeMatch(content : String) : Bool return{
     var regex = new EReg('[^\\w]' + content + '[^\\w]', '');
 
     if(nearStart(1)){
-      return safeisEnd(content);
+      return safeMatchEnd(content);
     }
 
     if(nearEnd(content.length + 2)){
-      return safeisStart(content);
+      return safeMatchStart(content);
     }
 
     var sub = this.content.substr(

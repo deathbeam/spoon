@@ -18,13 +18,13 @@ class @
     def script = new RaxeScript()
 
     script.variables.set("import", def(thing : String)
-      def path = thing + "/Raxefile"
+      def path = thing.replace(".", "/") + "/Raxefile"
 
       if(FileSystem.exists(path))
         return script.execute(script.parse(File.getContent(path)))
       end
 
-      path = thing.replace("/", ".")
+      path = thing
 
       def clazz : Dynamic = Type.resolveClass(path)
 

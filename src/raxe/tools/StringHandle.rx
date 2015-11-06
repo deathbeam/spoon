@@ -8,7 +8,7 @@ class @
   def atEnd() : Bool do position >= content.length
   def nearStart(tolerance : Int) : Bool do (position - tolerance) <= 0
   def nearEnd(tolerance : Int) : Bool do (position + tolerance) >= content.length
-  def is(content : String) : Bool do current == content
+  def match(content : String) : Bool do current == content
 
   def new(content : String, ?tokens : Array@[String], position : Int = 0)
     @content = content
@@ -46,7 +46,7 @@ class @
     return regex.match(sub.substr(0, count))
   end
 
-  def isOne(content : Array@[String] ) : Bool
+  def matchOne(content : Array@[String] ) : Bool
     def contains = false
 
     for(cnt in content)
@@ -56,15 +56,25 @@ class @
     return contains
   end
 
-  def safeisStart(content : String) : Bool
+  def safeMatchOne(content : Array@[String] ) : Bool
+    def contains = false
+
+    for(cnt in content)
+      contains = contains || safeMatch(cnt)
+    end
+
+    return contains
+  end
+
+  def safeMatchStart(content : String) : Bool
     def regex = new EReg("[^\\w]" + content, "")
 
     if(nearStart(1))
-      return is(content)
+      return match(content)
     end
 
     if(nearEnd(content.length + 1))
-      return is(content)
+      return match(content)
     end
 
     def sub = @content.substr(
@@ -74,11 +84,11 @@ class @
     return regex.match(sub)
   end
 
-  def safeisEnd(content : String) : Bool
+  def safeMatchEnd(content : String) : Bool
     def regex = new EReg(content + "[^\\w]", "")
 
     if(nearEnd(content.length + 2))
-      return is(content)
+      return match(content)
     end
 
     def sub = @content.substr(
@@ -88,15 +98,15 @@ class @
     return regex.match(sub)
   end
 
-  def safeis(content : String) : Bool
+  def safeMatch(content : String) : Bool
     def regex = new EReg("[^\\w]" + content + "[^\\w]", "")
 
     if(nearStart(1))
-      return safeisEnd(content)
+      return safeMatchEnd(content)
     end
 
     if(nearEnd(content.length + 2))
-      return safeisStart(content)
+      return safeMatchStart(content)
     end
 
     def sub = @content.substr(

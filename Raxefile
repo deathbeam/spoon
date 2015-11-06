@@ -70,6 +70,9 @@ def generateDocs()
   sh("haxelib", ["run", "dox", "-i", xml, "-o", docs])
 end
 
+###############################################################################
+# Compile all examples from examples/ folder to examples/build/
+###############################################################################
 def compileExamples()
   echo("> Compiling Raxe examples")
   sh("haxelib", ["run", "raxe", "-s", "examples", "-d", "examples/build"])

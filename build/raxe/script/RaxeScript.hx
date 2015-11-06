@@ -15,13 +15,13 @@ import raxe.tools.StringHandle;
     super();
 
     variables.set('import', function(thing : String) return{
-      var path = thing + '.rx';
+      var path = thing.replace('.', '/') + '.rxs';
 
       if(FileSystem.exists(path)){
         return execute(parse(File.getContent(path)));
       }
 
-      path = thing.replace('/', '.');
+      path = thing;
 
       var clazz : Dynamic = Type.resolveClass(path);
 

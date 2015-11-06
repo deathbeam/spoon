@@ -18,13 +18,13 @@ import sys.FileSystem;
     var script = new RaxeScript();
 
     script.variables.set('import', function(thing : String) return{
-      var path = thing + '/Raxefile';
+      var path = thing.replace('.', '/') + '/Raxefile';
 
       if(FileSystem.exists(path)){
         return script.execute(script.parse(File.getContent(path)));
       }
 
-      path = thing.replace('/', '.');
+      path = thing;
 
       var clazz : Dynamic = Type.resolveClass(path);
 

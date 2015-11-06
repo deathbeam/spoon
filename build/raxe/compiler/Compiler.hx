@@ -38,6 +38,9 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     // Brackets
     '{', '}', '(', ')', '[', ']',
 
+    // Word operators
+    'isnt', 'is', 'and', 'or', 'not',
+
     // Operators (< is also used for inheritance)
     ':', '?', '=', '+', '-', '*', '.', '/', ',' , '|', '&',  '^', '%', '<', '>', '~',
 
@@ -117,18 +120,18 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
    **/
   private function process(handle : StringHandle) : StringHandle return{
     // Skip compiler defines and annotations
-    if(handle.is('$$') && handle.at('$$[')){
+    if(handle.match('$$') && handle.at('$$[')){
       handle.remove();
       handle.insert('@');
       handle.increment();
       consumeBrackets(handle, '[', ']', '', '');
       safeNextToken(handle);
 
-      if(handle.is('\n')){
+      if(handle.match('\n')){
         handle.increment();
       }
-    }else if(handle.is('@@')){
-      if(handle.safeis('@@')){
+    }else if(handle.match('@@')){
+      if(handle.safeMatch('@@')){
         handle.remove();
         handle.insert(currentName);
       }else{
@@ -137,19 +140,19 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       }
 
       handle.increment();
-    }else if(handle.is('~') && handle.at('~/')){
+    }else if(handle.match('~') && handle.at('~/')){
       handle.increment('~/');
 
       while(handle.nextToken()){
-        if(handle.is('/') && isNotEscaped(handle)){
+        if(handle.match('/') && isNotEscaped(handle)){
           handle.increment();
           break;
         }
 
         handle.increment();
       }
-    }else if(handle.is('@')){
-      if(handle.safeis('@')){
+    }else if(handle.match('@')){
+      if(handle.safeMatch('@')){
         handle.remove();
         handle.insert('this');
         handle.increment();
@@ -161,36 +164,33 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
         handle.increment();
       }
     // Step over things in strings (" ") and process multiline strings
-    }else if(handle.is('"')){
+    }else if(handle.match('"')){
       consumeStrings(handle);
     // Correct access
-    }else if(handle.safeis('public') || handle.safeis('private')){
+    }else if(handle.safeMatch('public') || handle.safeMatch('private')){
       hasVisibility = true;
       handle.increment();
     // Change require to classic imports
-    }else if(handle.safeis('import')){
+    }else if(handle.safeMatch('import')){
       handle.next('\n');
       handle.insert(';');
       handle.increment();
     // Empty operator (null)
-    }else if(handle.safeis('void')){
+    }else if(handle.safeMatch('void')){
       handle.remove();
       handle.insert('(function(){})()');
       handle.increment();
     // Structures and arrays
-    }else if(handle.is('{') || handle.is('[')){
+    }else if(handle.match('{')){
       opened = opened + 1;
-      handle.increment();
-    }else if(handle.is('}') || handle.is(']')){
+      consumeTables(handle);
       opened = opened - 1;
-
-      if(opened == -1){
-        currentType = '';
-      }
-
-      handle.increment();
+    }else if(handle.match('[')){
+      opened = opened + 1;
+      consumeBrackets(handle, '[', ']');
+      opened = opened - 1;
     // Change end to classic bracket end
-    }else if(handle.safeis('end')){
+    }else if(handle.safeMatch('end')){
       handle.remove();
       handle.insert('}');
       handle.increment();
@@ -200,8 +200,12 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
         currentOpened = -1;
         currentExpression = '';
       }
+
+      if(opened == -1){
+        currentType = '';
+      }
     // Insert begin bracket after switch
-    }else if(handle.safeis('switch')){
+    }else if(handle.safeMatch('switch')){
       currentExpression = handle.current;
       currentOpened = opened;
       handle.increment();
@@ -212,7 +216,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       handle.increment();
       opened = opened + 1;
     // Replaced when with Haxe "case"
-    }else if(handle.safeis('when')){
+    }else if(handle.safeMatch('when')){
       handle.remove();
       handle.insert('case');
       handle.increment();
@@ -222,13 +226,13 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       handle.insert(':');
       handle.increment();
     // Insert begin bracket after try
-    }else if(handle.safeis('try')){
+    }else if(handle.safeMatch('try')){
       handle.increment();
       handle.insert('{');
       handle.increment();
       opened = opened + 1;
     // Insert brackets around catch
-    }else if(handle.safeis('catch')){
+    }else if(handle.safeMatch('catch')){
       handle.insert('}');
       handle.increment();
       handle.increment('catch');
@@ -238,7 +242,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       handle.insert('{');
       handle.increment();
     // Insert begin bracket after if and while
-    }else if(handle.safeis('if')){
+    }else if(handle.safeMatch('if')){
       handle.increment();
       handle.nextToken();
       consumeBrackets(handle, '(', ')');
@@ -247,7 +251,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       handle.increment();
       opened = opened + 1;
     // Change elseif to else if and insert begin and end brackets around it
-    }else if(handle.safeis('elsif')){
+    }else if(handle.safeMatch('elsif')){
       handle.remove();
       handle.insert('}else if');
       handle.increment();
@@ -257,7 +261,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       handle.insert('{');
       handle.increment();
     // Insert begin brackets after loops declaration
-    }else if(handle.safeis('while') || handle.safeis('for')){
+    }else if(handle.safeMatch('while') || handle.safeMatch('for')){
       handle.increment();
       handle.nextToken();
       consumeBrackets(handle, '(', ')');
@@ -267,7 +271,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       handle.increment();
     // Inser begin and end brackets around else but do not try to
     // process curlys because there will not be any
-    }else if(handle.safeis('else')){
+    }else if(handle.safeMatch('else')){
       if(currentExpression == 'switch'){
         handle.remove();
         handle.insert('default:');
@@ -280,7 +284,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
 
       handle.increment();
     // Defines to variables and functions
-    }else if(handle.safeis('def')){
+    }else if(handle.safeMatch('def')){
       handle.remove('def');
 
       var position = handle.position;
@@ -294,12 +298,12 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
         position = handle.position;
         safeNextToken(handle);
 
-        if(handle.is('@new')){
+        if(handle.match('@new')){
           handle.remove();
           handle.insert('static var __new = (function(){_new(); return true;})(); static  _new');
           handle.increment();
           position = handle.position - 5;
-        }else if(handle.is('@')){
+        }else if(handle.match('@')){
           handle.remove();
           handle.position = position;
           handle.insert('static ');
@@ -314,24 +318,24 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
 
       var implicit = true;
 
-      if(handle.safeis('new')){
+      if(handle.safeMatch('new')){
         implicit = false;
         handle.increment();
         handle.nextToken();
       }
 
-      if(handle.is('@')){
+      if(handle.match('@')){
         consumeGenerics(handle);
         handle.nextToken();
       }
 
-      if(handle.is('(')){
+      if(handle.match('(')){
         handle.position = position;
         handle.insert('function');
         consumeBrackets(handle, '(', ')');
 
         while(safeNextToken(handle)){
-          if(handle.is('do')){
+          if(handle.match('do')){
             handle.remove();
 
             if(implicit){
@@ -339,8 +343,8 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
             }
 
             break;
-          }else if(handle.isOne(['\n', '#', ';'])){
-            if(handle.is(';')){
+          }else if(handle.matchOne(['\n', '#', ';'])){
+            if(handle.match(';')){
               handle.remove();
             }
 
@@ -363,13 +367,13 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
         handle.increment();
       }
     // Closures and blocks
-    }else if(handle.safeis('do')){
+    }else if(handle.safeMatch('do')){
       handle.remove('do');
       handle.insert('{');
       opened = opened + 1;
       handle.increment();
     // [abstract] class/trait/enum
-    }else if (handle.safeis('class') || handle.safeis('trait') || handle.safeis('enum') || handle.safeis('interface') || handle.safeis('abstract')){
+    }else if (handle.safeMatch('class') || handle.safeMatch('trait') || handle.safeMatch('enum') || handle.safeMatch('interface') || handle.safeMatch('abstract')){
       currentType = handle.current;
 
       if(currentType != 'enum' && currentType != 'interface'){
@@ -389,7 +393,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       var nameSet = false;
 
       while(safeNextToken(handle)){
-        if(handle.is('@')){
+        if(handle.match('@')){
           if(!nameSet){
             currentName = fileName;
             nameSet = true;
@@ -398,14 +402,16 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
           if(handle.at('@[')){
             consumeGenerics(handle);
 
-            if(handle.is(';')){
+            if(handle.match(';')){
               handle.remove(';');
 
               var position = handle.position;
               handle.nextToken();
 
-              if(handle.is('\n')){
+              if(handle.match('\n')){
                 handle.insert('{');
+                handle.increment();
+                opened += 1;
                 break;
               }else{
                 handle.position = position;
@@ -415,7 +421,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
             handle.remove();
             handle.insert(currentName);
           }
-        }else if(handle.is('<')){
+        }else if(handle.match('<')){
           if(!nameSet){
             currentName = handle.content.substr(position, handle.position - position);
             nameSet = true;
@@ -423,7 +429,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
 
           handle.remove();
           handle.insert('extends');
-        }else if(handle.is('::')){
+        }else if(handle.match('::')){
           if(!nameSet){
             currentName = handle.content.substr(position, handle.position - position);
             nameSet = true;
@@ -431,21 +437,44 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
 
           handle.remove();
           handle.insert('implements');
-        }else if(handle.is('\n')){
+        }else if(handle.match('\n')){
           if(!nameSet){
             currentName = handle.content.substr(position, handle.position - position);
             nameSet = true;
           }
 
           handle.insert('{');
+          handle.increment();
+          opened += 1;
           break;
         }
 
         handle.increment();
       }
     // Process comments and newlines. Also, insert semicolons when needed
-    }else if(handle.is('\n') || handle.is('#')){
+    }else if(handle.match('\n') || handle.match('#')){
       consumeEndOfLine(handle, ';');
+    // Word operators
+    }else if(handle.safeMatch('is')){
+      handle.remove();
+      handle.insert('==');
+      handle.increment();
+    }else if(handle.safeMatch('isnt')){
+      handle.remove();
+      handle.insert('!=');
+      handle.increment();
+    }else if(handle.safeMatch('and')){
+      handle.remove();
+      handle.insert('&&');
+      handle.increment();
+    }else if(handle.safeMatch('or')){
+      handle.remove();
+      handle.insert('||');
+      handle.increment();
+    }else if(handle.safeMatch('not')){
+      handle.remove();
+      handle.insert('!');
+      handle.increment();
     // Skip this token
     }else{
       handle.increment();
@@ -461,7 +490,8 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
         safeCheck(handle, 'while') && safeCheck(handle, 'for') && safeCheck(handle, 'import') &&
         safeCheck(handle, 'do') && safeCheck(handle, 'else') && safeCheck(handle, 'try') && safeCheck(handle, 'catch') &&
         safeCheck(handle, 'private') && safeCheck(handle, 'public') && safeCheck(handle, 'void') && safeCheck(handle, 'switch') &&
-        safeCheck(handle, 'when')){
+        safeCheck(handle, 'when') && safeCheck(handle, 'is') && safeCheck(handle, 'isnt') && safeCheck(handle, 'and') &&
+        safeCheck(handle, 'or') && safeCheck(handle, 'not')){
       return true;
     }else{
       handle.increment();
@@ -470,8 +500,8 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
   }
 
   private function safeCheck(handle : StringHandle, content : String) : Bool return{
-    if(handle.is(content)){
-      return handle.safeis(content);
+    if(handle.match(content)){
+      return handle.safeMatch(content);
     }
 
     return true;
@@ -485,7 +515,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     var curLevel = opened;
 
     while(handle.nextToken()){
-      if(curLevel == opened && (handle.is('\n') || handle.is('#'))){
+      if(curLevel == opened && (handle.match('\n') || handle.match('#'))){
         if(consumeEndOfLine(handle, '){')){
           break;
         }
@@ -495,12 +525,12 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     }
   }
 
-  private function consumeBrackets(handle : StringHandle, startSymbol : String, endSymbol : String, startReplace : String = null, endReplace : String = null) return{
+  private function consumeBrackets(handle : StringHandle, startSymbol : String, endSymbol : String, startReplace : String = null, endReplace : String = null, doProcess : Bool = true) return{
     var count = 0;
     var startPosition = handle.position;
 
     while(handle.nextToken()){
-      if(handle.is(startSymbol)){
+      if(handle.match(startSymbol)){
         if(count == 0 && startReplace != null){
           handle.remove();
           handle.insert(startReplace);
@@ -510,7 +540,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
         }
 
         count = count + 1;
-      }else if(handle.is(endSymbol)){
+      }else if(handle.match(endSymbol)){
         count = count - 1;
 
         if(count == 0 && endReplace != null){
@@ -521,7 +551,11 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
           handle.increment();
         }
       }else{
-        process(handle);
+        if(doProcess){
+          process(handle);
+        }else{
+          handle.increment();
+        }
       }
 
       if(count == 0){
@@ -535,7 +569,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     var position = handle.position;
 
     while(handle.nextToken()){
-      if(handle.is('#')){
+      if(handle.match('#')){
         comment += '#';
         handle.increment();
       }else{
@@ -547,7 +581,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     handle.position = position;
     handle.current = '#';
 
-    if(comment.length > 1){
+    if(comment.length > 2){
       handle.remove(comment);
       handle.insert('/** ');
       handle.increment();
@@ -558,11 +592,11 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
           handle.insert(' **/');
           handle.increment();
           break;
-        }else if(handle.is('#')){
+        }else if(handle.match('#')){
           position = handle.position;
           handle.prevToken();
 
-          if(handle.is('\n') && onlyWhitespace(handle.content, position + 1, handle.position - 1)){
+          if(handle.match('\n') && onlyWhitespace(handle.content, position + 1, handle.position - 1)){
             handle.position = position;
             handle.remove('#');
             handle.insert('*');
@@ -606,7 +640,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     handle.increment();
 
     while(handle.nextToken()){
-      if(handle.is('#')){
+      if(handle.match('#')){
         if(isNotEscaped(handle)){
           handle.remove();
           handle.insert('$$');
@@ -616,15 +650,15 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
         }
 
         handle.increment();
-      }else if(handle.is('$$')){
+      }else if(handle.match('$$')){
         handle.insert('$$');
         handle.increment();
         handle.increment();
-      }else if(handle.is('\'')){
+      }else if(handle.match('\'')){
         handle.insert('\\');
         handle.increment();
         handle.increment('\'');
-      }else if(handle.is('"')){
+      }else if(handle.match('"')){
         if(isNotEscaped(handle)){
           if(multiline){
             if(handle.at('"""')){
@@ -661,7 +695,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     var position = handle.position;
     handle.nextToken();
 
-    if(handle.is('\n')){
+    if(handle.match('\n')){
       handle.insert(';');
     }else{
       handle.position = position;
@@ -678,12 +712,13 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
   private function consumeEndOfLine(handle : StringHandle, toInsert : String) : Bool return{
     var pos = handle.position;
     var insert = true;
-    var isComment = handle.is('#');
+    var isComment = handle.match('#');
 
     handle.prevToken();
 
-    if(handle.isOne(['=', ';', '+', '-', '*', '.', '/', ',' , '|', '&', '{', '(', '[', '^', '%', '~', '\n', '}', '?', ':', '<', '>']) && onlyWhitespace(handle.content, handle.position + 1, pos)){
-      if(handle.is('-') || handle.is('+')){
+    if((handle.matchOne(['=', ';', '+', '-', '*', '.', '/', ',' , '|', '&', '{', '(', '[', '^', '%', '~', '\n', '}', '?', ':', '<', '>']) ||
+      handle.safeMatchOne(['is', 'isnt', 'and', 'or', 'not'])) && onlyWhitespace(handle.content, handle.position + 1, pos)){
+      if(handle.match('-') || handle.match('+')){
         if(handle.content.charAt(handle.position - 1) != handle.current){
           insert = false;
         }
@@ -698,7 +733,8 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       handle.increment('\n');
       handle.nextToken();
 
-      if(handle.isOne(['?', ':', '=', '+', '-', '*', '.', '/', ',' , '|', '&', ')', ']', '^', '%', '~', '>', '<']) && onlyWhitespace(handle.content, pos + 1, handle.position - 1)){
+      if((handle.matchOne(['?', ':', '=', '+', '-', '*', '.', '/', ',' , '|', '&', ')', ']', '^', '%', '~', '>', '<']) ||
+        handle.safeMatchOne(['is', 'isnt', 'and', 'or', 'not'])) && onlyWhitespace(handle.content, pos + 1, handle.position - 1)){
         insert = false;
       }
 
@@ -719,9 +755,63 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     return insert && !handle.atStart();
   }
 
+  private function consumeTables(handle : StringHandle) return{
+    var pos = handle.position;
+    var arrayAccess : Bool = true;
+    handle.increment();
+
+    while(safeNextToken(handle)){
+      if(handle.match('[') && onlyWhitespace(handle.content, pos + 1, handle.position - 1)){
+        var curr = opened;
+
+        while(handle.nextToken()){
+          if(opened == curr){
+            if(handle.match('[')){
+              consumeBrackets(handle, '[', ']', '', '');
+            }else if(handle.match('=')){
+              handle.remove();
+              handle.insert('=>');
+              handle.increment();
+            }else if(handle.match('}')){
+              break;
+            }else{
+              handle.increment();
+            }
+          }else{
+            handle.increment();
+          }
+        }
+
+        break;
+      }else if(handle.match(':')){
+        arrayAccess = false;
+        break;
+      }else if(handle.match('\n') || handle.match('"') || handle.match('#')){
+        process(handle);
+      }else{
+        break;
+      }
+    }
+
+    if(arrayAccess){
+      handle.position = pos;
+      consumeBrackets(handle, '{', '}', '[', ']');
+    }
+  }
+
+  private function nextNoWhitespace(handle : StringHandle) return{
+    while(handle.nextToken()){
+      if(handle.match('\n')){
+        handle.increment();
+      }else if(handle.match('$')){
+        consumeComments(handle);
+      }else{
+        break;
+      }
+    }
+  }
+
   private function onlyWhitespace(content : String, from : Int, to : Int) return{
-    var sub = content.substr(from, to - from);
-    var regex = new EReg('^\\s*$$', '');
-    return regex.match(sub);
+    ~/^\s*$/.match(content.substr(from, to - from));
   }
 }

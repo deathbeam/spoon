@@ -38,6 +38,9 @@ class @
     # Brackets
     "{", "}", "(", ")", "[", "]",
 
+    # Word operators
+    "isnt", "is", "and", "or", "not",
+
     # Operators (< is also used for inheritance)
     ":", "?", "=", "+", "-", "*", ".", "/", "," , "|", "&",  "^", "%", "<", ">", "~",
 
@@ -117,18 +120,18 @@ class @
   #############################################################################
   private def process(handle : StringHandle) : StringHandle
     # Skip compiler defines and annotations
-    if(handle.is("$") && handle.at("$["))
+    if(handle.match("$") && handle.at("$["))
       handle.remove()
       handle.insert("@")
       handle.increment()
       consumeBrackets(handle, "[", "]", "", "")
       safeNextToken(handle)
 
-      if(handle.is("\n"))
+      if(handle.match("\n"))
         handle.increment()
       end
-    elsif(handle.is("@@"))
-      if(handle.safeis("@@"))
+    elsif(handle.match("@@"))
+      if(handle.safeMatch("@@"))
         handle.remove()
         handle.insert(currentName)
       else
@@ -137,19 +140,19 @@ class @
       end
 
       handle.increment()
-    elsif(handle.is("~") && handle.at("~/"))
+    elsif(handle.match("~") && handle.at("~/"))
       handle.increment("~/")
 
       while(handle.nextToken())
-        if(handle.is("/") && isNotEscaped(handle))
+        if(handle.match("/") && isNotEscaped(handle))
           handle.increment()
           break
         end
 
         handle.increment()
       end
-    elsif(handle.is("@"))
-      if(handle.safeis("@"))
+    elsif(handle.match("@"))
+      if(handle.safeMatch("@"))
         handle.remove()
         handle.insert("this")
         handle.increment()
@@ -161,36 +164,33 @@ class @
         handle.increment()
       end
     # Step over things in strings (" ") and process multiline strings
-    elsif(handle.is("\""))
+    elsif(handle.match("\""))
       consumeStrings(handle)
     # Correct access
-    elsif(handle.safeis("public") || handle.safeis("private"))
+    elsif(handle.safeMatch("public") || handle.safeMatch("private"))
       hasVisibility = true
       handle.increment()
     # Change require to classic imports
-    elsif(handle.safeis("import"))
+    elsif(handle.safeMatch("import"))
       handle.next("\n")
       handle.insert(";")
       handle.increment()
     # Empty operator (null)
-    elsif(handle.safeis("void"))
+    elsif(handle.safeMatch("void"))
       handle.remove()
       handle.insert("(function(){})()")
       handle.increment()
     # Structures and arrays
-    elsif(handle.is("{") || handle.is("["))
+    elsif(handle.match("{"))
       opened = opened + 1
-      handle.increment()
-    elsif(handle.is("}") || handle.is("]"))
+      consumeTables(handle)
       opened = opened - 1
-
-      if(opened == -1)
-        currentType = ""
-      end
-
-      handle.increment()
+    elsif(handle.match("["))
+      opened = opened + 1
+      consumeBrackets(handle, "[", "]")
+      opened = opened - 1
     # Change end to classic bracket end
-    elsif(handle.safeis("end"))
+    elsif(handle.safeMatch("end"))
       handle.remove()
       handle.insert("}")
       handle.increment()
@@ -200,8 +200,12 @@ class @
         currentOpened = -1
         currentExpression = ""
       end
+
+      if(opened == -1)
+        currentType = ""
+      end
     # Insert begin bracket after switch
-    elsif(handle.safeis("switch"))
+    elsif(handle.safeMatch("switch"))
       currentExpression = handle.current
       currentOpened = opened
       handle.increment()
@@ -212,7 +216,7 @@ class @
       handle.increment()
       opened = opened + 1
     # Replaced when with Haxe "case"
-    elsif(handle.safeis("when"))
+    elsif(handle.safeMatch("when"))
       handle.remove()
       handle.insert("case")
       handle.increment()
@@ -222,13 +226,13 @@ class @
       handle.insert(":")
       handle.increment()
     # Insert begin bracket after try
-    elsif(handle.safeis("try"))
+    elsif(handle.safeMatch("try"))
       handle.increment()
       handle.insert("{")
       handle.increment()
       opened = opened + 1
     # Insert brackets around catch
-    elsif(handle.safeis("catch"))
+    elsif(handle.safeMatch("catch"))
       handle.insert("}")
       handle.increment()
       handle.increment("catch")
@@ -238,7 +242,7 @@ class @
       handle.insert("{")
       handle.increment()
     # Insert begin bracket after if and while
-    elsif(handle.safeis("if"))
+    elsif(handle.safeMatch("if"))
       handle.increment()
       handle.nextToken()
       consumeBrackets(handle, "(", ")")
@@ -247,7 +251,7 @@ class @
       handle.increment()
       opened = opened + 1
     # Change elseif to else if and insert begin and end brackets around it
-    elsif(handle.safeis("elsif"))
+    elsif(handle.safeMatch("elsif"))
       handle.remove()
       handle.insert("}else if")
       handle.increment()
@@ -257,7 +261,7 @@ class @
       handle.insert("{")
       handle.increment()
     # Insert begin brackets after loops declaration
-    elsif(handle.safeis("while") || handle.safeis("for"))
+    elsif(handle.safeMatch("while") || handle.safeMatch("for"))
       handle.increment()
       handle.nextToken()
       consumeBrackets(handle, "(", ")")
@@ -267,7 +271,7 @@ class @
       handle.increment()
     # Inser begin and end brackets around else but do not try to
     # process curlys because there will not be any
-    elsif(handle.safeis("else"))
+    elsif(handle.safeMatch("else"))
       if(currentExpression == "switch")
         handle.remove()
         handle.insert("default:")
@@ -280,7 +284,7 @@ class @
 
       handle.increment()
     # Defines to variables and functions
-    elsif(handle.safeis("def"))
+    elsif(handle.safeMatch("def"))
       handle.remove("def")
 
       def position = handle.position
@@ -294,12 +298,12 @@ class @
         position = handle.position
         safeNextToken(handle)
 
-        if(handle.is("@new"))
+        if(handle.match("@new"))
           handle.remove()
           handle.insert("static var __new = (function(){_new(); return true;})(); static  _new")
           handle.increment()
           position = handle.position - 5
-        elsif(handle.is("@"))
+        elsif(handle.match("@"))
           handle.remove()
           handle.position = position
           handle.insert("static ")
@@ -314,24 +318,24 @@ class @
 
       def implicit = true
 
-      if(handle.safeis("new"))
+      if(handle.safeMatch("new"))
         implicit = false
         handle.increment()
         handle.nextToken()
       end
 
-      if(handle.is("@"))
+      if(handle.match("@"))
         consumeGenerics(handle)
         handle.nextToken()
       end
 
-      if(handle.is("("))
+      if(handle.match("("))
         handle.position = position
         handle.insert("function")
         consumeBrackets(handle, "(", ")")
 
         while(safeNextToken(handle))
-          if(handle.is("do"))
+          if(handle.match("do"))
             handle.remove()
 
             if(implicit)
@@ -339,8 +343,8 @@ class @
             end
 
             break
-          elsif(handle.isOne(["\n", "\#", ";"]))
-            if(handle.is(";"))
+          elsif(handle.matchOne(["\n", "\#", ";"]))
+            if(handle.match(";"))
               handle.remove()
             end
 
@@ -363,13 +367,13 @@ class @
         handle.increment()
       end
     # Closures and blocks
-    elsif(handle.safeis("do"))
+    elsif(handle.safeMatch("do"))
       handle.remove("do")
       handle.insert("{")
       opened = opened + 1
       handle.increment()
     # [abstract] class/trait/enum
-    elsif (handle.safeis("class") || handle.safeis("trait") || handle.safeis("enum") || handle.safeis("interface") || handle.safeis("abstract"))
+    elsif (handle.safeMatch("class") || handle.safeMatch("trait") || handle.safeMatch("enum") || handle.safeMatch("interface") || handle.safeMatch("abstract"))
       currentType = handle.current
 
       if(currentType != "enum" && currentType != "interface")
@@ -389,7 +393,7 @@ class @
       def nameSet = false
 
       while(safeNextToken(handle))
-        if(handle.is("@"))
+        if(handle.match("@"))
           if(!nameSet)
             currentName = fileName
             nameSet = true
@@ -398,14 +402,16 @@ class @
           if(handle.at("@["))
             consumeGenerics(handle)
 
-            if(handle.is(";"))
+            if(handle.match(";"))
               handle.remove(";")
 
               def position = handle.position
               handle.nextToken()
 
-              if(handle.is("\n"))
+              if(handle.match("\n"))
                 handle.insert("{")
+                handle.increment()
+                opened += 1
                 break
               else
                 handle.position = position
@@ -415,7 +421,7 @@ class @
             handle.remove()
             handle.insert(currentName)
           end
-        elsif(handle.is("<"))
+        elsif(handle.match("<"))
           if(!nameSet)
             currentName = handle.content.substr(position, handle.position - position)
             nameSet = true
@@ -423,7 +429,7 @@ class @
 
           handle.remove()
           handle.insert("extends")
-        elsif(handle.is("::"))
+        elsif(handle.match("::"))
           if(!nameSet)
             currentName = handle.content.substr(position, handle.position - position)
             nameSet = true
@@ -431,21 +437,44 @@ class @
 
           handle.remove()
           handle.insert("implements")
-        elsif(handle.is("\n"))
+        elsif(handle.match("\n"))
           if(!nameSet)
             currentName = handle.content.substr(position, handle.position - position)
             nameSet = true
           end
 
           handle.insert("{")
+          handle.increment()
+          opened += 1
           break
         end
 
         handle.increment()
       end
     # Process comments and newlines. Also, insert semicolons when needed
-    elsif(handle.is("\n") || handle.is("\#"))
+    elsif(handle.match("\n") || handle.match("\#"))
       consumeEndOfLine(handle, ";")
+    # Word operators
+    elsif(handle.safeMatch("is"))
+      handle.remove()
+      handle.insert("==")
+      handle.increment()
+    elsif(handle.safeMatch("isnt"))
+      handle.remove()
+      handle.insert("!=")
+      handle.increment()
+    elsif(handle.safeMatch("and"))
+      handle.remove()
+      handle.insert("&&")
+      handle.increment()
+    elsif(handle.safeMatch("or"))
+      handle.remove()
+      handle.insert("||")
+      handle.increment()
+    elsif(handle.safeMatch("not"))
+      handle.remove()
+      handle.insert("!")
+      handle.increment()
     # Skip this token
     else
       handle.increment()
@@ -461,7 +490,8 @@ class @
         safeCheck(handle, "while") && safeCheck(handle, "for") && safeCheck(handle, "import") &&
         safeCheck(handle, "do") && safeCheck(handle, "else") && safeCheck(handle, "try") && safeCheck(handle, "catch") &&
         safeCheck(handle, "private") && safeCheck(handle, "public") && safeCheck(handle, "void") && safeCheck(handle, "switch") &&
-        safeCheck(handle, "when"))
+        safeCheck(handle, "when") && safeCheck(handle, "is") && safeCheck(handle, "isnt") && safeCheck(handle, "and") &&
+        safeCheck(handle, "or") && safeCheck(handle, "not"))
       return true
     else
       handle.increment()
@@ -470,8 +500,8 @@ class @
   end
 
   private def safeCheck(handle : StringHandle, content : String) : Bool
-    if(handle.is(content))
-      return handle.safeis(content)
+    if(handle.match(content))
+      return handle.safeMatch(content)
     end
 
     return true
@@ -485,7 +515,7 @@ class @
     def curLevel = opened
 
     while(handle.nextToken())
-      if(curLevel == opened && (handle.is("\n") || handle.is("\#")))
+      if(curLevel == opened && (handle.match("\n") || handle.match("\#")))
         if(consumeEndOfLine(handle, "){"))
           break
         end
@@ -495,12 +525,12 @@ class @
     end
   end
 
-  private def consumeBrackets(handle : StringHandle, startSymbol : String, endSymbol : String, startReplace : String = null, endReplace : String = null)
+  private def consumeBrackets(handle : StringHandle, startSymbol : String, endSymbol : String, startReplace : String = null, endReplace : String = null, doProcess : Bool = true)
     def count = 0
     def startPosition = handle.position
 
     while(handle.nextToken())
-      if(handle.is(startSymbol))
+      if(handle.match(startSymbol))
         if(count == 0 && startReplace != null)
           handle.remove()
           handle.insert(startReplace)
@@ -510,7 +540,7 @@ class @
         end
 
         count = count + 1
-      elsif(handle.is(endSymbol))
+      elsif(handle.match(endSymbol))
         count = count - 1
 
         if(count == 0 && endReplace != null)
@@ -521,7 +551,11 @@ class @
           handle.increment()
         end
       else
-        process(handle)
+        if(doProcess)
+          process(handle)
+        else
+          handle.increment()
+        end
       end
 
       if(count == 0)
@@ -535,7 +569,7 @@ class @
     def position = handle.position
 
     while(handle.nextToken())
-      if(handle.is("\#"))
+      if(handle.match("\#"))
         comment += "\#"
         handle.increment()
       else
@@ -547,7 +581,7 @@ class @
     handle.position = position
     handle.current = "\#"
 
-    if(comment.length > 1)
+    if(comment.length > 2)
       handle.remove(comment)
       handle.insert("/** ")
       handle.increment()
@@ -558,11 +592,11 @@ class @
           handle.insert(" **/")
           handle.increment()
           break
-        elsif(handle.is("\#"))
+        elsif(handle.match("\#"))
           position = handle.position
           handle.prevToken()
 
-          if(handle.is("\n") && onlyWhitespace(handle.content, position + 1, handle.position - 1))
+          if(handle.match("\n") && onlyWhitespace(handle.content, position + 1, handle.position - 1))
             handle.position = position
             handle.remove("\#")
             handle.insert("*")
@@ -606,7 +640,7 @@ class @
     handle.increment()
 
     while(handle.nextToken())
-      if(handle.is("\#"))
+      if(handle.match("\#"))
         if(isNotEscaped(handle))
           handle.remove()
           handle.insert("$")
@@ -616,15 +650,15 @@ class @
         end
 
         handle.increment()
-      elsif(handle.is("$"))
+      elsif(handle.match("$"))
         handle.insert("$")
         handle.increment()
         handle.increment()
-      elsif(handle.is("'"))
+      elsif(handle.match("'"))
         handle.insert("\\")
         handle.increment()
         handle.increment("'")
-      elsif(handle.is("\""))
+      elsif(handle.match("\""))
         if(isNotEscaped(handle))
           if(multiline)
             if(handle.at("\"\"\""))
@@ -661,7 +695,7 @@ class @
     def position = handle.position
     handle.nextToken()
 
-    if(handle.is("\n"))
+    if(handle.match("\n"))
       handle.insert(";")
     else
       handle.position = position
@@ -678,12 +712,13 @@ class @
   private def consumeEndOfLine(handle : StringHandle, toInsert : String) : Bool
     def pos = handle.position
     def insert = true
-    def isComment = handle.is("\#")
+    def isComment = handle.match("\#")
 
     handle.prevToken()
 
-    if(handle.isOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":", "<", ">"]) && onlyWhitespace(handle.content, handle.position + 1, pos))
-      if(handle.is("-") || handle.is("+"))
+    if((handle.matchOne(["=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":", "<", ">"]) ||
+      handle.safeMatchOne(["is", "isnt", "and", "or", "not"])) && onlyWhitespace(handle.content, handle.position + 1, pos))
+      if(handle.match("-") || handle.match("+"))
         if(handle.content.charAt(handle.position - 1) != handle.current)
           insert = false
         end
@@ -698,7 +733,8 @@ class @
       handle.increment("\n")
       handle.nextToken()
 
-      if(handle.isOne(["?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "~", ">", "<"]) && onlyWhitespace(handle.content, pos + 1, handle.position - 1))
+      if((handle.matchOne(["?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "~", ">", "<"]) ||
+        handle.safeMatchOne(["is", "isnt", "and", "or", "not"])) && onlyWhitespace(handle.content, pos + 1, handle.position - 1))
         insert = false
       end
 
@@ -719,9 +755,63 @@ class @
     return insert && !handle.atStart()
   end
 
+  private def consumeTables(handle : StringHandle)
+    def pos = handle.position
+    def arrayAccess : Bool = true
+    handle.increment()
+
+    while(safeNextToken(handle))
+      if(handle.match("[") and onlyWhitespace(handle.content, pos + 1, handle.position - 1))
+        def curr = opened
+
+        while(handle.nextToken())
+          if(opened is curr)
+            if(handle.match("["))
+              consumeBrackets(handle, "[", "]", "", "")
+            elsif(handle.match("="))
+              handle.remove()
+              handle.insert("=>")
+              handle.increment()
+            elsif(handle.match("}"))
+              break
+            else
+              handle.increment()
+            end
+          else
+            handle.increment()
+          end
+        end
+
+        break
+      elsif(handle.match(":"))
+        arrayAccess = false
+        break
+      elsif(handle.match("\n") or handle.match("\"") or handle.match("\#"))
+        process(handle)
+      else
+        break
+      end
+    end
+
+    if(arrayAccess)
+      handle.position = pos
+      consumeBrackets(handle, "{", "}", "[", "]")
+    end
+  end
+
+  private def nextNoWhitespace(handle : StringHandle)
+    while(handle.nextToken())
+      if(handle.match("\n"))
+        handle.increment()
+      elsif(handle.match("#"))
+        consumeComments(handle)
+      else
+        break
+      end
+    end
+  end
+
   private def onlyWhitespace(content : String, from : Int, to : Int)
-    def sub = content.substr(from, to - from)
-    def regex = new EReg("^\\s*$", "")
-    return regex.match(sub)
+    ~/^\s*$/.match(content.substr(from, to - from))
   end
 end

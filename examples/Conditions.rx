@@ -5,19 +5,19 @@ class @
     def myvar : String = null
     def myarray = new Array@[String]()
 
-    if(myvar != null && myvar.charAt(10) == "p")
+    if(myvar isnt null and myvar.charAt(10) is "p")
       for(i in myarray.iterator())
         trace("Wouhou")
       end
-    elsif(myvar != null && myvar.charAt(20) == "c")
+    elsif(myvar isnt null and myvar.charAt(20) is "c")
       trace("no")
     else
       trace("coco")
     end
 
-    if(myvar != null &&
-        myvar.charAt(0) == "x" &&
-        myvar.charAt(2) == "x")
+    if(myvar isnt null and
+        myvar.charAt(0) is "x" and
+        myvar.charAt(2) is "x")
       trace("ok")
     end
   end

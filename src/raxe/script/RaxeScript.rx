@@ -15,13 +15,13 @@ class @ < Interp
     super()
 
     variables.set("import", def(thing : String)
-      def path = thing + ".rx"
+      def path = thing.replace(".", "/") + ".rxs"
 
       if(FileSystem.exists(path))
         return execute(parse(File.getContent(path)))
       end
 
-      path = thing.replace("/", ".")
+      path = thing
 
       def clazz : Dynamic = Type.resolveClass(path)
 

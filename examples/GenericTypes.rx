@@ -1,3 +1,5 @@
+# vim: set ft=rb:
+
 $[:generic]
 class MyValue@[T]
   def value: T

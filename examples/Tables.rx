@@ -5,19 +5,19 @@ class @
     def array = {
       1,
       2,
-      3,
+      3
     }
 
     def map = {
       ["a"] = 1,
       ["b"] = 2,
-      ["c"] = 3,
+      ["c"] = 3
     }
 
     def struct = {
       a: 1,
       b: 2,
-      c: 3,
+      c: 3
     }
   end
 end

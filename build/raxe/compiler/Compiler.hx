@@ -733,7 +733,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       handle.increment('\n');
       handle.nextToken();
 
-      if((handle.matchOne(['?', ':', '=', '+', '-', '*', '.', '/', ',' , '|', '&', ')', ']', '^', '%', '~', '>', '<']) ||
+      if((handle.matchOne(['?', ':', '=', '+', '-', '*', '.', '/', ',' , '|', '&', ')', ']', '}', '^', '%', '~', '>', '<']) ||
         handle.safeMatchOne(['is', 'isnt', 'and', 'or', 'not'])) && onlyWhitespace(handle.content, pos + 1, handle.position - 1)){
         insert = false;
       }

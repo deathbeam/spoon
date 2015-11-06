@@ -6,7 +6,7 @@ def xml  = "docs/index.xml"                        # Path to generate documentat
 def docs = "docs/build"                            # Path to generate documentation HTML
 def bin  = "run.n"                                 # Path to generate Neko binary
 def main = "raxe.cli.Main"                         # Entry point for CLI
-def libs = ["hscript", "mcli", "tink_lang", "dox"] # Haxelib libraries to use
+def libs = {"hscript", "mcli", "tink_lang", "dox"} # Haxelib libraries to use
 
 ###############################################################################
 # Default task which is executed when no task is specified.
@@ -25,7 +25,7 @@ def installLibs()
   echo("> Installing Raxe dependencies")
 
   for(lib in libs)
-    sh("haxelib", ["install", lib])
+    sh("haxelib", {"install", lib})
   end
 end
 
@@ -34,7 +34,7 @@ end
 ###############################################################################
 def compileRaxe()
   echo("> Compiling Raxe source files")
-  sh("haxelib", ["run", "raxe", "-a", "-s", src, "-d", dest])
+  sh("haxelib", {"run", "raxe", "-a", "-s", src, "-d", dest})
 end
 
 ###############################################################################
@@ -43,7 +43,7 @@ end
 def compileBinary()
   echo("> Building neko binary")
 
-  def args = ["-cp", dest, "-main", main, "-neko", bin]
+  def args = {"-cp", dest, "-main", main, "-neko", bin}
 
   for(lib in libs)
     args.push("-lib")
@@ -59,7 +59,7 @@ end
 def generateDocs()
   echo("> Generating documentation")
 
-  def args = ["-cp", dest, "-main", main, "-xml", xml]
+  def args = {"-cp", dest, "-main", main, "-xml", xml}
 
   for(lib in libs)
     args.push("-lib")
@@ -67,7 +67,7 @@ def generateDocs()
   end
 
   sh("haxe", args)
-  sh("haxelib", ["run", "dox", "-i", xml, "-o", docs])
+  sh("haxelib", {"run", "dox", "-i", xml, "-o", docs})
 end
 
 ###############################################################################
@@ -75,5 +75,5 @@ end
 ###############################################################################
 def compileExamples()
   echo("> Compiling Raxe examples")
-  sh("haxelib", ["run", "raxe", "-s", "examples", "-d", "examples/build"])
+  sh("haxelib", {"run", "raxe", "-s", "examples", "-d", "examples/build"})
 end

@@ -305,7 +305,7 @@ class @
 
         if(handle.match("@new"))
           handle.remove()
-          handle.insert("static var __new = (function(){_new(); return true;})(); static  _new")
+          handle.insert("@:keep static var __new = (function(){_new(); return true;})(); @:keep static  _new")
           handle.increment()
           position = handle.position - 5
         elsif(handle.match("@"))

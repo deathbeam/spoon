@@ -459,31 +459,40 @@ class @
       consumeEndOfLine(handle, ";")
     # Word operators
     elsif(handle.safeMatch("is"))
-      handle.remove()
-      handle.insert("==")
-      handle.increment()
+      consumeOperator(handle, "==")
     elsif(handle.safeMatch("isnt"))
-      handle.remove()
-      handle.insert("!=")
-      handle.increment()
+      consumeOperator(handle, "!=")
     elsif(handle.safeMatch("and"))
-      handle.remove()
-      handle.insert("&&")
-      handle.increment()
+      consumeOperator(handle, "&&")
     elsif(handle.safeMatch("or"))
-      handle.remove()
-      handle.insert("||")
-      handle.increment()
+      consumeOperator(handle, "||")
     elsif(handle.safeMatch("not"))
-      handle.remove()
-      handle.insert("!")
-      handle.increment()
+      consumeOperator(handle, "!")
     # Skip this token
     else
       handle.increment()
     end
 
     return handle
+  end
+
+  private def consumeOperator(handle : StringHandle, operator : String)
+    def pos = handle.position
+    def cur = handle.current
+
+    prevNoWhitespace(handle)
+
+    if(not handle.match("."))
+      handle.position = pos
+      handle.current = cur
+      handle.remove()
+      handle.insert(operator)
+      handle.increment()
+    else
+      handle.position = pos
+      handle.current = cur
+      handle.increment()
+    end
   end
 
   private def safeNextToken(handle : StringHandle) : Bool
@@ -816,6 +825,16 @@ class @
         handle.increment()
       elsif(handle.match("#"))
         consumeComments(handle)
+      else
+        break
+      end
+    end
+  end
+
+  private def prevNoWhitespace(handle : StringHandle)
+    while(handle.prevToken())
+      if(handle.match("\n"))
+        handle.increment()
       else
         break
       end

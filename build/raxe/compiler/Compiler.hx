@@ -459,31 +459,40 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       consumeEndOfLine(handle, ';');
     // Word operators
     }else if(handle.safeMatch('is')){
-      handle.remove();
-      handle.insert('==');
-      handle.increment();
+      consumeOperator(handle, '==');
     }else if(handle.safeMatch('isnt')){
-      handle.remove();
-      handle.insert('!=');
-      handle.increment();
+      consumeOperator(handle, '!=');
     }else if(handle.safeMatch('and')){
-      handle.remove();
-      handle.insert('&&');
-      handle.increment();
+      consumeOperator(handle, '&&');
     }else if(handle.safeMatch('or')){
-      handle.remove();
-      handle.insert('||');
-      handle.increment();
+      consumeOperator(handle, '||');
     }else if(handle.safeMatch('not')){
-      handle.remove();
-      handle.insert('!');
-      handle.increment();
+      consumeOperator(handle, '!');
     // Skip this token
     }else{
       handle.increment();
     }
 
     return handle;
+  }
+
+  private function consumeOperator(handle : StringHandle, operator : String) return{
+    var pos = handle.position;
+    var cur = handle.current;
+
+    prevNoWhitespace(handle);
+
+    if(! handle.match('.')){
+      handle.position = pos;
+      handle.current = cur;
+      handle.remove();
+      handle.insert(operator);
+      handle.increment();
+    }else{
+      handle.position = pos;
+      handle.current = cur;
+      handle.increment();
+    }
   }
 
   private function safeNextToken(handle : StringHandle) : Bool return{
@@ -816,6 +825,16 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
         handle.increment();
       }else if(handle.match('$')){
         consumeComments(handle);
+      }else{
+        break;
+      }
+    }
+  }
+
+  private function prevNoWhitespace(handle : StringHandle) return{
+    while(handle.prevToken()){
+      if(handle.match('\n')){
+        handle.increment();
       }else{
         break;
       }

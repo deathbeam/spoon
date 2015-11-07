@@ -22,6 +22,6 @@ class MyTests < TestCase
 
   # Every test function name has to start with 'test'
   def testValue() do @assertEquals("foo", myVal)
-  def testMath1() do @assertTrue(myInt == 2)
-  def testMath2() do @assertFalse(myInt == 3)
+  def testMath1() do @assertTrue(myInt is 2)
+  def testMath2() do @assertFalse(myInt is 3)
 end

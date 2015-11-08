@@ -1,11 +1,9 @@
-package raxe.script;using Lambda;using StringTools;import haxe.io.Input;
-import hscript.Parser;
+package raxe.script;using Lambda;using StringTools;import hscript.Parser;
 import hscript.Interp;
 import hscript.Expr;
 import sys.io.File;
 import sys.FileSystem;
 import raxe.compiler.Compiler;
-import raxe.tools.StringHandle;
 
 @:tink class RaxeScript extends Interp{
   public var parser : Parser = new Parser();

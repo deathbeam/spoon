@@ -43,11 +43,10 @@ class @
   # @param ?content File's content
   #############################################################################
   def @createFile(path : String, ?content : String) : Void
-    def parts : Array[String] = path.split("/")
-    def fileName : String = parts.pop()
-
     # Create all directories necessaries
-    createDirectory(parts.join("/"))
+    if(path.indexOf("/") > 0)
+      createDirectory(path)
+    end
 
     if(content == null)
       content = ""

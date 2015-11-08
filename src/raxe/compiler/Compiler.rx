@@ -129,6 +129,9 @@ class @
       end
 
       handle.increment()
+    elsif(handle.match("/") and handle.at("/**"))
+      handle.next("**/")
+      handle.increment("**/")
     elsif(handle.match("~") && handle.at("~/"))
       handle.increment("~/")
 
@@ -641,8 +644,12 @@ class @
         handle.remove("\#elsif")
         handle.insert("\#elseif")
       elsif(!handle.at("\#if") && !handle.at("\#else") && !handle.at("\#end"))
-        handle.remove(comment)
-        handle.insert("//")
+        def pos = handle.position
+        handle.next("\n")
+        def txt = handle.content.substr(pos, handle.position - pos)
+        handle.position = pos
+        handle.remove(txt)
+        return handle
       end
 
       handle.next("\n")
@@ -740,11 +747,11 @@ class @
     def insert = true
     def isComment = handle.match("\#")
 
-    handle.prevToken()
+    prevNoWhitespace(handle)
 
-    if((handle.matchOne({"=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":", "<", ">"}) ||
-      handle.safeMatchOne({"is", "isnt", "and", "or", "not"})) && onlyWhitespace(handle.content, handle.position + 1, pos))
-      if(handle.match("-") || handle.match("+"))
+    if(handle.nearStart(handle.current.length) or (handle.matchOne({"=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":", "<", ">"}) or
+      handle.safeMatchOne({"is", "isnt", "and", "or", "not"})) and onlyWhitespace(handle.content, handle.position + 1, pos))
+      if(handle.match("-") or handle.match("+"))
         if(handle.content.charAt(handle.position - 1) != handle.current)
           insert = false
         end
@@ -755,30 +762,26 @@ class @
 
     handle.position = pos
 
-    if(!isComment)
-      handle.increment("\n")
-      handle.nextToken()
+    nextNoWhitespace(handle)
 
-      if((handle.matchOne({"?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "}", "^", "%", "~", ">", "<"}) ||
-        handle.safeMatchOne({"is", "isnt", "and", "or", "not"})) && onlyWhitespace(handle.content, pos + 1, handle.position - 1))
-        insert = false
-      end
-
-      handle.prev("\n")
+    if((handle.matchOne({"?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "}", "^", "%", "~", ">", "<", ";"}) ||
+      handle.safeMatchOne({"is", "isnt", "and", "or", "not"})) && onlyWhitespace(handle.content, pos + 1, handle.position - 1))
+      insert = false
     end
 
-    if(insert && !handle.atStart())
+    handle.position = pos
+
+    if(insert && !handle.nearStart(handle.current.length))
       handle.insert(toInsert)
       handle.increment()
     end
 
-    if(isComment)
-      consumeComments(handle)
-    else
-      handle.increment()
+    if(handle.at("\#"))
+      handle.next("\n")
     end
 
-    return insert && !handle.atStart()
+    handle.increment("\n")
+    return(insert and not handle.atStart())
   end
 
   private def consumeTables(handle : StringHandle)
@@ -823,7 +826,7 @@ class @
     while(handle.nextToken())
       if(handle.match("\n"))
         handle.increment()
-      elsif(handle.match("#"))
+      elsif(handle.match("\#"))
         consumeComments(handle)
       else
         break
@@ -833,9 +836,21 @@ class @
 
   private def prevNoWhitespace(handle : StringHandle)
     while(handle.prevToken())
-      if(handle.match("\n"))
-        handle.increment()
-      else
+      if(handle.match("*") and handle.at("**/"))
+        handle.prev("/**")
+      elsif(not handle.match("\n"))
+        def pos = handle.position
+        def cur = handle.current
+        handle.prev("\n")
+        handle.nextToken()
+
+        if(handle.match("#"))
+          handle.next("\n")
+        else
+          handle.position = pos
+          handle.current = cur
+        end
+
         break
       end
     end

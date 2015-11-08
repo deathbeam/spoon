@@ -30,18 +30,17 @@ import raxe.compiler.Compiler;
    **/
   public function compile() : Bool return{
     var src = this.src;
-    var dest = this.dest;
+    var dest = this.dest == '.' ? Sys.getCwd() : this.dest;
     var dir = src;
 
-    // Compile one file
+    
     if(!FileSystem.isDirectory(this.src)){
       var oldFileSize : Int = this.files.get(this.src);
       var currentSize : Int = FileSystem.stat(this.src).size;
 
       if(oldFileSize != currentSize){
-        src = getSourceFile(src);
         printVerbose(src, dest);
-        var result = compileFile(dest, src);
+        var result = compileFile(null, src);
 
         if(dest == null || dest == ''){
             this.response = result;
@@ -54,12 +53,12 @@ import raxe.compiler.Compiler;
       }
 
       return false;
-    // Compile a whole folder
+    
     }else{
       var files = FolderReader.getFiles(src);
       var hasCompile : Bool = false;
 
-      // To have the same pattern between src and dest (avoid src/ and dist instead of dist/)
+      
       if(src.endsWith('/')){
         src = src.substr(0, src.length - 1);
       }
@@ -79,7 +78,7 @@ import raxe.compiler.Compiler;
         if(oldFileSize != currentSize && (all || isRaxeFile(file))){
           var newPath = this.getDestinationFile(file, src, dest);
 
-          // If it's a raxe file, we compile it
+          
           if(isRaxeFile(file)){
             file = getSourceFile(file);
             printVerbose(file, newPath);
@@ -87,7 +86,7 @@ import raxe.compiler.Compiler;
             FolderReader.createFile(newPath, result);
             this.files.set(file, currentSize);
 
-          // If it's not a raxe file, we just copy/past it to the new folder
+          
           }else{
               FolderReader.copyFileSystem(file, newPath);
           }

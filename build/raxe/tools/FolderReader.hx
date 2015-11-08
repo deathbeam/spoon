@@ -43,11 +43,10 @@ import sys.io.File;
   * @param ?content File's content
    **/
   public static function createFile(path : String, ?content : String) : Void return{
-    var parts : Array<String> = path.split('/');
-    var fileName : String = parts.pop();
-
-    // Create all directories necessaries
-    createDirectory(parts.join('/'));
+    
+    if(path.indexOf('/') > 0){
+      createDirectory(path);
+    }
 
     if(content == null){
       content = '';
@@ -84,7 +83,7 @@ import sys.io.File;
         source = source.substr(0, -1);
       }
 
-      // If that's a file
+      
       if(!FileSystem.isDirectory(source)){
         createFile(destination, File.getContent(source));
       }else{
@@ -95,7 +94,7 @@ import sys.io.File;
             createDirectory(destination);
           }
 
-          // Recursive call
+          
           copyFileSystem(source + '/' + file, destination + '/' + file);
         }
       }

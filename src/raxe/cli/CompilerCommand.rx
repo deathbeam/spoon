@@ -30,7 +30,7 @@ class @
   #############################################################################
   def compile() : Bool
     def src = @src
-    def dest = @dest
+    def dest = @dest == "." ? Sys.getCwd() : @dest
     def dir = src
 
     # Compile one file
@@ -39,9 +39,8 @@ class @
       def currentSize : Int = FileSystem.stat(@src).size
 
       if(oldFileSize != currentSize)
-        src = getSourceFile(src)
         printVerbose(src, dest)
-        def result = compileFile(dest, src)
+        def result = compileFile(null, src)
 
         if(dest == null || dest == "")
             @response = result

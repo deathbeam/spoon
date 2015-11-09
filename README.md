@@ -19,7 +19,7 @@ haxelib git raxe https://github.com/nondev/raxe.git
 
 # Editor support
 
-Raxe have official plugin for [Atom](https://atom.io) called [language-raxe](https://atom.io/packages/language-raxe), originally created by [Peekmo](https://github.com/Peekmo).
+Raxe have official plugin for [Atom](https://atom.io/packages/raxe), originally created by [Peekmo](https://github.com/Peekmo).
 You can install it from Atom by searching for `raxe` package, or via command-line, using APM:
 
 ```

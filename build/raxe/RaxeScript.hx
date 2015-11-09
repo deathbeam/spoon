@@ -7,7 +7,7 @@ import raxe.compiler.Compiler;
   import sys.io.File;
   import sys.FileSystem;
 #end
-;
+
 @:tink class RaxeScript extends Interp{
   public var parser : Parser = new Parser();
   public var compiler : Compiler = new Compiler(true);
@@ -23,7 +23,7 @@ import raxe.compiler.Compiler;
           return execute(parse(File.getContent(path)));
         }
       #end
-;
+
       path = thing;
 
       var clazz : Dynamic = Type.resolveClass(path);

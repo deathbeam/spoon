@@ -165,6 +165,10 @@ class @
       handle.remove()
       handle.next("`")
       handle.remove()
+    # Skip already processed strings
+    elsif(handle.match("'"))
+      handle.next("'")
+      handle.increment()
     # Step over things in strings (" ") and process multiline strings
     elsif(handle.match("\""))
       consumeStrings(handle)
@@ -188,7 +192,7 @@ class @
       safePrevToken(handle)
       handle.increment()
 
-      if(not onlyWhitespace(handle.content, handle.position, pos) or handle.matchOne({")", "]"}))
+      if(not onlyWhitespace(handle, handle.position, pos) or handle.matchOne({")", "]"}))
         handle.position = pos
         handle.current = "{"
         consumeBrackets(handle, "{", "}", "[", "]")
@@ -630,7 +634,7 @@ class @
           position = handle.position
           handle.prevToken()
 
-          if(handle.match("\n") && onlyWhitespace(handle.content, position + 1, handle.position - 1))
+          if(handle.match("\n") && onlyWhitespace(handle, position + handle.current.length, handle.position))
             handle.position = position
             handle.remove("\#")
             handle.insert("*")
@@ -748,13 +752,35 @@ class @
 
   private def consumeEndOfLine(handle : StringHandle, toInsert : String) : Bool
     def pos = handle.position
+    def cur = handle.current
     def insert = true
     def isComment = handle.match("\#")
 
+    handle.prevToken()
+
+    if(handle.match("\n") and onlyWhitespace(handle, handle.position + handle.current.length, pos))
+      handle.position = pos
+      handle.current = cur
+
+      if(handle.at("\#"))
+        consumeComments(handle)
+      else
+        handle.increment("\n")
+      end
+
+      return false
+    else
+      handle.position = pos
+      handle.current = cur
+    end
+
     prevNoWhitespace(handle)
 
-    if(handle.nearStart(handle.current.length) or (handle.matchOne({"=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "{", "(", "[", "^", "%", "~", "\n", "}", "?", ":", "<", ">"}) or
-      handle.safeMatchOne({"is", "isnt", "and", "or", "not"})) and onlyWhitespace(handle.content, handle.position + 1, pos))
+    if(handle.nearStart(handle.current.length) or
+      (handle.matchOne({"=", ";", "+", "-", "*", ".", "/", "," , "|", "&", "(", "[", "{", "^", "%", "~", "\n", "}", "?", ":", "<", ">"}) or
+      handle.safeMatchOne({"is", "isnt", "and", "or", "not"})) and
+      onlyWhitespace(handle, handle.position + handle.current.length, pos))
+
       if(handle.match("-") or handle.match("+"))
         if(handle.content.charAt(handle.position - 1) != handle.current)
           insert = false
@@ -765,15 +791,21 @@ class @
     end
 
     handle.position = pos
+    handle.current = cur
 
-    nextNoWhitespace(handle)
+    if(insert)
+      nextNoWhitespace(handle)
 
-    if((handle.matchOne({"?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "}", "^", "%", "~", ">", "<", ";"}) ||
-      handle.safeMatchOne({"is", "isnt", "and", "or", "not"})) && onlyWhitespace(handle.content, pos + 1, handle.position - 1))
-      insert = false
+      if((handle.matchOne({"?", ":", "=", "+", "-", "*", ".", "/", "," , "|", "&", ")", "]", "^", "%", "~", ">", "<", ";"}) or
+        handle.safeMatchOne({"is", "isnt", "and", "or", "not"})) and
+        onlyWhitespace(handle, pos, handle.position))
+
+        insert = false
+      end
+
+      handle.position = pos
+      handle.current = cur
     end
-
-    handle.position = pos
 
     if(insert && !handle.nearStart(handle.current.length))
       handle.insert(toInsert)
@@ -781,10 +813,11 @@ class @
     end
 
     if(handle.at("\#"))
-      handle.next("\n")
+      consumeComments(handle)
+    else
+      handle.increment("\n")
     end
 
-    handle.increment("\n")
     return(insert and not handle.atStart())
   end
 
@@ -794,7 +827,7 @@ class @
     handle.increment()
 
     while(safeNextToken(handle))
-      if(handle.match("[") and onlyWhitespace(handle.content, pos + 1, handle.position - 1))
+      if(handle.match("[") and onlyWhitespace(handle, pos + handle.current.length, handle.position))
         while(handle.nextToken())
           if(handle.match("["))
             consumeBrackets(handle, "[", "]", "", "")
@@ -824,6 +857,17 @@ class @
       handle.position = pos
       consumeBrackets(handle, "{", "}", "[", "]")
     end
+
+    pos = handle.position
+    handle.prevToken()
+    prevNoWhitespace(handle)
+
+    if(handle.match(";"))
+      handle.remove()
+      handle.position = pos - 1
+    else
+      handle.position = pos
+    end
   end
 
   private def nextNoWhitespace(handle : StringHandle)
@@ -849,18 +893,23 @@ class @
         handle.nextToken()
 
         if(handle.match("#"))
-          prevNoWhitespace(handle)
+          handle.prevToken()
         else
           handle.position = pos
           handle.current = cur
+          break
         end
-
-        break
       end
     end
   end
 
-  private def onlyWhitespace(content : String, from : Int, to : Int)
-    ~/^\s*$/.match(content.substr(from, to - from))
+  private def onlyWhitespace(handle : StringHandle, from : Int, to : Int)
+    def sub = handle.content.substr(from, to - from)
+
+    if(sub.length == 0)
+      sub = " "
+    end
+
+    ~/^\s*(#.*)*[ \n]*$/.match(sub)
   end
 end

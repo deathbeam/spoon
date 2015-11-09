@@ -166,6 +166,10 @@ package raxe.compiler;using Lambda;using StringTools;#if !js
       handle.next('`');
       handle.remove();
     
+    }else if(handle.match('\'')){
+      handle.next('\'');
+      handle.increment();
+    
     }else if(handle.match('"')){
       consumeStrings(handle);
     
@@ -188,7 +192,7 @@ package raxe.compiler;using Lambda;using StringTools;#if !js
       safePrevToken(handle);
       handle.increment();
 
-      if(! onlyWhitespace(handle.content, handle.position, pos) || handle.matchOne([')', ']'])){
+      if(! onlyWhitespace(handle, handle.position, pos) || handle.matchOne([')', ']'])){
         handle.position = pos;
         handle.current = '{';
         consumeBrackets(handle, '{', '}', '[', ']');
@@ -630,7 +634,7 @@ package raxe.compiler;using Lambda;using StringTools;#if !js
           position = handle.position;
           handle.prevToken();
 
-          if(handle.match('\n') && onlyWhitespace(handle.content, position + 1, handle.position - 1)){
+          if(handle.match('\n') && onlyWhitespace(handle, position + handle.current.length, handle.position)){
             handle.position = position;
             handle.remove('#');
             handle.insert('*');
@@ -748,13 +752,35 @@ package raxe.compiler;using Lambda;using StringTools;#if !js
 
   private function consumeEndOfLine(handle : StringHandle, toInsert : String) : Bool return{
     var pos = handle.position;
+    var cur = handle.current;
     var insert = true;
     var isComment = handle.match('#');
 
+    handle.prevToken();
+
+    if(handle.match('\n') && onlyWhitespace(handle, handle.position + handle.current.length, pos)){
+      handle.position = pos;
+      handle.current = cur;
+
+      if(handle.at('#')){
+        consumeComments(handle);
+      }else{
+        handle.increment('\n');
+      }
+
+      return false;
+    }else{
+      handle.position = pos;
+      handle.current = cur;
+    }
+
     prevNoWhitespace(handle);
 
-    if(handle.nearStart(handle.current.length) || (handle.matchOne(['=', ';', '+', '-', '*', '.', '/', ',' , '|', '&', '{', '(', '[', '^', '%', '~', '\n', '}', '?', ':', '<', '>']) ||
-      handle.safeMatchOne(['==', 'isnt', 'and', 'or', 'not'])) && onlyWhitespace(handle.content, handle.position + 1, pos)){
+    if(handle.nearStart(handle.current.length) ||
+      (handle.matchOne(['=', ';', '+', '-', '*', '.', '/', ',' , '|', '&', '(', '[', '{', '^', '%', '~', '\n', '}', '?', ':', '<', '>']) ||
+      handle.safeMatchOne(['==', 'isnt', 'and', 'or', 'not'])) &&
+      onlyWhitespace(handle, handle.position + handle.current.length, pos)){
+
       if(handle.match('-') || handle.match('+')){
         if(handle.content.charAt(handle.position - 1) != handle.current){
           insert = false;
@@ -765,15 +791,21 @@ package raxe.compiler;using Lambda;using StringTools;#if !js
     }
 
     handle.position = pos;
+    handle.current = cur;
 
-    nextNoWhitespace(handle);
+    if(insert){
+      nextNoWhitespace(handle);
 
-    if((handle.matchOne(['?', ':', '=', '+', '-', '*', '.', '/', ',' , '|', '&', ')', ']', '}', '^', '%', '~', '>', '<', ';']) ||
-      handle.safeMatchOne(['==', 'isnt', 'and', 'or', 'not'])) && onlyWhitespace(handle.content, pos + 1, handle.position - 1)){
-      insert = false;
+      if((handle.matchOne(['?', ':', '=', '+', '-', '*', '.', '/', ',' , '|', '&', ')', ']', '^', '%', '~', '>', '<', ';']) ||
+        handle.safeMatchOne(['==', 'isnt', 'and', 'or', 'not'])) &&
+        onlyWhitespace(handle, pos, handle.position)){
+
+        insert = false;
+      }
+
+      handle.position = pos;
+      handle.current = cur;
     }
-
-    handle.position = pos;
 
     if(insert && !handle.nearStart(handle.current.length)){
       handle.insert(toInsert);
@@ -781,10 +813,11 @@ package raxe.compiler;using Lambda;using StringTools;#if !js
     }
 
     if(handle.at('#')){
-      handle.next('\n');
+      consumeComments(handle);
+    }else{
+      handle.increment('\n');
     }
 
-    handle.increment('\n');
     return(insert && ! handle.atStart());
   }
 
@@ -794,7 +827,7 @@ package raxe.compiler;using Lambda;using StringTools;#if !js
     handle.increment();
 
     while(safeNextToken(handle)){
-      if(handle.match('[') && onlyWhitespace(handle.content, pos + 1, handle.position - 1)){
+      if(handle.match('[') && onlyWhitespace(handle, pos + handle.current.length, handle.position)){
         while(handle.nextToken()){
           if(handle.match('[')){
             consumeBrackets(handle, '[', ']', '', '');
@@ -824,6 +857,17 @@ package raxe.compiler;using Lambda;using StringTools;#if !js
       handle.position = pos;
       consumeBrackets(handle, '{', '}', '[', ']');
     }
+
+    pos = handle.position;
+    handle.prevToken();
+    prevNoWhitespace(handle);
+
+    if(handle.match(';')){
+      handle.remove();
+      handle.position = pos - 1;
+    }else{
+      handle.position = pos;
+    }
   }
 
   private function nextNoWhitespace(handle : StringHandle) return{
@@ -849,19 +893,23 @@ package raxe.compiler;using Lambda;using StringTools;#if !js
         handle.nextToken();
 
         if(handle.match('$')){
-          handle.next('\n');
-          handle.increment();
+          handle.prevToken();
         }else{
           handle.position = pos;
           handle.current = cur;
+          break;
         }
-
-        break;
       }
     }
   }
 
-  private function onlyWhitespace(content : String, from : Int, to : Int) return{
-    ~/^\s*$/.match(content.substr(from, to - from));
+  private function onlyWhitespace(handle : StringHandle, from : Int, to : Int) return{
+    var sub = handle.content.substr(from, to - from);
+
+    if(sub.length == 0){
+      sub = ' ';
+    }
+
+    ~/^\s*(#.*)*[ \n]*$/.match(sub);
   }
 }

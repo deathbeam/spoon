@@ -2,7 +2,7 @@ package raxe;using Lambda;using StringTools;#if !js
   import sys.io.File;
   import sys.FileSystem;
 #end
-;
+
 @:tink class RaxeFile{
   public var script : RaxeScript;
 
@@ -31,7 +31,7 @@ package raxe;using Lambda;using StringTools;#if !js
           return script.execute(script.parse(File.getContent(path)));
         }
       #end
-;
+
       path = thing;
 
       var clazz : Dynamic = Type.resolveClass(path);

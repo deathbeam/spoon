@@ -1,4 +1,4 @@
-package raxe.script;using Lambda;using StringTools;import hscript.Parser;
+package raxe;using Lambda;using StringTools;import hscript.Parser;
 import hscript.Interp;
 import hscript.Expr;
 import raxe.compiler.Compiler;

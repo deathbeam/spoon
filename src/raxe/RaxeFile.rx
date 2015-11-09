@@ -1,28 +1,36 @@
-import raxe.script.RaxeScript
-import sys.io.File
-import sys.FileSystem
+#if !js
+  import sys.io.File
+  import sys.FileSystem
+#end
 
 class @
   def script : RaxeScript
 
   def new(path : String)
     script = createScript()
-    script.execute(script.parse(File.getContent(path)))
+    #if js
+      script.execute(script.parse(path))
+    #else
+      script.execute(script.parse(File.getContent(path)))
+    #end
   end
 
   def run(task : String)
     script.variables.get(task)()
   end
 
-  def createScript() : RaxeScript
+  private def createScript() : RaxeScript
     def script = new RaxeScript()
+
 
     script.variables.set("import", def(thing : String)
       def path = thing.replace(".", "/") + "/Raxefile"
 
-      if(FileSystem.exists(path))
-        return script.execute(script.parse(File.getContent(path)))
-      end
+      #if !js
+        if(FileSystem.exists(path))
+          return script.execute(script.parse(File.getContent(path)))
+        end
+      #end
 
       path = thing
 

@@ -1,19 +1,21 @@
-package raxe.cli;using Lambda;using StringTools;import mcli.Dispatch;
+package raxe.cli;using Lambda;using StringTools;#if cli
+  import mcli.Dispatch;
 
-/** 
-* Entry point for Raxe CLI
- **/
-@:tink class Main{
-  public static function main() return{
-    var args = Sys.args();
-    Sys.setCwd(args.pop()) ;
+  /** 
+  * Entry point for Raxe CLI
+   **/
+  @:tink class Main{
+    public static function main() return{
+      var args = Sys.args();
+      Sys.setCwd(args.pop()) ;
 
-    
-    if(args[0] == '-i' || args[0] == '--interp'){
-      args = [args.shift(), args.join(' ')];
+      
+      if(args[0] == '-i' || args[0] == '--interp'){
+        args = [args.shift(), args.join(' ')];
+      }
+
+      
+      new Dispatch(args).dispatch(new Cli());
     }
-
-    
-    new Dispatch(args).dispatch(new Cli());
   }
-}
+#end

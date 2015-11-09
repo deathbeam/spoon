@@ -43,7 +43,7 @@ end
 def compileBinary()
   echo("> Building neko binary")
 
-  def args = {"-cp", dest, "-main", main, "-neko", bin}
+  def args = {"-cp", dest, "-main", main, "-neko", bin, "-D", "cli"}
 
   for(lib in libs)
     args.push("-lib")

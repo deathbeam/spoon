@@ -1,0 +1,108 @@
+#if cli
+  import sys.FileSystem
+  import sys.io.File
+
+  #############################################################################
+  # Utility to deal with folders
+  # @author Axel Anceau (Peekmo)
+  #############################################################################
+  class @
+    #############################################################################
+    # Returns an array of all files which are in the given folder and its
+    # subfolders
+    # @param rootFolder Root folder for the search
+    # @return Files found
+    #############################################################################
+    def @getFiles(rootFolder: String) : Array[String]
+      def files : Array[String] = new Array[String]()
+
+      if(FileSystem.exists(rootFolder))
+        def folders : Array[String] = FileSystem.readDirectory(rootFolder)
+
+        for(file in folders.iterator())
+          def path : String = rootFolder + "/" + file
+
+          if(FileSystem.isDirectory(path))
+            def data : Array[String] = getFiles(path)
+
+            for(i in data)
+              files.push(i)
+            end
+          else
+            files.push(path)
+          end
+        end
+      end
+
+      return files
+    end
+
+    #############################################################################
+    # Creates a file to the given path, with the given content
+    # (Creates all directories if they not exists)
+    # @param path     Path to the file (each folders separated by '/')
+    # @param ?content File's content
+    #############################################################################
+    def @createFile(path : String, ?content : String) : Void
+      # Create all directories necessaries
+      if(path.indexOf("/") > 0)
+        createDirectory(path)
+      end
+
+      if(content == null)
+        content = ""
+      end
+
+      File.saveContent(path, content)
+    end
+
+    #############################################################################
+    # Creates the given directory (and all path's directories if needed)
+    # @param path Path to the given directory
+    #############################################################################
+    def @createDirectory(path : String) : Void
+      def parts : Array[String] = path.split("/")
+      parts.pop() # Remove the filename
+      def done : String = null
+
+      for(part in parts.iterator())
+        done = done == null ? part : done + "/" + part
+
+        if(!FileSystem.exists(done))
+          FileSystem.createDirectory(done)
+        end
+      end
+    end
+
+    #############################################################################
+    # Copy all files from source to destination
+    # @param source      Source's path
+    # @param destination Destination's path
+    #############################################################################
+    def @copyFileSystem(source : String, destination : String) : Void
+      try
+        if(source.endsWith("/"))
+          source = source.substr(0, -1)
+        end
+
+        # If that's a file
+        if(!FileSystem.isDirectory(source))
+          createFile(destination, File.getContent(source))
+        else
+          def files : Array[String] = FileSystem.readDirectory(source)
+
+          for(file in files.iterator())
+            if(FileSystem.isDirectory(source + "/" + file))
+              createDirectory(destination)
+            end
+
+            # Recursive call
+            copyFileSystem(source + "/" + file, destination + "/" + file)
+          end
+        end
+      catch(ex: String)
+        throw("Unable to copy " + source + " to " + destination + " : " + ex)
+      end
+    end
+  end
+#end

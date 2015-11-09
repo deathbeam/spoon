@@ -1,5 +1,4 @@
-package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHandle;
-#if !js
+package raxe.compiler;using Lambda;using StringTools;#if !js
   import sys.io.File;
 #end
 
@@ -24,7 +23,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
     '\n', ';',
 
     
-    '#', '@new', '@@', '@', '"', '\'', '$$', '/',
+    '#', '@new', '@@', '@', '"', '\'', '$$', '/', '`',
 
     
     '::', 'class', 'enum', 'abstract', 'trait', 'interface',
@@ -161,6 +160,11 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
       if(handle.match('\n')){
         handle.increment();
       }
+    
+    }else if(handle.match('`')){
+      handle.remove();
+      handle.next('`');
+      handle.remove();
     
     }else if(handle.match('"')){
       consumeStrings(handle);
@@ -846,6 +850,7 @@ package raxe.compiler;using Lambda;using StringTools;import raxe.tools.StringHan
 
         if(handle.match('$')){
           handle.next('\n');
+          handle.increment();
         }else{
           handle.position = pos;
           handle.current = cur;

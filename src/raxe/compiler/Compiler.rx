@@ -1,4 +1,3 @@
-import raxe.tools.StringHandle
 #if !js
   import sys.io.File
 #end
@@ -24,7 +23,7 @@ class @
     "\n", ";",
 
     # Whitespace skip
-    "\#", "@new", "@@", "@", "\"", "'", "$", "/",
+    "\#", "@new", "@@", "@", "\"", "'", "$", "/", "`",
 
     # Types
     "::", "class", "enum", "abstract", "trait", "interface",
@@ -161,6 +160,11 @@ class @
       if(handle.match("\n"))
         handle.increment()
       end
+    # Embed Haxe in Raxe
+    elsif(handle.match("`"))
+      handle.remove()
+      handle.next("`")
+      handle.remove()
     # Step over things in strings (" ") and process multiline strings
     elsif(handle.match("\""))
       consumeStrings(handle)
@@ -845,7 +849,7 @@ class @
         handle.nextToken()
 
         if(handle.match("#"))
-          handle.next("\n")
+          prevNoWhitespace(handle)
         else
           handle.position = pos
           handle.current = cur

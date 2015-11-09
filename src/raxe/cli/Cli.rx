@@ -1,124 +1,126 @@
-import mcli.CommandLine
-import sys.FileSystem
-import raxe.file.RaxeFile
-import raxe.tools.Error
-import raxe.script.RaxeScript
+#if cli
+  import mcli.CommandLine
+  import sys.FileSystem
+  import raxe.tools.Error
+  import raxe.RaxeFile
+  import raxe.RaxeScript
 
-###############################################################################
-# 8b,dPPYba,  ,adPPYYba,  8b,     ,d8  ,adPPYba,
-# 88P'   "Y8  ""     `Y8   `Y8, ,8P'  a8P_____88
-# 88          ,adPPPPP88     )888(    8PP"""""""
-# 88          88,    ,88   ,d8" "8b,  "8b,   ,aa
-# 88          `"8bbdP"Y8  8P'     `Y8  `"Ybbd8"'
-#
-# Raxe 0.0.1 - https://raxe-lang.org
-###############################################################################
-class @ < CommandLine
-  inline def @ERROR_TYPE = "compile_error"
+  ###############################################################################
+  # 8b,dPPYba,  ,adPPYYba,  8b,     ,d8  ,adPPYba,
+  # 88P'   "Y8  ""     `Y8   `Y8, ,8P'  a8P_____88
+  # 88          ,adPPPPP88     )888(    8PP"""""""
+  # 88          88,    ,88   ,d8" "8b,  "8b,   ,aa
+  # 88          `"8bbdP"Y8  8P'     `Y8  `"Ybbd8"'
+  #
+  # Raxe 0.0.1 - https://raxe-lang.org
+  ###############################################################################
+  class @ < CommandLine
+    inline def @ERROR_TYPE = "compile_error"
 
-  #############################################################################
-  # Source directory or file
-  # @alias s
-  #############################################################################
-  def src : String
+    #############################################################################
+    # Source directory or file
+    # @alias s
+    #############################################################################
+    def src : String
 
-  #############################################################################
-  # Destination directory or file
-  # @alias d
-  #############################################################################
-  def dest : String
+    #############################################################################
+    # Destination directory or file
+    # @alias d
+    #############################################################################
+    def dest : String
 
-  #############################################################################
-  # Execute the command when source file(s) are changed
-  # @alias w
-  #############################################################################
-  def watch : Bool
+    #############################################################################
+    # Execute the command when source file(s) are changed
+    # @alias w
+    #############################################################################
+    def watch : Bool
 
-  #############################################################################
-  # Copy all (not only .rx) files to dest directory
-  # @alias a
-  #############################################################################
-  def all : Bool
+    #############################################################################
+    # Copy all (not only .rx) files to dest directory
+    # @alias a
+    #############################################################################
+    def all : Bool
 
-  #############################################################################
-  # Show more info about compilation process
-  # @alias v
-  #############################################################################
-  def verbose : Bool
+    #############################################################################
+    # Show more info about compilation process
+    # @alias v
+    #############################################################################
+    def verbose : Bool
 
-  #############################################################################
-  # Evaluate Raxe snippet
-  # @alias i
-  #############################################################################
-  def interp(snippet : String)
-    def script = new RaxeScript()
-    Sys.println(script.execute(script.parse(snippet)))
-    Sys.exit(0)
-  end
-
-  #############################################################################
-  # Execute Raxefile task in this directory (default task is "default")
-  # @alias f
-  #############################################################################
-  def file(task : String = "default")
-    if(FileSystem.exists("Raxefile"))
-      def rf = new RaxeFile("Raxefile")
-      rf.run(task)
-    else
-      Sys.println("Raxefile not found in this directory.")
-      help()
+    #############################################################################
+    # Evaluate Raxe snippet
+    # @alias i
+    #############################################################################
+    def interp(snippet : String)
+      def script = new RaxeScript()
+      Sys.println(script.execute(script.parse(snippet)))
+      Sys.exit(0)
     end
 
-    Sys.exit(0)
-  end
-
-  #############################################################################
-  # Show this message
-  # @alias h
-  #############################################################################
-  def help()
-    Sys.println(@showUsage())
-    Sys.exit(0)
-  end
-
-  #############################################################################
-  # Default task what is executed when none of above options is matched
-  #############################################################################
-  def runDefault()
-    try
-      if(src != null)
-        compile()
+    #############################################################################
+    # Execute Raxefile task in this directory (default task is "default")
+    # @alias f
+    #############################################################################
+    def file(task : String = "default")
+      if(FileSystem.exists("Raxefile"))
+        def rf = new RaxeFile("Raxefile")
+        rf.run(task)
       else
+        Sys.println("Raxefile not found in this directory.")
         help()
       end
-    catch(err : String)
-      Sys.println(err)
+
+      Sys.exit(0)
     end
 
-    Sys.exit(0)
-  end
-
-  private def compile()
-    if(!FileSystem.exists(src))
-      Error.create(ERROR_TYPE, "Source not found")
+    #############################################################################
+    # Show this message
+    # @alias h
+    #############################################################################
+    def help()
+      Sys.println(@showUsage())
+      Sys.exit(0)
     end
 
-    def compiler = new CompilerCommand(src, dest, all, verbose)
-
-    while(true)
+    #############################################################################
+    # Default task what is executed when none of above options is matched
+    #############################################################################
+    def runDefault()
       try
-        if(compiler.compile())
-          if(compiler.response != null && compiler.response != "")
-            Sys.println(compiler.response)
-          end
+        if(src != null)
+          compile()
+        else
+          help()
         end
       catch(err : String)
         Sys.println(err)
       end
 
-      if(!watch)
-        break
+      Sys.exit(0)
+    end
+
+    private def compile()
+      if(!FileSystem.exists(src))
+        Error.create(ERROR_TYPE, "Source not found")
+      end
+
+      def compiler = new CompilerCommand(src, dest, all, verbose)
+
+      while(true)
+        try
+          if(compiler.compile())
+            if(compiler.response != null && compiler.response != "")
+              Sys.println(compiler.response)
+            end
+          end
+        catch(err : String)
+          Sys.println(err)
+        end
+
+        if(!watch)
+          break
+        end
       end
     end
   end
-end
+#end

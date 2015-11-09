@@ -1,10 +1,13 @@
-package raxe.script;using Lambda;using StringTools;import hscript.Parser;
+package raxe;using Lambda;using StringTools;import hscript.Parser;
 import hscript.Interp;
 import hscript.Expr;
-import sys.io.File;
-import sys.FileSystem;
 import raxe.compiler.Compiler;
 
+#if !js
+  import sys.io.File;
+  import sys.FileSystem;
+#end
+;
 @:tink class RaxeScript extends Interp{
   public var parser : Parser = new Parser();
   public var compiler : Compiler = new Compiler(true);
@@ -15,10 +18,12 @@ import raxe.compiler.Compiler;
     variables.set('import', function(thing : String) return{
       var path = thing.replace('.', '/') + '.rxs';
 
-      if(FileSystem.exists(path)){
-        return execute(parse(File.getContent(path)));
-      }
-
+      #if !js
+        if(FileSystem.exists(path)){
+          return execute(parse(File.getContent(path)));
+        }
+      #end
+;
       path = thing;
 
       var clazz : Dynamic = Type.resolveClass(path);

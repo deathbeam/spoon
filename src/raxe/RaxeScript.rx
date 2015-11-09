@@ -1,9 +1,12 @@
 import hscript.Parser
 import hscript.Interp
 import hscript.Expr
-import sys.io.File
-import sys.FileSystem
 import raxe.compiler.Compiler
+
+#if !js
+  import sys.io.File
+  import sys.FileSystem
+#end
 
 class @ < Interp
   def parser : Parser = new Parser()
@@ -15,9 +18,11 @@ class @ < Interp
     variables.set("import", def(thing : String)
       def path = thing.replace(".", "/") + ".rxs"
 
-      if(FileSystem.exists(path))
-        return execute(parse(File.getContent(path)))
-      end
+      #if !js
+        if(FileSystem.exists(path))
+          return execute(parse(File.getContent(path)))
+        end
+      #end
 
       path = thing
 

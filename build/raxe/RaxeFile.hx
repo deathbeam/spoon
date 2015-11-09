@@ -1,29 +1,37 @@
-package raxe.file;using Lambda;using StringTools;import raxe.script.RaxeScript;
-import sys.io.File;
-import sys.FileSystem;
-
+package raxe;using Lambda;using StringTools;#if !js
+  import sys.io.File;
+  import sys.FileSystem;
+#end
+;
 @:tink class RaxeFile{
   public var script : RaxeScript;
 
   public function new(path : String){
     script = createScript();
-    script.execute(script.parse(File.getContent(path)));
+    #if js
+      script.execute(script.parse(path));
+    #else
+      script.execute(script.parse(File.getContent(path)));
+    #end
   }
 
   public function run(task : String) return{
     script.variables.get(task)();
   }
 
-  public function createScript() : RaxeScript return{
+  private function createScript() : RaxeScript return{
     var script = new RaxeScript();
+
 
     script.variables.set('import', function(thing : String) return{
       var path = thing.replace('.', '/') + '/Raxefile';
 
-      if(FileSystem.exists(path)){
-        return script.execute(script.parse(File.getContent(path)));
-      }
-
+      #if !js
+        if(FileSystem.exists(path)){
+          return script.execute(script.parse(File.getContent(path)));
+        }
+      #end
+;
       path = thing;
 
       var clazz : Dynamic = Type.resolveClass(path);

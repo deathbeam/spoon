@@ -12,6 +12,28 @@ db   8D 88      `8b  d8' `8b  d8' 88  V888
 
 Spoon is awesome new programming language, what combines the best things from CoffeeScript, Python and Haxe. Spoon is open source, cross-platform and compiles to Haxe without any performance penalty and runtime library.
 
+From Haxe, Spoon can be compiled to
+
+  * C++
+  * Java
+  * C#
+  * JavaScript
+  * Neko
+  * ActionScript 3
+  * PHP
+  * Python
+
+So that means Spoon will work on
+
+  * Any platform on what you can run C++, so almost everywhere
+  * Android/iOS/Windows Phone
+  * Windows/Linux/Mac
+  * Browser (NodeJS, HTML5, PHP, AS3)
+
+and the list continues. Haxe is awesome, and thanks to it, Spoon can be awesome too.
+
+So Spoon is like CoffeeScript on crack. It have static typing, can run in native performance on almost any platform and final and most important thing... it is freaking AWESOME.
+
 **Spoon is still in heavy development and not usable yet, so feel free to help me and contribute :smile:**
 
 # Installation
@@ -20,20 +42,6 @@ To install Spoon you can use haxelib
 
 ```
 haxelib git spoon https://github.com/nondev/spoon.git
-```
-
-# Build from source
-
-First, to install all dependencies, run
-
-```
-haxelib install build.hxml
-```
-
-Now, to build `neko` executable `run.n`, simply run this
-
-```
-haxe build.hxml
 ```
 
 # Example
@@ -73,4 +81,18 @@ class MyValue[T]
 trace MyValue[String].new("HI!")
 trace MyValue[Int].new(5)
 Messenger.run! # Exclamation mark used for 0-arg argument calls
+```
+
+# Build from source
+
+First, to install all dependencies, run
+
+```
+haxelib install build.hxml
+```
+
+Now, to build `neko` executable `run.n`, simply run this
+
+```
+haxe build.hxml
 ```

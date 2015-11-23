@@ -36,9 +36,9 @@ class Cli extends CommandLine {
   public var all : Bool;
 
   /**
-  * Specify dump output type (default "yaml", "cson", "json", "xml", "simple")
+  * Specify dump output type (default "simple", "yaml", "cson", "json", "xml")
    **/
-  public var dump : String = "yaml";
+  public var dump : String;
 
   /**
   * Show this message

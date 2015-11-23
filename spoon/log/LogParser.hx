@@ -28,7 +28,7 @@ class LogParserUtil {
     if (str != null) {
       str = str.toLowerCase().replace(" ", "");
     } else {
-      str = "yaml";
+      str = "";
     }
 
     return switch(str) {
@@ -80,7 +80,7 @@ class LogParser {
     result += data.type;
 
     if (data.description != null) {
-      result += ' : ${data.description}';
+      result += ' ${data.description}';
     }
 
     return result + "\n";

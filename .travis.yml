@@ -2,9 +2,3 @@ language: haxe
 
 hxml:
   - build.hxml
-
-before_install:
-  - yes | haxelib git raxe https://github.com/nondev/raxe
-
-script:
-  - neko run --file `pwd`

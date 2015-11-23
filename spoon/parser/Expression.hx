@@ -5,30 +5,30 @@ import hxparse.Position;
 typedef Expressions = Array<Expression>;
 
 typedef Expression = {
-	var expr : ExpressionDef;
-	var pos : Position;
+  var expr : ExpressionDef;
+  var pos : Position;
 }
 
 enum Constant {
-	CNull;
+  CNull;
 
-	CBool(
+  CBool(
     s : String
   );
 
-	CInt(
+  CInt(
     v : String
   );
 
-	CFloat(
+  CFloat(
     f : String
   );
 
-	CString(
+  CString(
     s : String
   );
 
-	CIdent(
+  CIdent(
     s : String
   );
 
@@ -36,7 +36,7 @@ enum Constant {
     s : String
   );
 
-	CRegexp(
+  CRegexp(
     r : String,
     opt : String
   );

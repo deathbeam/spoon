@@ -1,16 +1,17 @@
 {
-  "name": "raxe",
-  "url" : "https://github.com/nondev/raxe",
+  "name": "spoon",
+  "url" : "https://github.com/nondev/spoon",
   "license": "MIT",
   "tags": ["cross", "compiler", "ruby", "coffeescript"],
-  "description": "Rock 'n' Haxe",
+  "description": "For every coffee, you need spoon",
   "version": "0.0.1",
-  "classPath": "build/",
+  "classPath": "spoon/",
   "releasenote": "Initial release",
-  "contributors": ["deathbeam", "Peekmo"],
+  "contributors": [
+    "deathbeam"
+  ],
   "dependencies": {
     "mcli": "",
-    "hscript": "",
-    "tink_lang": ""
+    "hxparse": ""
   }
 }

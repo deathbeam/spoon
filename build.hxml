@@ -1,9 +1,6 @@
--cmd haxelib run raxe -a -v -s src -d build
---next
 -D cli
 -lib mcli
--lib hscript
--lib tink_lang
--cp build
--main raxe.cli.Main
+-lib hxparse
+-cp spoon
+-main spoon.cli.Main
 -neko run.n

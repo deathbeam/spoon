@@ -47,7 +47,7 @@ class Cli extends CommandLine {
   public function help() {
     var useAscii = Sys.systemName().toLowerCase().indexOf("windows") == -1;
 
-    if (useAscii) Sys.print("\033[1;35m\033[1m");
+    if (useAscii) Sys.print("\033[1;36m\033[1m");
     Sys.print("
  .d8888. d8888b.  .d88b.   .d88b.  d8b   db
  88'  YP 88  `8D .8P  Y8. .8P  Y8. 888o  88

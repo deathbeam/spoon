@@ -94,11 +94,13 @@ class Cli extends CommandLine {
       var result = parser.run();
 
       if (result.length == 0) {
-        Logger.self.log({
-          type: Empty,
-          severity: Warning,
-          position: new Position(filename, 0, 0)
-        });
+        if (Logger.self.getMessageCount() == 0) {
+          Logger.self.log({
+            type: Empty,
+            severity: Warning,
+            position: new Position(filename, 0, 0)
+          });
+        }
       } else {
         Sys.println(result);
       }

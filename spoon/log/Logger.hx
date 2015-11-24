@@ -15,6 +15,10 @@ class Logger {
   var source : ByteData;
   var messages = new Array<Message>();
 
+  public function getMessageCount() {
+    return messages.length;
+  }
+
   public function new(parser : LogParser, source : ByteData) {
     this.parser = parser;
     this.source = source;
@@ -51,7 +55,7 @@ class Logger {
     messages.push(m);
   }
 
-  public function dump() {
+  public function dump() : Bool {
     var res = "";
     var fatal = false;
 
@@ -74,8 +78,6 @@ class Logger {
       Sys.print(res);
     }
 
-    if (fatal) {
-      Sys.exit(1);
-    }
+    return fatal;
   }
 }

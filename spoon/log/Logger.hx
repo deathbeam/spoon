@@ -20,6 +20,33 @@ class Logger {
     this.source = source;
   }
 
+  public function catchErrors<T>(f) {
+    try {
+      f();
+    } catch (e : hxparse.NoMatch<Dynamic>) {
+      log({
+        type: NoMatch,
+        severity: Error,
+        position: e.pos,
+        description: Type.enumConstructor(e.token)
+      });
+    } catch (e : hxparse.Unexpected<Dynamic>) {
+      log({
+        type: Unexpected,
+        severity: Error,
+        position: e.pos,
+        description: Type.enumConstructor(e.token)
+      });
+    } catch (e : hxparse.UnexpectedChar) {
+      log({
+        type: Unexpected,
+        severity: Error,
+        position: e.pos,
+        description: e.char
+      });
+    }
+  }
+
   public function log(m : Message) {
     messages.push(m);
   }

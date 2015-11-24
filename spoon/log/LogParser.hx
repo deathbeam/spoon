@@ -58,7 +58,7 @@ class LogParser {
       position = {
         source: message.position.psource,
         line: pos.lineMin,
-        collumn: pos.posMin++
+        collumn: pos.posMin + 1
       }
     }
 

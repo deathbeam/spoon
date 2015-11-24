@@ -22,34 +22,13 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
 
   public function run() : Expressions {
     var v = new Expressions();
-
-    try {
+    
+    Logger.self.catchErrors(function() {
       while(true) _(switch stream {
         case [TEof(_)]: break;
         case [e = parseExpression()]: v.push(e);
       });
-    } catch (e : hxparse.NoMatch<Dynamic>) {
-      Logger.self.log({
-        type: NoMatch,
-        severity: Error,
-        position: e.pos,
-        description: Type.enumConstructor(e.token)
-      });
-    } catch (e : hxparse.Unexpected<Dynamic>) {
-      Logger.self.log({
-        type: Unexpected,
-        severity: Error,
-        position: e.pos,
-        description: Type.enumConstructor(e.token)
-      });
-    } catch (e : hxparse.UnexpectedChar) {
-      Logger.self.log({
-        type: Unexpected,
-        severity: Error,
-        position: e.pos,
-        description: e.char
-      });
-    }
+    });
 
     return v;
   }

@@ -55,7 +55,7 @@
 }
 
 .jumbotron-pattern {
-  background: transparent radial-gradient(circle at 50% calc(50% - 142px) , #B73131, #642121);
+  background: transparent radial-gradient(circle at 50% calc(50% - 142px) , #cceeff, #e5f7ff);
   color: white;
 }
 

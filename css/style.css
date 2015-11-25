@@ -28,7 +28,7 @@
   padding-top: 20px;
   padding-bottom: 20px;
   font-size: 30px;
-  color: #6f1313;
+  color: rgb(2, 15, 97);
 }
 
 .jumbotron-footer img {
@@ -56,15 +56,15 @@
 
 .jumbotron-pattern {
   background: transparent radial-gradient(circle at 50% calc(50% - 142px) , #cceeff, #e5f7ff);
-  color: white;
+  color: black;
 }
 
 .jumbotron-pattern a {
-  color: #c6c6c6;
+  color: rgb(2, 15, 97);
 }
 
 a {
-  color: #6f1313;
+  color: rgb(2, 15, 97);
 }
 
 /* Buttons */
@@ -135,7 +135,7 @@ a {
 
 .btn-outlined.btn-white:hover,
 .btn-outlined.btn-white:active {
-    color: #6f1313;
+    color: rgb(2, 15, 97);
     background: #FFFFFF;
     border-color: #FFFFFF;
 }

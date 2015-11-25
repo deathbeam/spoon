@@ -81,18 +81,18 @@
 
     <div class="jumbotron jumbotron-pattern">
       <div class="container">
-        <img class="main" src="img/logo.png" alt="Raxe logo"/>
+        <img class="main" src="img/logo.png" alt="Spoon logo"/>
         <h1>spoon</h1>
-        <p style="margin-bottom: 30px">Raxe is awesome new programming language, what combines the best things from Haxe, Ruby and CoffeeScript. Raxe is open source, cross-platform and compiles to Haxe without any performance penalty and runtime library.</p>
+        <p style="margin-bottom: 30px">Spoon is awesome new programming language, what combines the best things from CoffeeScript, Python and Haxe. Spoon is open source, cross-platform and compiles to Haxe without any performance penalty and runtime library.</p>
         <p class="hidden-xs">
-          <a href="https://github.com/nondev/raxe" class="btn btn-lg btn-outlined btn-white btn-fixed" title="Learn how to install Raxe"><i class="fa fa-fw fa-gears"></i> Install</a>
+          <a href="https://github.com/nondev/spoon" class="btn btn-lg btn-outlined btn-black btn-fixed" title="Learn how to install Raxe"><i class="fa fa-fw fa-gears"></i> Install</a>
           <b style="padding-left: 10px; padding-right: 10px;"> or </b>
-          <a href="https://github.com/nondev/raxe" class="btn btn-lg btn-outlined btn-white btn-fixed"  title="Learn more about Raxe and it's documentation"><i class="fa fa-fw fa-file"></i> Learn more</a>
+          <a href="https://github.com/nondev/spoon" class="btn btn-lg btn-outlined btn-black btn-fixed"  title="Learn more about Raxe and it's documentation"><i class="fa fa-fw fa-file"></i> Learn more</a>
         </p>
         <p class="visible-xs">
-          <a href="https://github.com/nondev/raxe" class="btn btn-lg btn-outlined btn-white btn-block"><i class="fa fa-fw fa-gears"></i> Install</a>
+          <a href="https://github.com/nondev/spoon" class="btn btn-lg btn-outlined btn-black btn-block"><i class="fa fa-fw fa-gears"></i> Install</a>
           <b style="padding-left: 10px; padding-right: 10px;"> or </b>
-          <a href="https://github.com/nondev/raxe" class="btn btn-lg btn-outlined btn-white btn-block"><i class="fa fa-fw fa-file"></i> Learn more</a>
+          <a href="https://github.com/nondev/spoon" class="btn btn-lg btn-outlined btn-black btn-block"><i class="fa fa-fw fa-file"></i> Learn more</a>
         </p>
         <p style="margin-top: 30px;"><a id="updated" href="#">updated <b>unknown</b></a></p>
       </div>
@@ -104,90 +104,94 @@
       <div class="container">
       <div class="row">
         <div class="col-md-6 left">
-          <h2><b>Main</b>.rx</h2>
-          <pre><span style="color: #75715e">###
-We will use module here, because in modules, everything is static
-and that is what we need for functional programming
-###</span>
-<span style="color: #66d9ef">module</span> <span style="color: #f8f8f2">self</span>
-  <span style="color: #75715e"># A definition of factorial, using a local, tail recursive function</span>
-  <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">factorial</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">n</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">):</span> <span style="color: #66d9ef">Int</span>
-    <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">go</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">n</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">acc</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">):</span> <span style="color: #66d9ef">Int</span>
-      <span style="color: #66d9ef">if</span> <span style="color: #f8f8f2">(n</span> <span style="color: #f92672">&lt;=</span> <span style="color: #ae81ff">0</span><span style="color: #f8f8f2">)</span>
-        <span style="color: #f8f8f2">acc</span>
-      <span style="color: #66d9ef">else</span>
-        <span style="color: #f8f8f2">go(n</span><span style="color: #f92672">-</span><span style="color: #ae81ff">1</span><span style="color: #f8f8f2">,</span> <span style="color: #f8f8f2">n</span><span style="color: #f92672">*</span><span style="color: #f8f8f2">acc)</span>
-      <span style="color: #66d9ef">end</span>
-    <span style="color: #66d9ef">end</span>
+          <h2><b>Main</b>.spoon</h2>
+          <pre><span style="color: #a6e22e">from</span> <span style="color: #a6e22e">Foo</span> <span style="color: #a6e22e">import</span> <span style="color: #a6e22e">Bar</span> <span style="color: #a6e22e">as</span> <span style="color: #a6e22e">Chocolate</span> <span style="color: #75715e"># Python-like imports and module system</span>
 
-    <span style="color: #f8f8f2">go(n,</span> <span style="color: #ae81ff">1</span><span style="color: #f8f8f2">)</span>
-  <span style="color: #66d9ef">end</span>
+<span style="color: #75715e"># Interfaces with default implementation</span>
+<span style="color: #a6e22e">interface</span> <span style="color: #a6e22e">Printer</span>
+  <span style="color: #a6e22e">function</span> <span style="color: #a6e22e">print</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">message</span><span style="color: #f8f8f2">)</span>
+    <span style="color: #a6e22e">trace</span> <span style="color: #a6e22e">message</span> <span style="color: #75715e"># Optional parenthesis</span>
 
-  <span style="color: #75715e"># Another implementation of `factorial`, this time with a `while` loop</span>
-  <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">factorial2</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">n</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">):</span> <span style="color: #66d9ef">Int</span>
-    <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">acc</span> <span style="color: #f92672">=</span> <span style="color: #ae81ff">1</span>
-    <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">i</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">n</span>
+<span style="color: #75715e">###</span>
+<span style="color: #75715e">Block comments</span>
+<span style="color: #75715e">###</span>
+<span style="color: #66d9ef">class</span> <span style="color: #a6e22e">Hello</span>
+  <span style="color: #a6e22e">function</span> <span style="color: #a6e22e">hello</span>
+    <span style="color: #66d9ef">return</span> <span style="color: #e6db74">&quot;Hello&quot;</span>
 
-    <span style="color: #66d9ef">while</span> <span style="color: #f8f8f2">(i</span> <span style="color: #f92672">&gt;</span> <span style="color: #ae81ff">0</span><span style="color: #f8f8f2">)</span>
-      <span style="color: #f8f8f2">acc</span> <span style="color: #f92672">*=</span> <span style="color: #f8f8f2">i</span>
-      <span style="color: #f8f8f2">i</span> <span style="color: #f92672">-=</span> <span style="color: #ae81ff">1</span>
-    <span style="color: #66d9ef">end</span>
+<span style="color: #66d9ef">class</span> <span style="color: #a6e22e">World</span> <span style="color: #66d9ef">extends</span> <span style="color: #a6e22e">Hello</span>
+  <span style="color: #a6e22e">function</span> <span style="color: #a6e22e">world</span>
+    <span style="color: #66d9ef">return</span> <span style="color: #e6db74">&quot;World&quot;</span>
 
-    <span style="color: #f8f8f2">acc</span>
-  <span style="color: #66d9ef">end</span>
+<span style="color: #66d9ef">class</span> <span style="color: #a6e22e">Messenger</span> <span style="color: #66d9ef">extends</span> <span style="color: #a6e22e">World</span>
+  <span style="color: #a6e22e">implements</span> <span style="color: #a6e22e">Printer</span>
 
-  <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">compute</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">n</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">,</span> <span style="color: #e6db74">f</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">Int</span> <span style="color: #f92672">-&gt;</span> <span style="color: #66d9ef">Int</span><span style="color: #f8f8f2">):</span> <span style="color: #66d9ef">Int</span> <span style="color: #f92672">=&gt;</span> <span style="color: #f8f8f2">f(n)</span>
+  <span style="color: #a6e22e">function</span> <span style="color: #66d9ef">this</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">run</span>
+    <span style="color: #f8f8f2">self = </span><span style="color: #a6e22e">Messenger</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">new</span><span style="color: #f92672">!</span> <span style="color: #75715e"># Ruby-like method of creating new objects</span>
+    <span style="color: #a6e22e">print</span> <span style="color: #e6db74">&quot;#{</span><span style="color: #a6e22e">self</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">hello</span><span style="color: #f92672">!</span><span style="color: #e6db74">} #{</span><span style="color: #a6e22e">self</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">world</span><span style="color: #f92672">!</span><span style="color: #e6db74">}&quot;</span> <span style="color: #75715e"># Ruby-like string interpolation</span>
 
-  <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">main</span><span style="color: #f8f8f2">()</span>
-    <span style="color: #66d9ef">def</span> <span style="color: #a6e22e">number</span> <span style="color: #f92672">=</span> <span style="color: #ae81ff">10</span> <span style="color: #75715e"># Compute factorials for number 10</span>
+<span style="color: #75715e"># Generic types and static typing</span>
+<span style="color: #66d9ef">class</span> <span style="color: #a6e22e">MyValue</span><span style="color: #f8f8f2">[</span><span style="color: #a6e22e">T</span><span style="color: #f8f8f2">]</span>
+  <span style="color: #a6e22e">value</span> <span style="color: #a6e22e">as</span> <span style="color: #a6e22e">T</span>
 
-    <span style="color: #f8f8f2">trace(compute(number,</span> <span style="color: #f8f8f2">factorial))</span> <span style="color: #75715e"># Compute with recursive factorial method</span>
-    <span style="color: #f8f8f2">trace(compute(number,</span> <span style="color: #f8f8f2">factorial2))</span> <span style="color: #75715e"># Compute with loop factorial method</span>
-    <span style="color: #75715e"># Result should be 3628800 in both</span>
-  <span style="color: #66d9ef">end</span>
-<span style="color: #66d9ef">end</span></pre>
+  <span style="color: #a6e22e">function</span> <span style="color: #66d9ef">new</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">value</span> <span style="color: #a6e22e">as</span> <span style="color: #a6e22e">T</span><span style="color: #f8f8f2">)</span>
+    <span style="color: #66d9ef">this</span><span style="color: #f8f8f2">.value = </span><span style="color: #a6e22e">value</span>
+
+<span style="color: #a6e22e">trace</span> <span style="color: #a6e22e">MyValue</span><span style="color: #f8f8f2">[String].</span><span style="color: #a6e22e">new</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">&quot;HI!&quot;</span><span style="color: #f8f8f2">)</span>
+<span style="color: #a6e22e">trace</span> <span style="color: #a6e22e">MyValue</span><span style="color: #f8f8f2">[</span><span style="color: #a6e22e">Int</span><span style="color: #f8f8f2">].</span><span style="color: #a6e22e">new</span><span style="color: #f8f8f2">(</span><span style="color: #ae81ff">5</span><span style="color: #f8f8f2">)</span>
+<span style="color: #a6e22e">Messenger</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">run</span><span style="color: #f92672">!</span> <span style="color: #75715e"># Exclamation mark used for 0-arg argument calls</span></pre>
           </div>
           <div class="col-md-6 right">
             <h2><b>Main</b>.hx</h2>
-            <pre><span style="color: #AA22FF; font-weight: bold">package</span>;<span style="color: #AA22FF; font-weight: bold">using</span> <span style="color: #0000FF; font-weight: bold">Lambda</span>;<span style="color: #AA22FF; font-weight: bold">using</span> <span style="color: #0000FF; font-weight: bold">StringTools</span>;<span style="color: #008800; font-style: italic">/** </span>
-<span style="color: #008800; font-style: italic">We will use module here, because in modules, everything is static</span>
-<span style="color: #008800; font-style: italic">and that is what we need for functional programming</span>
-<span style="color: #008800; font-style: italic"> **/</span>
-<span style="color: #AA22FF; font-weight: bold">class</span> <span style="color: #0000FF">Main</span>{
-  <span style="color: #008800; font-style: italic">// A definition of factorial, using a local, tail recursive function</span>
-  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">static</span> <span style="color: #AA22FF; font-weight: bold">function</span> <span style="color: #00A000">factorial</span>(<span style="color: #B8860B">n</span>: <span style="color: #0000FF">Int</span>): <span style="color: #0000FF">Int</span> <span style="border: 1px solid #FF0000">return</span>{
-    <span style="color: #AA22FF; font-weight: bold">function</span> go(n<span style="color: #666666">:</span> Int, acc<span style="color: #666666">:</span> Int)<span style="color: #666666">:</span> Int <span style="color: #AA22FF; font-weight: bold">return</span>{
-      <span style="color: #AA22FF; font-weight: bold">if</span> (n <span style="color: #666666">&lt;=</span> <span style="color: #666666">0</span>){
-        acc;
-      }<span style="color: #AA22FF; font-weight: bold">else</span>{
-        go(n<span style="color: #666666">-1</span>, n<span style="color: #666666">*</span>acc);
-      }
+            <pre><span style="color: #AA22FF; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">Foo.Bar as Chocolate</span>;
+
+<span style="border: 1px solid #FF0000">@:mixin</span>
+<span style="border: 1px solid #FF0000">interface</span> <span style="border: 1px solid #FF0000">Printer</span> <span style="border: 1px solid #FF0000">{</span>
+  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="border: 1px solid #FF0000">function</span> <span style="border: 1px solid #FF0000">print(message)</span> <span style="border: 1px solid #FF0000">{</span>
+    <span style="border: 1px solid #FF0000">trace(message);</span>
+  <span style="border: 1px solid #FF0000">}</span>
+<span style="border: 1px solid #FF0000">}</span>
+
+<span style="color: #008800; font-style: italic">/**</span>
+<span style="color: #008800; font-style: italic">Block comments</span>
+<span style="color: #008800; font-style: italic">**/</span>
+<span style="color: #AA22FF; font-weight: bold">class</span> <span style="color: #0000FF">Hello</span> {
+  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">function</span> <span style="color: #00A000">hello</span>() {
+    <span style="color: #AA22FF; font-weight: bold">return</span> <span style="color: #BB4444">&quot;Hello&quot;</span>;
+  }
+}
+
+<span style="color: #AA22FF; font-weight: bold">class</span> <span style="color: #0000FF">World</span> <span style="color: #AA22FF; font-weight: bold">extends</span> <span style="color: #0000FF">Hello</span> {
+  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">function</span> <span style="color: #00A000">world</span>() {
+    <span style="color: #AA22FF; font-weight: bold">return</span> <span style="color: #BB4444">&quot;World&quot;</span>;
+  }
+}
+
+<span style="color: #AA22FF; font-weight: bold">class</span> <span style="color: #0000FF">Messenger</span> <span style="color: #AA22FF; font-weight: bold">extends</span> <span style="color: #0000FF">World</span> <span style="color: #AA22FF; font-weight: bold">implements</span> <span style="color: #0000FF">Printer</span> {
+  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">static</span> <span style="color: #AA22FF; font-weight: bold">function</span> <span style="color: #00A000">run</span>() {
+    <span style="color: #AA22FF; font-weight: bold">var</span> <span style="color: #B8860B">self</span> <span style="color: #666666">=</span> <span style="color: #AA22FF; font-weight: bold">new</span> <span style="color: #0000FF">Messenger</span>();
+    print(<span style="color: #BB4444">&#39;${self.hello()} ${self.world()}&#39;</span>);
+  }
+}
+
+<span style="color: #AA22FF; font-weight: bold">class</span> <span style="color: #0000FF">MyValue</span>&lt;<span style="color: #0000FF">T</span>&gt; {
+  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">var</span> <span style="color: #B8860B">value</span> : <span style="color: #0000FF">T</span>;
+
+  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">function</span> <span style="color: #00A000">new</span>(<span style="color: #B8860B">value</span> : <span style="color: #0000FF">T</span>) {
+    <span style="color: #AA22FF; font-weight: bold">this</span><span style="color: #666666">.</span>value <span style="color: #666666">=</span> value;
+  }
+}
+
+<span style="color: #AA22FF; font-weight: bold">class</span> <span style="color: #0000FF">Test</span> {
+  <span style="border: 1px solid #FF0000">@</span><span style="color: #666666">:</span>keep
+  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">static</span> <span style="color: #AA22FF; font-weight: bold">function</span> <span style="color: #00A000">main</span>() {
+    <span style="color: #AA22FF; font-weight: bold">if</span> (Reflect<span style="color: #666666">.</span>hasField(Foo, <span style="color: #BB4444">&quot;main&quot;</span>)) {
+      Reflect<span style="color: #666666">.</span>callMethod(Foo, Reflect<span style="color: #666666">.</span>field(Foo, <span style="color: #BB4444">&quot;main&quot;</span>), []);
     }
 
-    go(n, <span style="color: #666666">1</span>);
-  }
-
-  <span style="color: #008800; font-style: italic">// Another implementation of `factorial`, this time with a `while` loop</span>
-  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">static</span> <span style="color: #AA22FF; font-weight: bold">function</span> <span style="color: #00A000">factorial2</span>(<span style="color: #B8860B">n</span>: <span style="color: #0000FF">Int</span>): <span style="color: #0000FF">Int</span> <span style="border: 1px solid #FF0000">return</span>{
-    <span style="color: #AA22FF; font-weight: bold">var</span> <span style="color: #B8860B">acc</span> <span style="color: #666666">=</span> <span style="color: #666666">1</span>;
-    <span style="color: #AA22FF; font-weight: bold">var</span> <span style="color: #B8860B">i</span> <span style="color: #666666">=</span> n;
-
-    <span style="color: #AA22FF; font-weight: bold">while</span> (i <span style="color: #666666">&gt;</span> <span style="color: #666666">0</span>){
-      acc <span style="color: #666666">*=</span> i;
-      i <span style="color: #666666">-=</span> <span style="color: #666666">1</span>;
-    }
-
-    acc;
-  }
-
-  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">static</span> <span style="color: #AA22FF; font-weight: bold">function</span> <span style="color: #00A000">compute</span>(<span style="color: #B8860B">n</span>: <span style="color: #0000FF">Int</span>, <span style="color: #B8860B">f</span>: <span style="color: #0000FF">Int</span> <span style="color: #00BB00; font-weight: bold">-&gt;</span> <span style="color: #0000FF">Int</span>): <span style="color: #0000FF">Int</span> <span style="border: 1px solid #FF0000">return</span> <span style="border: 1px solid #FF0000">f</span>(<span style="color: #B8860B">n</span>);
-
-  <span style="color: #AA22FF; font-weight: bold">public</span> <span style="color: #AA22FF; font-weight: bold">static</span> <span style="color: #AA22FF; font-weight: bold">function</span> <span style="color: #00A000">main</span>() <span style="color: #AA22FF; font-weight: bold">return</span>{
-    <span style="color: #AA22FF; font-weight: bold">var</span> <span style="color: #B8860B">number</span> <span style="color: #666666">=</span> <span style="color: #666666">10</span> ;<span style="color: #008800; font-style: italic">// Compute factorials for number 10</span>
-
-    <span style="color: #AA22FF; font-weight: bold">trace</span>(compute(number, factorial)) ;<span style="color: #008800; font-style: italic">// Compute with recursive factorial method</span>
-    <span style="color: #AA22FF; font-weight: bold">trace</span>(compute(number, factorial2)) ;<span style="color: #008800; font-style: italic">// Compute with loop factorial method</span>
-    <span style="color: #008800; font-style: italic">// Result should be 3628800 in both</span>
+    <span style="color: #AA22FF; font-weight: bold">trace</span>(<span style="color: #AA22FF; font-weight: bold">new</span> <span style="color: #0000FF">MyValue</span>&lt;<span style="color: #0000FF">String</span>&gt;(<span style="color: #BB4444">&quot;HI!&quot;</span>));
+    <span style="color: #AA22FF; font-weight: bold">trace</span>(<span style="color: #AA22FF; font-weight: bold">new</span> <span style="color: #0000FF">MyValue</span>&lt;<span style="color: #0000FF">Int</span>&gt;(<span style="color: #666666">5</span>));
+    Messenger<span style="color: #666666">.</span>run();
   }
 }</pre>
           </div>
@@ -200,22 +204,21 @@ and that is what we need for functional programming
     <div class="jumbotron jumbotron-footer">
       <div class="container">
         <span class="pull-left">
-          <a href="https://nondev.io" title="Raxe blog">DEV</a>
-          <a href="https://github.com/nondev/raxe" title="Raxe GitHub"><i class="fa fa-fw fa-github"></i></a>
-          <a href="https://twitter.com/_deathbeam" title="Raxe Twitter"><i class="fa fa-fw fa-twitter"></i></a>
-          <a href="https://gitter.im/nondev/raxe" title="Raxe Gitter"><i class="fa fa-fw fa-comments"></i></a>
+          <a href="https://nondev.io" title="Spoon blog">DEV</a>
+          <a href="https://github.com/nondev/spoon" title="Spoon GitHub"><i class="fa fa-fw fa-github"></i></a>
+          <a href="https://twitter.com/_deathbeam" title="Spoon Twitter"><i class="fa fa-fw fa-twitter"></i></a>
+          <a href="https://gitter.im/nondev/spoon" title="Spoon Gitter"><i class="fa fa-fw fa-comments"></i></a>
         </span>
         <span class="pull-right">
-          <a href="https://www.ruby-lang.org"><img src="img/ruby-logo.png" alt="Ruby logo"/></a> +
-          <a href="http://haxe.org/"><img src="img/haxe-logo.png" alt="Haxe logo"/></a> =
-          <img src="img/logo.png" alt="Raxe logo"/>
+          <a href="http://haxe.org/"><img src="img/haxe-logo.png" alt="Haxe logo"/></a> =>
+          <img src="img/logo.png" alt="Spoon logo"/>
         </span>
       </div>
     </div>
 
     <script>
       ((window.gitter = {}).chat = {}).options = {
-        room: 'nondev/raxe'
+        room: 'nondev/spoon'
       };
     </script>
     <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>

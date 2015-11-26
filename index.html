@@ -84,7 +84,7 @@
 
     <div class="jumbotron jumbotron-pattern">
       <div class="container">
-        <img class="main" src="img/logo.png" alt="Spoon logo"/>
+        <img class="main js-gitter-toggle-chat-button" src="img/logo.png" alt="Click me"/>
         <h1>spoon</h1>
         <p style="margin-bottom: 30px">Spoon is awesome new programming language, what combines the best things from CoffeeScript, Python and Haxe. Spoon is open source, cross-platform and compiles to Haxe without any performance penalty and runtime library.</p>
         <p class="hidden-xs">
@@ -221,7 +221,8 @@
 
     <script>
       ((window.gitter = {}).chat = {}).options = {
-        room: 'nondev/spoon'
+        room: 'nondev/spoon',
+        activationElement: false
       };
     </script>
     <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>

@@ -57,7 +57,7 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
     });
 
     {
-      node: Constant(v),
+      expr: Constant(v),
       pos: p
     }
   }
@@ -77,7 +77,7 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
     });
 
     {
-      node: Block(v),
+      expr: Block(v),
       pos: p
     }
   }
@@ -102,7 +102,7 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
     });
 
     {
-      node: If(c, b, els),
+      expr: If(c, b, els),
       pos: p
     }
   }
@@ -111,7 +111,7 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
     _(switch stream {
       case [TFor(tp)]:
         {
-          node: For(parseNode(), parseNode()),
+          expr: For(parseNode(), parseNode()),
           pos: tp
         }
     });
@@ -121,7 +121,7 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
     _(switch stream {
       case [TWhile(tp)]:
         {
-          node: While(parseNode(), parseNode()),
+          expr: While(parseNode(), parseNode()),
           pos: tp
         }
     });

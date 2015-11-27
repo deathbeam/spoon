@@ -5,7 +5,7 @@ import hxparse.Position;
 typedef Nodes = Array<Node>;
 
 typedef Node = {
-  var node : NodeDef;
+  var expr : ExpressionDef;
   var pos : Position;
 }
 
@@ -20,7 +20,7 @@ enum ConstantDef {
   CRegexp  (r : String, opt : String);
 }
 
-enum NodeDef {
+enum ExpressionDef {
   Empty;
   Constant (v : ConstantDef);
   Block    (v : Nodes);

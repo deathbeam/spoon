@@ -23,8 +23,8 @@ class Lexer extends hxparse.Lexer implements hxparse.RuleBuilder {
     "false" => TFalse(lexer.curPos()),
     "null"  => TNull(lexer.curPos()),
     // Identifiers and types
-    "_?[A-Z]\\w+" => TType(lexer.curPos(), lexer.current),
-    "_?[a-z]\\w+" => TIdent(lexer.curPos(), lexer.current),
+    "_?[A-Z][a-zA-Z\\-]+" => TType(lexer.curPos(), lexer.current),
+    "_?[a-z][a-zA-Z\\-]+" => TVar(lexer.curPos(), lexer.current),
     // Numbers
     "0x[0-9a-fA-F]+"                     => TInt(lexer.curPos(), lexer.current),
     "[0-9]+"                             => TInt(lexer.curPos(), lexer.current),

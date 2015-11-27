@@ -23,12 +23,12 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
   public function run() : Expressions {
     var v = new Expressions();
 
-    Logger.self.catchErrors(function() {
+    if (Logger.self.catchErrors(function() {
       while(true) _(switch stream {
-        case [TEof(_)]: return v;
+      case [TEof(_)]: break;
         case [e = parseExpression()]: v.push(e);
       });
-    });
+    })) return v;
 
     return new Expressions();
   }
@@ -44,7 +44,7 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
   }
 
   function parseConst() : Expression return {
-    var v : Constant;
+    var v : ConstantDef;
     var p : Position;
 
     _(switch stream {
@@ -54,12 +54,12 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
       case [TInt(tp, tv)]: p = tp; v = CInt(tv);
       case [TFloat(tp, tv)]: p = tp; v = CFloat(tv);
       case [TString(tp, tv)]: p = tp; v = CString(tv);
-      case [TIdent(tp, tv)]: p = tp; v = CIdent(tv);
+      case [TVar(tp, tv)]: p = tp; v = CVar(tv);
       case [TType(tp, tv)]: p = tp; v = CType(tv);
     });
 
     {
-      expr: Const(v),
+      expr: Constant(v),
       pos: p
     }
   }
@@ -85,21 +85,22 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
   }
 
   function parseCondition() : Expression return {
-    var vIf : Expression;
+    var p : Position;
+    var c : Expression;
+    var b : Expression;
     var vElse : Null<Expression> = null;
     var vElsIf : Null<Expressions> = null;
 
     _(switch stream {
       case [TIf(tp)]:
-        vIf = {
-          expr: If(parseExpression(), parseExpression()),
-          pos: tp
-        }
+        p = tp;
+        c = parseExpression();
+        b = parseExpression();
 
         while(true) switch stream {
           case [TElsIf(tp), condition = parseExpression(), body = parseExpression()]:
             vElsIf.push({
-              expr: If(condition, body),
+              expr: ElseIf(condition, body),
               pos: tp
             });
           case [TElse(tp), e = parseExpression()]:
@@ -112,8 +113,8 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
     });
 
     {
-      expr: Condition(vIf, vElsIf, vElse),
-      pos: vIf.pos
+      expr: If(c, b, vElsIf, vElse),
+      pos: p
     }
   }
 

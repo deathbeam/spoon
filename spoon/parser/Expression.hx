@@ -9,76 +9,25 @@ typedef Expression = {
   var pos : Position;
 }
 
-enum Constant {
+enum ConstantDef {
   CNull;
-
-  CBool(
-    s : String
-  );
-
-  CInt(
-    v : String
-  );
-
-  CFloat(
-    f : String
-  );
-
-  CString(
-    s : String
-  );
-
-  CIdent(
-    s : String
-  );
-
-  CType(
-    s : String
-  );
-
-  CRegexp(
-    r : String,
-    opt : String
-  );
+  CBool    (v : String);
+  CInt     (v : String);
+  CFloat   (v : String);
+  CString  (v : String);
+  CVar     (v : String);
+  CType    (v : String);
+  CRegexp  (r : String, opt : String);
 }
 
 enum ExpressionDef {
   Empty;
-
-  Const(
-    value : Constant
-  );
-
-  If(
-    condition : Expression,
-    body : Expression
-  );
-
-  Else(
-    body : Expression
-  );
-
-  For(
-    condition : Expression,
-    body : Expression
-  );
-
-  While(
-    condition : Expression,
-    body : Expression
-  );
-
-  Condition(
-    vIf : Expression,
-    vElsIf : Null<Expressions>,
-    vElse : Null<Expression>
-  );
-
-  Block(
-    values : Expressions
-  );
-
-  Params(
-    values : Expressions
-  );
+  Constant (v : ConstantDef);
+  Block    (v : Expressions);
+  Params   (v : Expressions);
+  If       (c : Expression, b : Expression, elif : Null<Expressions>, el : Null<Expression>);
+  ElseIf   (c : Expression, b : Expression);
+  Else     (b : Expression);
+  For      (c : Expression, b : Expression);
+  While    (c : Expression, b : Expression);
 }

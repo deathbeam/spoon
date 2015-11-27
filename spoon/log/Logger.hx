@@ -24,9 +24,10 @@ class Logger {
     this.source = source;
   }
 
-  public function catchErrors<T>(f) {
+  public function catchErrors<T>(f) : Bool {
     try {
       f();
+      return true;
     } catch (e : hxparse.NoMatch<Dynamic>) {
       log({
         type: NoMatch,
@@ -49,6 +50,8 @@ class Logger {
         description: e.char
       });
     }
+
+    return false;
   }
 
   public function log(m : Message) {

@@ -2,7 +2,7 @@ package spoon.parser;
 
 import byte.ByteData;
 import hxparse.Position;
-import hxparse.Parser.parse as _;
+import hxparse.Parser.parse as parse;
 import hxparse.LexerTokenSource;
 import spoon.log.Message;
 import spoon.log.Logger;
@@ -25,15 +25,15 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
     var v = new Nodes();
 
     if (Logger.self.catchErrors(function() {
-      while(true) _(switch stream {
-      case [TEof(_)]: break;
+      while(true) parse(switch stream {
+        case [TEof(_)]: break;
         case [e = parseNode()]: v.push(e);
       });
     })) v else new Nodes();
   }
 
   function parseNode() : Node return {
-    _(switch stream {
+    parse(switch stream {
       case [e = parseBlock()]: e;
       case [e = parseIf()]: e;
       case [e = parseFor()]: e;
@@ -46,7 +46,7 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
     var v : ConstantDef;
     var p : Position;
 
-    _(switch stream {
+    parse(switch stream {
       case [TTrue(tp)]: p = tp; v = CBool("true");
       case [TFalse(tp)]: p = tp; v = CBool("false");
       case [TNull(tp)]: p = tp; v = CNull;
@@ -64,52 +64,46 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
   }
 
   function parseBlock() : Node return {
-    var v = new Nodes();
-    var p : Position;
-
-    _(switch stream {
+    parse(switch stream {
       case [TIndent(tp)]:
-        p = tp;
+        var v = new Nodes();
+        var p = tp;
 
         while(true) switch stream {
           case [TDedent(_) | TEof(_)]: break;
           case [e = parseNode()]: v.push(e);
         }
-    });
 
-    {
-      expr: Block(v),
-      pos: p
-    }
+        {
+          expr: Block(v),
+          pos: p
+        }
+    });
   }
 
   function parseIf() : Node return {
-    var p : Position;
-    var c : Node;
-    var b : Node;
-    var els : Null<Node> = null;
-
-    _(switch stream {
+    parse(switch stream {
       case [TIf(tp)]:
-        p = tp;
-        c = parseNode();
-        b = parseNode();
+        var p = tp;
+        var c = parseNode();
+        var b = parseNode();
+        var els : Null<Node> = null;
 
         switch stream {
           case [TElse(tp), e = parseNode()]:
             els = e;
           case _:
         }
-    });
 
-    {
-      expr: If(c, b, els),
-      pos: p
-    }
+        {
+          expr: If(c, b, els),
+          pos: p
+        }
+    });
   }
 
   function parseFor() : Node return {
-    _(switch stream {
+    parse(switch stream {
       case [TFor(tp)]:
         {
           expr: For(parseNode(), parseNode()),
@@ -119,7 +113,7 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
   }
 
   function parseWhile() : Node return {
-    _(switch stream {
+    parse(switch stream {
       case [TWhile(tp)]:
         {
           expr: While(parseNode(), parseNode()),

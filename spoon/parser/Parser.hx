@@ -1,5 +1,6 @@
 package spoon.parser;
 
+import byte.ByteData;
 import hxparse.Position;
 import hxparse.Parser.parse as _;
 import hxparse.LexerTokenSource;
@@ -14,9 +15,9 @@ using StringTools;
 
 class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
   public function new(logParser : LogParser, input:String, sourceName:String) {
-    var lexer = new Lexer(byte.ByteData.ofString(input), sourceName);
+    var lexer = new Lexer(ByteData.ofString(input), sourceName);
     var ts = new LexerTokenSource(lexer, Lexer.tok);
-    Logger.intialize(logParser, byte.ByteData.ofString(input));
+    Logger.intialize(logParser, ByteData.ofString(input));
     super(ts);
   }
 

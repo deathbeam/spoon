@@ -22,15 +22,15 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
 
   public function run() : Expressions {
     var v = new Expressions();
-    
+
     Logger.self.catchErrors(function() {
       while(true) _(switch stream {
-        case [TEof(_)]: break;
+        case [TEof(_)]: return v;
         case [e = parseExpression()]: v.push(e);
       });
     });
 
-    return v;
+    return new Expressions();
   }
 
   function parseExpression() : Expression return {

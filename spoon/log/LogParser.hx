@@ -71,7 +71,7 @@ class LogParser {
   }
 
   public function format(data : LogData) : String {
-    var result = '${data.severity} : ';
+    var result = '${data.severity} - ';
 
     if (data.position != null) {
       result += '${data.position.source} ${data.position.line}:${data.position.collumn} - ';

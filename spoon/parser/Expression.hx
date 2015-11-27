@@ -25,9 +25,8 @@ enum ExpressionDef {
   Constant (v : ConstantDef);
   Block    (v : Expressions);
   Params   (v : Expressions);
-  If       (c : Expression, b : Expression, elif : Null<Expressions>, el : Null<Expression>);
-  ElseIf   (c : Expression, b : Expression);
+  If       (c : Expression, b : Expression, ?els : Expression);
   Else     (b : Expression);
-  For      (c : Expression, b : Expression);
-  While    (c : Expression, b : Expression);
+  For      (c : Expression, ?b : Expression);
+  While    (c : Expression, ?b : Expression);
 }

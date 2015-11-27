@@ -13,7 +13,6 @@ class Lexer extends hxparse.Lexer implements hxparse.RuleBuilder {
     ","     => TComma(lexer.curPos()),
     "\\."   => TDot(lexer.curPos()),
     "if"    => TIf(lexer.curPos()),
-    "elsif" => TElsIf(lexer.curPos()),
     "else"  => TElse(lexer.curPos()),
     "for"   => TFor(lexer.curPos()),
     "while" => TWhile(lexer.curPos()),

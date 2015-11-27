@@ -8,7 +8,7 @@ import spoon.log.Logger;
 import spoon.log.LogParser;
 import spoon.lexer.Lexer;
 import spoon.lexer.Token;
-import spoon.parser.Expression;
+import spoon.parser.Node;
 
 using StringTools;
 
@@ -20,18 +20,18 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
     super(ts);
   }
 
-  public function run() : Expressions  return {
-    var v = new Expressions();
+  public function run() : Nodes  return {
+    var v = new Nodes();
 
     if (Logger.self.catchErrors(function() {
       while(true) _(switch stream {
       case [TEof(_)]: break;
-        case [e = parseExpression()]: v.push(e);
+        case [e = parseNode()]: v.push(e);
       });
-    })) v else new Expressions();
+    })) v else new Nodes();
   }
 
-  function parseExpression() : Expression return {
+  function parseNode() : Node return {
     _(switch stream {
       case [e = parseBlock()]: e;
       case [e = parseIf()]: e;
@@ -41,7 +41,7 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
     });
   }
 
-  function parseConst() : Expression return {
+  function parseConst() : Node return {
     var v : ConstantDef;
     var p : Position;
 
@@ -57,13 +57,13 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
     });
 
     {
-      expr: Constant(v),
+      node: Constant(v),
       pos: p
     }
   }
 
-  function parseBlock() : Expression return {
-    var v = new Expressions();
+  function parseBlock() : Node return {
+    var v = new Nodes();
     var p : Position;
 
     _(switch stream {
@@ -72,56 +72,56 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
 
         while(true) switch stream {
           case [TDedent(_) | TEof(_)]: break;
-          case [e = parseExpression()]: v.push(e);
+          case [e = parseNode()]: v.push(e);
         }
     });
 
     {
-      expr: Block(v),
+      node: Block(v),
       pos: p
     }
   }
 
-  function parseIf() : Expression return {
+  function parseIf() : Node return {
     var p : Position;
-    var c : Expression;
-    var b : Expression;
-    var els : Null<Expression> = null;
+    var c : Node;
+    var b : Node;
+    var els : Null<Node> = null;
 
     _(switch stream {
       case [TIf(tp)]:
         p = tp;
-        c = parseExpression();
-        b = parseExpression();
+        c = parseNode();
+        b = parseNode();
 
         switch stream {
-          case [TElse(tp), e = parseExpression()]:
+          case [TElse(tp), e = parseNode()]:
             els = e;
           case _:
         }
     });
 
     {
-      expr: If(c, b, els),
+      node: If(c, b, els),
       pos: p
     }
   }
 
-  function parseFor() : Expression return {
+  function parseFor() : Node return {
     _(switch stream {
       case [TFor(tp)]:
         {
-          expr: For(parseExpression(), parseExpression()),
+          node: For(parseNode(), parseNode()),
           pos: tp
         }
     });
   }
 
-  function parseWhile() : Expression return {
+  function parseWhile() : Node return {
     _(switch stream {
       case [TWhile(tp)]:
         {
-          expr: While(parseExpression(), parseExpression()),
+          node: While(parseNode(), parseNode()),
           pos: tp
         }
     });

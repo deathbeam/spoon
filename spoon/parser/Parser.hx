@@ -34,11 +34,12 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
 
   function parseNode() : Node return {
     parse(switch stream {
+      case [e = parseConst()]: e;
       case [e = parseBlock()]: e;
       case [e = parseIf()]: e;
       case [e = parseFor()]: e;
       case [e = parseWhile()]: e;
-      case [e = parseConst()]: e;
+      case [e = parseFunction()]: e;
     });
   }
 
@@ -117,6 +118,60 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
       case [TWhile(tp)]:
         {
           expr: While(parseNode(), parseNode()),
+          pos: tp
+        }
+    });
+  }
+
+  function parseFunction() : Node return {
+    parse(switch stream {
+      case [TFunction(tp)]:
+        var n = parseConst();
+        var p : Null<Node> = null;
+
+        switch stream {
+          case [e = parseParams()]: p = e;
+          default: Empty;
+        }
+
+        var b = parseNode();
+
+        {
+          expr: Function(n, b, p),
+          pos: tp
+        }
+    });
+  }
+
+  function parseParams() : Node return {
+
+    parse(switch stream {
+      case [TPOpen(tp)]:
+        var v = new Nodes();
+
+        while(true) {
+          switch stream {
+            case [e = parseNode()]: v.push(e);
+            default: break;
+          };
+
+          switch stream {
+            case [TComma(_)]: Empty;
+            default: break;
+          };
+    		}
+
+        switch stream {
+          case [TPClose(_)]: Empty;
+          default: Logger.self.log({
+              type: UnterminatedParenthesis,
+              position: curPos(),
+              severity: Error
+            }); this.unexpected();
+        }
+
+        {
+          expr: Params(v),
           pos: tp
         }
     });

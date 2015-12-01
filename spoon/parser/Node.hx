@@ -24,6 +24,8 @@ enum ExpressionDef {
   Empty;
   Constant (v : ConstantDef);
   Block    (v : Nodes);
+  Params   (v : Nodes);
+  Function (?n: Node, ?b : Node, ?p : Node);
   If       (c : Node, b : Node, ?els : Node);
   For      (c : Node, ?b : Node);
   While    (c : Node, ?b : Node);

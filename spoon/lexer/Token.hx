@@ -3,6 +3,7 @@ package spoon.lexer;
 import hxparse.Position;
 
 enum Token {
+  TEmpty;
   TEof      (p : Position);
   TPOpen    (p : Position);
   TPClose   (p : Position);

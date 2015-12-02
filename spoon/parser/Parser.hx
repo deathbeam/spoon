@@ -144,7 +144,6 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
   }
 
   function parseParams() : Node return {
-
     parse(switch stream {
       case [TPOpen(tp)]:
         var v = new Nodes();

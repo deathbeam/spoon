@@ -11,7 +11,7 @@ end
 
 # Interfaces with default implementation
 interface Greeter
-  function greet(name as MyValue<String>)
+  function greet(name as MyValue<String>) as Void
     print "Hello #name"
   end
 end
@@ -19,13 +19,32 @@ end
 # Classes and OOP
 class Person
   include Greeter
+
+  function new(name)
+    this.name = name
+  end
+
+  # Cool naming with support for - as delimiter
+  function greet-self
+    greet name
+  end
 end
 
 # Top-level expressions
 name = MyValue<String>("Alice")
 
-# Easy method of creating new objects and chaining with special ! operator
-# what is replacement for (), in this case for ().
-Person!greet name
+# Creating of objects
+alice = Person(name)
+
+# Dynamic methods, closures
+alice.greet = do(name)
+  print "#name is awesome"
+end
+
+# Calling of methods
+# We will use ! operator, what is replacement for ()
+alice.greet-self!
+
+# Above will output "Alice is awesome" to console
 
 # vim: set ft=coffee:

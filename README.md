@@ -7,18 +7,16 @@ db   8D 88      `8b  d8' `8b  d8' 88  V888
 `8888Y' 88       `Y88P'   `Y88P'  VP   V8P
 ```
 
-[![Build Status](https://travis-ci.org/nondev/spoon.svg)](https://travis-ci.org/nondev/spoon) [![Join the chat at https://gitter.im/nondev/raxe](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nondev/spoon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/nondev/spoon.svg)](https://travis-ci.org/nondev/spoon) [![Join the chat at https://gitter.im/nondev/spoon](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nondev/spoon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Spoon is awesome new programming language, what combines the best things from CoffeeScript, Python and Haxe. Spoon is open source, cross-platform and compiles to Haxe without any performance penalty and runtime library.
+Spoon is awesome new programming language, what combines the best things from [https://ruby-lang.org](Ruby) and [https://python.org](Python). Spoon is open source, cross-platform and runs on top of [https://haxe.org](Haxe).
 
-Thanks to Haxe, Spoon can run natively on
+Projects written in Spoon can run natively on any platform that Haxe supports, so
 
   * Any platform on what you can run C++, so almost everywhere
   * Android/iOS/Windows Phone
   * Windows/Linux/Mac
   * Browser (NodeJS, HTML5, PHP, AS3)
-
-So Spoon is like CoffeeScript on crack. It have static typing and can run in native performance on almost any platform but it still have beauty of significant whitespace language.
 
 **Spoon is still in heavy development and not usable yet, so feel free to help me and contribute**
 

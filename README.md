@@ -9,7 +9,7 @@ db   8D 88      `8b  d8' `8b  d8' 88  V888
 
 [![Build Status](https://travis-ci.org/nondev/spoon.svg)](https://travis-ci.org/nondev/spoon) [![Join the chat at https://gitter.im/nondev/spoon](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nondev/spoon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Spoon is awesome new programming language, what combines the best things from [https://ruby-lang.org](Ruby) and [https://python.org](Python). Spoon is open source, cross-platform and runs on top of [https://haxe.org](Haxe).
+Spoon is awesome new programming language, what combines the best things from [Ruby](https://ruby-lang.org) and [Python](https://python.org). Spoon is open source, cross-platform and runs on top of [Haxe](https://haxe.org).
 
 Projects written in Spoon can run natively on any platform that Haxe supports, so
 

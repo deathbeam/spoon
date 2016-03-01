@@ -58,7 +58,7 @@ class Cli extends CommandLine {
 
 ");
     if (useAscii) Sys.print("\033[0;37m\033[1m");
-    Sys.println("Spoon 0.0.1 - https://github.com/nondev/spoon");
+    Sys.println("Spoon 0.0.1 - https://spoonlang.org");
     Sys.println("\033[0;37m\n" + this.showUsage());
     Sys.exit(0);
   }

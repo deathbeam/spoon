@@ -9,13 +9,13 @@ enum Token {
   TPClose   (p : Position);
   TComma    (p : Position);
   TDot      (p : Position);
+  TEnd      (p : Position);
   TIf       (p : Position);
   TElse     (p : Position);
   TFor      (p : Position);
   TWhile    (p : Position);
   TFunction (p : Position);
   TClass    (p : Position);
-  TExtends  (p : Position);
   TIndent   (p : Position);
   TDedent   (p : Position);
   TTrue     (p : Position);

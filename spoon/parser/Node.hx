@@ -5,8 +5,8 @@ import hxparse.Position;
 typedef Nodes = Array<Node>;
 
 typedef Node = {
-  var expr : ExpressionDef;
-  var pos : Position;
+  var e : ExpressionDef;
+  var p : Position;
 }
 
 enum ConstantDef {

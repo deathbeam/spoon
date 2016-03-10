@@ -8,7 +8,7 @@ using StringTools;
 typedef LogPosition = {
   var source : String;
   var line : Int;
-  var collumn : Int;
+  var column : Int;
 }
 
 typedef LogData = {
@@ -58,7 +58,7 @@ class LogParser {
       position = {
         source: message.position.psource,
         line: pos.lineMin,
-        collumn: pos.posMin + 1
+        column: pos.posMin + 1
       }
     }
 
@@ -74,7 +74,7 @@ class LogParser {
     var result = '${data.severity} - ';
 
     if (data.position != null) {
-      result += '${data.position.source} ${data.position.line}:${data.position.collumn} - ';
+      result += '${data.position.source} ${data.position.line}:${data.position.column} - ';
     }
 
     result += data.type;
@@ -121,7 +121,7 @@ class CsonLogParser extends LogParser {
         '$dblindent"position":\n' +
           '$trplindent"source": "${data.position.source}"\n' +
           '$trplindent"line": ${data.position.line}\n' +
-          '$trplindent"collumn": ${data.position.collumn}\n';
+          '$trplindent"column": ${data.position.column}\n';
     }
 
     return res;
@@ -166,7 +166,7 @@ class JsonLogParser extends LogParser {
         ',\n$dblindent"position": {\n' +
           '$trplindent"source": "${data.position.source}",\n' +
           '$trplindent"line": ${data.position.line},\n' +
-          '$trplindent"collumn": ${data.position.collumn}\n' +
+          '$trplindent"column": ${data.position.column}\n' +
         '$dblindent}';
     }
 
@@ -212,7 +212,7 @@ class XmlLogParser extends LogParser {
         '\n$dblindent<position>\n' +
           '$trplindent<source>${data.position.source}</source>\n' +
           '$trplindent<line>${data.position.line}</line>\n' +
-          '$trplindent<collumn>${data.position.collumn}</collumn>\n' +
+          '$trplindent<column>${data.position.column}</column>\n' +
         '$dblindent</position>';
     }
 
@@ -253,7 +253,7 @@ class YamlLogParser extends LogParser {
         '${indent}position:\n' +
           '${dblindent}source: ${data.position.source}\n' +
           '${dblindent}line: ${data.position.line}\n' +
-          '${dblindent}collum: ${data.position.collumn}';
+          '${dblindent}column: ${data.position.column}';
     }
 
     return res;

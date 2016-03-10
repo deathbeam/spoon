@@ -9,7 +9,6 @@ enum Token {
   TPClose   (p : Position);
   TComma    (p : Position);
   TDot      (p : Position);
-  TEnd      (p : Position);
   TIf       (p : Position);
   TElse     (p : Position);
   TFor      (p : Position);

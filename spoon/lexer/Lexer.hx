@@ -24,8 +24,6 @@ class Lexer extends hxparse.Lexer implements RuleBuilder {
       => TFunction(lexer.curPos()),
     "class"
       => TClass(lexer.curPos()),
-    "end"
-      => TEnd(lexer.curPos()),
     /***************************************************************************
     * Constants
     ***************************************************************************/

@@ -36,10 +36,16 @@ class Parser extends hxparse.Parser<LexerTokenSource<Token>, Token> {
     parse(switch stream {
       case [e = parseConst()]: e;
       case [e = parseBlock()]: e;
+      case [e = parseControl()]: e;
+      case [e = parseFunction()]: e;
+    });
+  }
+
+  function parseControl() : Node return {
+    parse(switch stream {
       case [e = parseIf()]: e;
       case [e = parseFor()]: e;
       case [e = parseWhile()]: e;
-      case [e = parseFunction()]: e;
     });
   }
 

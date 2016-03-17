@@ -18,14 +18,12 @@ module Spoon
     rule(:end_kwd)  { key("end") }
     rule(:if_kwd)   { key("if") }
     rule(:else_kwd) { key("else") }
-    rule(:then_kwd) { key("then") }
 
     rule(:skip_kwd) {
       def_kwd.absent? >>
       do_kwd.absent? >>
       if_kwd.absent? >>
       else_kwd.absent? >>
-      then_kwd.absent? >>
       end_kwd.absent?
     }
 
@@ -50,7 +48,7 @@ module Spoon
       (else_kwd >> else_body.as(:else)).repeat.as(:if_false) >> end_kwd)
     }
 
-    rule(:condition_body) { then_kwd >> expressions?.as(:body) | else_body }
+    rule(:condition_body) { do_kwd >> expressions?.as(:body) | else_body }
     rule(:else_body)      { expressions?.as(:body) >> (else_kwd.present? | end_kwd.present?) }
 
     rule(:function)      { def_kwd >> name.as(:function) >> params.maybe >> function_body }

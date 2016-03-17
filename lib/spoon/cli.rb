@@ -24,6 +24,11 @@ module Spoon
         ###
         Hello
         ###
+
+        if (aa)
+          bbb
+        end
+
         def aaas
           aha
         end

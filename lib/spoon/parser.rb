@@ -51,7 +51,7 @@ module Spoon
     }
 
     rule(:condition_body) { then_kwd >> expressions?.as(:body) | else_body }
-    rule(:else_body)      { expressions?.as(:body) >> (else_kwd.present? | end_kwd).present? }
+    rule(:else_body)      { expressions?.as(:body) >> (else_kwd.present? | end_kwd.present?) }
 
     rule(:function)      { def_kwd >> name.as(:function) >> params.maybe >> function_body }
     rule(:params)        { lparen >> ((name.as(:param) >> (comma >> name.as(:param)).repeat(0)).maybe).as(:params) >> rparen}

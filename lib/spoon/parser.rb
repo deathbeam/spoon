@@ -1,5 +1,7 @@
 require "parslet"
-require 'parslet/convenience'
+require "parslet/convenience"
+
+require "spoon/util/indentparser"
 
 module Spoon
   class Parslet::Parser
@@ -32,7 +34,7 @@ module Spoon
     end
   end
 
-  class Parser < Parslet::Parser
+  class Parser < Spoon::Util::IndentParser
     root :script
 
     rule(:script)   { space? >> expressions >> space? }
@@ -40,6 +42,13 @@ module Spoon
     rule(:expressions?)  { expressions.maybe }
     rule(:expressions)   { expression.repeat(1) }
     rule(:expression)    { name | number | comment | function | condition }
+
+    rule(:block) {
+      indent >>
+        ((expression | expression >> block) >>
+          (samedent >> (expression | expression >> block)).repeat).as(:children) >>
+      dedent
+    }
 
     rule(:els) {
       else_kwd >> condition_body.as(:else)

@@ -1,6 +1,7 @@
 require "awesome_print"
 require "colorize"
 require "thor"
+require "pp"
 
 require "spoon/parser"
 require "spoon/version"
@@ -21,19 +22,13 @@ module Spoon
     desc "dev", "Just dev things"
     def dev
       ap Spoon::Parser.new.parse_with_debug <<~HEREDOC
-        ###
-        Hello
-        ###
-
-        if (aa)
-          bbb
-        else
-          aaa
-        end
-
-        def aaas
-          aha
-        end
+      if (aa)
+        bbb
+      else
+        aaa
+      else
+        sss
+      end
       HEREDOC
     end
 

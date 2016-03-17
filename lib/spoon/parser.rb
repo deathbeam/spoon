@@ -46,8 +46,8 @@ module Spoon
     # For some reason, when else is added, it do not recognizes entire condition in tree
     rule(:condition) {
       if_kwd >> lparen >> expression.as(:condition) >> rparen >>
-        condition_body.maybe.as(:if) >>
-      (else_kwd >> else_body.maybe.as(:else)).repeat >> end_kwd
+        condition_body.maybe.as(:if_true) >> (end_kwd |
+      (else_kwd >> else_body.as(:else)).repeat.as(:if_false) >> end_kwd)
     }
 
     rule(:condition_body) { then_kwd >> expressions?.as(:body) | else_body }

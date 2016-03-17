@@ -27,6 +27,8 @@ module Spoon
 
         if (aa)
           bbb
+        else
+          aaa
         end
 
         def aaas

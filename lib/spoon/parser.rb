@@ -43,16 +43,19 @@ module Spoon
     rule(:expressions)   { expression.repeat(1) }
     rule(:expression)    { name | number | comment | function | condition }
 
+    # For some reason, when else is added, it do not recognizes entire condition in tree
     rule(:condition) {
-      if_kwd >> lparen >> expression.as(:condition) >> rparen >> body.maybe.as(:if)
+      if_kwd >> lparen >> expression.as(:condition) >> rparen >>
+        condition_body.maybe.as(:if) >>
+      (else_kwd >> else_body.maybe.as(:else)).repeat >> end_kwd
     }
 
     rule(:condition_body) { then_kwd >> expressions?.as(:body) | else_body }
-    rule(:else_body)      { expressions?.as(:body) >> (else_kwd.present? | end_kwd) }
+    rule(:else_body)      { expressions?.as(:body) >> (else_kwd.present? | end_kwd).present? }
 
-    rule(:function)      { def_kwd >> name.as(:function) >> params.maybe >> body }
+    rule(:function)      { def_kwd >> name.as(:function) >> params.maybe >> function_body }
     rule(:params)        { lparen >> ((name.as(:param) >> (comma >> name.as(:param)).repeat(0)).maybe).as(:params) >> rparen}
-    rule(:body)          { do_kwd >> expressions?.as(:body) | expressions?.as(:body) >> end_kwd }
+    rule(:function_body) { do_kwd >> expressions?.as(:body) | expressions?.as(:body) >> end_kwd }
 
     rule(:comment)       { (comment_block | comment_line).as(:comment) }
     rule(:comment_block) { key("###") >> match["^###"].repeat.as(:text) >> key("###") }

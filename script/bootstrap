@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Usage: script/bootstrap
+# Install bundler if not present, then install all required dependencies
+# via bundler.
+
+set -e
+
+echo "Installing dependencies..."
+
+if ! gem query -i -n bundler > /dev/null; then
+  sudo gem install bundler
+fi
+
+bundle install --quiet

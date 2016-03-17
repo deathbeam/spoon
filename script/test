@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Usage: script/test
+# Run the application's tests.
+
+set -e
+
+script/bootstrap
+
+echo "Running tests..."
+
+rspec

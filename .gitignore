@@ -1,5 +1,9 @@
-.raxecompletion
-docs/
-examples/build/
-.DS_Store
-Thumbs.db
+/.bundle/
+/.yardoc
+/Gemfile.lock
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/

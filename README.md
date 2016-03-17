@@ -20,24 +20,37 @@ Projects written in Spoon can run natively on any platform that Haxe supports, s
 
 **Spoon is still in heavy development and not usable yet, so feel free to help me and contribute**
 
-# Installation
+## Installation
 
-To install Spoon you can use haxelib
+Add this line to your application's Gemfile:
 
-```
-haxelib git spoon https://github.com/nondev/spoon.git
-```
-
-# Build from source
-
-First, to install all dependencies, run
-
-```
-haxelib install build.hxml
+```ruby
+gem 'spoon'
 ```
 
-Now, to build `neko` executable `run.n`, simply run this
+And then execute:
 
-```
-haxe build.hxml
-```
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install spoon
+
+## Usage
+
+TODO
+
+## Development
+
+After checking out the repo, run `script/bootstrap` to install dependencies. Then, run `script/test` to run the tests. You can also run `script/run` for a CLI.
+
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/spoon. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).

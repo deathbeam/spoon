@@ -1,6 +1,0 @@
--D cli
--lib mcli
--lib hxparse
--cp spoon
--main spoon.cli.Main
--neko run.n

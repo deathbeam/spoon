@@ -5,15 +5,23 @@ describe Spoon::Parser do
 
   context "condition rule" do
     it "should consume 'if (something) do anything'" do
-      expect(parser.function).to parse('if (something) then anything')
+      expect(parser.condition).to parse('if (something) do anything')
     end
 
     it "should consume 'if (something) anything end'" do
-      expect(parser.function).to parse('if (something) anything end')
+      expect(parser.condition).to parse('if (something) anything end')
+    end
+
+    it "should consume 'if (a) do b else if (c) do d else do e'" do
+      expect(parser.condition).to parse('if (a) do b else if (c) do d else do e')
     end
 
     it "shouldn't consume 'if (something) anything'" do
-      expect(parser.function).to_not parse('if (something) anything')
+      expect(parser.condition).to_not parse('if (something) anything')
+    end
+
+    it "shouldn't consume 'if (something) do anything end'" do
+      expect(parser.condition).to_not parse('if (something) do anything end')
     end
   end
 
@@ -32,6 +40,10 @@ describe Spoon::Parser do
 
     it "shouldn't consume 'def test() it'" do
       expect(parser.function).to_not parse('def test() it')
+    end
+
+    it "shouldn't consume 'def test() do it end'" do
+      expect(parser.function).to_not parse('def test() do it end')
     end
   end
 end

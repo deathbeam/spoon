@@ -4,6 +4,7 @@ require "thor"
 require "pp"
 
 require "spoon/parser"
+require "spoon/util/indentparser"
 require "spoon/version"
 
 module Spoon
@@ -21,14 +22,12 @@ module Spoon
 
     desc "dev", "Just dev things"
     def dev
-      ap Spoon::Parser.new.parse_with_debug <<~HEREDOC
-      if (aa)
-        bbb
-      else
+      ap Spoon::Util::IndentParser.new.parse_with_debug <<~HEREDOC
         aaa
-      else
-        sss
-      end
+          bbb
+            ccc
+            ddd
+        ccc
       HEREDOC
     end
 

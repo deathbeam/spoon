@@ -3,57 +3,30 @@ require 'spec_helper'
 describe Spoon::Parser do
   let(:parser) { Spoon::Parser.new }
 
-  context "comment rule" do
-    it "should consume '# comment'" do
-      expect(parser.comment).to parse('# comment')
-    end
+  context "comment parsing" do
+    subject { parser.comment }
 
-    it "should consume '#comment'" do
-      expect(parser.comment).to parse('#comment')
-    end
-
-    it "shouldn't consume '# comment\\n expression'" do
-      expect(parser.comment).to parse('# comment\n expression')
-    end
+    it { should parse "# comment" }
+    it { should parse "#comment" }
+    it { should_not parse "# comment\n expression" }
   end
 
-  context "condition rule" do
-    it "should consume 'if (something) anything'" do
-      expect(parser.condition).to parse('if (something) anything')
-    end
+  context "condition parsing" do
+    subject { parser.condition }
 
-    it "should consume 'if (a) b else if (c) d else e'" do
-      expect(parser.condition).to parse('if (a) b else if (c) d else e')
-    end
-
-    it "shouldn't consume 'if something anything'" do
-      expect(parser.condition).to_not parse('if something anything')
-    end
-
-    it "shouldn't consume 'if (something) a b'" do
-      expect(parser.condition).to_not parse('if (something) a b')
-    end
+    it { should parse "if (something) anything" }
+    it { should parse "if (a) b else if (c) d else e" }
+    it { should_not parse "if something anything" }
+    it { should_not parse "if (something) a b" }
   end
 
-  context "function rule" do
-    it "should consume 'def test it'" do
-      expect(parser.function).to parse('def test it')
-    end
+  context "function parsing" do
+    subject { parser.function }
 
-    it "should consume 'def test() it'" do
-      expect(parser.function).to parse('def test() it')
-    end
-
-    it "should consume 'def test(me) it'" do
-      expect(parser.function).to parse('def test(me) it')
-    end
-
-    it "shouldn't consume 'def test() me it'" do
-      expect(parser.function).to_not parse('def test() me it')
-    end
-
-    it "shouldn't consume 'def test me it'" do
-      expect(parser.function).to_not parse('def test me it')
-    end
+    it { should parse "def test it" }
+    it { should parse "def test() it" }
+    it { should parse "def test(me) it" }
+    it { should_not parse "def test() me it" }
+    it { should_not parse "def test me it" }
   end
 end

@@ -11,6 +11,9 @@ module Spoon
     # Matches keyword and skips space after it
     def key(value) keyword(value) >> space? end
 
+    # Matches value in parens or not in parens
+    def parens(value) sym("(").maybe >> value >> sym(")").maybe end
+
     # Matches single or multiple end of lines
     rule(:newline)     { (match("\n") | match("\r")).repeat(1) }
     rule(:newline?)    { newline.maybe }
@@ -72,20 +75,23 @@ module Spoon
 
     # Matches function definition
     # example: def (a) b
-    rule(:function) { (key("def") >> name.as(:name) >> params.maybe >> body.as(:body)).as(:function) }
+    rule(:function) {
+      (key("def") >> name.as(:name) >>
+        (body.as(:body) | parens(params).maybe >> body.as(:body))).as(:function)
+    }
 
     # Matches closure
     # example: (a) -> b
-    rule(:closure)  { (params.maybe >> sym("->") >> body.as(:body)).as(:closure) }
+    rule(:closure)  { (parens(params).maybe >> sym("->") >> body.as(:body)).as(:closure) }
 
     # Matches comma delimited function params in parenthesis
     # example: (a, b)
-    rule(:params)   { sym("(") >> (name >> (sym(",") >> name).repeat(0)).maybe.as(:params) >> sym(")") }
+    rule(:params)   { (name >> (sym(",") >> name).repeat(0)).maybe.as(:params) }
 
     # Matches if-else if-else in recursive structure
     # example: if (a) b else if(c) d else e
     rule(:condition) {
-      (key("if") >> sym("(") >> expression.as(:body) >> sym(")") >>
+      (key("if") >> parens(expression.as(:body)) >>
           body.maybe.as(:if_true) >>
       (key("else") >> body.maybe.as(:if_false)).maybe).as(:condition)
     }

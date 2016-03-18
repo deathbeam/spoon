@@ -22,7 +22,7 @@ module Spoon
     desc "dev", "Just dev things"
     def dev
       ap Spoon::Parser.new.parse_with_debug <<~HEREDOC
-      if (aa) do bbb else if (bbb) do ddd else do aaa
+      def ab (a) a
       HEREDOC
     end
 

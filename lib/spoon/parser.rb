@@ -4,52 +4,67 @@ require "parslet/convenience"
 require "spoon/util/indentparser"
 
 module Spoon
-  class Parslet::Parser
-    rule(:space)  { (match("\s") | match("\n")).repeat(1) }
-    rule(:space?) { space.maybe }
-    rule(:name)   { space? >> skip_kwd >> match["a-z"].repeat(1).as(:name) >> space? }
-    rule(:number) { match["0-9"].repeat(1).as(:number) >> space? }
-    rule(:lbrace) { key("{") }
-    rule(:rbrace) { key("}") }
-    rule(:lparen) { key("(") }
-    rule(:rparen) { key(")") }
-    rule(:comma)  { key(",") }
+  class Parser < Spoon::Util::IndentParser
+    def key(value)
+      @keys = [] if @keys.nil?
+      @keys.push value unless @keys.include? value
 
-    rule(:def_kwd)  { key("def") }
-    rule(:do_kwd)   { key("do") }
-    rule(:end_kwd)  { key("end") }
-    rule(:if_kwd)   { key("if") }
-    rule(:else_kwd) { key("else") }
+      sym(value)
+    end
 
-    rule(:skip_kwd) {
-      def_kwd.absent? >>
-      do_kwd.absent? >>
-      if_kwd.absent? >>
-      else_kwd.absent? >>
-      end_kwd.absent?
+    def sym(value)
+      str(value) >> space?
+    end
+
+    rule(:skip_key) {
+      if @keys.nil? or @keys.empty?
+        alwaysmatch
+      else
+        result = str(@keys.first).absent?
+
+        for keyword in @keys
+          result >> str(keyword).absent?
+        end
+
+        result
+      end
     }
 
-    def key(value)
-      space? >> str(value) >> space?
-    end
-  end
+    rule(:newline)     { (match("\n") | match("\r")).repeat(1) }
+    rule(:newline?)    { newline.maybe }
+    rule(:space)       { (match("\s") | comment).repeat(1) }
+    rule(:space?)      { space.maybe }
+    rule(:whitespace)  { (match("\s") | match("\n") | match("\r")).repeat(1) }
+    rule(:whitespace?) { whitespace.maybe }
+    rule(:stop)        { match["^\n"].repeat }
+    rule(:comment)     { str("#") >> stop.as(:comment) }
 
-  class Parser < Spoon::Util::IndentParser
-    root :script
-
-    rule(:script)   { space? >> expressions >> space? }
+    rule(:name)   { skip_key >> match["a-z"].repeat(1).as(:name) >> space?}
+    rule(:number) { match["0-9"].repeat(1).as(:number) }
 
     rule(:expressions?)  { expressions.maybe }
     rule(:expressions)   { expression.repeat(1) }
-    rule(:expression)    { name | number | comment | function | condition }
+    rule(:expression)    { function | name | number | comment }
 
     rule(:block) {
-      indent >>
-        ((expression | expression >> block) >>
-          (samedent >> (expression | expression >> block)).repeat).as(:children) >>
+      newline? >> indent >>
+        (expression >>
+          (newline? >> samedent >> expression).repeat).maybe.as(:block) >>
       dedent
     }
 
+    rule(:function) {
+      key("def") >> whitespace? >> name.as(:function) >> whitespace? >> params.maybe >> (block | whitespace? >> expression).as(:body)
+    }
+
+
+    rule(:params) {
+      str("(") >> whitespace? >>
+        (name >> (whitespace? >> str(",") >> whitespace? >> name).repeat(0)).maybe.as(:params) >>
+      whitespace? >> str(")")
+    }
+
+=begin
     rule(:els) {
       else_kwd >> condition_body.as(:else)
     }
@@ -67,13 +82,9 @@ module Spoon
     }
 
     rule(:condition_body) { do_kwd >> expressions?.as(:body) | expressions?.as(:body) >> (else_kwd.present? | end_kwd) }
+=end
 
-    rule(:function)      { def_kwd >> name.as(:function) >> params.maybe >> function_body }
-    rule(:params)        { lparen >> ((name.as(:param) >> (comma >> name.as(:param)).repeat(0)).maybe).as(:params) >> rparen}
-    rule(:function_body) { do_kwd >> expressions?.as(:body) | expressions?.as(:body) >> end_kwd }
-
-    rule(:comment)       { (comment_block | comment_line).as(:comment) }
-    rule(:comment_block) { key("###") >> match["^###"].repeat.as(:text) >> key("###") }
-    rule(:comment_line)  { key("#") >> match["^\n"].repeat.as(:text) }
+    root :script
+    rule(:script) { whitespace? >> expressions >> whitespace? }
   end
 end

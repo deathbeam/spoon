@@ -29,15 +29,23 @@ module Spoon
         return @stack[@stack.length - 1], indent
       end
 
+      rule(:alwaysmatch) {
+        AlwaysMatch.new
+      }
+
+      rule(:nevermatch) {
+        NeverMatch.new
+      }
+
       rule(:indent) {
         dynamic { |source, context|
           last, dent = check_indentation(source)
 
           if dent > last
             @stack.push dent
-            AlwaysMatch.new
+            alwaysmatch
           else
-            NeverMatch.new
+            nevermatch
           end
         }
       }
@@ -48,9 +56,9 @@ module Spoon
 
           if dent < last
             @stack.pop
-            AlwaysMatch.new
+            alwaysmatch
           else
-            NeverMatch.new
+            nevermatch
           end
         }
       }
@@ -60,9 +68,9 @@ module Spoon
           last, dent = check_indentation(source)
 
           if dent == last
-            AlwaysMatch.new
+            alwaysmatch
           else
-            NeverMatch.new
+            nevermatch
           end
         }
       }

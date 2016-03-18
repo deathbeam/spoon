@@ -29,7 +29,7 @@ module Spoon
     # Matches one or more expressions
     rule(:expressions?)  { expressions.maybe }
     rule(:expressions)   { expression.repeat(1) }
-    rule(:expression)    { function | condition | name | number }
+    rule(:expression)    { function | condition | closure | name | number }
 
     # Matches entire file, skipping all whitespace at beginning and end
     rule(:root) { whitespace? >> expressions >> whitespace? }
@@ -44,27 +44,39 @@ module Spoon
     }
 
     # Matches expression or indented block and skips end of line at end
-    rule(:body)          { (block | expression) >> newline? }
+    rule(:body)     { (block | expression) >> newline? }
 
     # Matches everything that starts with '#' until end of line
     # example: # abc
-    rule(:comment)     { str("#") >> stop.as(:comment) }
+    rule(:comment)  { str("#") >> stop.as(:comment) }
 
     # Matches all lowercase words except keys, then skips space after them
     # example: abc
-    rule(:name)        { skip_key >> match["a-z"].repeat(1).as(:name) >> space?}
+    rule(:name)     { skip_key >> match["a-z"].repeat(1).as(:name) >> space? }
+
+    # FIXME: Should match chain of expressions
+    # example: abc(a).def(b).efg
+    rule(:chain)    { ((name | call) >> (sym(".") >> name | call).repeat(0)).maybe.as(:chain) }
+
+    # FIXME: Should match function call
+    # example: a(b, c, d, e, f)
+    rule(:call)     { name >> sym("(").maybe >> slice >> sym(")").maybe }
+
+    # FIXME: Should match delimited expressions
+    # example: a(b), c(d), e
+    rule(:slice)    { (expression >> (sym(",") >> expression).repeat(0)).maybe.as(:slice) }
 
     # Matches simple numbers
     # example: 123
-    rule(:number)      { match["0-9"].repeat(1).as(:number) }
+    rule(:number)   { match["0-9"].repeat(1).as(:number) }
 
     # Matches function definition
     # example: def (a) b
-    rule(:function) { key("def") >> name.as(:function) >> params.maybe >> body.as(:body) }
+    rule(:function) { (key("def") >> name.as(:name) >> params.maybe >> body.as(:body)).as(:function) }
 
     # Matches closure
     # example: (a) -> b
-    rule(:closure) { params.maybe >> sym("->") >> body.as(:body) }
+    rule(:closure)  { (params.maybe >> sym("->") >> body.as(:body)).as(:closure) }
 
     # Matches comma delimited function params in parenthesis
     # example: (a, b)
@@ -73,9 +85,9 @@ module Spoon
     # Matches if-else if-else in recursive structure
     # example: if (a) b else if(c) d else e
     rule(:condition) {
-      key("if") >> sym("(") >> expression.as(:condition) >> sym(")") >>
-          body.maybe.as(:if) >>
-      (key("else") >> body.maybe.as(:else)).maybe
+      (key("if") >> sym("(") >> expression.as(:body) >> sym(")") >>
+          body.maybe.as(:if_true) >>
+      (key("else") >> body.maybe.as(:if_false)).maybe).as(:condition)
     }
   end
 end

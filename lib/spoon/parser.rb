@@ -7,7 +7,7 @@ module Spoon
   class Parser < Spoon::Util::IndentParser
     # Matches string and skips space after it
     def sym(value) str(value) >> space? end
-      
+
     # Stores string as key, matches it and then skips space after it
     def key(value)
       @keys = [] if @keys.nil?
@@ -39,8 +39,8 @@ module Spoon
     rule(:space)       { (match("\s") | comment).repeat(1) }
     rule(:space?)      { space.maybe }
 
-    # Matches all whitespace (tab, end of line, space)
-    rule(:whitespace)  { (match("\s") | match("\n") | match("\r")).repeat(1) }
+    # Matches all whitespace (tab, end of line, space, comments)
+    rule(:whitespace)  { (match("\s") | match("\n") | match("\r") | comment).repeat(1) }
     rule(:whitespace?) { whitespace.maybe }
 
     # Matches everything until end of line
@@ -49,7 +49,7 @@ module Spoon
     # Matches everything that starts with '#' until end of line
     rule(:comment)     { str("#") >> stop.as(:comment) }
 
-    # Matches all lowercase words
+    # Matches all lowercase words except keys, then skips space after them
     rule(:name)        { skip_key >> match["a-z"].repeat(1).as(:name) >> space?}
 
     # Matches simple numbers
@@ -58,7 +58,7 @@ module Spoon
     # Matches one or more expressions
     rule(:expressions?)  { expressions.maybe }
     rule(:expressions)   { expression.repeat(1) }
-    rule(:expression)    { function | condition | name | number | comment }
+    rule(:expression)    { function | condition | name | number }
 
     # Matches expression or indented block
     rule(:body)          { block | expression }

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Usage: script/doc
+# Generate application's documentation.
+
+script/bootstrap
+
+echo "Generating documenation..."
+
+yard doc

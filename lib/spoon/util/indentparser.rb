@@ -74,23 +74,6 @@ module Spoon
           end
         }
       }
-
-=begin
-        rule(:identifier) { match['A-Za-z0-9'].repeat(1).as(:identifier) >> match("\n").maybe }
-
-        rule(:expression) { node | identifier}
-
-        rule(:node) {
-          identifier >>
-            indent >>
-              (expression >> (samedent >> expression).repeat).as(:children) >>
-            dedent
-        }
-
-        rule(:document) { expression.repeat }
-
-        root :document
-=end
     end
   end
 end

@@ -16,56 +16,56 @@ module Spoon
     end
 
     class IndentParser < Parslet::Parser
-        def check_indentation(source)
-          indent = 0
+      def check_indentation(source)
+        indent = 0
 
-          while source.matches?(Regexp.new("[ \t]"))
-            source.consume(1)
-            indent += 1
-          end
-
-          @stack = [0] if @stack.nil?
-
-          return @stack[@stack.length - 1], indent
+        while source.matches?(Regexp.new("[ \t]"))
+          source.consume(1)
+          indent += 1
         end
 
-        rule(:indent) {
-          dynamic { |source, context|
-            last, dent = check_indentation(source)
+        @stack = [0] if @stack.nil?
 
-            if dent > last
-              @stack.push dent
-              AlwaysMatch.new
-            else
-              NeverMatch.new
-            end
-          }
+        return @stack[@stack.length - 1], indent
+      end
+
+      rule(:indent) {
+        dynamic { |source, context|
+          last, dent = check_indentation(source)
+
+          if dent > last
+            @stack.push dent
+            AlwaysMatch.new
+          else
+            NeverMatch.new
+          end
         }
+      }
 
-        rule(:dedent) {
-          dynamic { |source, context|
-            last, dent = check_indentation(source)
+      rule(:dedent) {
+        dynamic { |source, context|
+          last, dent = check_indentation(source)
 
-            if dent < last
-              @stack.pop
-              AlwaysMatch.new
-            else
-              NeverMatch.new
-            end
-          }
+          if dent < last
+            @stack.pop
+            AlwaysMatch.new
+          else
+            NeverMatch.new
+          end
         }
+      }
 
-        rule(:samedent) {
-          dynamic { |source, context|
-            last, dent = check_indentation(source)
+      rule(:samedent) {
+        dynamic { |source, context|
+          last, dent = check_indentation(source)
 
-            if dent == last
-              AlwaysMatch.new
-            else
-              NeverMatch.new
-            end
-          }
+          if dent == last
+            AlwaysMatch.new
+          else
+            NeverMatch.new
+          end
         }
+      }
 
 =begin
         rule(:identifier) { match['A-Za-z0-9'].repeat(1).as(:identifier) >> match("\n").maybe }

@@ -60,8 +60,8 @@ module Spoon
     rule(:expressions)   { expression.repeat(1) }
     rule(:expression)    { function | condition | name | number }
 
-    # Matches expression or indented block
-    rule(:body)          { block | expression }
+    # Matches expression or indented block and skips end of line at end
+    rule(:body)          { (block | expression) >> newline? }
 
     # Matches indented block and consumes newlines at start and in between
     # but not at end

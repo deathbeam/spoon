@@ -10,12 +10,8 @@ module Spoon
     end
 
     class NeverMatch < Parslet::Atoms::Base
-      attr_accessor :msg
-      def initialize(msg = "ignore")
-        self.msg = msg
-      end
       def try(source, context, consume_all)
-        context.err(self, source, msg)
+        context.err(self, source, "ignore")
       end
     end
 
@@ -71,6 +67,7 @@ module Spoon
           }
         }
 
+=begin
         rule(:identifier) { match['A-Za-z0-9'].repeat(1).as(:identifier) >> match("\n").maybe }
 
         rule(:expression) { node | identifier}
@@ -85,6 +82,7 @@ module Spoon
         rule(:document) { expression.repeat }
 
         root :document
+=end
     end
   end
 end

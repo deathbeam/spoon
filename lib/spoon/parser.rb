@@ -44,7 +44,7 @@ module Spoon
 
     rule(:expressions?)  { expressions.maybe }
     rule(:expressions)   { expression.repeat(1) }
-    rule(:expression)    { function | name | number | comment }
+    rule(:expression)    { function | condition | name | number | comment }
 
     rule(:block) {
       newline? >> indent >>
@@ -53,34 +53,36 @@ module Spoon
       dedent
     }
 
+    rule(:body) {
+      block | expression
+    }
+
     rule(:function) {
-      key("def") >> name.as(:function) >> params.maybe >> (block | whitespace? >> expression).as(:body)
+      key("def") >> name.as(:function) >> params.maybe >> body.as(:body)
     }
 
 
     rule(:params) {
-      sym("(") >> (name >> (sym(",") >> name).repeat(0)).maybe.as(:params) >> str(")")
+      sym("(") >> (name >> (sym(",") >> name).repeat(0)).maybe.as(:params) >> sym(")")
     }
 
-=begin
     rule(:els) {
       else_kwd >> condition_body.as(:else)
     }
 
     rule(:elses) {
-      (else_kwd >> if_kwd >> lparen >> expression.as(:condition) >> rparen >>
+      (key("if") >> if_kwd >> lparen >> expression.as(:condition) >> rparen >>
         condition_body.as(:if)).repeat.as(:else)
     }
 
     rule(:condition) {
-      if_kwd >> lparen >> expression.as(:condition) >> rparen >>
-          condition_body.maybe.as(:if) >>
-        elses.maybe.as(:elses) >>
-        els.maybe
+      key("if") >> sym("(") >> expression.as(:condition) >> sym(")") >>
+          body.maybe.as(:if) >>
+      (key("else") >> body.maybe.as(:else)).maybe
     }
 
     rule(:condition_body) { do_kwd >> expressions?.as(:body) | expressions?.as(:body) >> (else_kwd.present? | end_kwd) }
-=end
+
 
     root :script
     rule(:script) { whitespace? >> expressions >> whitespace? }

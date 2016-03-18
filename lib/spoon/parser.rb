@@ -54,14 +54,12 @@ module Spoon
     }
 
     rule(:function) {
-      key("def") >> whitespace? >> name.as(:function) >> whitespace? >> params.maybe >> (block | whitespace? >> expression).as(:body)
+      key("def") >> name.as(:function) >> params.maybe >> (block | whitespace? >> expression).as(:body)
     }
 
 
     rule(:params) {
-      str("(") >> whitespace? >>
-        (name >> (whitespace? >> str(",") >> whitespace? >> name).repeat(0)).maybe.as(:params) >>
-      whitespace? >> str(")")
+      sym("(") >> (name >> (sym(",") >> name).repeat(0)).maybe.as(:params) >> str(")")
     }
 
 =begin

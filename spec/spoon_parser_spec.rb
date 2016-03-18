@@ -27,6 +27,20 @@ describe Spoon::Parser do
   end
 =end
 
+  context "comment rule" do
+    it "should consume '# comment'" do
+      expect(parser.comment).to parse('# comment')
+    end
+
+    it "should consume '#comment'" do
+      expect(parser.comment).to parse('#comment')
+    end
+
+    it "shouldn't consume '# comment\\n expression'" do
+      expect(parser.comment).to parse('# comment\n expression')
+    end
+  end
+
   context "function rule" do
     it "should consume 'def test it'" do
       expect(parser.function).to parse('def test it')

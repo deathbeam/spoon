@@ -11,11 +11,14 @@ module Spoon
     # Matches keyword and skips space after it
     def key(value) keyword(value) >> space? end
 
+    # Matches string or keyword, based on if it is word or not
+    def op(value) /\w/.match(value) ? key(value) : sym(value) end
+
     # Matches value in parens or not in parens
     def parens(value) sym("(").maybe >> value >> sym(")").maybe end
 
     # Matches single or multiple end of lines
-    rule(:newline)     { (match("\n") | match("\r")).repeat(1) }
+    rule(:newline)     { match["\n\r"].repeat(1) }
     rule(:newline?)    { newline.maybe }
 
     # Matches single or multiple spaces, tabs and comments
@@ -23,16 +26,14 @@ module Spoon
     rule(:space?)      { space.maybe }
 
     # Matches all whitespace (tab, end of line, space, comments)
-    rule(:whitespace)  { (match("\s") | match("\n") | match("\r") | comment).repeat(1) }
+    rule(:whitespace)  { (match["\s\n\r"] | comment).repeat(1) }
     rule(:whitespace?) { whitespace.maybe }
 
     # Matches everything until end of line
     rule(:stop)        { match["^\n"].repeat }
 
-    # Matches one or more expressions
-    rule(:expressions?)  { expressions.maybe }
-    rule(:expressions)   { expression.repeat(1) }
-    rule(:expression)    { function | condition | closure | name | number }
+    # Matches value
+    rule(:value)    { function | condition | closure | name | number }
 
     # Matches entire file, skipping all whitespace at beginning and end
     rule(:root) { whitespace? >> expressions >> whitespace? }
@@ -63,11 +64,7 @@ module Spoon
 
     # FIXME: Should match function call
     # example: a(b, c, d, e, f)
-    rule(:call)     { name >> sym("(").maybe >> slice >> sym(")").maybe }
-
-    # FIXME: Should match delimited expressions
-    # example: a(b), c(d), e
-    rule(:slice)    { (expression >> (sym(",") >> expression).repeat(0)).maybe.as(:slice) }
+    rule(:call)     { name >> sym("(").maybe >> expression_list >> sym(")").maybe }
 
     # Matches simple numbers
     # example: 123
@@ -95,5 +92,28 @@ module Spoon
           body.maybe.as(:if_true) >>
       (key("else") >> body.maybe.as(:if_false)).maybe).as(:condition)
     }
+
+    rule(:operator) {
+      # FIXME: For some reason, regex below is not working
+      # match["\+\-\*\/%\^><\|&"] |
+        whitespace? >> (op("or") | op("and") | op("<=") |
+        op(">=") | op("!=") | op("==")) >> whitespace?
+    }
+
+    rule(:assign) { sym("=") >> expression_list.as(:assign) }
+
+    rule(:update) {
+      (whitespace? >> (sym("+=") | sym("-=") | sym("*=") | sym("/=") |
+      sym("%=") | sym("or=") | sym("and=")) >> whitespace? >> expression).as(:update)
+    }
+
+    # Matches one or more exressions
+    rule(:expressions?) { expressions.maybe }
+    rule(:expressions) { expression.repeat(1) }
+    rule(:expression) { value.as(:left) >> (operator.as(:op) >> value.as(:right)).maybe }
+
+    # Matches comma delimited expressions
+    # example: a(b), c(d), e
+    rule(:expression_list) { (expression >> (sym(",") >> expression).repeat(0)) }
   end
 end

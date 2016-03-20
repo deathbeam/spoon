@@ -24,7 +24,7 @@ module Spoon
       ap Spoon::Parser.new.parse_with_debug <<~HEREDOC
         if a
           a, b ->
-            d
+            d == g
         else if c
           d
         else e

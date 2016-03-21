@@ -33,10 +33,14 @@ module Spoon
     rule(:stop)        { match["^\n"].repeat }
 
     # Matches value
-    rule(:value)    { function | condition | closure | name | number }
+    rule(:value)    { condition | closure | name | number }
+
+    # Matches statement (unassignable and unmovable value)
+    rule(:statement) { function }
+    rule(:statements) { statement.repeat(1) }
 
     # Matches entire file, skipping all whitespace at beginning and end
-    rule(:root) { whitespace? >> expressions >> whitespace? }
+    rule(:root) { whitespace? >> (expressions | statements) >> whitespace? }
 
     # Matches indented block and consumes newlines at start and in between
     # but not at end
@@ -94,23 +98,23 @@ module Spoon
     }
 
     rule(:operator) {
-      # FIXME: For some reason, regex below is not working
-      # match["\+\-\*\/%\^><\|&"] |
-        whitespace? >> (op("or") | op("and") | op("<=") |
-        op(">=") | op("!=") | op("==")) >> whitespace?
+        whitespace? >> (
+        match['\+\-\*\/%\^><\|&'] |
+        op("or") | op("and") | op("<=") |
+        op(">=") | op("!=") | op("==")).as(:op) >> whitespace?
     }
 
     rule(:assign) { sym("=") >> expression_list.as(:assign) }
 
     rule(:update) {
       (whitespace? >> (sym("+=") | sym("-=") | sym("*=") | sym("/=") |
-      sym("%=") | sym("or=") | sym("and=")) >> whitespace? >> expression).as(:update)
+      sym("%=") | sym("or=") | sym("and=")).as(:op) >> whitespace? >> expression).as(:update)
     }
 
     # Matches one or more exressions
     rule(:expressions?) { expressions.maybe }
     rule(:expressions) { expression.repeat(1) }
-    rule(:expression) { value.as(:left) >> (operator.as(:op) >> value.as(:right)).maybe }
+    rule(:expression) { value.as(:left) >> (operator >> value.as(:right)).maybe }
 
     # Matches comma delimited expressions
     # example: a(b), c(d), e

@@ -18,6 +18,9 @@ module Spoon
     # Trims all whitespace around value
     def trim(value) whitespace? >> value >> whitespace? end
 
+    # Matches value in parens or not in parens
+    def parens(value) (op("(") >> value.maybe >> op(")")) | value end
+
     # Matches single or multiple end of lines
     rule(:newline)     { match["\n\r"].repeat(1) }
     rule(:newline?)    { newline.maybe }
@@ -47,9 +50,6 @@ module Spoon
   end
 
   class Parser < Spoon::Util::IndentParser
-    # Matches value in parens or not in parens
-    def parens(value) (op("(") >> value.maybe >> op(")")) | value end
-
     # Matches entire file, skipping all whitespace at beginning and end
     rule(:root)      { trim(expressions | statement.repeat(1)) }
 

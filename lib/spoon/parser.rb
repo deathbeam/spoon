@@ -4,7 +4,8 @@ require "parslet/convenience"
 require "spoon/util/indent_parser"
 
 module Spoon
-  class Parser < Spoon::Util::IndentParser
+  # Monkey-patch the parser to include some common methods
+  class Spoon::Util::IndentParser
     # Matches string and skips space after it
     def sym(value) str(value) >> space? end
 
@@ -32,15 +33,20 @@ module Spoon
     # Matches everything until end of line
     rule(:stop)        { match["^\n"].repeat }
 
+    # Matches everything that starts with '#' until end of line
+    # example: # abc
+    rule(:comment)  { str("#") >> stop.as(:comment) }
+  end
+
+  class Parser < Spoon::Util::IndentParser
+    # Matches entire file, skipping all whitespace at beginning and end
+    rule(:root) { whitespace? >> (expressions | statement.repeat(1)) >> whitespace? }
+
     # Matches value
     rule(:value)    { condition | closure | name | number }
 
     # Matches statement (unassignable and unmovable value)
     rule(:statement) { function }
-    rule(:statements) { statement.repeat(1) }
-
-    # Matches entire file, skipping all whitespace at beginning and end
-    rule(:root) { whitespace? >> (expressions | statements) >> whitespace? }
 
     # Matches indented block and consumes newlines at start and in between
     # but not at end
@@ -53,10 +59,6 @@ module Spoon
 
     # Matches expression or indented block and skips end of line at end
     rule(:body)     { (block | expression) >> newline? }
-
-    # Matches everything that starts with '#' until end of line
-    # example: # abc
-    rule(:comment)  { str("#") >> stop.as(:comment) }
 
     # Matches all lowercase words except keys, then skips space after them
     # example: abc

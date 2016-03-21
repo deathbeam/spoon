@@ -109,11 +109,11 @@ module Spoon
 
     # FIXME: Should match chain of expressions
     # example: abc(a).def(b).efg
-    rule(:chain)    { ((name | call) >> (sym(".") >> name | call).repeat(0)).maybe.as(:chain) }
+    rule(:chain)    { ((name | call) >> (sym(".") >> (name | call)).repeat(0)).maybe.as(:chain) }
 
-    # FIXME: Should match function call
+    # Matches function call
     # example: a(b, c, d, e, f)
-    rule(:call)     { name >> sym("(").maybe >> expression_list >> sym(")").maybe }
+    rule(:call)     { name >> parens(expression_list.as(:arguments)) }
 
     # Matches function definition
     # example: def (a) b

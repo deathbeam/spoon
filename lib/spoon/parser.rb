@@ -90,7 +90,7 @@ module Spoon
     rule(:root)      { trim(expressions | statement.repeat(1)) }
 
     # Matches value
-    rule(:value)     { condition | closure | name | number }
+    rule(:value)     { condition | closure | chain | name | number }
 
     # Matches statement (unassignable and unmovable value)
     rule(:statement) { function }
@@ -107,9 +107,9 @@ module Spoon
     # Matches expression or indented block and skips end of line at end
     rule(:body)     { (block | expression) >> newline? }
 
-    # FIXME: Should match chain of expressions
+    # Matches chain of expressions
     # example: abc(a).def(b).efg
-    rule(:chain)    { ((name | call) >> (sym(".") >> (name | call)).repeat(0)).maybe.as(:chain) }
+    rule(:chain)   { ((call | name) >> (op(".") >> (call | name)).repeat(1)).as(:chain) }
 
     # Matches function call
     # example: a(b, c, d, e, f)
@@ -132,7 +132,7 @@ module Spoon
 
     # Matches comma delimited function parameters
     # example: (a, b)
-    rule(:parameter_list)   { (parameter >> (op(",") >> parameter).repeat(0)).maybe.as(:parameters) }
+    rule(:parameter_list)   { (parameter >> (op(",") >> parameter).repeat(0)).as(:parameters) }
 
     # Matches if-else if-else in recursive structure
     # example: if (a) b else if(c) d else e

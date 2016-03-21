@@ -3,6 +3,14 @@ require 'spec_helper'
 describe Spoon::Parser do
   let(:parser) { Spoon::Parser.new }
 
+  context "chain parsing" do
+    subject { parser.chain }
+
+    it { should parse "a.b.c" }
+    it { should parse "a().b().c(d, e).f" }
+    it { should_not parse "a b.c" }
+  end
+
   context "comment parsing" do
     subject { parser.comment }
 

@@ -25,8 +25,8 @@ describe Spoon::Parser do
 
     it { should parse "def test() it" }
     it { should parse "def test it" }
-    it { should parse "def test(me) it" }
-    it { should parse "def test me it" }
+    it { should parse "def test(me = 1) it" }
+    it { should parse "def test me = 2 it" }
     it { should_not parse "def test() me it" }
     it { should_not parse "def test me it he" }
   end

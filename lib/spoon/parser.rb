@@ -8,13 +8,9 @@ module Spoon
   class Spoon::Util::IndentParser
     # Matches string and skips space after it
     def sym(value)
-      if (value.kind_of?(Array))
+      if value.kind_of?(Array)
         result = str(value.first)
-
-        value.each do |val|
-          result = result | str(val)
-        end
-
+        value.each { |val| result |= str(val) }
         result >> space?
       else
         str(value) >> space?
@@ -23,13 +19,9 @@ module Spoon
 
     # Matches keyword and skips space after it
     def key(value)
-      if (value.kind_of?(Array))
+      if value.kind_of?(Array)
         result = keyword(value.first)
-
-        value.each do |val|
-          result = result | keyword(val)
-        end
-
+        value.each { |val| result |= keyword(val) }
         result >> space?
       else
         keyword(value) >> space?
@@ -38,13 +30,9 @@ module Spoon
 
     # Matches string or keyword, based on if it is word or not
     def op(value)
-      if (value.kind_of?(Array))
+      if value.kind_of?(Array)
         result = whitespace? >> (/\w/.match(value.first) ? key(value.first) : sym(value.first))
-
-        value.each do |val|
-          result = result | (/\w/.match(val) ? key(val) : sym(val))
-        end
-
+        value.each { |val| result |= (/\w/.match(val) ? key(val) : sym(val)) }
         result >> whitespace?
       else
         trim(/\w/.match(value) ? key(value) : sym(value))

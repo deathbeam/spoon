@@ -119,7 +119,7 @@ module Spoon
     # example: def (a) b
     rule(:function) {
       (key("def") >> name.as(:name) >>
-        (body.as(:body) | parens(parameter_list).maybe >> body.as(:body))).as(:function)
+        (parens(parameter_list).maybe >> body.as(:body) | body.as(:body))).as(:function)
     }
 
     # Matches closure
@@ -143,8 +143,7 @@ module Spoon
     }
 
     rule(:operator) {
-      # FIXME: Add assign operator handling
-      (op(["or", "and", "<=", ">=", "!=", "==", "+=", "-=", "*=", "/=", "%=", "or=", "and="]) | trim(match['\+\-\*\/%\^><\|&'])).as(:op)
+      (op(["or", "and", "<=", ">=", "!=", "==", "+=", "-=", "*=", "/=", "%=", "or=", "and="]) | trim(match['\+\-\*\/%\^><\|&='])).as(:op)
     }
 
     # Matches one or more exressions

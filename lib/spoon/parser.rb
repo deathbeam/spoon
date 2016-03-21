@@ -59,18 +59,19 @@ module Spoon
 
     # Matches all lowercase words except keys, then skips space after them
     # example: abc
-    rule(:name)        { skip_key >> match["a-z"].repeat(1).as(:name) >> space? }
+    rule(:name)        { skip_key >> match["a-z\-"].repeat(1).as(:name) >> space? }
 
-    # Matches simple numbers
+    # Matches numbers
     # example: 123
-    rule(:number)      { match["0-9"].repeat(1).as(:number) }
+    rule(:number)      { float | integer }
+    rule(:integer)     { match["0-9"].repeat(1).as(:integer) }
+    rule(:float)       { match["0-9"] >> match["0-9\."].repeat(1).as(:float) }
 
     # Matches everything until end of line
     rule(:stop)        { match["^\n"].repeat }
 
-    # Matches everything that starts with '#' until end of line
-    # example: # abc
-    rule(:comment)     { str("#") >> stop.as(:comment) }
+    # Dummy comment rule, override in implementation
+    rule(:comment)     { nevermatch }
   end
 
   class Parser < Spoon::Util::IndentParser
@@ -91,6 +92,10 @@ module Spoon
           (newline? >> samedent >> expression).repeat).maybe.as(:block) >>
       dedent
     }
+
+    # Matches everything that starts with '#' until end of line
+    # example: # abc
+    rule(:comment)     { str("#") >> stop.as(:comment) }
 
     # Matches expression or indented block and skips end of line at end
     rule(:body)     { (block | expression) >> newline? }

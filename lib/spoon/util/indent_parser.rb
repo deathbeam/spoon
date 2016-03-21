@@ -32,7 +32,7 @@ module Spoon
           result = str(@keywords.first).absent?
 
           for keyword in @keywords
-            result >> str(keyword).absent?
+            result = result >> str(keyword).absent?
           end
 
           result

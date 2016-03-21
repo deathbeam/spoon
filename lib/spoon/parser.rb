@@ -7,13 +7,49 @@ module Spoon
   # Monkey-patch the parser to include some common methods
   class Spoon::Util::IndentParser
     # Matches string and skips space after it
-    def sym(value) str(value) >> space? end
+    def sym(value)
+      if (value.kind_of?(Array))
+        result = str(value.first)
+
+        value.each do |val|
+          result = result | str(val)
+        end
+
+        result >> space?
+      else
+        str(value) >> space?
+      end
+    end
 
     # Matches keyword and skips space after it
-    def key(value) keyword(value) >> space? end
+    def key(value)
+      if (value.kind_of?(Array))
+        result = keyword(value.first)
+
+        value.each do |val|
+          result = result | keyword(val)
+        end
+
+        result >> space?
+      else
+        keyword(value) >> space?
+      end
+    end
 
     # Matches string or keyword, based on if it is word or not
-    def op(value) trim(/\w/.match(value) ? key(value) : sym(value)) end
+    def op(value)
+      if (value.kind_of?(Array))
+        result = whitespace? >> (/\w/.match(value.first) ? key(value.first) : sym(value.first))
+
+        value.each do |val|
+          result = result | (/\w/.match(val) ? key(val) : sym(val))
+        end
+
+        result >> whitespace?
+      else
+        trim(/\w/.match(value) ? key(value) : sym(value))
+      end
+    end
 
     # Trims all whitespace around value
     def trim(value) whitespace? >> value >> whitespace? end
@@ -96,7 +132,7 @@ module Spoon
 
     # Matches comma delimited function parameters
     # example: (a, b)
-    rule(:parameter_list)   { (parameter >> (sym(",") >> parameter).repeat(0)).maybe.as(:parameters) }
+    rule(:parameter_list)   { (parameter >> (op(",") >> parameter).repeat(0)).maybe.as(:parameters) }
 
     # Matches if-else if-else in recursive structure
     # example: if (a) b else if(c) d else e
@@ -107,16 +143,8 @@ module Spoon
     }
 
     rule(:operator) {
-        (op("or") | op("and") | op("<=") |
-        op(">=") | op("!=") | op("==") |
-        trim(match['\+\-\*\/%\^><\|&'])).as(:op)
-    }
-
-    rule(:assign) { sym("=") >> expression_list.as(:assign) }
-
-    rule(:update) {
-      ((op("+=") | op("-=") | op("*=") | op("/=") |
-      op("%=") | op("or=") | op("and=")).as(:op) >> expression).as(:update)
+      # FIXME: Add assign operator handling
+      (op(["or", "and", "<=", ">=", "!=", "==", "+=", "-=", "*=", "/=", "%=", "or=", "and="]) | trim(match['\+\-\*\/%\^><\|&'])).as(:op)
     }
 
     # Matches one or more exressions
@@ -126,6 +154,6 @@ module Spoon
 
     # Matches comma delimited expressions
     # example: a(b), c(d), e
-    rule(:expression_list) { (expression >> (sym(",") >> expression).repeat(0)) }
+    rule(:expression_list) { (expression >> (op(",") >> expression).repeat(0)) }
   end
 end

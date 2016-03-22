@@ -16,29 +16,6 @@ module Spoon
     end
 
     class IndentParser < Parslet::Parser
-      # Stores string as key, matches it and then skips space after it
-      def keyword(value)
-        @keywords = [] if @keys.nil?
-        @keywords.push value unless @keywords.include? value
-
-        str(value)
-      end
-
-      # Matches only if you are not trying to match any previously stored key
-      rule(:skip_key) {
-        if @keywords.nil? or @keywords.empty?
-          alwaysmatch
-        else
-          result = str(@keywords.first).absent?
-
-          for keyword in @keywords
-            result = result >> str(keyword).absent?
-          end
-
-          result
-        end
-      }
-
       def check_indentation(source)
         indent = 0
 

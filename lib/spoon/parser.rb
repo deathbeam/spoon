@@ -6,33 +6,65 @@ require "spoon/util/parser_extensions"
 
 module Spoon
   class Parser < Spoon::Util::IndentParser
+    store :HASH,   'key("#")'
+    store :DOT,    'op(".")'
+    store :RETURN, 'key("return")'
+
     # Matches entire file, skipping all whitespace at beginning and end
-    rule(:root)            { trim(statement.repeat(1) | expressions) }
+    the :root, [
+      'trim statement * 1',
+      'expression * 1'
+    ]
 
     # Matches value
-    rule(:value)           { condition | closure | chain | ret | name | number }
+    the :value, [
+      'condition',
+      'closure',
+      'chain',
+      'ret',
+      'word',
+      'number'
+    ]
 
-    # Matches statement (unassignable and unmovable value)
-    rule(:statement)       { function }
+    # Matches statement, so everything that is unassignable
+    the :statement, [
+      'function'
+    ]
 
     # Matches everything that starts with '#' until end of line
     # example: # abc
-    rule(:comment)         { str("#") >> stop.as(:comment) }
+    the :comment, [
+      'HASH AND stop:comment'
+    ]
 
     # Matches expression or indented block and skips end of line at end
-    rule(:body)            { (block | expression) >> newline? }
+    the :body, [
+      '(block OR expression) AND newline?'
+    ]
+
+    # Matches chain value
+    the :chain_value, [
+      'call',
+      'word'
+    ]
 
     # Matches chain of expressions
     # example: abc(a).def(b).efg
-    rule(:chain)           { ((call | name) >> (op(".") >> (call | name)).repeat(1)).as(:chain) }
+    the :chain, [
+      '(chain_value AND (DOT AND chain_value) * 1):chain'
+    ]
 
     # Matches function call
     # example: a(b, c, d, e, f)
-    rule(:call)            { name >> parens(expression_list.as(:arguments)) }
+    the :call, [
+      'word AND parens(expression_list:arguments)'
+    ]
 
     # Matches return statement
     # example: return a, b, c
-    rule(:ret)            { (key("return") >> parens(expression_list).maybe).as(:return) }
+    the :ret, [
+      '(RETURN AND parens(expression_list)?):return'
+    ]
 
     # Matches closure
     # example: (a) -> b
@@ -40,7 +72,7 @@ module Spoon
 
     # Matches function parameter
     # example a = 1
-    rule(:parameter)       { name.as(:name) >> (op("=") >> expression.as(:value)).maybe }
+    rule(:parameter)       { word.as(:name) >> (op("=") >> expression.as(:value)).maybe }
 
     # Matches comma delimited function parameters
     # example: (a, b)
@@ -67,7 +99,7 @@ module Spoon
     # Matches function definition
     # example: def (a) b
     rule(:function) {
-      (key("def") >> name.as(:name) >>
+      (key("def") >> word.as(:name) >>
         (parens(parameter_list.as(:parameters)).maybe >> body.as(:body) | body.as(:body))).as(:function)
     }
 

@@ -4,6 +4,56 @@ module Spoon
   module Util
     # Monkey-patch the parser to include some common methods
     class Spoon::Util::IndentParser
+      @@storage = {
+        " AND " => " >> ",
+        " OR " => " | ",
+        "?" => ".maybe"
+      }
+
+      # DSL for our awesome parser
+      def self.store(key, value)
+        @@storage[key] = value
+      end
+
+      def self.the(name, arr)
+        arr.map! do |item|
+          temp = item
+          @@storage.each { |k, v| temp = temp.gsub(k.to_s, v.to_s) }
+          item = temp
+        end
+
+        script = arr.join(" | ")
+          .gsub(/ \* ([0-9]+)/, '.repeat(\1)')
+          .gsub(/((?:\w+)|(?:\(.+\))):(\w+)/, '\1.as(:\2)')
+
+        puts script
+
+        rule(name) { eval(" " + script) }
+      end
+
+      # Stores string as key, matches it and then skips space after it
+      def keyword(value)
+        @keywords = [] if @keys.nil?
+        @keywords.push value unless @keywords.include? value
+
+        str(value)
+      end
+
+      # Matches only if you are not trying to match any previously stored key
+      rule(:skip_key) {
+        if @keywords.nil? or @keywords.empty?
+          alwaysmatch
+        else
+          result = str(@keywords.first).absent?
+
+          for keyword in @keywords
+            result = result >> str(keyword).absent?
+          end
+
+          result
+        end
+      }
+
       # Matches string and skips space after it
       def sym(value)
         if value.kind_of?(Array)
@@ -57,7 +107,7 @@ module Spoon
 
       # Matches all lowercase words except keys, then skips space after them
       # example: abc
-      rule(:name)        { skip_key >> match["a-z\-"].repeat(1).as(:name) >> space? }
+      rule(:word)        { skip_key >> match["a-z\-"].repeat(1).as(:word) >> space? }
 
       # Matches numbers
       # example: 123

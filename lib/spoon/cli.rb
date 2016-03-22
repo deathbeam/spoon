@@ -21,9 +21,9 @@ db   8D 88      `8b  d8' `8b  d8' 88  V888
 
     desc "dev", "Just dev things"
     def dev
-      ap Spoon::Parser.new.parse_with_debug <<~HEREDOC
+      ap Spoon::Parser.new.parse_with_debug %{
         abc(a).def(b).efg
-      HEREDOC
+      }
     end
 
 

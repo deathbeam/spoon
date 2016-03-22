@@ -22,7 +22,8 @@ db   8D 88      `8b  d8' `8b  d8' 88  V888
     desc "dev", "Just dev things"
     def dev
       ap Spoon::Parser.new.parse_with_debug %{
-        abc(a).def(b).efg
+        def a(b, c)
+          return b, c, 5
       }
     end
 

@@ -61,9 +61,9 @@ module Spoon
 
       # Matches numbers
       # example: 123
-      rule(:number)      { float | integer }
-      rule(:integer)     { match["0-9"].repeat(1).as(:integer) }
-      rule(:float)       { match["0-9"] >> match["0-9\."].repeat(1).as(:float) }
+      rule(:number)      { (float | integer) >> space? }
+      rule(:integer)     { match["0-9"].repeat(1) }
+      rule(:float)       { match["0-9"] >> match["0-9\."].repeat(1) }
 
       # Matches everything until end of line
       rule(:stop)        { match["^\n"].repeat }

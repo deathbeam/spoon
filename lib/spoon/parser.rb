@@ -23,6 +23,11 @@ module Spoon
       'expression * 1'
     ]
 
+    # Matches literals (strings, numbers)
+    the :literal, [
+      'number'
+    ]
+
     # Matches value
     the :value, [
       'condition',
@@ -30,7 +35,7 @@ module Spoon
       'chain',
       'ret',
       'word',
-      'number'
+      'literal'
     ]
 
     # Matches statement, so everything that is unassignable
@@ -106,7 +111,7 @@ module Spoon
     # Matches operator
     the :operator, [
       'op(["or", "and", "<=", ">=", "!=", "==", "+=", "-=", "*=", "/=", "%=", "or=", "and="])',
-      'whitespace? AND match(\'[\+\-\*\/%\^><\|&=]\'):op AND whitespace?'
+      'whitespace? AND /[\+\-\*\/%\^><\|&=]/:op AND whitespace?'
     ]
 
     # Matches closure

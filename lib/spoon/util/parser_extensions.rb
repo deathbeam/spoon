@@ -10,7 +10,8 @@ module Spoon
         ' OR '           => ' | ',
         '?'              => '.maybe',
         '/ \* ([0-9]+)/' => '.repeat(\1)',
-        '/:([\w_]+)/'       => '.as(:\1)'
+        '/:([\w_]+)/'    => '.as(:\1)',
+        '/\/(.+)\//'     => 'match(\'\1\')'
       }
 
       # DSL for our awesome parser

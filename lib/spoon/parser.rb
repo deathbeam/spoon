@@ -6,10 +6,14 @@ require "spoon/util/parser_extensions"
 
 module Spoon
   class Parser < Spoon::Util::IndentParser
-    store :COMMA,  'op(",")'
-    store :HASH,   'key("#")'
-    store :DOT,    'op(".")'
-    store :RETURN, 'key("return")'
+    template :COMMA,  'op(",")'
+    template :HASH,   'key("#")'
+    template :DOT,    'op(".")'
+    template :RETURN, 'key("return")'
+    template :ARROW,  'sym("->")'
+    template :DEF,    'key("def")'
+    template :IF,     'key("if")'
+    template :ELSE,   'key("else")'
 
     # Matches entire file, skipping all whitespace at beginning and end
     the :root, [
@@ -96,28 +100,39 @@ module Spoon
 
     # Matches closure
     # example: (a) -> b
-    rule(:closure)         { (parens(parameter_list.as(:parameters)).maybe >> sym("->") >> body.as(:body)).as(:closure) }
+    the :closure, [
+      '(parens(parameter_list:parameters)? AND ARROW AND body:body):closure'
+    ]
 
     # Matches function parameter
     # example a = 1
-    rule(:parameter)       { word.as(:name) >> (op("=") >> expression.as(:value)).maybe }
+    the :parameter, [
+      'word:name AND (op("=") AND expression:value)?'
+    ]
 
     # Matches expression
-    rule(:expression)      { (value.as(:left) >> operator >> value.as(:right)) | value }
+    the :expression, [
+      '(value:left AND operator AND value:right)',
+      'value'
+    ]
 
     # Matches function definition
     # example: def (a) b
-    rule(:function) {
-      (key("def") >> word.as(:name) >>
-        (parens(parameter_list.as(:parameters)).maybe >> body.as(:body) | body.as(:body))).as(:function)
-    }
+    the :function, [
+      '(DEF AND word:name AND function_body):function'
+    ]
+
+    # Matches function body
+    the :function_body, [
+      'parens(parameter_list:parameters)? AND body:body',
+      'body:body'
+    ]
 
     # Matches if-else if-else in recursive structure
     # example: if (a) b else if(c) d else e
-    rule(:condition) {
-      (key("if") >> parens(expression.as(:body)) >>
-          body.as(:if_true) >>
-      (key("else") >> body.as(:if_false)).maybe).as(:condition)
-    }
+    the :condition, [
+      '(IF AND parens(expression:body) AND body:if_true AND '\
+      '(ELSE AND body:if_false)?):condition'
+    ]
   end
 end

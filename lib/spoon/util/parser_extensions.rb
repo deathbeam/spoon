@@ -1,31 +1,41 @@
+require 'to_regexp'
 require 'spoon/util/indent_parser'
 
 module Spoon
   module Util
     # Monkey-patch the parser to include some common methods
     class Spoon::Util::IndentParser
-      @@storage = {
-        " AND " => " >> ",
-        " OR " => " | ",
-        "?" => ".maybe"
+      @@templates = {
+        ' AND '          => ' >> ',
+        ' OR '           => ' | ',
+        '?'              => '.maybe',
+        '/ \* ([0-9]+)/' => '.repeat(\1)',
+        '/:([\w_]+)/'       => '.as(:\1)'
       }
 
       # DSL for our awesome parser
-      def self.store(key, value)
-        @@storage[key] = value
+      def self.template(key, value)
+        @@templates[key] = value
       end
 
       def self.the(name, arr)
         arr.map! do |item|
-          temp = item
-          @@storage.each { |k, v| temp = temp.gsub(k.to_s, v.to_s) }
-          item = temp
+          result = item
+
+          @@templates.each do |k, v|
+            toreplace = k.to_s
+
+            if k.respond_to? :to_regexp
+              toreplace = k.to_regexp || k.to_s
+            end
+
+            result = result.gsub(toreplace, v.to_s)
+          end
+
+          result
         end
 
         script = arr.join(" | ")
-          .gsub(/ \* ([0-9]+)/, '.repeat(\1)')
-          .gsub(/((?:\w+)|(?:\(.+\))):(\w+)/, '\1.as(:\2)')
-
         rule(name) { eval(" " + script) }
       end
 

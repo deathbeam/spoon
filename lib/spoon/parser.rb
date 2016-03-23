@@ -110,8 +110,23 @@ module Spoon
 
     # Matches operator
     the :operator, [
-      'op(["or", "and", "<=", ">=", "!=", "==", "+=", "-=", "*=", "/=", "%=", "or=", "and="])',
-      'whitespace? AND /[\+\-\*\/%\^><\|&=]/:op AND whitespace?'
+      'alias: op',
+      'start: whitespace?',
+      'end: whitespace?',
+      '"or"',
+      '"and"',
+      '"<="',
+      '">="',
+      '"!="',
+      '"=="',
+      '"+="',
+      '"-="',
+      '"*="',
+      '"/="',
+      '"%="',
+      '"or="',
+      '"and="',
+      '/[\+\-\*\/%\^><\|&=]/'
     ]
 
     # Matches closure
@@ -124,7 +139,7 @@ module Spoon
     # Matches function parameter
     # example a = 1
     the :parameter, [
-      'word:name AND (op("=") AND expression:value)?'
+      'word:name AND (trim("=") AND expression:value)?'
     ]
 
     # Matches expression

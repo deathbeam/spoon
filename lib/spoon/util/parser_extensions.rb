@@ -26,8 +26,6 @@ module Spoon
           .gsub(/ \* ([0-9]+)/, '.repeat(\1)')
           .gsub(/((?:\w+)|(?:\(.+\))):(\w+)/, '\1.as(:\2)')
 
-        puts script
-
         rule(name) { eval(" " + script) }
       end
 

@@ -39,8 +39,16 @@ describe Spoon::Parser do
     it { should_not parse "def test me it he" }
   end
 
-  context "name parsing" do
-    subject { parser.name }
+  context "number parsing" do
+    subject { parser.number }
+
+    it { should parse "123456789" }
+    it { should parse "1.2" }
+    it { should_not parse "a2" }
+  end
+
+  context "word parsing" do
+    subject { parser.word }
 
     it { should parse "a-b-c" }
     it { should parse "abcdef" }
@@ -48,13 +56,5 @@ describe Spoon::Parser do
     it { should_not parse "ab=" }
     it { should_not parse "a2b" }
     it { should_not parse "ab_cd" }
-  end
-
-  context "number parsing" do
-    subject { parser.number }
-
-    it { should parse "123456789" }
-    it { should parse "1.2" }
-    it { should_not parse "a2" }
   end
 end

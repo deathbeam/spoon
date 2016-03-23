@@ -6,14 +6,15 @@ require "spoon/util/parser_extensions"
 
 module Spoon
   class Parser < Spoon::Util::IndentParser
+    store :COMMA,  'op(",")'
     store :HASH,   'key("#")'
     store :DOT,    'op(".")'
     store :RETURN, 'key("return")'
 
     # Matches entire file, skipping all whitespace at beginning and end
     the :root, [
-      'trim statement * 1',
-      'expression * 1'
+      'whitespace? AND statement * 1 AND whitespace?',
+      'whitespace? AND expression * 1 AND whitespace?'
     ]
 
     # Matches value
@@ -66,6 +67,33 @@ module Spoon
       '(RETURN AND parens(expression_list)?):return'
     ]
 
+    # Matches indented block and consumes newlines at start and in between
+    # but not at end
+    the :block, [
+      'newline? AND indent AND '\
+      '(expression AND '\
+      '(newline? AND samedent AND expression) * 0)?:block AND '\
+      'dedent'
+    ]
+
+    # Matches comma delimited function parameters
+    # example: (a, b)
+    the :parameter_list, [
+      '(parameter AND (COMMA AND parameter) * 0)'
+    ]
+
+    # Matches comma delimited expressions
+    # example: a(b), c(d), e
+    the :expression_list, [
+      '(expression AND (COMMA AND expression) * 0)'
+    ]
+
+    # Matches operator
+    the :operator, [
+      'op(["or", "and", "<=", ">=", "!=", "==", "+=", "-=", "*=", "/=", "%=", "or=", "and="])',
+      'whitespace? AND match(\'[\+\-\*\/%\^><\|&=]\'):op AND whitespace?'
+    ]
+
     # Matches closure
     # example: (a) -> b
     rule(:closure)         { (parens(parameter_list.as(:parameters)).maybe >> sym("->") >> body.as(:body)).as(:closure) }
@@ -74,27 +102,8 @@ module Spoon
     # example a = 1
     rule(:parameter)       { word.as(:name) >> (op("=") >> expression.as(:value)).maybe }
 
-    # Matches comma delimited function parameters
-    # example: (a, b)
-    rule(:parameter_list)  { (parameter >> (op(",") >> parameter).repeat(0)) }
-
-    # Matches one or more exressions
-    rule(:expressions?)    { expressions.maybe }
-    rule(:expressions)     { expression.repeat(1) }
+    # Matches expression
     rule(:expression)      { (value.as(:left) >> operator >> value.as(:right)) | value }
-
-    # Matches comma delimited expressions
-    # example: a(b), c(d), e
-    rule(:expression_list) { (expression >> (op(",") >> expression).repeat(0)) }
-
-    # Matches indented block and consumes newlines at start and in between
-    # but not at end
-    rule(:block) {
-      newline? >> indent >>
-        (expression >>
-          (newline? >> samedent >> expression).repeat).maybe.as(:block) >>
-      dedent
-    }
 
     # Matches function definition
     # example: def (a) b
@@ -109,10 +118,6 @@ module Spoon
       (key("if") >> parens(expression.as(:body)) >>
           body.as(:if_true) >>
       (key("else") >> body.as(:if_false)).maybe).as(:condition)
-    }
-
-    rule(:operator) {
-      (op(["or", "and", "<=", ">=", "!=", "==", "+=", "-=", "*=", "/=", "%=", "or=", "and="]) | trim(match['\+\-\*\/%\^><\|&='])).as(:op)
     }
   end
 end

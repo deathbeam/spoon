@@ -25,24 +25,18 @@ module Spoon
         alias_rule = ""
 
         arr.each do |item|
-          skip = false
+          mode = 0
           result = item
 
           if result.start_with? "start: "
             result = result[7..-1]
-            skip = true
-
-            start_rule = result + " >> " + start_rule
+            mode = 1
           elsif result.start_with? "end: "
             result = result[5..-1]
-            skip = true
-
-            end_rule = end_rule + " >> " + result
+            mode = 2
           elsif result.start_with? "alias: "
             result = result[7..-1]
-            skip = true
-
-            alias_rule = ".as(:" + result + ")"
+            mode = 3
           elsif item != arr.first
             script += " | "
           end
@@ -57,7 +51,16 @@ module Spoon
             result = result.gsub(toreplace, v.to_s)
           end
 
-          if skip
+          case mode
+          when 1
+            start_rule = result + " >> " + start_rule
+          when 2
+            end_rule = end_rule + " >> " + result
+          when 3
+            alias_rule = ".as(:" + result + ")"
+          end
+
+          if mode > 0
             arr -= [item]
           else
             script += result

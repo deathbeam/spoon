@@ -41,7 +41,8 @@ module Spoon
     # Matches everything that starts with '#' until end of line
     # example: # abc
     the :comment, [
-      'HASH AND stop:comment'
+      'start: HASH',
+      'stop:comment'
     ]
 
     # Matches expression or indented block and skips end of line at end
@@ -61,41 +62,45 @@ module Spoon
     # example: abc(a).def(b).efg
     the :chain, [
       'alias: chain',
-      'chain_value AND (DOT AND chain_value) * 1'
+      'start: chain_value',
+      '(DOT AND chain_value) * 1'
     ]
 
     # Matches function call
     # example: a(b, c, d, e, f)
     the :call, [
-      'word AND parens(expression_list:arguments)'
+      'start: word',
+      'parens(expression_list:arguments)'
     ]
 
     # Matches return statement
     # example: return a, b, c
     the :ret, [
       'alias: return',
-      'RETURN AND parens(expression_list)?'
+      'start: RETURN',
+      'parens(expression_list)?'
     ]
 
     # Matches indented block and consumes newlines at start and in between
     # but not at end
     the :block, [
-      'newline? AND indent AND '\
-      '(expression AND '\
-      '(newline? AND samedent AND expression) * 0)?:block AND '\
-      'dedent'
+      'start: newline? AND indent',
+      'end: dedent',
+      '(expression AND (newline? AND samedent AND expression) * 0)?:block'
     ]
 
     # Matches comma delimited function parameters
     # example: (a, b)
     the :parameter_list, [
-      'parameter AND (COMMA AND parameter) * 0'
+      'start: parameter',
+      '(COMMA AND parameter) * 0'
     ]
 
     # Matches comma delimited expressions
     # example: a(b), c(d), e
     the :expression_list, [
-      'expression AND (COMMA AND expression) * 0'
+      'start: expression',
+      '(COMMA AND expression) * 0'
     ]
 
     # Matches operator
@@ -127,7 +132,8 @@ module Spoon
     # example: def (a) b
     the :function, [
       'alias: function',
-      'DEF AND word:name AND function_body'
+      'start: DEF',
+      'word:name AND function_body'
     ]
 
     # Matches function body
@@ -140,8 +146,9 @@ module Spoon
     # example: if (a) b else if(c) d else e
     the :condition, [
       'alias: condition',
-      'IF AND parens(expression:body) AND body:if_true AND '\
-      '(ELSE AND body:if_false)?'
+      'start: IF',
+      'end: (ELSE AND body:if_false)?',
+      'parens(expression:body) AND body:if_true'
     ]
   end
 end

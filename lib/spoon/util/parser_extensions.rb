@@ -19,8 +19,33 @@ module Spoon
       end
 
       def self.the(name, arr)
-        arr.map! do |item|
+        script = ""
+        start_rule = "("
+        end_rule = ")"
+        alias_rule = ""
+
+        arr.each do |item|
+          skip = false
           result = item
+
+          if result.start_with? "start: "
+            result = result[7..-1]
+            skip = true
+
+            start_rule = result + " >> " + start_rule
+          elsif result.start_with? "end: "
+            result = result[5..-1]
+            skip = true
+
+            end_rule = end_rule + " >> " + result
+          elsif result.start_with? "alias: "
+            result = result[7..-1]
+            skip = true
+
+            alias_rule = ".as(:" + result + ")"
+          elsif item != arr.first
+            script += " | "
+          end
 
           @@templates.each do |k, v|
             toreplace = k.to_s
@@ -32,10 +57,15 @@ module Spoon
             result = result.gsub(toreplace, v.to_s)
           end
 
-          result
+          if skip
+            arr -= [item]
+          else
+            script += result
+          end
         end
 
-        script = arr.join(" | ")
+        script = start_rule + script + end_rule + alias_rule
+
         rule(name) { eval(" " + script) }
       end
 

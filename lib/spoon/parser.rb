@@ -17,8 +17,10 @@ module Spoon
 
     # Matches entire file, skipping all whitespace at beginning and end
     the :root, [
-      'whitespace? AND statement * 1 AND whitespace?',
-      'whitespace? AND expression * 1 AND whitespace?'
+      'start: whitespace?',
+      'end: whitespace?',
+      'statement * 1',
+      'expression * 1'
     ]
 
     # Matches value
@@ -44,7 +46,9 @@ module Spoon
 
     # Matches expression or indented block and skips end of line at end
     the :body, [
-      '(block OR expression) AND newline?'
+      'end: newline?',
+      'block',
+      'expression'
     ]
 
     # Matches chain value
@@ -56,7 +60,8 @@ module Spoon
     # Matches chain of expressions
     # example: abc(a).def(b).efg
     the :chain, [
-      '(chain_value AND (DOT AND chain_value) * 1):chain'
+      'alias: chain',
+      'chain_value AND (DOT AND chain_value) * 1'
     ]
 
     # Matches function call
@@ -68,7 +73,8 @@ module Spoon
     # Matches return statement
     # example: return a, b, c
     the :ret, [
-      '(RETURN AND parens(expression_list)?):return'
+      'alias: return',
+      'RETURN AND parens(expression_list)?'
     ]
 
     # Matches indented block and consumes newlines at start and in between
@@ -83,13 +89,13 @@ module Spoon
     # Matches comma delimited function parameters
     # example: (a, b)
     the :parameter_list, [
-      '(parameter AND (COMMA AND parameter) * 0)'
+      'parameter AND (COMMA AND parameter) * 0'
     ]
 
     # Matches comma delimited expressions
     # example: a(b), c(d), e
     the :expression_list, [
-      '(expression AND (COMMA AND expression) * 0)'
+      'expression AND (COMMA AND expression) * 0'
     ]
 
     # Matches operator
@@ -101,7 +107,8 @@ module Spoon
     # Matches closure
     # example: (a) -> b
     the :closure, [
-      '(parens(parameter_list:parameters)? AND ARROW AND body:body):closure'
+      'alias: closure',
+      'parens(parameter_list:parameters)? AND ARROW AND body:body'
     ]
 
     # Matches function parameter
@@ -119,7 +126,8 @@ module Spoon
     # Matches function definition
     # example: def (a) b
     the :function, [
-      '(DEF AND word:name AND function_body):function'
+      'alias: function',
+      'DEF AND word:name AND function_body'
     ]
 
     # Matches function body
@@ -131,8 +139,9 @@ module Spoon
     # Matches if-else if-else in recursive structure
     # example: if (a) b else if(c) d else e
     the :condition, [
-      '(IF AND parens(expression:body) AND body:if_true AND '\
-      '(ELSE AND body:if_false)?):condition'
+      'alias: condition',
+      'IF AND parens(expression:body) AND body:if_true AND '\
+      '(ELSE AND body:if_false)?'
     ]
   end
 end

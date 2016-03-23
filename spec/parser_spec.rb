@@ -28,6 +28,15 @@ describe Spoon::Parser do
     it { should_not parse "if (something) a b" }
   end
 
+  context "expression parsing" do
+    subject { parser.expression }
+
+    it { should parse "a and b" }
+    it { should parse "a * b" }
+    it { should_not parse "a ** b" }
+    it { should_not parse "a + b + c" }
+  end
+
   context "function parsing" do
     subject { parser.function }
 

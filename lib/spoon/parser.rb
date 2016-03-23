@@ -144,7 +144,7 @@ module Spoon
 
     # Matches expression
     the :expression, [
-      '(value:left AND operator AND value:right)',
+      'value:left AND operator AND value:right',
       'value'
     ]
 

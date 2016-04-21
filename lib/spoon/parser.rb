@@ -31,7 +31,7 @@ module Spoon
 
     # Matches number
     rule(:number) {
-      match["+-"].maybe >>
+      (match["+-"].maybe >>
       (
         match["0-9"].repeat(1) |
         (str("0x") >> match["0-9a-fA-F"].repeat(1)) |
@@ -39,7 +39,7 @@ module Spoon
         (str(".") >> match["0-9"].repeat(1)) |
         (match["0-9"].repeat(1) >> match["eE"] >> match["+-"].maybe >> match["0-9"].repeat(1)) |
         (match["0-9"].repeat(1) >> str(".") >> match["0-9"].repeat >> match["eE"] >> match["+-"].maybe >> match["0-9"].repeat(1))
-      )
+      )).as(:number)
     }
 
     # Matches literals (strings, numbers)
@@ -95,7 +95,7 @@ module Spoon
     # Matches return statement
     # example: return a, b, c
     rule(:ret) {
-      key("return") >> (parens(expression_list).maybe).as(:return)
+      key("return") >> parens(expression_list).maybe.as(:return)
     }
 
     # Matches indented block and consumes newlines at start and in between
@@ -119,27 +119,25 @@ module Spoon
     }
 
     # Matches operator
-    the :operator, [
-      'alias: op',
-      'start: whitespace?',
-      'end: whitespace?',
-      '"or"',
-      '"and"',
-      '"is"',
-      '"isnt"',
-      '"<="',
-      '">="',
-      '"!="',
-      '"=="',
-      '"+="',
-      '"-="',
-      '"*="',
-      '"/="',
-      '"%="',
-      '"or="',
-      '"and="',
-      '/[\+\-\*\/%\^><\|&=]/'
-    ]
+    rule(:operator) {
+      ((whitespace.maybe >> match['\+\-\*\/%\^><\|&='] >> whitespace.maybe) | op([
+        "or",
+        "and",
+        "is",
+        "isnt",
+        "<=",
+        ">=",
+        "!=",
+        "==",
+        "+=",
+        "-=",
+        "*=",
+        "/=",
+        "%=",
+        "or=",
+        "and="
+      ])).as(:op)
+    }
 
     # Matches closure
     # example: (a) -> b

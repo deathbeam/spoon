@@ -25,7 +25,7 @@ db   8D 88      `8b  d8' `8b  d8' 88  V888
         # Test
 
         def a(b, c)
-          return b, c, 5
+          return a, c, 5
       }
     end
 

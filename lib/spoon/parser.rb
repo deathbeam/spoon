@@ -18,8 +18,7 @@ module Spoon
     # Matches entire file, skipping all whitespace at beginning and end
     rule(:root) {
       whitespace.maybe >>
-      statement.repeat(1) |
-      expression.repeat(1) >>
+      (statement| expression).repeat(1) >>
       whitespace.maybe
     }
 
@@ -88,33 +87,29 @@ module Spoon
 
     # Matches return statement
     # example: return a, b, c
-    the :ret, [
-      'alias: return',
-      'start: RETURN',
-      'parens(expression_list)?'
-    ]
+    rule(:ret) {
+      key("return") >> (parens(expression_list).maybe).as(:return)
+    }
 
     # Matches indented block and consumes newlines at start and in between
     # but not at end
-    the :block, [
-      'start: newline? AND indent',
-      'end: dedent',
-      '(expression AND (newline? AND samedent AND expression) * 0)?:block'
-    ]
+    rule(:block) {
+      newline.maybe >> indent >>
+      (expression >> (newline.maybe >> samedent >> expression).repeat).maybe.as(:block) >>
+      dedent
+    }
 
     # Matches comma delimited function parameters
     # example: (a, b)
-    the :parameter_list, [
-      'start: parameter',
-      '(COMMA AND parameter) * 0'
-    ]
+    rule(:parameter_list) {
+      parameter >> (op(",") >> parameter).repeat
+    }
 
     # Matches comma delimited expressions
     # example: a(b), c(d), e
-    the :expression_list, [
-      'start: expression',
-      '(COMMA AND expression) * 0'
-    ]
+    rule(:expression_list) {
+      expression >> (op(",") >> expression).repeat
+    }
 
     # Matches operator
     the :operator, [

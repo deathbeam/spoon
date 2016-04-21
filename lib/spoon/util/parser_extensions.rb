@@ -102,9 +102,9 @@ module Spoon
         if value.kind_of?(Array)
           result = str(value.first)
           value.each { |val| result |= str(val) }
-          result >> space?
+          result >> space.maybe
         else
-          str(value) >> space?
+          str(value) >> space.maybe
         end
       end
 
@@ -113,40 +113,37 @@ module Spoon
         if value.kind_of?(Array)
           result = keyword(value.first)
           value.each { |val| result |= keyword(val) }
-          result >> space?
+          result >> space.maybe
         else
-          keyword(value) >> space?
+          keyword(value) >> space.maybe
         end
       end
 
       # Matches string or keyword, based on if it is word or not
       def op(value)
         if value.kind_of?(Array)
-          result = whitespace? >> (/\w/.match(value.first) ? key(value.first) : sym(value.first))
+          result = whitespace.maybe >> (/\w/.match(value.first) ? key(value.first) : sym(value.first))
           value.each { |val| result |= (/\w/.match(val) ? key(val) : sym(val)) }
-          result >> whitespace?
+          result >> whitespace.maybe
         else
           trim(/\w/.match(value) ? key(value) : sym(value))
         end
       end
 
       # Trims all whitespace around value
-      def trim(value) whitespace? >> value >> whitespace? end
+      def trim(value) whitespace.maybe >> value >> whitespace.maybe end
 
       # Matches value in parens or not in parens
       def parens(value) (op("(") >> value.maybe >> op(")")) | value end
 
       # Matches single or multiple end of lines
       rule(:newline)     { match["\n\r"].repeat(1) }
-      rule(:newline?)    { newline.maybe }
 
       # Matches single or multiple spaces, tabs and comments
       rule(:space)       { (match("\s") | comment).repeat(1) }
-      rule(:space?)      { space.maybe }
 
       # Matches all whitespace (tab, end of line, space, comments)
       rule(:whitespace)  { (match["\s\n\r"] | comment).repeat(1) }
-      rule(:whitespace?) { whitespace.maybe }
 
       # Matches everything until end of line
       rule(:stop)        { match["^\n"].repeat }

@@ -27,12 +27,12 @@ module Spoon
     rule(:word) {
       skip_key >>
       match['a-z\-'].repeat(1).as(:word) >>
-      space?
+      space.maybe
     }
 
     # Matches number
     rule(:number) {
-      space? >>
+      space.maybe >>
       match["0-9"].repeat(1)
     }
 
@@ -58,38 +58,33 @@ module Spoon
 
     # Matches everything that starts with '#' until end of line
     # example: # abc
-    the :comment, [
-      'start: HASH',
-      'stop:comment'
-    ]
+    rule(:comment) {
+      sym("#") >> stop.as(:comment)
+    }
 
     # Matches expression or indented block and skips end of line at end
-    the :body, [
-      'end: newline?',
-      'block',
-      'expression'
-    ]
+    rule(:body) {
+      (block | expression) >> newline.maybe
+    }
 
     # Matches chain value
-    the :chain_value, [
-      'call',
-      'word'
-    ]
+    rule(:chain_value) {
+      call |
+      word
+    }
 
     # Matches chain of expressions
     # example: abc(a).def(b).efg
-    the :chain, [
-      'alias: chain',
-      'start: chain_value',
-      '(DOT AND chain_value) * 1'
-    ]
+    rule(:chain) {
+      (chain_value >> (op(".") >> chain_value).repeat(1)).as(:chain)
+    }
 
     # Matches function call
     # example: a(b, c, d, e, f)
-    the :call, [
-      'start: word',
-      'parens(expression_list:arguments)'
-    ]
+    rule(:call) {
+      word >>
+      parens(expression_list.as(:arguments))
+    }
 
     # Matches return statement
     # example: return a, b, c

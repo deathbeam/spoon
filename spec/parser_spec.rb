@@ -6,6 +6,7 @@ describe Spoon::Parser do
   context "call parsing" do
     subject { parser.call }
 
+    it { should parse "a b" }
     it { should parse "a(b, c, d)" }
     it { should parse "a(b)" }
     it { should_not parse "a b c" }
@@ -31,6 +32,7 @@ describe Spoon::Parser do
     subject { parser.condition }
 
     it { should parse "if (something) anything" }
+    it { should parse "if something anything" }
     it { should parse "if (a) b else if (c) d else e" }
     it { should_not parse "if a b c" }
     it { should_not parse "if (something) a b" }

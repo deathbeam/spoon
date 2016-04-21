@@ -18,8 +18,9 @@ module Spoon
     class IndentParser < Parslet::Parser
       def check_indentation(source)
         indent = 0
+        matcher = /[ \t]/
 
-        while source.matches?(Regexp.new("[ \t]"))
+        while source.matches?(matcher)
           source.consume(1)
           indent += 1
         end

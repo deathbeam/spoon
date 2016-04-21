@@ -115,6 +115,8 @@ module Spoon
       'end: whitespace?',
       '"or"',
       '"and"',
+      '"is"',
+      '"isnt"',
       '"<="',
       '">="',
       '"!="',

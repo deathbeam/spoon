@@ -17,28 +17,23 @@ db   8D 88      `8b  d8' `8b  d8' 88  V888
   }
 
   class CLI < Thor
-    default_task :welcome
+    default_task :hello
 
-    desc "dev", "Just dev things"
-    def dev
-      pp Spoon::Parser.new.parse_with_debug %{
-        # Test
-
-        def a(b, c)
-          return a, c, 5
-      }
+    desc "tree FILE", "Print file AST and exit"
+    def tree(file)
+      pp Spoon::Parser.new.parse_with_debug File.read(file)
     end
 
 
-    desc "welcome", "Prints welcome message and help to console"
-    def welcome
+    desc "hello", "I greet you!"
+    def hello
       puts BANNER.colorize :light_cyan
       puts "Spoon #{Spoon::VERSION} - https://spoonlang.org\n".bold
 
       invoke :help
     end
 
-    desc "version", "Current version"
+    desc "version", "Print current version and exit"
     def version
       puts Spoon::VERSION
     end

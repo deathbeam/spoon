@@ -25,19 +25,26 @@ module Spoon
     # Matches word
     rule(:word) {
       skip_key >>
-      match['a-z\-'].repeat(1).as(:word) >>
+      match['a-zA-Z\-'].repeat(1).as(:word) >>
       space.maybe
     }
 
     # Matches number
     rule(:number) {
-      space.maybe >>
-      match["0-9"].repeat(1)
+      match["+-"].maybe >>
+      (
+        match["0-9"].repeat(1) |
+        (str("0x") >> match["0-9a-fA-F"].repeat(1)) |
+        (match["0-9"].repeat(1) >> str(".") >> match["0-9"].repeat(1)) |
+        (str(".") >> match["0-9"].repeat(1)) |
+        (match["0-9"].repeat(1) >> match["eE"] >> match["+-"].maybe >> match["0-9"].repeat(1)) |
+        (match["0-9"].repeat(1) >> str(".") >> match["0-9"].repeat >> match["eE"] >> match["+-"].maybe >> match["0-9"].repeat(1))
+      )
     }
 
     # Matches literals (strings, numbers)
     rule(:literal) {
-      number
+      number >> space.maybe
     }
 
     # Matches value

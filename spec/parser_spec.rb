@@ -61,7 +61,14 @@ describe Spoon::Parser do
   context "number parsing" do
     subject { parser.number }
 
-    it { should parse "123456789" }
+    it { should parse "10" }
+    it { should parse "+0" }
+    it { should parse "-10" }
+    it { should parse "0xFF0000" }
+    it { should parse "1.0" }
+    it { should parse "0.0" }
+    it { should parse "-10.0" }
+    it { should parse "1e10" }
     it { should_not parse "a2" }
   end
 
@@ -69,8 +76,9 @@ describe Spoon::Parser do
     subject { parser.word }
 
     it { should parse "a-b-c" }
-    it { should parse "abcdef" }
+    it { should parse "ABCdEf" }
     it { should parse "a" }
+    it { should_not parse "ab?" }
     it { should_not parse "ab=" }
     it { should_not parse "a2b" }
     it { should_not parse "ab_cd" }

@@ -1,0 +1,4 @@
+#!/usr/bin/env spoon
+
+def a(b, c)
+  return a, c, 5

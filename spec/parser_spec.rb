@@ -60,7 +60,6 @@ describe Spoon::Parser do
     subject { parser.number }
 
     it { should parse "123456789" }
-    it { should parse "1.2" }
     it { should_not parse "a2" }
   end
 

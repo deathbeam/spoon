@@ -16,32 +16,45 @@ module Spoon
     template :ELSE,   'key("else")'
 
     # Matches entire file, skipping all whitespace at beginning and end
-    the :root, [
-      'start: whitespace?',
-      'end: whitespace?',
-      'statement * 1',
-      'expression * 1'
-    ]
+    rule(:root) {
+      whitespace.maybe >>
+      statement.repeat(1) |
+      expression.repeat(1) >>
+      whitespace.maybe
+    }
+
+    # Matches word
+    rule(:word) {
+      skip_key >>
+      match['a-z\-'].repeat(1).as(:word) >>
+      space?
+    }
+
+    # Matches number
+    rule(:number) {
+      space? >>
+      match["0-9"].repeat(1)
+    }
 
     # Matches literals (strings, numbers)
-    the :literal, [
-      'number'
-    ]
+    rule(:literal) {
+      number
+    }
 
     # Matches value
-    the :value, [
-      'condition',
-      'closure',
-      'chain',
-      'ret',
-      'word',
-      'literal'
-    ]
+    rule(:value) {
+      condition |
+      closure |
+      chain |
+      ret |
+      word |
+      literal
+    }
 
     # Matches statement, so everything that is unassignable
-    the :statement, [
-      'function'
-    ]
+    rule(:statement) {
+      function
+    }
 
     # Matches everything that starts with '#' until end of line
     # example: # abc

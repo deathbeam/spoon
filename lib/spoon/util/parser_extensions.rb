@@ -85,7 +85,7 @@ module Spoon
       # Matches only if you are not trying to match any previously stored key
       rule(:skip_key) {
         if @keywords.nil? or @keywords.empty?
-          alwaysmatch
+          always_match
         else
           result = str(@keywords.first).absent?
 
@@ -148,21 +148,11 @@ module Spoon
       rule(:whitespace)  { (match["\s\n\r"] | comment).repeat(1) }
       rule(:whitespace?) { whitespace.maybe }
 
-      # Matches all lowercase words except keys, then skips space after them
-      # example: abc
-      rule(:word)        { skip_key >> match["a-z\-"].repeat(1).as(:word) >> space? }
-
-      # Matches numbers
-      # example: 123
-      rule(:number)      { (float | integer) >> space? }
-      rule(:integer)     { match["0-9"].repeat(1) }
-      rule(:float)       { match["0-9"] >> match["0-9\."].repeat(1) }
-
       # Matches everything until end of line
       rule(:stop)        { match["^\n"].repeat }
 
       # Dummy comment rule, override in implementation
-      rule(:comment)     { nevermatch }
+      rule(:comment)     { never_match }
     end
   end
 end

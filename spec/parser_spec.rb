@@ -20,6 +20,14 @@ describe Spoon::Parser do
     it { should_not parse "a b.c" }
   end
 
+  context "closure parsing" do
+    subject { parser.closure }
+    
+    it { should parse "a -> b" }
+    it { should parse "(a, b) -> c" }
+    it { should_not parse "a" }
+  end
+
   context "comment parsing" do
     subject { parser.comment }
 

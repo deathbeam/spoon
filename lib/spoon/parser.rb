@@ -141,44 +141,38 @@ module Spoon
 
     # Matches closure
     # example: (a) -> b
-    the :closure, [
-      'alias: closure',
-      'parens(parameter_list:parameters)? AND ARROW AND body:body'
-    ]
+    rule(:closure) {
+      (parens(parameter_list.as(:parameters)).maybe >> op("->") >> body.as(:body)).as(:closure)
+    }
 
     # Matches function parameter
     # example a = 1
-    the :parameter, [
-      'word:name AND (trim("=") AND expression:value)?'
-    ]
+    rule(:parameter) {
+      word.as(:name) >> (op("=") >> expression.as(:value)).maybe
+    }
 
     # Matches expression
-    the :expression, [
-      'value:left AND operator AND value:right',
-      'value'
-    ]
+    rule(:expression) {
+      (value.as(:left) >> operator >> value.as(:right)) |
+      value
+    }
 
     # Matches function definition
     # example: def (a) b
-    the :function, [
-      'alias: function',
-      'start: DEF',
-      'word:name AND function_body'
-    ]
+    rule(:function) {
+      (key("def") >> word.as(:name) >> function_body).as(:function)
+    }
 
     # Matches function body
-    the :function_body, [
-      'parens(parameter_list:parameters)? AND body:body',
-      'body:body'
-    ]
+    rule(:function_body) {
+      (parens(parameter_list.as(:parameters)).maybe >> body.as(:body)) |
+      body.as(:body)
+    }
 
     # Matches if-else if-else in recursive structure
     # example: if (a) b else if(c) d else e
-    the :condition, [
-      'alias: condition',
-      'start: IF',
-      'end: (ELSE AND body:if_false)?',
-      'parens(expression:body) AND body:if_true'
-    ]
+    rule(:condition) {
+      (key("if") >> parens(expression.as(:body)) >> body.as(:if_true) >> (key("else") >> body.as(:if_false)).maybe).as(:condition)
+    }
   end
 end

@@ -65,7 +65,7 @@ module Spoon
       def trim(value) whitespace.maybe >> value >> whitespace.maybe end
 
       # Matches value in parens or not in parens
-      def parens(value) (op("(") >> value.maybe >> whitespace.maybe >> str(")")) | value end
+      def parens(value) (str("(") >> whitespace.maybe >> value.maybe >> whitespace.maybe >> str(")")) | value end
 
       # Matches single or multiple end of lines
       rule(:newline)     { match["\n\r"].repeat(1) }
@@ -78,6 +78,12 @@ module Spoon
 
       # Matches everything until end of line
       rule(:stop)        { match["^\n"].repeat }
+
+      # Matches empty line
+      rule(:emptyline)   { (match["\n\r"] >> match("\s").repeat >> match["\n\r"]) | match["\n\r"] }
+
+      # Matches space to end of line
+      rule(:endofline)   { space.maybe >> emptyline.repeat(1) }
 
       # Dummy comment rule, override in implementation
       rule(:comment)     { never_match }

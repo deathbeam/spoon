@@ -2,6 +2,8 @@ require "awesome_print"
 require "colorize"
 require "thor"
 require "pp"
+require "json"
+require "yaml"
 
 require "spoon/parser"
 require "spoon/version"
@@ -21,9 +23,10 @@ db   8D 88      `8b  d8' `8b  d8' 88  V888
 
     desc "tree FILE", "Print file AST and exit"
     def tree(file)
-      pp Spoon::Parser.new.parse_with_debug File.read(file)
+      # Very hacky way on how to output pretty YAML to console
+      file = Spoon::Parser.new.parse_with_debug(File.read(file))
+      puts JSON.parse(JSON.pretty_generate file).to_yaml if file != nil
     end
-
 
     desc "hello", "I greet you!"
     def hello

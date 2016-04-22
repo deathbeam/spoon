@@ -43,6 +43,7 @@ module Spoon
 
           if dent > last
             @stack.push dent
+            puts @stack[@stack.length - 1]
             always_match
           else
             never_match
@@ -56,6 +57,7 @@ module Spoon
 
           if dent < last
             @stack.pop
+            puts @stack[@stack.length - 1]
             always_match
           else
             never_match
@@ -66,7 +68,13 @@ module Spoon
       rule(:samedent) {
         dynamic { |source, context|
           last, dent = check_indentation(source)
-          dent == last ? always_match : never_match
+
+          if dent == last
+            puts @stack[@stack.length - 1]
+            always_match
+          else
+            never_match
+          end
         }
       }
     end

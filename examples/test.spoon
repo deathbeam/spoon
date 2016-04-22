@@ -1,7 +1,13 @@
 #!/usr/bin/env spoon
 
+function a(b = 7, c = "aaa")
+  if a < 0
+    return c
 
-def a(b, c)
-  if (b < 0)
-    return "hello" +
-      b * c
+  function a(b = 7, c = "aaa")
+    if a < 0
+      return c
+
+    return "hello" + b
+    return "hello" + b
+    return "hello" + b

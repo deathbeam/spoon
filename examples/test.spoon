@@ -1,5 +1,7 @@
 #!/usr/bin/env spoon
 
+
 def a(b, c)
-  return a *
-    b, c, 5
+  if (b < 0)
+    return "hello" +
+      b * c

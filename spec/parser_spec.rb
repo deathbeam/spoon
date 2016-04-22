@@ -22,7 +22,7 @@ describe Spoon::Parser do
 
   context "closure parsing" do
     subject { parser.closure }
-    
+
     it { should parse "a -> b" }
     it { should parse "(a, b) -> c" }
     it { should_not parse "a" }
@@ -61,7 +61,7 @@ describe Spoon::Parser do
     it { should parse "def test() it" }
     it { should parse "def test it" }
     it { should parse "def test(me = 1) it" }
-    it { should parse "def test me = 2 it" }
+    it { should_not parse "def test me = 2 it" }
     it { should_not parse "def test() me it" }
     it { should_not parse "def test me it he" }
   end
@@ -72,7 +72,6 @@ describe Spoon::Parser do
     it { should parse "10" }
     it { should parse "+0" }
     it { should parse "-10" }
-    it { should parse "0xFF0000" }
     it { should parse "1.0" }
     it { should parse "0.0" }
     it { should parse "-10.0" }

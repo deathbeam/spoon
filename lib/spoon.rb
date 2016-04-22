@@ -3,6 +3,7 @@ require "spoon/compiler"
 require "spoon/parser"
 require "spoon/transformer"
 require "spoon/util/indent_parser"
+require "spoon/util/parser_extensions"
 require "spoon/version"
 
 module Spoon

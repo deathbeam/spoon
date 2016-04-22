@@ -6,60 +6,77 @@ require "spoon/util/parser_extensions"
 
 module Spoon
   class Parser < Spoon::Util::IndentParser
-    template :COMMA,  'op(",")'
-    template :HASH,   'key("#")'
-    template :DOT,    'op(".")'
-    template :RETURN, 'key("return")'
-    template :ARROW,  'sym("->")'
-    template :DEF,    'key("def")'
-    template :IF,     'key("if")'
-    template :ELSE,   'key("else")'
+    def initialize
+      super
+      @keywords = [
+        "if",
+        "else",
+        "def",
+        "return",
+        "and",
+        "is",
+        "isnt",
+        "or",
+        "not"
+      ]
+    end
 
     # Matches entire file, skipping all whitespace at beginning and end
     rule(:root) {
       whitespace.maybe >>
-      (statement| expression).repeat(1) >>
+      expression.repeat(1) >>
       whitespace.maybe
     }
 
     # Matches word
     rule(:word) {
       skip_key >>
-      match['a-zA-Z\-'].repeat(1).as(:word) >>
-      space.maybe
+      match['a-zA-Z\-'].repeat(1).as(:word)
+    }
+
+    # Matches strings
+    rule(:string) {
+      str('"') >> (
+        str('\\') >> any |
+        str('"').absent? >> any
+      ).repeat.as(:string) >> str('"')
+    }
+
+    # Matches floats
+    rule(:float) {
+      integer >> (
+        str('.') >> match('[0-9]').repeat(1) |
+        str('e') >> match('[0-9]').repeat(1)
+      )
+    }
+
+    rule(:integer) {
+      ((str('+') | str('-')).maybe >> match("[0-9]").repeat(1))
     }
 
     # Matches number
     rule(:number) {
-      (match["+-"].maybe >>
-      (
-        match["0-9"].repeat(1) |
-        (str("0x") >> match["0-9a-fA-F"].repeat(1)) |
-        (match["0-9"].repeat(1) >> str(".") >> match["0-9"].repeat(1)) |
-        (str(".") >> match["0-9"].repeat(1)) |
-        (match["0-9"].repeat(1) >> match["eE"] >> match["+-"].maybe >> match["0-9"].repeat(1)) |
-        (match["0-9"].repeat(1) >> str(".") >> match["0-9"].repeat >> match["eE"] >> match["+-"].maybe >> match["0-9"].repeat(1))
-      )).as(:number)
+      (float | integer).as(:number)
     }
 
     # Matches literals (strings, numbers)
     rule(:literal) {
-      number >> space.maybe
+      (number | string) >> space.maybe
     }
 
     # Matches value
     rule(:value) {
-      condition |
+      (condition |
       closure |
       chain |
       ret |
       word |
-      literal
+      literal) >> space.maybe
     }
 
     # Matches statement, so everything that is unassignable
     rule(:statement) {
-      function
+      function >> space.maybe
     }
 
     # Matches everything that starts with '#' until end of line
@@ -76,7 +93,7 @@ module Spoon
     # Matches chain value
     rule(:chain_value) {
       call |
-      word
+      (word >> space.maybe)
     }
 
     # Matches chain of expressions
@@ -88,7 +105,7 @@ module Spoon
     # Matches function call
     # example: a(b, c, d, e, f)
     rule(:call) {
-      word >>
+      word >> space.maybe >>
       parens(expression_list.as(:arguments))
     }
 
@@ -112,6 +129,12 @@ module Spoon
       parameter >> (op(",") >> parameter).repeat
     }
 
+    # Matches function parameter
+    # example a = 1
+    rule(:parameter) {
+      word.as(:name) >> (op("=") >> expression.as(:value)).maybe
+    }
+
     # Matches comma delimited expressions
     # example: a(b), c(d), e
     rule(:expression_list) {
@@ -120,7 +143,7 @@ module Spoon
 
     # Matches operator
     rule(:operator) {
-      ((whitespace.maybe >> match['\+\-\*\/%\^><\|&='] >> whitespace.maybe) | op([
+      (whitespace.maybe >> match['\+\-\*\/%\^><\|&='].as(:op) >> whitespace.maybe) | op([
         "or",
         "and",
         "is",
@@ -136,7 +159,7 @@ module Spoon
         "%=",
         "or=",
         "and="
-      ])).as(:op)
+      ]).as(:op)
     }
 
     # Matches closure
@@ -145,15 +168,9 @@ module Spoon
       (parens(parameter_list.as(:parameters)).maybe >> op("->") >> body.as(:body)).as(:closure)
     }
 
-    # Matches function parameter
-    # example a = 1
-    rule(:parameter) {
-      word.as(:name) >> (op("=") >> expression.as(:value)).maybe
-    }
-
     # Matches expression
     rule(:expression) {
-      (value.as(:left) >> operator >> value.as(:right)) |
+      statement | (value.as(:left) >> operator >> value.as(:right)) |
       value
     }
 

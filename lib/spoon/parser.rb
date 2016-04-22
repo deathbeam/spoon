@@ -188,8 +188,10 @@ module Spoon
       (
         whitespace.maybe >>
         match['\+\-\*\/%\^><\|&='].as(:op) >>
-        whitespace.maybe) |
-        op([
+        whitespace.maybe
+      ) |
+      op(
+        [
           "or",
           "and",
           "is",
@@ -260,6 +262,7 @@ module Spoon
         space.maybe >>
         body.as(:if_true) >>
         (
+          space.maybe >>
           key("else") >>
           body.as(:if_false)
         ).maybe

@@ -58,12 +58,12 @@ describe Spoon::Parser do
   context "function parsing" do
     subject { parser.function }
 
-    it { should parse "def test() it" }
-    it { should parse "def test it" }
-    it { should parse "def test(me = 1) it" }
-    it { should_not parse "def test me = 2 it" }
-    it { should_not parse "def test() me it" }
-    it { should_not parse "def test me it he" }
+    it { should parse "function test() it" }
+    it { should parse "function test it" }
+    it { should parse "function test(me = 1) it" }
+    it { should parse "function test me = 2 it" }
+    it { should_not parse "function test() me it" }
+    it { should_not parse "function test me it he" }
   end
 
   context "number parsing" do

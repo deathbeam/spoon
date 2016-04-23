@@ -66,6 +66,12 @@ describe Spoon::Parser do
     it { should_not parse "function test me it he" }
   end
 
+  context "indent parsing" do
+    subject { parser }
+
+    it { should parse "function hello(a)\n  return this\n  return that\n" }
+  end
+
   context "number parsing" do
     subject { parser.number }
 

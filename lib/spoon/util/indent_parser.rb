@@ -43,7 +43,6 @@ module Spoon
 
           if dent > last
             @stack.push dent
-            puts @stack[@stack.length - 1]
             always_match
           else
             never_match
@@ -57,7 +56,6 @@ module Spoon
 
           if dent < last
             @stack.pop
-            puts @stack[@stack.length - 1]
             always_match
           else
             never_match
@@ -70,7 +68,6 @@ module Spoon
           last, dent = check_indentation(source)
 
           if dent == last
-            puts @stack[@stack.length - 1]
             always_match
           else
             never_match

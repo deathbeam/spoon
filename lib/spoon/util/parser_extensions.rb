@@ -31,7 +31,7 @@ module Spoon
       def trim(value) whitespace.maybe >> value >> whitespace.maybe end
 
       # Matches value in parens or not in parens
-      def parens(value) (str("(") >> whitespace.maybe >> value.maybe >> whitespace.maybe >> str(")")) | value end
+      def parens(value) (str("(") >> whitespace.maybe >> value >> whitespace.maybe >> str(")")) | value end
 
       # Matches single or multiple end of lines
       rule(:newline)     { match["\n\r"].repeat(1) }

@@ -95,7 +95,7 @@ module Spoon
     # Matches everything that starts with '#' until end of line
     # example: # abc
     rule(:comment) {
-      sym("#") >>
+      str("#") >>
       stop
     }
 
@@ -117,7 +117,7 @@ module Spoon
       (
         chain_value >>
         (
-          op(".") >>
+          trim(str(".")) >>
           chain_value
         ).repeat(1)
       ).as(:chain)
@@ -135,6 +135,7 @@ module Spoon
     # example: return a, b, c
     rule(:ret) {
       key("return") >>
+      space.maybe >>
       parens(expression_list).maybe.as(:return)
     }
 
@@ -158,7 +159,7 @@ module Spoon
     # example: (a, b)
     rule(:parameter_list) {
       parameter >> (
-        op(",") >>
+        trim(str(",")) >>
         parameter
       ).repeat
     }
@@ -168,7 +169,7 @@ module Spoon
     rule(:parameter) {
       word.as(:name) >>
       (
-        op("=") >>
+        trim(str("=")) >>
         expression.as(:value)
       ).maybe
     }
@@ -178,7 +179,7 @@ module Spoon
     rule(:expression_list) {
       expression >>
       (
-        op(",") >>
+        trim(str(",")) >>
         expression
       ).repeat
     }
@@ -186,28 +187,22 @@ module Spoon
     # Matches operator
     rule(:operator) {
       (
-        whitespace.maybe >>
-        match['\+\-\*\/%\^><\|&='].as(:op) >>
-        whitespace.maybe
-      ) |
-      op(
-        [
-          "or",
-          "and",
-          "is",
-          "isnt",
-          "<=",
-          ">=",
-          "!=",
-          "==",
-          "+=",
-          "-=",
-          "*=",
-          "/=",
-          "%=",
-          "or=",
-          "and="
-        ]
+        str("<=") |
+        str(">=") |
+        str("!=") |
+        str("==") |
+        str("+=") |
+        str("-=") |
+        str("*=") |
+        str("/=") |
+        str("%=") |
+        str("and=") |
+        str("or=") |
+        key("or") |
+        key("and") |
+        key("is") |
+        key("isnt") |
+        match['\+\-\*\/%\^><\|&=']
       ).as(:op)
     }
 
@@ -216,7 +211,7 @@ module Spoon
     rule(:closure) {
       (
         parens(parameter_list.as(:parameters)).maybe >>
-        op("->") >>
+        trim(str("->")) >>
         body.as(:body)
       ).as(:closure)
     }
@@ -227,7 +222,7 @@ module Spoon
         statement |
         (
           value.as(:left) >>
-          operator >>
+          trim(operator) >>
           value.as(:right)
         ) | value
       ) >> endofline.maybe
@@ -238,6 +233,7 @@ module Spoon
     rule(:function) {
       (
         key("function") >>
+        space.maybe >>
         word.as(:name) >>
         space.maybe >>
         function_body
@@ -258,12 +254,14 @@ module Spoon
     rule(:condition) {
       (
         key("if") >>
+        space.maybe >>
         parens(expression.as(:body)) >>
         space.maybe >>
         body.as(:if_true) >>
         (
           space.maybe >>
           key("else") >>
+          space.maybe >>
           body.as(:if_false)
         ).maybe
       ).as(:condition)

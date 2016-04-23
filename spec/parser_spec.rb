@@ -2,6 +2,11 @@ require 'spec_helper'
 
 describe Spoon::Parser do
   let(:parser) { Spoon::Parser.new }
+  context "block parsing" do
+    subject { parser.block }
+
+    it { should parse "\n  return this\n  return that\n" }
+  end
 
   context "call parsing" do
     subject { parser.call }
@@ -64,12 +69,6 @@ describe Spoon::Parser do
     it { should parse "function test me = 2 it" }
     it { should_not parse "function test() me it" }
     it { should_not parse "function test me it he" }
-  end
-
-  context "indent parsing" do
-    subject { parser }
-
-    it { should parse "function hello(a)\n  return this\n  return that\n" }
   end
 
   context "number parsing" do

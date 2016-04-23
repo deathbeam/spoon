@@ -31,25 +31,22 @@ module Spoon
       def trim(value) whitespace.maybe >> value >> whitespace.maybe end
 
       # Matches value in parens or not in parens
-      def parens(value) (str("(") >> whitespace.maybe >> value >> whitespace.maybe >> str(")")) | value end
+      def parens(value) (str("(") >> whitespace.maybe >> value.maybe >> whitespace.maybe >> str(")")) | value end
 
       # Matches single or multiple end of lines
-      rule(:newline)     { match["\n\r"].repeat(1) }
+      rule(:newline)     { match["\n\r"] }
 
       # Matches single or multiple spaces, tabs and comments
-      rule(:space)       { (match("\s") | comment).repeat(1) }
+      rule(:space)       { (comment | match("\s")).repeat(1) }
 
       # Matches all whitespace (tab, end of line, space, comments)
-      rule(:whitespace)  { (match["\s\n\r"] | comment).repeat(1) }
+      rule(:whitespace)  { (comment | match["\s\n\r"]).repeat(1) }
 
       # Matches everything until end of line
       rule(:stop)        { match["^\n"].repeat }
 
-      # Matches empty line
-      rule(:emptyline)   { (match["\n\r"] >> match("\s").repeat >> match["\n\r"]) | match["\n\r"] }
-
       # Matches space to end of line
-      rule(:endofline)   { space.maybe >> emptyline.repeat(1) }
+      rule(:skipline)   { (space.maybe >> newline).repeat(1) }
 
       # Dummy comment rule, override in implementation
       rule(:comment)     { never_match }

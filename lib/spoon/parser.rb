@@ -31,9 +31,9 @@ module Spoon
     }
 
     # Matches word
-    rule(:word) {
+    rule(:name) {
       skip_key >>
-      match['a-zA-Z\-'].repeat(1).as(:word)
+      (match['a-zA-Z'] >> match['a-zA-Z\-'].repeat).as(:name)
     }
 
     # Matches strings
@@ -71,6 +71,13 @@ module Spoon
       ).as(:number)
     }
 
+    # Matches everything that starts with '#' until end of line
+    # example: # abc
+    rule(:comment) {
+      str("#") >>
+      stop
+    }
+
     # Matches literals (strings, numbers)
     rule(:literal) {
       number |
@@ -82,8 +89,9 @@ module Spoon
       condition |
       closure |
       chain |
+      call |
       ret |
-      word |
+      name |
       literal
     }
 
@@ -92,23 +100,10 @@ module Spoon
       function
     }
 
-    # Matches everything that starts with '#' until end of line
-    # example: # abc
-    rule(:comment) {
-      str("#") >>
-      stop
-    }
-
     # Matches expression or indented block and skips end of line at end
     rule(:body) {
       block |
       expression
-    }
-
-    # Matches chain value
-    rule(:chain_value) {
-      call |
-      word
     }
 
     # Matches chain of expressions
@@ -123,12 +118,20 @@ module Spoon
       ).as(:chain)
     }
 
+    # Matches chain value
+    rule(:chain_value) {
+      call |
+      name
+    }
+
     # Matches function call
     # example: a(b, c, d, e, f)
     rule(:call) {
-      word >>
-      space.maybe >>
-      parens(expression_list.as(:arguments))
+      (
+        name >>
+        space.maybe >>
+        parens(expression_list.as(:arguments))
+      ).as(:call)
     }
 
     # Matches return statement
@@ -142,7 +145,7 @@ module Spoon
     # Matches indented block and consumes newlines at start and in between
     # but not at end
     rule(:block) {
-      newline >>
+      skipline.maybe >>
       indent >>
       (
         expression >>
@@ -152,7 +155,17 @@ module Spoon
         ).repeat
       ).maybe.as(:block) >>
       dedent >>
-      endofline.maybe
+      skipline.maybe
+    }
+
+    # Matches function parameter
+    # example a = 1
+    rule(:parameter) {
+      name >>
+      (
+        trim(str("=")) >>
+        expression.as(:value)
+      ).maybe
     }
 
     # Matches comma delimited function parameters
@@ -164,14 +177,17 @@ module Spoon
       ).repeat
     }
 
-    # Matches function parameter
-    # example a = 1
-    rule(:parameter) {
-      word.as(:name) >>
+    # Matches expression
+    rule(:expression) {
       (
-        trim(str("=")) >>
-        expression.as(:value)
-      ).maybe
+        statement |
+        (
+          value.as(:left) >>
+          trim(operator) >>
+          value.as(:right)
+        ) |
+        value
+      ) >> skipline.maybe
     }
 
     # Matches comma delimited expressions
@@ -184,28 +200,6 @@ module Spoon
       ).repeat
     }
 
-    # Matches operator
-    rule(:operator) {
-      (
-        str("<=") |
-        str(">=") |
-        str("!=") |
-        str("==") |
-        str("+=") |
-        str("-=") |
-        str("*=") |
-        str("/=") |
-        str("%=") |
-        str("and=") |
-        str("or=") |
-        key("or") |
-        key("and") |
-        key("is") |
-        key("isnt") |
-        match['\+\-\*\/%\^><\|&=']
-      ).as(:op)
-    }
-
     # Matches closure
     # example: (a) -> b
     rule(:closure) {
@@ -216,25 +210,13 @@ module Spoon
       ).as(:closure)
     }
 
-    # Matches expression
-    rule(:expression) {
-      (
-        statement |
-        (
-          value.as(:left) >>
-          trim(operator) >>
-          value.as(:right)
-        ) | value
-      ) >> endofline.maybe
-    }
-
     # Matches function definition
     # example: def (a) b
     rule(:function) {
       (
         key("function") >>
         space.maybe >>
-        word.as(:name) >>
+        name >>
         space.maybe >>
         function_body
       ).as(:function)
@@ -265,6 +247,28 @@ module Spoon
           body.as(:if_false)
         ).maybe
       ).as(:condition)
+    }
+
+    # Matches operator
+    rule(:operator) {
+      (
+        str("<=") |
+        str(">=") |
+        str("!=") |
+        str("==") |
+        str("+=") |
+        str("-=") |
+        str("*=") |
+        str("/=") |
+        str("%=") |
+        str("and=") |
+        str("or=") |
+        key("or") |
+        key("and") |
+        key("is") |
+        key("isnt") |
+        match['\+\-\*\/%\^><\|&=']
+      ).as(:op)
     }
   end
 end

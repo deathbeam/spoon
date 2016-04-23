@@ -28,28 +28,62 @@ module Spoon
       end
 
       # Trims all whitespace around value
-      def trim(value) whitespace.maybe >> value >> whitespace.maybe end
+      def trim(value)
+        whitespace.maybe >>
+        value >>
+        whitespace.maybe
+      end
 
       # Matches value in parens or not in parens
-      def parens(value) (str("(") >> whitespace.maybe >> value.maybe >> whitespace.maybe >> str(")")) | value end
+      def parens(value)
+        (
+          str("(") >>
+          whitespace.maybe >>
+          value.maybe >>
+          whitespace.maybe >>
+          str(")")
+        ) |
+        value
+      end
 
       # Matches single or multiple end of lines
-      rule(:newline)     { match["\n\r"] }
+      rule(:newline) {
+        match["\n\r"]
+      }
 
       # Matches single or multiple spaces, tabs and comments
-      rule(:space)       { (comment | match("\s")).repeat(1) }
+      rule(:space) {
+        (
+          comment |
+          match("\s")
+        ).repeat(1)
+      }
 
       # Matches all whitespace (tab, end of line, space, comments)
-      rule(:whitespace)  { (comment | match["\s\n\r"]).repeat(1) }
+      rule(:whitespace) {
+        (
+          comment |
+          match["\s\n\r"]
+        ).repeat(1)
+      }
 
       # Matches everything until end of line
-      rule(:stop)        { match["^\n"].repeat }
+      rule(:stop) {
+        match["^\n"].repeat
+      }
 
       # Matches space to end of line
-      rule(:skipline)   { (space.maybe >> newline).repeat(1) }
+      rule(:skipline) {
+        (
+          space.maybe >>
+          newline
+        ).repeat(1)
+      }
 
       # Dummy comment rule, override in implementation
-      rule(:comment)     { never_match }
+      rule(:comment) {
+        never_match
+      }
     end
   end
 end

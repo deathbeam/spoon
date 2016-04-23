@@ -33,7 +33,10 @@ module Spoon
     # Matches word
     rule(:name) {
       skip_key >>
-      (match['a-zA-Z'] >> match['a-zA-Z\-'].repeat).as(:name)
+      (
+        match['a-zA-Z'] >>
+        match['a-zA-Z\-'].repeat
+      ).as(:name)
     }
 
     # Matches strings

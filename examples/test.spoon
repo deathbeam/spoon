@@ -5,7 +5,7 @@ function a(b = 7, c = "aaa")
     print "Closure!"
 
   if b < 0
-    call()
+    call!
   else
     print "Fail"
 

@@ -133,7 +133,10 @@ module Spoon
       (
         name >>
         space.maybe >>
-        parens(expression_list.as(:arguments))
+        (
+          parens(expression_list.as(:arguments)) |
+          str("!")
+        )
       ).as(:call)
     }
 

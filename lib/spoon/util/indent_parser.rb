@@ -10,8 +10,14 @@ module Spoon
     end
 
     class NeverMatch < Parslet::Atoms::Base
+      attr_accessor :msg
+
+      def initialize(msg = "ignore")
+        self.msg = msg
+      end
+
       def try(source, context, consume_all)
-        context.err(self, source, "ignore")
+        context.err(self, source, msg)
       end
     end
 
@@ -29,23 +35,15 @@ module Spoon
         return @stack[@stack.length - 1], indent
       end
 
-      rule(:always_match) {
-        AlwaysMatch.new
-      }
-
-      rule(:never_match) {
-        NeverMatch.new
-      }
-
       rule(:indent) {
         dynamic { |source, context|
           last, dent = check_indentation(source)
 
           if dent > last
             @stack.push dent
-            always_match
+            AlwaysMatch.new
           else
-            never_match
+            NeverMatch.new "Not an indent"
           end
         }
       }
@@ -56,9 +54,9 @@ module Spoon
 
           if dent < last
             @stack.pop
-            always_match
+            AlwaysMatch.new
           else
-            never_match
+            NeverMatch.new "Not a dedent"
           end
         }
       }
@@ -68,9 +66,9 @@ module Spoon
           last, dent = check_indentation(source)
 
           if dent == last
-            always_match
+            AlwaysMatch.new
           else
-            never_match
+            NeverMatch.new "Not a samedent"
           end
         }
       }

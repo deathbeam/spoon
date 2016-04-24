@@ -3,85 +3,85 @@ require 'spec_helper'
 describe Spoon::Parser do
   let(:parser) { Spoon::Parser.new }
 
-  context "block parsing" do
+  context "block" do
     subject { parser.block }
 
-    it { should parse "\n  return this\n  return that\n" }
+    it { should parse "\n  print foo\n  return bar\n" }
   end
 
-  context "call parsing" do
+  context "call" do
     subject { parser.call }
 
-    it { should parse "a b" }
-    it { should parse "a(b, c, d)" }
-    it { should parse "a(b)" }
+    it { should parse "foo bar" }
+    it { should parse "foo(bar)" }
+    it { should parse "foo bar, baz" }
+    it { should parse "foo(bar, baz)" }
   end
 
-  context "chain parsing" do
+  context "chain" do
     subject { parser.chain }
 
-    it { should parse "a.b.c" }
-    it { should parse "a().b().c(d, e).f" }
-    it { should_not parse "a b.c" }
+    it { should parse "foo.bar" }
+    it { should parse "foo().bar().baz(foo, bar).baz" }
   end
 
-  context "closure parsing" do
+  context "closure" do
     subject { parser.closure }
 
-    it { should parse "a -> b" }
-    it { should parse "(a, b) -> c" }
-    it { should_not parse "a" }
+    it { should parse "-> foo" }
+    it { should parse "() -> foo" }
+    it { should parse "foo -> bar" }
+    it { should parse "foo, bar -> baz" }
+    it { should parse "(foo, bar) -> baz" }
   end
 
-  context "comment parsing" do
+  context "comment" do
     subject { parser.comment }
 
-    it { should parse "# comment" }
-    it { should parse "#comment" }
-    it { should_not parse "# comment\n expression" }
+    it { should parse "# foo" }
+    it { should parse "#foo" }
+    it { should_not parse "# foo\n bar" }
   end
 
-  context "condition parsing" do
+  context "condition" do
     subject { parser.condition }
 
-    it { should parse "if (something) anything" }
-    it { should parse "if something anything" }
-    it { should parse "if (a) b else if (c) d else e" }
-    it { should_not parse "if a b c" }
+    it { should parse "if (foo) bar" }
+    it { should parse "if foo bar" }
+    it { should parse "if (foo) bar else if (baz) foo else bar" }
+    it { should_not parse "if" }
   end
 
-  context "expression parsing" do
+  context "expression" do
     subject { parser.expression }
 
-    it { should parse "a and b" }
-    it { should parse "a * b" }
-    it { should_not parse "a ** b" }
-    it { should_not parse "a + b + c" }
+    it { should parse "foo and bar" }
+    it { should parse "foo * bar" }
+    it { should_not parse "foo ** bar" }
   end
 
-  context "function parsing" do
+  context "function" do
     subject { parser.function }
 
-    it { should parse "function test() it" }
-    it { should parse "function test it" }
-    it { should parse "function test(me = 1) it" }
-    it { should parse "function test me = 2 it" }
-    it { should_not parse "a function test() me it" }
+    it { should parse "function foo bar" }
+    it { should parse "function foo() bar" }
+    it { should parse "function foo bar = 1 baz" }
+    it { should parse "function foo(bar = 1) baz" }
   end
 
-  context "name parsing" do
+  context "name" do
     subject { parser.name }
 
-    it { should parse "a-b-c" }
-    it { should parse "ABCdEf" }
-    it { should parse "a" }
-    it { should_not parse "ab?" }
-    it { should_not parse "ab=" }
-    it { should_not parse "a2b" }
-    it { should_not parse "ab_cd" }
+    it { should parse "foo" }
+    it { should parse "Foo" }
+    it { should parse "foo-bar" }
+    it { should_not parse "-foo" }
+    it { should_not parse "foo2" }
+    it { should_not parse "foo?" }
+    it { should_not parse "foo_bar" }
   end
 
-  context "number parsing" do
+  context "number" do
     subject { parser.number }
 
     it { should parse "10" }

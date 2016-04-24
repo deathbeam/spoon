@@ -10,17 +10,6 @@ module Spoon
         @keywords = []
       end
 
-      # Matches only if you are not trying to match any previously stored key
-      rule(:skip_key) {
-        result = str(@keywords.first).absent?
-
-        for keyword in @keywords
-          result = result >> str(keyword).absent?
-        end
-
-        result
-      }
-
       # Stores string as key and matches it
       def key(value)
         @keywords.push value unless @keywords.include? value
@@ -41,10 +30,22 @@ module Spoon
           whitespace.maybe >>
           value.maybe >>
           whitespace.maybe >>
-          str(")")
+          str(")") >>
+          skipline.maybe
         ) |
         value
       end
+
+      # Matches only if you are not trying to match any previously stored key
+      rule(:skip_key) {
+        result = str(@keywords.first).absent?
+
+        for keyword in @keywords
+          result = result >> str(keyword).absent?
+        end
+
+        result
+      }
 
       # Matches single or multiple end of lines
       rule(:newline) {
@@ -82,7 +83,7 @@ module Spoon
 
       # Dummy comment rule, override in implementation
       rule(:comment) {
-        never_match
+        NeverMatch.new
       }
     end
   end

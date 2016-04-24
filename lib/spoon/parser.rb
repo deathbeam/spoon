@@ -148,8 +148,7 @@ module Spoon
       parens(expression_list).maybe.as(:return)
     }
 
-    # Matches indented block and consumes newlines at start and in between
-    # but not at end
+    # Matches indented block
     rule(:block) {
       skipline.maybe >>
       indent >>
@@ -193,7 +192,8 @@ module Spoon
           value.as(:right)
         ) |
         value
-      ) >> skipline.maybe
+      ) >>
+      skipline.maybe
     }
 
     # Matches comma delimited expressions
@@ -245,7 +245,7 @@ module Spoon
         space.maybe >>
         parens(expression.as(:body)) >>
         space.maybe >>
-        body.as(:if_true) >>
+        block.as(:if_true) >>
         (
           space.maybe >>
           key("else") >>

@@ -93,4 +93,10 @@ describe Spoon::Parser do
     it { should parse "1e10" }
     it { should_not parse "a2" }
   end
+
+  context "root" do
+    subject { parser.root }
+
+    it { should parse "# foo\n    print bar\n # baz " }
+  end
 end

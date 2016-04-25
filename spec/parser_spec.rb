@@ -47,8 +47,9 @@ describe Spoon::Parser do
     subject { parser.condition }
 
     it { should parse "if (foo) bar" }
-    it { should parse "if foo bar" }
+    it { should parse "if foo then bar" }
     it { should parse "if (foo) bar else if (baz) foo else bar" }
+    it { should_not parse "if foo bar" }
   end
 
   context "expression" do

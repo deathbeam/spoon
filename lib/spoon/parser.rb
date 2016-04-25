@@ -17,7 +17,8 @@ module Spoon
         "is",
         "isnt",
         "or",
-        "not"
+        "not",
+        "then"
       ]
     end
 
@@ -228,6 +229,8 @@ module Spoon
         key("if") >>
         space.maybe >>
         parens(expression.as(:body)) >>
+        space.maybe >>
+        key("then").maybe >>
         body.as(:if_true) >>
         (
           space.maybe >>

@@ -89,11 +89,6 @@ module Spoon
           newline
         ).repeat(1) >> checkdent
       }
-
-      # Dummy comment rule, override in implementation
-      rule(:comment) {
-        NeverMatch.new
-      }
     end
   end
 end

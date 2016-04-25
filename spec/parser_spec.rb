@@ -6,7 +6,7 @@ describe Spoon::Parser do
   context "block" do
     subject { parser.block }
 
-    it { should parse "\n  print foo\n  return bar\n" }
+    it { should parse "\n print foo\n return bar\n" }
   end
 
   context "call" do
@@ -49,7 +49,6 @@ describe Spoon::Parser do
     it { should parse "if (foo) bar" }
     it { should parse "if foo bar" }
     it { should parse "if (foo) bar else if (baz) foo else bar" }
-    it { should_not parse "if" }
   end
 
   context "expression" do

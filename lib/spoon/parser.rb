@@ -30,6 +30,51 @@ module Spoon
       ).as(:block)
     }
 
+    # Matches expression or indented block and skips end of line at end
+    rule(:body) {
+      block |
+      expression
+    }
+
+    # Matches indented block
+    rule(:block) {
+      endline.maybe >>
+      indent >>
+      repeat(expression, samedent).as(:block) >>
+      dedent
+    }
+
+    # Matches expression
+    rule(:expression) {
+      space.maybe >>
+      (
+        statement |
+        (
+          value.as(:left) >>
+          trim(operator) >>
+          value.as(:right)
+        ) |
+        value
+      ) >>
+      endline.maybe
+    }
+
+    # Matches value
+    rule(:value) {
+      condition |
+      closure |
+      chain |
+      call |
+      ret |
+      name |
+      literal
+    }
+
+    # Matches statement, so everything that is unassignable
+    rule(:statement) {
+      function
+    }
+
     # Matches word
     rule(:name) {
       skip_key >>
@@ -74,51 +119,32 @@ module Spoon
       ).as(:number)
     }
 
-    # Matches everything that starts with '#' until end of line
-    # example: # abc
-    rule(:comment) {
-      str("#") >>
-      stop
-    }
-
     # Matches literals (strings, numbers)
     rule(:literal) {
       number |
       string
     }
 
-    # Matches value
-    rule(:value) {
-      condition |
-      closure |
-      chain |
-      call |
-      ret |
-      name |
-      literal
+    # Matches everything that starts with '#' until end of line
+    # example: # abc
+    rule(:comment) {
+      str("#") >>
+      stop >>
+      newline.maybe
     }
 
-    # Matches statement, so everything that is unassignable
-    rule(:statement) {
-      function
-    }
-
-    # Matches expression or indented block and skips end of line at end
-    rule(:body) {
-      block |
-      expression
+    # Matches return statement
+    # example: return a, b, c
+    rule(:ret) {
+      key("return") >>
+      space.maybe >>
+      expression_list.maybe.as(:return)
     }
 
     # Matches chain of expressions
     # example: abc(a).def(b).efg
     rule(:chain) {
-      (
-        chain_value >>
-        (
-          trim(str(".")) >>
-          chain_value
-        ).repeat(1)
-      ).as(:chain)
+      repeat(chain_value, trim(str(".")), 1).as(:chain)
     }
 
     # Matches chain value
@@ -132,35 +158,14 @@ module Spoon
     rule(:call) {
       (
         name >>
-        space.maybe >>
         (
-          parens(expression_list.as(:arguments)) |
-          str("!")
+          str("!") |
+          (
+            space.maybe >>
+            expression_list.as(:arguments)
+          )
         )
       ).as(:call)
-    }
-
-    # Matches return statement
-    # example: return a, b, c
-    rule(:ret) {
-      key("return") >>
-      space.maybe >>
-      parens(expression_list).maybe.as(:return)
-    }
-
-    # Matches indented block
-    rule(:block) {
-      skipline.maybe >>
-      indent >>
-      (
-        expression >>
-        (
-          samedent >>
-          expression
-        ).repeat
-      ).maybe.as(:block) >>
-      dedent >>
-      skipline.maybe
     }
 
     # Matches function parameter
@@ -176,42 +181,22 @@ module Spoon
     # Matches comma delimited function parameters
     # example: (a, b)
     rule(:parameter_list) {
-      parameter >> (
-        trim(str(",")) >>
-        parameter
-      ).repeat
-    }
-
-    # Matches expression
-    rule(:expression) {
-      (
-        statement |
-        (
-          value.as(:left) >>
-          trim(operator) >>
-          value.as(:right)
-        ) |
-        value
-      ) >>
-      skipline.maybe
+      parens(repeat(parameter, trim(str(","))).as(:parameters))
     }
 
     # Matches comma delimited expressions
     # example: a(b), c(d), e
     rule(:expression_list) {
-      expression >>
-      (
-        trim(str(",")) >>
-        expression
-      ).repeat
+      parens(repeat(expression, trim(str(","))))
     }
 
     # Matches closure
     # example: (a) -> b
     rule(:closure) {
       (
-        parens(parameter_list.as(:parameters)).maybe >>
-        trim(str("->")) >>
+        parameter_list.maybe >>
+        whitespace.maybe >>
+        str("->") >>
         body.as(:body)
       ).as(:closure)
     }
@@ -223,7 +208,6 @@ module Spoon
         key("function") >>
         space.maybe >>
         name >>
-        space.maybe >>
         function_body
       ).as(:function)
     }
@@ -231,8 +215,8 @@ module Spoon
     # Matches function body
     rule(:function_body) {
       (
-        parens(parameter_list.as(:parameters)).maybe >>
         space.maybe >>
+        parameter_list.maybe >>
         body.as(:body)
       ) | body.as(:body)
     }
@@ -244,12 +228,10 @@ module Spoon
         key("if") >>
         space.maybe >>
         parens(expression.as(:body)) >>
-        space.maybe >>
-        block.as(:if_true) >>
+        body.as(:if_true) >>
         (
           space.maybe >>
           key("else") >>
-          space.maybe >>
           body.as(:if_false)
         ).maybe
       ).as(:condition)

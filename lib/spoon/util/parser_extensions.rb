@@ -23,6 +23,15 @@ module Spoon
         whitespace.maybe
       end
 
+      # Repeat parameter using delimiter
+      def repeat(value, delimiter, min = 0)
+        value >>
+        (
+          delimiter >>
+          value
+        ).repeat(min)
+      end
+
       # Matches value in parens or not in parens
       def parens(value)
         (
@@ -31,7 +40,7 @@ module Spoon
           value.maybe >>
           whitespace.maybe >>
           str(")") >>
-          skipline.maybe
+          endline.maybe
         ) |
         value
       end
@@ -56,7 +65,7 @@ module Spoon
       rule(:space) {
         (
           comment |
-          match("\s")
+          match[" \t"]
         ).repeat(1)
       }
 
@@ -64,7 +73,7 @@ module Spoon
       rule(:whitespace) {
         (
           comment |
-          match["\s\n\r"]
+          match[" \t\n\r"]
         ).repeat(1)
       }
 
@@ -73,12 +82,12 @@ module Spoon
         match["^\n"].repeat
       }
 
-      # Matches space to end of line
-      rule(:skipline) {
+      # Matches space to end of line and checks indentation
+      rule(:endline) {
         (
           space.maybe >>
           newline
-        ).repeat(1)
+        ).repeat(1) >> checkdent
       }
 
       # Dummy comment rule, override in implementation

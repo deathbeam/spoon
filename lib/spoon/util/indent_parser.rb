@@ -22,8 +22,14 @@ module Spoon
     end
 
     class IndentParser < Parslet::Parser
+      def initialize
+        super
+        @stack = [0]
+        @current = 0
+        @last = 0
+      end
+
       def check_indentation(source)
-        @stack = [0] if @stack.nil?
         indent = 0
         matcher = /[ \t]/
 
@@ -32,15 +38,26 @@ module Spoon
           indent += 1
         end
 
-        return @stack[@stack.length - 1], indent
+        @last = @stack[@stack.length - 1]
+        @current = indent
+
+        if @current > @last
+          @stack.push indent
+        elsif @current < @last
+          @stack.pop
+        end
       end
+
+      rule (:checkdent) {
+        dynamic { |source, context|
+          check_indentation(source)
+          AlwaysMatch.new
+        }
+      }
 
       rule(:indent) {
         dynamic { |source, context|
-          last, dent = check_indentation(source)
-
-          if dent > last
-            @stack.push dent
+          if @current > @last
             AlwaysMatch.new
           else
             NeverMatch.new "Not an indent"
@@ -50,10 +67,7 @@ module Spoon
 
       rule(:dedent) {
         dynamic { |source, context|
-          last, dent = check_indentation(source)
-
-          if dent < last
-            @stack.pop
+          if @current < @last
             AlwaysMatch.new
           else
             NeverMatch.new "Not a dedent"
@@ -63,9 +77,7 @@ module Spoon
 
       rule(:samedent) {
         dynamic { |source, context|
-          last, dent = check_indentation(source)
-
-          if dent == last
+          if @current == @last
             AlwaysMatch.new
           else
             NeverMatch.new "Not a samedent"

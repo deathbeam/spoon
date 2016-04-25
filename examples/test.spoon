@@ -1,3 +1,15 @@
 #!/usr/bin/env spoon
-if a < 0
-  return c
+
+function a b = 7, c = "aaa"
+  print "Hello"
+
+  call = ->
+    print "Closure!"
+    print "Closure!"
+
+  print "Hello"
+
+  if b < 0
+    call!
+  else
+    print "Fail"

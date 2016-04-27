@@ -7,6 +7,7 @@ describe Spoon::Parser do
     subject { parser.block }
 
     it { should parse "\n print foo\n return bar\n" }
+    it { should_not parse "\n print foo\n return bar" }
   end
 
   context "call" do

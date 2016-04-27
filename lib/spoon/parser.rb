@@ -50,14 +50,66 @@ module Spoon
       space.maybe >>
       parens(
         statement |
-        (
-          value.as(:left) >>
-          trim(operator) >>
-          expression.as(:right)
-        ) |
+        operation |
         value
       ) >>
       endline.maybe
+    }
+
+    # Matches operation
+    rule(:operation) {
+      binary_operation |
+      unary_operation
+    }
+
+    # Matches binary operation
+    # example: foo + bar
+    rule(:binary_operation) {
+      (
+        value.as(:left) >>
+        trim((
+          str("<=") |
+          str(">=") |
+          str("!=") |
+          str("==") |
+          str("+=") |
+          str("-=") |
+          str("*=") |
+          str("/=") |
+          str("%=") |
+          str("and=") |
+          str("or=") |
+          key("or") |
+          key("and") |
+          key("is") |
+          key("isnt") |
+          match['\+\-\*\/%\^><\|&=']
+        ).as(:op)) >>
+        expression.as(:right)
+      ).as(:binary)
+    }
+
+    # Matches unary operation
+    # example: !foo
+    rule(:unary_operation) {
+      (
+        (
+          trim((
+            str("++") |
+            str("--") |
+            key("not") |
+            match['\+\-!']
+          ).as(:op)) >>
+          value.as(:right)
+        ) |
+        (
+          value.as(:left) >>
+          trim((
+            str("++") |
+            str("--")
+          ).as(:op))
+        )
+      ).as(:unary)
     }
 
     # Matches value
@@ -238,28 +290,6 @@ module Spoon
           body.as(:if_false)
         ).maybe
       ).as(:condition)
-    }
-
-    # Matches operator
-    rule(:operator) {
-      (
-        str("<=") |
-        str(">=") |
-        str("!=") |
-        str("==") |
-        str("+=") |
-        str("-=") |
-        str("*=") |
-        str("/=") |
-        str("%=") |
-        str("and=") |
-        str("or=") |
-        key("or") |
-        key("and") |
-        key("is") |
-        key("isnt") |
-        match['\+\-\*\/%\^><\|&=']
-      ).as(:op)
     }
   end
 end

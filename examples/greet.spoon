@@ -1,0 +1,11 @@
+#!/usr/bin/env spoon
+
+function log message
+  if message
+    print message
+  else
+    print "It is empty, sorry"
+
+greet = name -> log "Hello #{name}"
+
+greet "friend" # This will print "Hello friend" to console

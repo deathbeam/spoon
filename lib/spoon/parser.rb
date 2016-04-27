@@ -33,15 +33,15 @@ module Spoon
 
     # Matches expression or indented block and skips end of line at end
     rule(:body) {
-      block |
+      block_expression |
       expression
     }
 
     # Matches indented block
-    rule(:block) {
+    rule(:block_expression) {
       endline.maybe >>
       indent >>
-      repeat(expression, samedent).as(:block) >>
+      repeat(expression, samedent) >>
       dedent
     }
 
@@ -54,6 +54,12 @@ module Spoon
         value
       ) >>
       endline.maybe
+    }
+
+    rule(:block) {
+      space.maybe >>
+      key("do") >>
+      body.as(:block)
     }
 
     # Matches operation
@@ -116,6 +122,7 @@ module Spoon
     rule(:value) {
       condition |
       closure |
+      block |
       chain |
       call |
       ret |

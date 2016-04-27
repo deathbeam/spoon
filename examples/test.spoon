@@ -1,5 +1,10 @@
 #!/usr/bin/env spoon
 
+do
+  print "Hello"
+
+do print "Hello"
+
 function a b = 7, c = "aaa"
   print "Hello"
 

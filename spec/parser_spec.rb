@@ -14,6 +14,13 @@ describe Spoon::Parser do
   context "block" do
     subject { parser.block }
 
+    it { should parse "do print foo" }
+    it { should parse "do \n print foo\n" }
+  end
+
+  context "block expression" do
+    subject { parser.block_expression }
+
     it { should parse "\n print foo\n return bar\n" }
     it { should_not parse "\n print foo\n return bar" }
   end

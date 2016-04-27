@@ -28,7 +28,7 @@ module Spoon
         whitespace.maybe >>
         expression.repeat(1) >>
         whitespace.maybe
-      ).as(:block)
+      ).as(:root)
     }
 
     # Matches expression or indented block and skips end of line at end

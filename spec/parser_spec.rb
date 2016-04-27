@@ -3,6 +3,14 @@ require 'spec_helper'
 describe Spoon::Parser do
   let(:parser) { Spoon::Parser.new }
 
+  context "binary operation" do
+    subject { parser.binary_operation }
+
+    it { should parse "foo + bar" }
+    it { should parse "foo * bar" }
+    it { should_not parse "foo + bar + baz" }
+  end
+
   context "block" do
     subject { parser.block }
 
@@ -99,5 +107,14 @@ describe Spoon::Parser do
     subject { parser.root }
 
     it { should parse "# foo\n    print bar\n # baz " }
+  end
+
+  context "unary operation" do
+    subject { parser.unary_operation }
+
+    it { should parse "++foo" }
+    it { should parse "foo++" }
+    it { should parse "not foo" }
+    it { should_not parse "foo + bar" }
   end
 end

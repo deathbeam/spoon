@@ -1,4 +1,6 @@
-#!/usr/bin/env spoon
+#!/usr/bin/env coffee
+# Above is just for nice syntax highlighting
+# as Spoon syntax is very similar to CoffeeScript
 
 function log message
   if message

@@ -30,19 +30,19 @@ module Spoon
       end
 
       def check_indentation(source)
-        indent = 0
+        indent_level = 0
         matcher = /[ \t]/
 
         while source.matches?(matcher)
           source.consume(1)
-          indent += 1
+          indent_level += 1
         end
 
         @last = @stack[@stack.length - 1]
-        @current = indent
+        @current = indent_level
 
         if @current > @last
-          @stack.push indent
+          @stack.push @current
         elsif @current < @last
           @stack.pop
         end
@@ -68,6 +68,10 @@ module Spoon
       rule(:dedent) {
         dynamic { |source, context|
           if @current < @last
+            # We need to do this, so next samedent won't be skipped
+            source.bytepos = source.bytepos - @current
+            @current = @last
+            
             AlwaysMatch.new
           else
             NeverMatch.new "Not a dedent"

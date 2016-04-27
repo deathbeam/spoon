@@ -26,7 +26,7 @@ module Spoon
     rule(:root) {
       (
         whitespace.maybe >>
-        body.repeat(1) >>
+        expression.repeat(1) >>
         whitespace.maybe
       ).as(:block)
     }

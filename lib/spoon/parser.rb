@@ -18,7 +18,9 @@ module Spoon
         "isnt",
         "or",
         "not",
-        "then"
+        "then",
+        "in",
+        "of"
       ]
     end
 
@@ -56,6 +58,7 @@ module Spoon
       endline.maybe
     }
 
+    # Matches block starting with do keyword
     rule(:block) {
       space.maybe >>
       key("do") >>

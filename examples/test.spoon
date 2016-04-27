@@ -3,6 +3,8 @@
 function a b = 7, c = "aaa"
   print "Hello"
 
+  print 9 * 5 + (8 - 7 * 7) * 9 + (5 - 3)
+
   call = ->
     print "Closure!"
     print "Closure!"

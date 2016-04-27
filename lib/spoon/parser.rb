@@ -48,12 +48,12 @@ module Spoon
     # Matches expression
     rule(:expression) {
       space.maybe >>
-      (
+      parens(
         statement |
         (
           value.as(:left) >>
           trim(operator) >>
-          value.as(:right)
+          expression.as(:right)
         ) |
         value
       ) >>

@@ -77,10 +77,7 @@ module Spoon
         until ary.empty?
           op, right = ary.shift(2)
 
-          # p [left, op, right]
-
           if right.kind_of? Array
-            # Subexpression -> Subhash
             left = { Op: { Name: op, Left: left, Right: produce_tree(right) } }
           else
             left = { Op: { Name: op, Left: left, Right: right } }

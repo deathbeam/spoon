@@ -15,6 +15,7 @@ describe Spoon::Parser do
 
     it { should parse "\n print foo\n return bar\n" }
     it { should_not parse "\n print foo\n return bar" }
+    it { should_not parse "\n  print foo\n  return bar\n " }
   end
 
   context "call" do
@@ -55,13 +56,13 @@ describe Spoon::Parser do
 
   context "expression" do
     subject { parser.expression }
-
-    it { should parse "foo.bar.(baz())" }
     it { should parse "foo and bar" }
     it { should parse "foo + bar" }
     it { should parse "foo * bar" }
     it { should parse "++foo" }
     it { should parse "foo++" }
+    it { should parse "a = b * c * d * e" }
+    it { should parse "foo.bar.(baz())" }
     it { should_not parse "foo ** bar" }
   end
 

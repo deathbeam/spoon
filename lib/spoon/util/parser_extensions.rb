@@ -81,9 +81,9 @@ module Spoon
 
           if right.kind_of? Array
             # Subexpression -> Subhash
-            left = {Left: left, Op: op, Right: produce_tree(right)}
+            left = { Op: { Name: op, Left: left, Right: produce_tree(right) } }
           else
-            left = {Left: left, Op: op, Right: right}
+            left = { Op: { Name: op, Left: left, Right: right } }
           end
         end
 

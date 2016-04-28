@@ -8,6 +8,9 @@ function log message
   else
     print "[INFO] Empty message"
 
-greet = name -> log "Hello #{name}"
+a = b++
+a = ++c
+
+greet = name, hame -> log "Hello #{name}"
 
 greet "friend" # This will print "Hello friend" to console

@@ -51,7 +51,7 @@ module Spoon
     # Matches expression
     rule(:expression) {
       space.maybe >>
-      (statement | operation) >>
+      (statement | operation | value) >>
       endline.maybe
     }
 
@@ -64,30 +64,30 @@ module Spoon
 
     # Matches operation
     rule(:operation) {
-       unary_operation | infix_expression(
-        parens(value) | parens(operation, true),
-        [trim(str(".")), 2, :left],
-        [trim(match['\*/%']), 5, :left],
-        [trim(match['\+\-']), 6, :left],
-        [trim(str("<<") | str(">>")), 7, :left],
+       unary_operation.as(:Op) | infix_expression(
+        unary_operation.as(:Op) | parens(value) | parens(operation, true),
+        [trim(str(".")), 12, :left],
+        [trim(match['\*/%']), 11, :left],
+        [trim(match['\+\-']), 10, :left],
+        [trim(str("<<") | str(">>")), 9, :left],
         [trim(match['<>'] |str("<=") | str(">=")), 8, :left],
-        [trim(str("==") | str("!=") | key("is") | key("isnt")), 9, :left],
-        [trim(str("&")), 10, :left],
-        [trim(str("^")), 11, :left],
-        [trim(str("|")), 12, :left],
-        [trim(str("&&") | key("and")), 13, :left],
-        [trim(str("||") | key("or")), 14, :left],
+        [trim(str("==") | str("!=") | key("is") | key("isnt")), 7, :left],
+        [trim(str("&")), 6, :left],
+        [trim(str("^")), 5, :left],
+        [trim(str("|")), 4, :left],
+        [trim(str("&&") | key("and")), 3, :left],
+        [trim(str("||") | key("or")), 2, :left],
         [trim(str("+=") | str("-=") | str("*=") | str("/=") |
               str("%=") | str("<<=") | str(">>=") | str("&=")|
-              str("^=") | str("|=") | str("=") | key("in")), 15, :right]
+              str("^=") | str("|=") | str("=") | key("in")), 1, :right]
       )
     }
 
     # Matches unary operation
     # example: !foo
     rule(:unary_operation) {
-      (trim(str("++") | str("--") | key("not") | match['\+\-!']).as(:Op) >> value.as(:Right)) |
-      (value.as(:Left) >> trim(str("++") | str("--")).as(:Op))
+      (((str("++") | str("--") | key("not") | match['\+\-!']) >> space.maybe).as(:Name) >> value.as(:Right)) |
+      (value.as(:Left) >> space.maybe >> (str("++") | str("--")).as(:Name))
     }
 
     # Matches value

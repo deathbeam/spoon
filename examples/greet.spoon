@@ -4,9 +4,9 @@
 
 function log message
   if message
-    print message
+    print "[INFO] #{@message}"
   else
-    print "It is empty, sorry"
+    print "[INFO] Empty message"
 
 greet = name -> log "Hello #{name}"
 

@@ -7,24 +7,25 @@ module Spoon
       def initialize
         super
         @stack = [0]
+        @prev_stack = [0]
         @current = 0
         @last = 0
+        @matcher = /[ \t]/
       end
 
       # Check indentation level at current position and adjust stack
       def check_indentation(source)
-        indent_level = 0
-        matcher = /[ \t]/
+        @current = 0
 
-        while source.matches?(matcher)
+        while source.matches?(@matcher)
           source.consume(1)
-          indent_level += 1
+          @current += 1
         end
 
         @last = @stack[@stack.length - 1]
-        @current = indent_level
 
         if @current > @last
+          @prev_stack.push @last
           @stack.push @current
         elsif @current < @last
           @stack.pop
@@ -36,8 +37,16 @@ module Spoon
       # We need to do this, so next samedent won't be skipped
       def fix_position(source)
         source.bytepos = source.bytepos - @current
-        @current = @last
-        AlwaysMatch.new
+
+        if @current <= @prev_stack[@prev_stack.length - 1]
+          while @last != @current && !@prev_stack.empty?
+            @last = @prev_stack.pop
+          end
+
+          return AlwaysMatch.new if @last == @current
+        end
+
+        NeverMatch.new "Mismatched indentation level"
       end
 
       rule (:checkdent) {

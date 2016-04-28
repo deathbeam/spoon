@@ -35,8 +35,12 @@ module Spoon
       end
 
       # Matches value in parens or not in parens
-      def parens(value)
-        (str("(") >> trim(value.maybe) >> str(")") >> endline.maybe) | value
+      def parens(value, force = false)
+        if force
+          str("(") >> trim(value) >> str(")") >> endline.maybe
+        else
+          (str("(") >> trim(value.maybe) >> str(")") >> endline.maybe) | value
+        end
       end
 
       # Matches single or multiple end of lines
@@ -62,62 +66,6 @@ module Spoon
       # Matches space to end of line and checks indentation
       rule(:endline) {
         (space.maybe >> newline).repeat(1) >> checkdent
-      }
-
-      rule(:op_compound_assign) {
-        str("-=") |
-        str("+=") |
-        str("/=") |
-        str("*=") |
-        str("%=") |
-        str("||=") |
-        str("&&=") |
-        str(">>>=") |
-        str("<<=") |
-        str(">>=") |
-        str("&=") |
-        str("^=") |
-        str("|=")
-      }
-
-      rule(:op_shift) {
-        str(">>>") |
-        str(">>") |
-        str("<<")
-      }
-
-      rule(:op_math) {
-        str("%") |
-        str("/") |
-        str("*") |
-        str("\\")
-      }
-
-      rule(:op_compare) {
-        str(">=") |
-        str("<=") |
-        str(">") |
-        str("<") |
-        str("!=") |
-        str("==")
-      }
-
-      rule(:op_relation) {
-        key("of") |
-        key("in")
-      }
-
-      rule(:op_logic) {
-        str("||") |
-        str("&&") |
-        str("|") |
-        str("&") |
-        str("^")
-      }
-
-      rule(:op_unary_math) {
-        str("!") |
-        str("~")
       }
     end
   end

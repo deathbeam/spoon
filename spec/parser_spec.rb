@@ -3,14 +3,6 @@ require 'spec_helper'
 describe Spoon::Parser do
   let(:parser) { Spoon::Parser.new }
 
-  context "binary operation" do
-    subject { parser.binary_operation }
-
-    it { should parse "foo + bar" }
-    it { should parse "foo * bar" }
-    it { should_not parse "foo + bar + baz" }
-  end
-
   context "block" do
     subject { parser.block }
 
@@ -32,13 +24,6 @@ describe Spoon::Parser do
     it { should parse "foo(bar)" }
     it { should parse "foo bar, baz" }
     it { should parse "foo(bar, baz)" }
-  end
-
-  context "chain" do
-    subject { parser.chain }
-
-    it { should parse "foo.bar" }
-    it { should parse "foo().bar().baz(foo, bar).baz" }
   end
 
   context "closure" do
@@ -71,8 +56,12 @@ describe Spoon::Parser do
   context "expression" do
     subject { parser.expression }
 
+    it { should parse "foo.bar.(baz())" }
     it { should parse "foo and bar" }
+    it { should parse "foo + bar" }
     it { should parse "foo * bar" }
+    it { should parse "++foo" }
+    it { should parse "foo++" }
     it { should_not parse "foo ** bar" }
   end
 
@@ -101,11 +90,9 @@ describe Spoon::Parser do
     subject { parser.number }
 
     it { should parse "10" }
-    it { should parse "+0" }
-    it { should parse "-10" }
+    it { should parse "0" }
     it { should parse "1.0" }
     it { should parse "0.0" }
-    it { should parse "-10.0" }
     it { should parse "1e10" }
     it { should_not parse "a2" }
   end
@@ -114,14 +101,5 @@ describe Spoon::Parser do
     subject { parser.root }
 
     it { should parse "# foo\n    print bar\n # baz " }
-  end
-
-  context "unary operation" do
-    subject { parser.unary_operation }
-
-    it { should parse "++foo" }
-    it { should parse "foo++" }
-    it { should parse "not foo" }
-    it { should_not parse "foo + bar" }
   end
 end

@@ -50,11 +50,7 @@ module Spoon
     # Matches expression
     rule(:expression) {
       space.maybe >>
-      parens(
-        statement |
-        operation |
-        value
-      ) >>
+      (statement | operation) >>
       endline.maybe
     }
 
@@ -67,58 +63,30 @@ module Spoon
 
     # Matches operation
     rule(:operation) {
-      binary_operation |
-      unary_operation
-    }
-
-    # Matches binary operation
-    # example: foo + bar
-    rule(:binary_operation) {
-      (
-        value.as(:left) >>
-        trim((
-          str("<=") |
-          str(">=") |
-          str("!=") |
-          str("==") |
-          str("+=") |
-          str("-=") |
-          str("*=") |
-          str("/=") |
-          str("%=") |
-          str("and=") |
-          str("or=") |
-          key("or") |
-          key("and") |
-          key("is") |
-          key("isnt") |
-          match['\+\-\*\/%\^><\|&=']
-        ).as(:op)) >>
-        expression.as(:right)
-      ).as(:binary)
+       unary_operation | infix_expression(
+        parens(value) | parens(expression, true),
+        [trim(str(".")), 2, :left],
+        [trim(match['\*/%']), 5, :left],
+        [trim(match['\+\-']), 6, :left],
+        [trim(str("<<") | str(">>")), 7, :left],
+        [trim(match['<>'] |str("<=") | str(">=")), 8, :left],
+        [trim(str("==") | str("!=")), 9, :left],
+        [trim(str("&")), 10, :left],
+        [trim(str("^")), 11, :left],
+        [trim(str("|")), 12, :left],
+        [trim(str("&&") | key("and")), 13, :left],
+        [trim(str("||") | key("or")), 14, :left],
+        [trim(str("+=") | str("-=") | str("*=") | str("/=") |
+              str("%=") | str("<<=") | str(">>=") | str("&=")|
+              str("^=") | str("|=") | str("=")), 15, :right]
+      )
     }
 
     # Matches unary operation
     # example: !foo
     rule(:unary_operation) {
-      (
-        (
-          trim((
-            str("++") |
-            str("--") |
-            key("not") |
-            match['\+\-!']
-          ).as(:op)) >>
-          value.as(:right)
-        ) |
-        (
-          value.as(:left) >>
-          trim((
-            str("++") |
-            str("--")
-          ).as(:op))
-        )
-      ).as(:unary)
+      (trim(str("++") | str("--") | key("not") | match['\+\-!']).as(:o) >> value.as(:r)) |
+      (value.as(:l) >> trim(str("++") | str("--")).as(:o))
     }
 
     # Matches value
@@ -126,7 +94,6 @@ module Spoon
       condition |
       closure |
       block |
-      chain |
       call |
       ret |
       name |
@@ -167,10 +134,6 @@ module Spoon
     }
 
     rule(:integer) {
-      (
-        str('+') |
-        str('-')
-      ).maybe >>
       match("[0-9]").repeat(1)
     }
 
@@ -202,18 +165,6 @@ module Spoon
       key("return") >>
       space.maybe >>
       expression_list.maybe.as(:return)
-    }
-
-    # Matches chain of expressions
-    # example: abc(a).def(b).efg
-    rule(:chain) {
-      repeat(chain_value, trim(str(".")), 1).as(:chain)
-    }
-
-    # Matches chain value
-    rule(:chain_value) {
-      call |
-      name
     }
 
     # Matches function call

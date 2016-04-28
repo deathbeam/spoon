@@ -5,7 +5,6 @@ module Spoon
   module Util
     # Monkey-patch the parser to include some common methods
     class Spoon::Util::IndentParser
-
       # Matches only if you are not trying to match any previously stored key
       rule(:skip_key) {
         result = str(@keywords.first).absent?
@@ -67,6 +66,29 @@ module Spoon
       rule(:endline) {
         (space.maybe >> newline).repeat(1) >> checkdent
       }
+    end
+
+    class Parslet::Atoms::Infix
+      def produce_tree(ary)
+        return ary unless ary.kind_of? Array
+
+        left = ary.shift
+
+        until ary.empty?
+          op, right = ary.shift(2)
+
+          # p [left, op, right]
+
+          if right.kind_of? Array
+            # Subexpression -> Subhash
+            left = {Left: left, Op: op, Right: produce_tree(right)}
+          else
+            left = {Left: left, Op: op, Right: right}
+          end
+        end
+
+        left
+      end
     end
   end
 end

@@ -16,10 +16,15 @@ module Spoon
         result
       }
 
-      # Stores string as key and matches it
-      def key(value)
+      # Stores string as key
+      def preserve(value)
         @keywords = [] if @keywords.nil?
         @keywords.push value unless @keywords.include? value
+      end
+
+      # Stores string as key and matches it
+      def key(value)
+        preserve(value)
         str(value)
       end
 

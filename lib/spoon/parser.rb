@@ -3,9 +3,11 @@ require "parslet/convenience"
 
 require "spoon/util/indent_parser"
 require "spoon/util/parser_extensions"
+require "spoon/util/parser_literals"
 
 module Spoon
   class Parser < Spoon::Util::IndentParser
+    # Initialize the keyword map
     def initialize
       super
       @keywords = [
@@ -58,7 +60,7 @@ module Spoon
     # Matches block starting with do keyword
     rule(:block) {
       space.maybe >>
-      key("do") >>
+      DO() >>
       body.as(:Block)
     }
 
@@ -66,28 +68,27 @@ module Spoon
     rule(:operation) {
        unary_operation.as(:Op) | infix_expression(
         unary_operation.as(:Op) | parens(value) | parens(operation, true),
-        [trim(str(".")), 12, :left],
-        [trim(match['\*/%']), 11, :left],
-        [trim(match['\+\-']), 10, :left],
-        [trim(str("<<") | str(">>")), 9, :left],
-        [trim(match['<>'] |str("<=") | str(">=")), 8, :left],
-        [trim(str("==") | str("!=") | key("is") | key("isnt")), 7, :left],
-        [trim(str("&")), 6, :left],
-        [trim(str("^")), 5, :left],
-        [trim(str("|")), 4, :left],
-        [trim(str("&&") | key("and")), 3, :left],
-        [trim(str("||") | key("or")), 2, :left],
-        [trim(str("+=") | str("-=") | str("*=") | str("/=") |
-              str("%=") | str("<<=") | str(">>=") | str("&=")|
-              str("^=") | str("|=") | str("=") | key("in")), 1, :right]
+        [DOT(), 13, :left],
+        [MUL(), 12, :left],
+        [ADD(), 11, :left],
+        [SHIFT(), 10, :left],
+        [COMPARE(), 9, :left],
+        [EQ(), 8, :left],
+        [BAND(), 7, :left],
+        [BXOR(), 6, :left],
+        [BOR(), 5, :left],
+        [AND(), 4, :left],
+        [OR(), 3, :left],
+        [ASSIGN(), 2, :right],
+        [CASSIGN(), 1, :right]
       )
     }
 
     # Matches unary operation
     # example: !foo
     rule(:unary_operation) {
-      (((str("++") | str("--") | key("not") | match['\+\-!']) >> space.maybe).as(:Name) >> value.as(:Right)) |
-      (value.as(:Left) >> space.maybe >> (str("++") | str("--")).as(:Name))
+      (((INCREMENT() | UNARY()) >> space.maybe).as(:Name) >> value.as(:Right)) |
+      (value.as(:Left) >> space.maybe >> INCREMENT().as(:Name))
     }
 
     # Matches value
@@ -140,7 +141,7 @@ module Spoon
     # Matches everything that starts with '#' until end of line
     # example: # abc
     rule(:comment) {
-      str("#") >>
+      HASH() >>
       stop >>
       newline.maybe
     }
@@ -148,7 +149,7 @@ module Spoon
     # Matches return statement
     # example: return a, b, c
     rule(:ret) {
-      key("return") >>
+      RETURN() >>
       space.maybe >>
       expression_list.maybe.as(:Return)
     }
@@ -156,38 +157,25 @@ module Spoon
     # Matches function call
     # example: a(b, c, d, e, f)
     rule(:call) {
-      (
-        name >>
-        (
-          str("!") |
-          (
-            space.maybe >>
-            expression_list
-          )
-        )
-      ).as(:Call)
+      (name >> space.maybe >> (EXCLAMATION() |  expression_list)).as(:Call)
     }
 
     # Matches function parameter
     # example a = 1
     rule(:parameter) {
-      name.as(:Name) >>
-      (
-        trim(str("=")) >>
-        expression
-      ).maybe
+      name.as(:Name) >> (ASSIGN() >> expression).maybe
     }
 
     # Matches comma delimited function parameters
     # example: (a, b)
     rule(:parameter_list) {
-      parens(repeat(parameter.as(:Param), trim(str(","))))
+      parens(repeat(parameter.as(:Param), COMMA()))
     }
 
     # Matches comma delimited expressions
     # example: a(b), c(d), e
     rule(:expression_list) {
-      parens(repeat(expression.as(:Arg), trim(str(","))))
+      parens(repeat(expression.as(:Arg), COMMA()))
     }
 
     # Matches closure
@@ -196,7 +184,7 @@ module Spoon
       (
         parameter_list.maybe >>
         whitespace.maybe >>
-        str("->") >>
+        ARROW() >>
         body
       ).as(:Closure)
     }
@@ -205,7 +193,7 @@ module Spoon
     # example: def (a) b
     rule(:function) {
       (
-        key("function") >>
+        FUNCTION() >>
         space.maybe >>
         name.as(:Name) >>
         function_body
@@ -225,15 +213,15 @@ module Spoon
     # example: if (a) b else if(c) d else e
     rule(:condition) {
       (
-        key("if") >>
+        IF() >>
         space.maybe >>
         parens(expression) >>
         space.maybe >>
-        key("then").maybe >>
+        THEN().maybe >>
         body.as(:True) >>
         (
           space.maybe >>
-          key("else") >>
+          ELSE() >>
           body.as(:False)
         ).maybe
       ).as(:If)

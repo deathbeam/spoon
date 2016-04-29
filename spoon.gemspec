@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Tomas Slusny"]
   spec.email         = ["slusnucky@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
+  spec.summary       = %q{Programming language that runs blazingly fast, compiles to native code and works everywhere}
+  spec.description   = %q{Spoon is awesome new programming language, what combines the best things from Ruby and Python. Spoon is open source, cross-platform and runs on top of Haxe.}
   spec.homepage      = "https://spoonlang.org"
   spec.license       = "MIT"
 

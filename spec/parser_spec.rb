@@ -75,18 +75,6 @@ describe Spoon::Parser do
     it { should parse "function foo(bar = 1) baz" }
   end
 
-  context "name" do
-    subject { parser.name }
-
-    it { should parse "foo" }
-    it { should parse "Foo" }
-    it { should parse "foo-bar" }
-    it { should_not parse "-foo" }
-    it { should_not parse "foo2" }
-    it { should_not parse "foo?" }
-    it { should_not parse "foo_bar" }
-  end
-
   context "number" do
     subject { parser.number }
 
@@ -102,5 +90,17 @@ describe Spoon::Parser do
     subject { parser.root }
 
     it { should parse "# foo\n    print bar\n # baz " }
+  end
+
+  context "word" do
+    subject { parser.word }
+
+    it { should parse "foo" }
+    it { should parse "Foo" }
+    it { should parse "foo-bar" }
+    it { should_not parse "-foo" }
+    it { should_not parse "foo2" }
+    it { should_not parse "foo?" }
+    it { should_not parse "foo_bar" }
   end
 end

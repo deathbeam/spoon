@@ -16,6 +16,10 @@ module Spoon
       AST::Node.new :block, expressions
     }
 
+    rule(:boolean => simple(:boolean)) {
+      AST::Node.new :value, [ boolean.to_b ]
+    }
+
     rule(:string => simple(:string)) {
       AST::Node.new :value, [ "'#{string}'" ]
     }
@@ -115,10 +119,31 @@ module Spoon
 
     rule(:if => {
           :body => simple(:body),
+          :true => simple(:if_true)
+          }) {
+      AST::Node.new :if, [ body, if_true ]
+    }
+
+    rule(:if => {
+          :condition => simple(:condition),
           :true => simple(:if_true),
           :false => simple(:if_false)
           }) {
-      AST::Node.new :if, [ body, if_true, if_false ]
+      AST::Node.new :if, [ condition, if_true, if_false ]
+    }
+
+    rule(:for => {
+          :condition => simple(:condition),
+          :body => simple(:body)
+          }) {
+      AST::Node.new :for, [ condition, body ]
+    }
+
+    rule(:while => {
+          :condition => simple(:condition),
+          :body => simple(:body)
+          }) {
+      AST::Node.new :while, [ condition, body ]
     }
   end
 end

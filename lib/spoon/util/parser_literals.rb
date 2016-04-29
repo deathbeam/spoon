@@ -12,13 +12,19 @@ module Spoon
 
       rule(:ELSE) { key("else") }
 
+      rule(:FOR) { key("for") }
+
       rule(:FUNCTION) { key("function") }
 
       rule(:IF) { key("if") }
 
+      rule(:IN) { key("in") }
+
       rule(:RETURN) { key("return") }
 
       rule(:THEN) { key("then") }
+
+      rule(:WHILE) { key("while") }
 
       ####################################
       # Special characters

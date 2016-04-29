@@ -66,6 +66,12 @@ describe Spoon::Parser do
     it { should_not parse "foo ** bar" }
   end
 
+  context "for" do
+    subject { parser.for_loop }
+
+    it { should parse "for (foo in bar) baz" }
+  end
+
   context "function" do
     subject { parser.function }
 
@@ -90,6 +96,12 @@ describe Spoon::Parser do
     subject { parser.root }
 
     it { should parse "# foo\n    print bar\n # baz " }
+  end
+
+  context "while" do
+    subject { parser.while_loop }
+
+    it { should parse "while (foo) baz" }
   end
 
   context "word" do

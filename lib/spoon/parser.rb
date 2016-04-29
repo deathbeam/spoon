@@ -21,7 +21,9 @@ module Spoon
         "or",
         "not",
         "then",
-        "in"
+        "in",
+        "for",
+        "while"
       ]
     end
 
@@ -94,12 +96,14 @@ module Spoon
     # Matches value
     rule(:value) {
       condition |
+      for_loop |
+      while_loop |
       closure |
       block |
       call |
       ret |
-      word.as(:identifier) |
-      literal
+      literal |
+      word.as(:identifier)
     }
 
     # Matches statement, so everything that is unassignable
@@ -114,6 +118,11 @@ module Spoon
         match['a-zA-Z'] >>
         match['a-zA-Z\-'].repeat
       )
+    }
+
+    # Matches true false
+    rule(:boolean) {
+      (str("true") | str("false")).as(:boolean)
     }
 
     # Matches strings
@@ -139,7 +148,7 @@ module Spoon
 
     # Matches literals (strings, numbers)
     rule(:literal) {
-      number | string
+      number | string | boolean
     }
 
     # Matches everything that starts with '#' until end of line
@@ -212,13 +221,33 @@ module Spoon
       ) | body.as(:body)
     }
 
+    # Matches for loop
+    rule(:for_loop) {
+      (
+        FOR() >>
+        space.maybe >>
+        parens(word.as(:identifier).as(:left) >> trim(IN()).as(:op) >> expression.as(:right)).as(:condition) >>
+        body.as(:body)
+      ).as(:for)
+    }
+
+    # Matches while loop
+    rule(:while_loop) {
+      (
+        WHILE() >>
+        space.maybe >>
+        parens(expression).as(:condition) >>
+        body.as(:body)
+      ).as(:while)
+    }
+
     # Matches if-else if-else in recursive structure
     # example: if (a) b else if(c) d else e
     rule(:condition) {
       (
         IF() >>
         space.maybe >>
-        parens(expression).as(:body) >>
+        parens(expression).as(:condition) >>
         space.maybe >>
         THEN().maybe >>
         body.as(:true) >>

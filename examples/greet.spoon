@@ -10,4 +10,10 @@ function log message
 
 greet = name -> log "Hello #{name}"
 
+for i in greet!
+  print "Hello #{i}"
+
+while true
+  print "Endless loop"
+
 greet "friend" # This will print "Hello friend" to console

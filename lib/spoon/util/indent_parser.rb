@@ -1,5 +1,4 @@
-require 'parslet'
-require "awesome_print"
+require "parslet"
 
 module Spoon
   module Util

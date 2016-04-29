@@ -20,11 +20,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "ast"
-  spec.add_dependency "awesome_print"
   spec.add_dependency "colorize"
   spec.add_dependency "parslet"
   spec.add_dependency "thor"
-  spec.add_dependency "json"
 
   spec.add_development_dependency "bundler", "~> 1.11"
   spec.add_development_dependency "coveralls"

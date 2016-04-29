@@ -83,9 +83,9 @@ module Spoon
           op, right = ary.shift(2)
 
           if right.kind_of? Array
-            left = { Op: { Name: op, Left: left, Right: produce_tree(right) } }
+            left = { left: left, op: op, right: produce_tree(right) }
           else
-            left = { Op: { Name: op, Left: left, Right: right } }
+            left = { left: left, op: op, right: right }
           end
         end
 

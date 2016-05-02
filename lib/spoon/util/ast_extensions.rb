@@ -22,6 +22,9 @@ module Spoon
       def to_op
         str = trim
 
+        # Special
+        return "access" if str == "."
+
         # Assign and update
         return "assign" if str == "="
         return "addition assign" if str == "+="

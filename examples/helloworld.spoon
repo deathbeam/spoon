@@ -1,0 +1,5 @@
+#!/usr/bin/env coffee
+
+print "Hello World"
+
+# > Hello World

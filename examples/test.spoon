@@ -1,0 +1,20 @@
+#!/usr/bin/env coffee
+# Above is just for nice syntax highlighting
+# as Spoon syntax is very similar to CoffeeScript
+
+function log message
+  if message
+    print "[INFO] #{@message}"
+  else
+    print "[INFO] Empty message"
+    return a, b
+
+greet = name -> log "Hello #{name}"
+
+for i in greet!
+  print "Hello #{i}"
+
+while true
+  print "Endless loop"
+
+greet "friend" # This will print "Hello friend" to console

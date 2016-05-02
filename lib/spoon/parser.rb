@@ -11,21 +11,21 @@ module Spoon
     def initialize
       super
       @keywords = [
-        "if",
-        "else",
-        "function",
-        "return",
-        "and",
-        "is",
-        "isnt",
-        "or",
-        "not",
-        "then",
-        "in",
-        "for",
-        "unless",
-        "do",
-        "while"
+        :if,
+        :else,
+        :function,
+        :return,
+        :and,
+        :is,
+        :isnt,
+        :or,
+        :not,
+        :then,
+        :in,
+        :for,
+        :unless,
+        :do,
+        :while
       ]
     end
 
@@ -86,8 +86,8 @@ module Spoon
     # example: !foo
     # TODO: Enable spaces between operator and value
     rule(:unary_operation) {
-      ((INCREMENT() | UNARY()).as(:op) >> value.as(:right)) |
-      (value.as(:left) >> INCREMENT().as(:op))
+      ((INCREMENT() | UNARY()).as(:o) >> value.as(:r)) |
+      (value.as(:l) >> INCREMENT().as(:o))
     }
 
     # Matches value
@@ -120,7 +120,7 @@ module Spoon
 
     # Matches true false
     rule(:boolean) {
-      (str("true") | str("false")).as(:boolean)
+      (str(:true) | str(:false)).as(:boolean)
     }
 
     # Matches strings
@@ -136,7 +136,7 @@ module Spoon
     # Matches numbers
     rule(:number) {
       (
-        match("[0-9]").repeat(1) >>
+        match('[0-9]').repeat(1) >>
         (
           str('.') >> match('[0-9]').repeat(1) |
           str('e') >> match('[0-9]').repeat(1)
@@ -224,7 +224,7 @@ module Spoon
       (
         FOR() >>
         space.maybe >>
-        parens(word.as(:identifier).as(:left) >> trim(IN()).as(:op) >> expression.as(:right)).as(:condition) >>
+        parens(word.as(:identifier).as(:l) >> trim(IN()).as(:o) >> expression.as(:r)).as(:condition) >>
         body.as(:body)
       ).as(:for)
     }

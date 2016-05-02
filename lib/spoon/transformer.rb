@@ -44,15 +44,15 @@ module Spoon
       AST::Node.new :param, [ name.to_v, value]
     }
 
-    rule(:left => simple(:left), :op => simple(:op), :right => simple(:right)) {
+    rule(:l => simple(:left), :o => simple(:op), :r => simple(:right)) {
       AST::Node.new :op, [ op.to_op, left, right ]
     }
 
-    rule(:left => simple(:left), :op => simple(:op)) {
+    rule(:l => simple(:left), :o => simple(:op)) {
       AST::Node.new :op, [ op.to_op, left ]
     }
 
-    rule(:op => simple(:op), :right => simple(:right)) {
+    rule(:o => simple(:op), :r => simple(:right)) {
       AST::Node.new :op, [ op.to_op, right ]
     }
 

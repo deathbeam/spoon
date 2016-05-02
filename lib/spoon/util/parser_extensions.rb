@@ -72,25 +72,5 @@ module Spoon
         (space.maybe >> newline).repeat(1) >> checkdent
       }
     end
-
-    class Parslet::Atoms::Infix
-      def produce_tree(ary)
-        return ary unless ary.kind_of? Array
-
-        left = ary.shift
-
-        until ary.empty?
-          op, right = ary.shift(2)
-
-          if right.kind_of? Array
-            left = { left: left, op: op, right: produce_tree(right) }
-          else
-            left = { left: left, op: op, right: right }
-          end
-        end
-
-        left
-      end
-    end
   end
 end

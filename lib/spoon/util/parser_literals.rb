@@ -8,35 +8,35 @@ module Spoon
       # Special keywords
       ####################################
 
-      rule(:DO) { key("do") }
+      rule(:DO)       { key :do }
 
-      rule(:ELSE) { key("else") }
+      rule(:ELSE)     { key :else }
 
-      rule(:FOR) { key("for") }
+      rule(:FOR)      { key :for }
 
-      rule(:FUNCTION) { key("function") }
+      rule(:FUNCTION) { key :function }
 
-      rule(:IF) { key("if") }
+      rule(:IF)       { key :if }
 
-      rule(:IN) { key("in") }
+      rule(:IN)       { key :in }
 
-      rule(:RETURN) { key("return") }
+      rule(:RETURN)   { key :return }
 
-      rule(:THEN) { key("then") }
+      rule(:THEN)     { key :then }
 
-      rule(:UNLESS) { key("unless") }
+      rule(:UNLESS)   { key :unless }
 
-      rule(:WHILE) { key("while") }
+      rule(:WHILE)    { key :while }
 
       ####################################
       # Special characters
       ####################################
 
-      rule(:ARROW) { str("->") }
+      rule(:ARROW)       { str "->" }
 
-      rule(:EXCLAMATION) { str("!") }
+      rule(:EXCLAMATION) { str "!" }
 
-      rule(:HASH) { str("#") }
+      rule(:HASH)        { str "#" }
 
       ####################################
       # Operators
@@ -78,10 +78,14 @@ module Spoon
       # Logical OR
       rule(:OR) { trim(str("||") | key("or")) }
 
+      # Suffix/Prefix increment and decrement
+      rule(:INCREMENT) { str("++") | str("--") }
+
+      # Unary plus/minus, logical not and bitwise not
+      rule(:UNARY) { key("not") | match['\+\-!~'] }
+
       # Direct assignment
-      rule(:ASSIGN) {
-        trim(str("="))
-      }
+      rule(:ASSIGN) { trim(str("=")) }
 
       # Compound assignment
       rule(:CASSIGN) {
@@ -89,12 +93,6 @@ module Spoon
             str("%=") | str("<<=") | str(">>=") | str("&=")|
             str("^=") | str("|="))
       }
-
-      # Suffix/Prefix increment and decrement
-      rule(:INCREMENT) { str("++") | str("--") }
-
-      # Unary plus/minus, logical not and bitwise not
-      rule(:UNARY) { key("not") | match['\+\-!~'] }
     end
   end
 end

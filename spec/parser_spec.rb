@@ -6,13 +6,6 @@ describe Spoon::Parser do
   context "block" do
     subject { parser.block }
 
-    it { should parse "do print foo" }
-    it { should parse "do \n print foo\n" }
-  end
-
-  context "block expression" do
-    subject { parser.block_expression }
-
     it { should parse "\n print foo\n return bar\n" }
     it { should_not parse "\n print foo\n return bar" }
     it { should_not parse "\n  print foo\n  return bar\n " }
@@ -49,9 +42,18 @@ describe Spoon::Parser do
     subject { parser.condition }
 
     it { should parse "if (foo) bar" }
-    it { should parse "if foo then bar" }
+    it { should parse "if foo do bar" }
     it { should parse "if (foo) bar else if (baz) foo else bar" }
     it { should_not parse "if foo bar" }
+  end
+
+  context "reverse condition" do
+    subject { parser.condition_reverse }
+
+    it { should parse "unless (foo) bar" }
+    it { should parse "unless foo do bar" }
+    it { should parse "unless (foo) bar else if (baz) foo else bar" }
+    it { should_not parse "unless foo bar" }
   end
 
   context "expression" do
@@ -70,6 +72,7 @@ describe Spoon::Parser do
     subject { parser.for_loop }
 
     it { should parse "for (foo in bar) baz" }
+    it { should parse "for foo in bar do baz" }
   end
 
   context "function" do
@@ -102,6 +105,7 @@ describe Spoon::Parser do
     subject { parser.while_loop }
 
     it { should parse "while (foo) baz" }
+    it { should parse "while foo do baz" }
   end
 
   context "word" do

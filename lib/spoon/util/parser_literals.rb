@@ -24,6 +24,8 @@ module Spoon
 
       rule(:THEN) { key("then") }
 
+      rule(:UNLESS) { key("unless") }
+
       rule(:WHILE) { key("while") }
 
       ####################################

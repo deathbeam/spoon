@@ -118,10 +118,10 @@ module Spoon
     }
 
     rule(:if => {
-          :body => simple(:body),
+          :condition => simple(:condition),
           :true => simple(:if_true)
           }) {
-      AST::Node.new :if, [ body, if_true ]
+      AST::Node.new :if, [ condition, if_true ]
     }
 
     rule(:if => {
@@ -130,6 +130,21 @@ module Spoon
           :false => simple(:if_false)
           }) {
       AST::Node.new :if, [ condition, if_true, if_false ]
+    }
+
+    rule(:unless => {
+          :condition => simple(:condition),
+          :true => simple(:if_true)
+          }) {
+      AST::Node.new :if, [ AST::Node.new(:op, [ "!", condition ]), if_true ]
+    }
+
+    rule(:unless => {
+          :condition => simple(:condition),
+          :true => simple(:if_true),
+          :false => simple(:if_false)
+          }) {
+      AST::Node.new :if, [ AST::Node.new(:op, [ "!", condition ]), if_true, if_false ]
     }
 
     rule(:for => {

@@ -23,6 +23,8 @@ module Spoon
         "then",
         "in",
         "for",
+        "unless",
+        "do",
         "while"
       ]
     end
@@ -38,14 +40,14 @@ module Spoon
 
     # Matches expression or indented block and skips end of line at end
     rule(:body) {
-      (
-        block_expression |
+      (space.maybe >> DO()).maybe >> (
+        block |
         expression
       )
     }
 
     # Matches indented block
-    rule(:block_expression) {
+    rule(:block) {
       endline.maybe >>
       indent >>
       repeat(expression, samedent).as(:block) >>
@@ -53,17 +55,11 @@ module Spoon
     }
 
     # Matches expression
+    # TODO: Add decorators (postfix if, unless, for and while)
     rule(:expression) {
       space.maybe >>
       (statement | operation | value) >>
       endline.maybe
-    }
-
-    # Matches block starting with do keyword
-    rule(:block) {
-      space.maybe >>
-      DO() >>
-      body.as(:block)
     }
 
     # Matches operation
@@ -88,6 +84,7 @@ module Spoon
 
     # Matches unary operation
     # example: !foo
+    # TODO: Enable spaces between operator and value
     rule(:unary_operation) {
       ((INCREMENT() | UNARY()).as(:op) >> value.as(:right)) |
       (value.as(:left) >> INCREMENT().as(:op))
@@ -96,10 +93,10 @@ module Spoon
     # Matches value
     rule(:value) {
       condition |
+      condition_reverse |
       for_loop |
       while_loop |
       closure |
-      block |
       call |
       ret |
       literal |
@@ -107,6 +104,7 @@ module Spoon
     }
 
     # Matches statement, so everything that is unassignable
+    # TODO: Add classes, interfaces and so
     rule(:statement) {
       function
     }
@@ -248,15 +246,29 @@ module Spoon
         IF() >>
         space.maybe >>
         parens(expression).as(:condition) >>
-        space.maybe >>
-        THEN().maybe >>
-        body.as(:true) >>
-        (
-          space.maybe >>
-          ELSE() >>
-          body.as(:false)
-        ).maybe
+        condition_body
       ).as(:if)
+    }
+
+    # Matches if-else if-else in recursive structure
+    # example: if (a) b else if(c) d else e
+    rule(:condition_reverse) {
+      (
+        UNLESS() >>
+        space.maybe >>
+        parens(expression).as(:condition) >>
+        condition_body
+      ).as(:unless)
+    }
+
+    # Matches condition body
+    rule(:condition_body) {
+      body.as(:true) >>
+      (
+        space.maybe >>
+        ELSE() >>
+        body.as(:false)
+      ).maybe
     }
   end
 end

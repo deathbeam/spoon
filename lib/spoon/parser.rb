@@ -66,19 +66,19 @@ module Spoon
     rule(:operation) {
        unary_operation | infix_expression(
         unary_operation | parens(value) | parens(operation, true),
-        [DOT(), 12, :left],
-        [MUL(), 11, :left],
-        [ADD(), 10, :left],
-        [SHIFT(), 9, :left],
-        [COMPARE(), 8, :left],
-        [EQ(), 7, :left],
-        [BAND(), 6, :left],
-        [BXOR(), 5, :left],
-        [BOR(), 4, :left],
-        [AND(), 3, :left],
-        [OR(), 2, :left],
-        [ASSIGN(), 1, :right],
-        [CASSIGN(), 1, :right]
+        [DOT(), 13, :left],
+        [MUL(), 12, :left],
+        [ADD(), 11, :left],
+        [SHIFT(), 10, :left],
+        [COMPARE(), 9, :left],
+        [EQ(), 8, :left],
+        [BAND(), 7, :left],
+        [BXOR(), 6, :left],
+        [BOR(), 5, :left],
+        [AND(), 4, :left],
+        [OR(), 3, :left],
+        [CASSIGN(), 2, :right],
+        [ASSIGN(), 1, :right]
       )
     }
 

@@ -8,6 +8,8 @@ function log message
   else
     print "[INFO] Empty message"
 
+  return message
+
 greet = name -> log "Hello #{name}"
 
 for i in greet!

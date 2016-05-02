@@ -45,19 +45,31 @@ module Spoon
     }
 
     rule(:left => simple(:left), :op => simple(:op), :right => simple(:right)) {
-      AST::Node.new :op, [ op.trim, left, right ]
+      AST::Node.new :op, [ op.to_op, left, right ]
     }
 
     rule(:left => simple(:left), :op => simple(:op)) {
-      AST::Node.new :op, [ op.trim, left ]
+      AST::Node.new :op, [ op.to_op, left ]
     }
 
     rule(:op => simple(:op), :right => simple(:right)) {
-      AST::Node.new :op, [ op.trim, right ]
+      AST::Node.new :op, [ op.to_op, right ]
     }
 
     rule(:call => { :name => simple(:name) }) {
       AST::Node.new :call, [ name.to_v ]
+    }
+
+    rule(:return => simple(:args)) {
+      unless args == nil
+        AST::Node.new :return, [ args ]
+      else
+        AST::Node.new :return
+      end
+    }
+
+    rule(:return => sequence(:args)) {
+      AST::Node.new :return, args
     }
 
     rule(:call => {
@@ -136,7 +148,7 @@ module Spoon
           :condition => simple(:condition),
           :true => simple(:if_true)
           }) {
-      AST::Node.new :if, [ AST::Node.new(:op, [ "!", condition ]), if_true ]
+      AST::Node.new :if, [ AST::Node.new(:op, [ "not", condition ]), if_true ]
     }
 
     rule(:unless => {
@@ -144,7 +156,7 @@ module Spoon
           :true => simple(:if_true),
           :false => simple(:if_false)
           }) {
-      AST::Node.new :if, [ AST::Node.new(:op, [ "!", condition ]), if_true, if_false ]
+      AST::Node.new :if, [ AST::Node.new(:op, [ "not", condition ]), if_true, if_false ]
     }
 
     rule(:for => {

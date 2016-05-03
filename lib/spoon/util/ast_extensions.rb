@@ -16,7 +16,7 @@ module Spoon
         str = trim
         return true if str == "true"
         return false if str == "false"
-        raise ArgumentError.new("Invalid value for Boolean: \"#{self}\"")
+        raise ArgumentError.new("Invalid value for boolean: \"#{self}\"")
       end
 
       def to_op
@@ -37,9 +37,10 @@ module Spoon
         return "modulo assign" if str == "%="
 
         # Logical
-        return "not" if str == "!"
-        return "and" if str == "&&"
-        return "or" if str == "||"
+        return "in" if str == "in"
+        return "not" if str == "!" || str == "not"
+        return "and" if str == "&&" || str == "and"
+        return "or" if str == "||" || str == "or"
 
         # Arithmetic
         return "increment" if str == "++"
@@ -67,7 +68,7 @@ module Spoon
         return "shift right" if str == ">>"
         return "unsigned shift right" if str == ">>>"
 
-        return str
+        raise ArgumentError.new("Invalid value for operator: \"#{self.trim}\"")
       end
     end
   end

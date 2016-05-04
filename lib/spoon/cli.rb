@@ -2,6 +2,7 @@ require "colorize"
 require "thor"
 require "pp"
 
+require "spoon/compiler"
 require "spoon/parser"
 require "spoon/transformer"
 require "spoon/version"
@@ -19,10 +20,19 @@ db   8D 88      `8b  d8' `8b  d8' 88  V888
   class CLI < Thor
     default_task :hello
 
+    desc "compile FILE", "Print compiled file and exit"
+    def compile(file)
+      file = Spoon::Parser.new.parse_with_debug(File.read(file))
+      ast = Spoon::Transformer.new.apply file
+      result = Spoon::Compiler.new.compile ast
+      puts result.to_s
+    end
+
     desc "tree FILE", "Print file AST and exit"
     def tree(file)
       file = Spoon::Parser.new.parse_with_debug(File.read(file))
-      puts Spoon::Transformer.new.apply file
+      ast = Spoon::Transformer.new.apply file
+      puts ast
     end
 
     desc "hello", "I greet you!"

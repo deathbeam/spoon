@@ -45,15 +45,15 @@ module Spoon
     }
 
     rule(:l => simple(:left), :o => simple(:op), :r => simple(:right)) {
-      AST::Node.new :op, [ op.to_op, left, right ]
+      AST::Node.new :op, [ op.to_op, left, right ], :operation => :infix
     }
 
     rule(:l => simple(:left), :o => simple(:op)) {
-      AST::Node.new :op, [ op.to_op, left ]
+      AST::Node.new :op, [ op.to_op, left ], :operation => :suffix
     }
 
     rule(:o => simple(:op), :r => simple(:right)) {
-      AST::Node.new :op, [ op.to_op, right ]
+      AST::Node.new :op, [ op.to_op, right ], :operation => :prefix
     }
 
     rule(:call => { :name => simple(:name) }) {
@@ -148,7 +148,7 @@ module Spoon
           :condition => simple(:condition),
           :true => simple(:if_true)
           }) {
-      AST::Node.new :if, [ AST::Node.new(:op, [ "not", condition ]), if_true ]
+      AST::Node.new :if, [ AST::Node.new(:op, [ "!", condition ], :operation => :prefix), if_true ]
     }
 
     rule(:unless => {
@@ -156,7 +156,7 @@ module Spoon
           :true => simple(:if_true),
           :false => simple(:if_false)
           }) {
-      AST::Node.new :if, [ AST::Node.new(:op, [ "not", condition ]), if_true, if_false ]
+      AST::Node.new :if, [ AST::Node.new(:op, [ "!", condition ], :operation => :prefix), if_true, if_false ]
     }
 
     rule(:for => {

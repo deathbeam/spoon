@@ -2,6 +2,12 @@ require 'ast/node'
 
 module Spoon
   module Util
+    class AST::Node
+      def option(variable)
+        instance_variable_get "@#{variable}"
+      end
+    end
+
     class Parslet::Slice
       def to_v
         "#{self}"
@@ -22,53 +28,13 @@ module Spoon
       def to_op
         str = trim
 
-        # Special
-        return "access" if str == "."
+        return "!" if str == "not"
+        return "&&" if str == "and"
+        return "||" if str == "or"
+        return  "==" if str == "is"
+        return "!=" if str == "isnt"
 
-        # Assign and update
-        return "assign" if str == "="
-        return "addition assign" if str == "+="
-        return "subtraction assign" if str == "-="
-        return "multiplication assign" if str == "*="
-        return "division assign" if str == "/="
-        return "and assign" if str == "&="
-        return "or assign" if str == "|="
-        return "xor assign" if str == "^="
-        return "modulo assign" if str == "%="
-
-        # Logical
-        return "in" if str == "in"
-        return "not" if str == "!" || str == "not"
-        return "and" if str == "&&" || str == "and"
-        return "or" if str == "||" || str == "or"
-
-        # Arithmetic
-        return "increment" if str == "++"
-        return "decrement" if str == "--"
-        return "addition" if str == "+"
-        return "subtraction" if str == "-"
-        return "multiplication" if str == "*"
-        return "division" if str == "/"
-        return "modulo" if str == "%"
-
-        # Comparison
-        return "equal" if str == "==" || str == "is"
-        return "not equal" if str == "!=" || str == "isnt"
-        return "less than" if str == "<"
-        return "less than or equal" if str == "<="
-        return "greater than" if str == ">"
-        return "greater than or equal" if str == ">="
-
-        # Bitwise
-        return "bitwise not" if str == "~"
-        return "bitwise and" if str == "&"
-        return "bitwise or" if str == "|"
-        return "bitwise xor" if str == "^"
-        return "shift left" if str == "<<"
-        return "shift right" if str == ">>"
-        return "unsigned shift right" if str == ">>>"
-
-        raise ArgumentError.new("Invalid value for operator: \"#{self.trim}\"")
+        return str
       end
     end
   end

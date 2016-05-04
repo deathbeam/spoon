@@ -30,10 +30,10 @@ module Spoon
       @content << "static public function main() {\n"
 
       node.children.each do |child|
-        @content << @compiler.compile(child).to_s
+        @content << @compiler.compile(child).to_s << ";\n"
       end
 
-      @content << "\n}\n"
+      @content << "}\n"
       @content << "}"
     end
   end

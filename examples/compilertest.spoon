@@ -1,3 +1,4 @@
 #!/usr/bin/env coffee
 
 c = ++aa
+hello = "aaaa" + (8 * 6)

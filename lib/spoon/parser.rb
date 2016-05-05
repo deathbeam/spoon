@@ -25,7 +25,8 @@ module Spoon
         :for,
         :unless,
         :do,
-        :while
+        :while,
+        :import
       ]
     end
 
@@ -33,6 +34,7 @@ module Spoon
     rule(:root) {
       (
         whitespace.maybe >>
+        import.repeat >>
         expression.repeat(1) >>
         whitespace.maybe
       ).as(:root)
@@ -52,6 +54,14 @@ module Spoon
       indent >>
       repeat(expression, samedent).as(:block) >>
       dedent
+    }
+
+    rule(:import) {
+      space.maybe >>
+      IMPORT() >>
+      space.maybe >>
+      repeat((word | str('*')).as(:identifier), DOT()).as(:import) >>
+      endline.maybe
     }
 
     # Matches expression
@@ -98,6 +108,7 @@ module Spoon
       while_loop |
       closure |
       call |
+      import |
       ret |
       literal |
       word.as(:identifier)
@@ -113,6 +124,7 @@ module Spoon
     rule(:word) {
       skip_key >>
       (
+        str('@').maybe >>
         match['a-zA-Z'] >>
         match['a-zA-Z\-'].repeat
       )

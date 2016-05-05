@@ -1,4 +1,10 @@
 #!/usr/bin/env coffee
 
+import Sys.print
+
+print "Hello World"
+
 c = ++aa
 hello = "aaaa" + (8 * 6)
+
+a.b(a).c!.d.hello a, b, c, d

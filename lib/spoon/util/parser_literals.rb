@@ -18,6 +18,8 @@ module Spoon
 
       rule(:IF)       { key :if }
 
+      rule(:IMPORT)   { key :import }
+
       rule(:IN)       { key :in }
 
       rule(:RETURN)   { key :return }

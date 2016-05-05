@@ -33,7 +33,15 @@ module Spoon
     }
 
     rule(:arg => simple(:arg)) {
-      AST::Node.new :arg, [ arg ]
+      arg
+    }
+
+    rule(:import => simple(:import)) {
+      AST::Node.new :import, [ import.to_v ]
+    }
+
+    rule(:import => sequence(:import)) {
+      AST::Node.new :import, import
     }
 
     rule(:param => { :name => simple(:name) }) {

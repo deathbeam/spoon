@@ -5,6 +5,7 @@ module Spoon
         :root => Root,
         :block => Block,
         :function => Function,
+        :if => If,
         :op => Operation,
         :call => Call,
         :import => Import,
@@ -65,9 +66,14 @@ module Spoon
 
   class Block < Base
     def compile
+
+      @content << "{\n"
+
       @node.children.each do |child|
         @content << @tab << compile_next(child) << ";\n"
       end
+
+      @content << @tab << "}"
 
       super
     end
@@ -158,9 +164,18 @@ module Spoon
         end
       end
 
-      @content << ") {\n"
+      @content << ") "
       @content << compile_next(children.last)
-      @content << @tab << "}"
+    end
+  end
+
+  class If < Base
+    def compile
+      children = @node.children.dup
+
+      @content << "if (" << compile_next(children.shift) << ") "
+      @content << compile_next(children.shift)
+      @content << "else " << compile_next(children.shift) unless children.empty?
     end
   end
 end

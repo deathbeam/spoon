@@ -6,3 +6,8 @@ function log message = "hello"
   print message
 
 log "Hello World"
+
+if message
+  print "[INFO] #{@message}"
+else
+  print "[INFO] Empty message"

@@ -10,52 +10,58 @@ module Spoon
       }
     end
 
-    def compile(node, parent = nil)
-      @nodes[node.type].new(self, node, parent).compile.to_s
+    def compile(node, parent = nil, tab = "")
+      @nodes[node.type].new(self, node, parent, tab).compile.to_s
     end
   end
 
   class Base
-    def initialize(compiler, node, parent)
+    def initialize(compiler, node, parent, tab)
       @compiler = compiler
       @node = node
       @parent = parent
       @content = ""
+      @tab = tab
     end
 
     def compile
-      @content = ""
+      @content
     end
 
     def compile_next(node)
-      @compiler.compile(node, self)
+      @compiler.compile(node, @node, @tab + "  ")
     end
   end
 
   class Root < Base
-    def compile
+    def initialize(compiler, node, parent, tab)
       super
+      @tab = "    "
+    end
+
+    def compile
       imports = ""
       @content << "class Main {\n"
-      @content << "static public function main() {\n"
+      @content << "  static public function main() {\n"
 
       @node.children.each do |child|
         if child.type == :import
           imports << compile_next(child) << ";\n"
         else
-          @content << compile_next(child) << ";\n"
+          @content << @tab << compile_next(child) << ";\n"
         end
       end
 
       @content = "#{imports}\n#{@content}"
-      @content << "}\n"
+      @content << "  }\n"
       @content << "}"
+
+      super
     end
   end
 
   class Operation < Base
     def compile
-      super
       children = @node.children.dup
       operator = children.shift.to_s
 
@@ -71,19 +77,20 @@ module Spoon
         @content << compile_next(children.shift)
         @content << operator
       end
+
+      super
     end
   end
 
   class Value < Base
     def compile
-      super
       @content << @node.children.dup.shift.to_s
+      super
     end
   end
 
   class Call < Base
     def compile
-      super
       children = @node.children.dup
       @content << children.shift.to_s
       @content << "("
@@ -94,12 +101,12 @@ module Spoon
       end
 
       @content << ")"
+      super
     end
   end
 
   class Import < Base
     def compile
-      super
       children = @node.children.dup
 
       @content << "import "
@@ -109,7 +116,7 @@ module Spoon
         @content << "." unless children.last == child
       end
 
-      @content
+      super
     end
   end
 end

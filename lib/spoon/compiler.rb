@@ -3,9 +3,12 @@ module Spoon
     def initialize
       @nodes = {
         :root => Root,
+        :block => Block,
+        :function => Function,
         :op => Operation,
         :call => Call,
         :import => Import,
+        :param => Param,
         :value => Value
       }
     end
@@ -60,6 +63,16 @@ module Spoon
     end
   end
 
+  class Block < Base
+    def compile
+      @node.children.each do |child|
+        @content << @tab << compile_next(child) << ";\n"
+      end
+
+      super
+    end
+  end
+
   class Operation < Base
     def compile
       children = @node.children.dup
@@ -85,6 +98,15 @@ module Spoon
   class Value < Base
     def compile
       @content << @node.children.dup.shift.to_s
+      super
+    end
+  end
+
+  class Param < Base
+    def compile
+      children = @node.children.dup
+      @content << children.shift.to_s
+      @content << " = " << compile_next(children.shift) unless children.empty?
       super
     end
   end
@@ -117,6 +139,28 @@ module Spoon
       end
 
       super
+    end
+  end
+
+  class Function < Base
+    def compile
+      children = @node.children.dup
+      name = children.shift.to_s
+
+      @content << "function #{name}("
+
+      if children.length > 1
+        children.each do |child|
+          unless child == children.last
+            @content << compile_next(child)
+            @content << ", " unless child == children[children.length - 2]
+          end
+        end
+      end
+
+      @content << ") {\n"
+      @content << compile_next(children.last)
+      @content << @tab << "}"
     end
   end
 end

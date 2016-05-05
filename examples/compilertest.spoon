@@ -2,9 +2,7 @@
 
 import Sys.print
 
-print "Hello World"
+function log message = "hello"
+  print message
 
-c = ++aa
-hello = "aaaa" + (8 * 6)
-
-a.b(a).c!.d.hello a, b, c, d
+log "Hello World"

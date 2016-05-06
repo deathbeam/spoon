@@ -2,10 +2,12 @@
 
 import Sys.print
 
-function log message = "hello"
+function log-message message = "hello"
   print message
 
-log "Hello World"
+a = 10
+
+log-message "Hello World"
 
 if message
   print "[INFO] #{@message}"

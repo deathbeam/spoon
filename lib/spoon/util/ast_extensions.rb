@@ -4,7 +4,8 @@ module Spoon
   module Util
     class AST::Node
       def option(variable)
-        instance_variable_get "@#{variable}"
+        variable = "@#{variable}"
+        instance_variable_get(variable)
       end
     end
 

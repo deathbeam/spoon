@@ -26,6 +26,8 @@ module Spoon
   end
 
   class Base
+    attr_reader :tab
+
     def initialize(compiler, node, parent, tab)
       @compiler = compiler
       @node = node
@@ -39,7 +41,15 @@ module Spoon
     end
 
     def compile_next(node)
-      @compiler.compile(node, @node, @tab + "  ")
+      @compiler.compile(node, self, @tab)
+    end
+
+    def compile_str(str)
+      if str.start_with? "'"
+        str
+      else
+        str.gsub!("-", "_") || str
+      end
     end
   end
 
@@ -70,6 +80,11 @@ module Spoon
   end
 
   class Block < Base
+    def initialize(compiler, node, parent, tab)
+      super
+      @tab = tab + "  "
+    end
+
     def compile
       @content << "{\n"
 
@@ -77,7 +92,7 @@ module Spoon
         @content << @tab << compile_next(child) << ";\n"
       end
 
-      @content << @tab << "}"
+      @content << @parent.tab << "}"
       super
     end
   end
@@ -89,10 +104,6 @@ module Spoon
 
       case @node.option :operation
       when :infix
-        if operator == "="
-
-        end
-
         @content << compile_next(children.shift)
         @content << " #{operator} "
         @content << "(" + compile_next(children.shift) + ")"
@@ -110,7 +121,8 @@ module Spoon
 
   class Value < Base
     def compile
-      @content << @node.children.dup.shift.to_s
+      content = @node.children.dup.shift.to_s
+      @content << compile_str(content)
       super
     end
   end
@@ -127,7 +139,7 @@ module Spoon
   class Call < Base
     def compile
       children = @node.children.dup
-      @content << children.shift.to_s
+      @content << compile_str(children.shift.to_s)
       @content << "("
 
       children.each do |child|
@@ -158,7 +170,7 @@ module Spoon
   class Function < Base
     def compile
       children = @node.children.dup
-      name = children.shift.to_s
+      name = compile_str(children.shift.to_s)
 
       @content << "function #{name}("
 
@@ -183,7 +195,7 @@ module Spoon
 
       @content << "if (" << compile_next(children.shift) << ") "
       @content << compile_next(children.shift)
-      @content << "else " << compile_next(children.shift) unless children.empty?
+      @content << " else " << compile_next(children.shift) unless children.empty?
       super
     end
   end

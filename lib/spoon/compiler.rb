@@ -6,6 +6,8 @@ module Spoon
         :block => Block,
         :function => Function,
         :if => If,
+        :for => For,
+        :while => While,
         :op => Operation,
         :call => Call,
         :import => Import,
@@ -59,14 +61,12 @@ module Spoon
       @content = "#{imports}\n#{@content}"
       @content << "  }\n"
       @content << "}"
-
       super
     end
   end
 
   class Block < Base
     def compile
-
       @content << "{\n"
 
       @node.children.each do |child|
@@ -74,7 +74,6 @@ module Spoon
       end
 
       @content << @tab << "}"
-
       super
     end
   end
@@ -88,12 +87,12 @@ module Spoon
       when :infix
         @content << compile_next(children.shift)
         @content << " #{operator} "
-        @content << compile_next(children.shift)
+        @content << "(" + compile_next(children.shift) + ")"
       when :prefix
         @content << operator
-        @content << compile_next(children.shift)
+        @content << "(" + compile_next(children.shift) + ")"
       when :suffix
-        @content << compile_next(children.shift)
+        @content << "(" + compile_next(children.shift) + ")"
         @content << operator
       end
 
@@ -166,6 +165,7 @@ module Spoon
 
       @content << ") "
       @content << compile_next(children.last)
+      super
     end
   end
 
@@ -176,6 +176,27 @@ module Spoon
       @content << "if (" << compile_next(children.shift) << ") "
       @content << compile_next(children.shift)
       @content << "else " << compile_next(children.shift) unless children.empty?
+      super
+    end
+  end
+
+  class For < Base
+    def compile
+      children = @node.children.dup
+
+      @content << "for (" << compile_next(children.shift) << ") "
+      @content << compile_next(children.shift)
+      super
+    end
+  end
+
+  class While < Base
+    def compile
+      children = @node.children.dup
+
+      @content << "while (" << compile_next(children.shift) << ") "
+      @content << compile_next(children.shift)
+      super
     end
   end
 end

@@ -11,3 +11,8 @@ if message
   print "[INFO] #{@message}"
 else
   print "[INFO] Empty message"
+
+for i in message
+  print "#{i}"
+
+while true do print "Hello"

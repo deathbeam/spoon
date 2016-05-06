@@ -1,5 +1,7 @@
 module Spoon
   class Compiler
+    attr_accessor :namespace
+
     def initialize
       @nodes = {
         :root => Root,
@@ -14,6 +16,8 @@ module Spoon
         :param => Param,
         :value => Value
       }
+
+      @namespace = []
     end
 
     def compile(node, parent = nil, tab = "")
@@ -85,6 +89,10 @@ module Spoon
 
       case @node.option :operation
       when :infix
+        if operator == "="
+
+        end
+
         @content << compile_next(children.shift)
         @content << " #{operator} "
         @content << "(" + compile_next(children.shift) + ")"

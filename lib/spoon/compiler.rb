@@ -1,6 +1,11 @@
 module Spoon
   class Compiler
-    def initialize
+    attr_reader :name
+
+    def initialize(path = "main")
+      basename = File.basename(path, ".*")
+      @name = basename.split('_').collect!{ |w| w.capitalize }.join
+
       @nodes = {
         :root => Root,
         :block => Block,
@@ -83,9 +88,10 @@ module Spoon
 
     def compile
       @compiler.namespace_new
+      @compiler.namespace_current[@compiler.name] = true
 
       imports = ""
-      @content << "class Main {\n"
+      @content << "class #{@compiler.name} {\n"
       @content << "  static public function main() {\n"
 
       @node.children.each do |child|
@@ -173,7 +179,7 @@ module Spoon
           else
             @content << compile_next(child)
           end
-          
+
           @content << " + " unless children.last == child
         end
       else

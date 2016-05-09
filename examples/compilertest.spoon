@@ -5,7 +5,11 @@ import Sys.print
 a = 10
 a = 15
 
+test = (a = 5) ->
+  print "Jajaja"
+
 function log-message message = "hello"
+  message = "bb"
   a = 25
   b = 10
   print message

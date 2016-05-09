@@ -5,6 +5,7 @@ module Spoon
         :root => Root,
         :block => Block,
         :function => Function,
+        :closure => Closure,
         :if => If,
         :for => For,
         :while => While,
@@ -214,6 +215,37 @@ module Spoon
 
       if children.length > 1
         children.each do |child|
+          name = child.children.first.to_s
+          @compiler.namespace_current[name] = true unless @compiler.namespace_contains name
+
+          unless child == children.last
+            @content << compile_next(child)
+            @content << ", " unless child == children[children.length - 2]
+          end
+        end
+      end
+
+      @content << ") "
+      @content << compile_next(children.last)
+
+      @compiler.namespace_pop
+      super
+    end
+  end
+
+  class Closure < Base
+    def compile
+      @compiler.namespace_new
+
+      children = @node.children.dup
+
+      @content << "function ("
+
+      if children.length > 1
+        children.each do |child|
+          name = child.children.first.to_s
+          @compiler.namespace_current[name] = true unless @compiler.namespace_contains name
+
           unless child == children.last
             @content << compile_next(child)
             @content << ", " unless child == children[children.length - 2]

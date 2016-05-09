@@ -1,7 +1,5 @@
 module Spoon
   class Compiler
-    attr_accessor :namespace
-
     def initialize
       @nodes = {
         :root => Root,
@@ -20,6 +18,26 @@ module Spoon
       @namespace = []
     end
 
+    def namespace_new
+      @namespace.push Hash.new
+    end
+
+    def namespace_pop
+      @namespace.pop
+    end
+
+    def namespace_current
+      @namespace.last
+    end
+
+    def namespace_contains(key)
+      @namespace.each do |namespace|
+        return true if namespace.key?(key)
+      end
+
+      false
+    end
+
     def compile(node, parent = nil, tab = "")
       @nodes[node.type].new(self, node, parent, tab).compile.to_s
     end
@@ -27,6 +45,8 @@ module Spoon
 
   class Base
     attr_reader :tab
+    attr_reader :node
+    attr_reader :parent
 
     def initialize(compiler, node, parent, tab)
       @compiler = compiler
@@ -60,6 +80,8 @@ module Spoon
     end
 
     def compile
+      @compiler.namespace_new
+
       imports = ""
       @content << "class Main {\n"
       @content << "  static public function main() {\n"
@@ -75,6 +97,8 @@ module Spoon
       @content = "#{imports}\n#{@content}"
       @content << "  }\n"
       @content << "}"
+
+      @compiler.namespace_pop
       super
     end
   end
@@ -104,7 +128,19 @@ module Spoon
 
       case @node.option :operation
       when :infix
-        @content << compile_next(children.shift)
+        left = children.shift
+
+        if left.type == :value && operator == "="
+          namespace = @compiler.namespace_current
+          name = compile_next(left)
+
+          unless @compiler.namespace_contains name
+            namespace[name] = true
+            @content << "var "
+          end
+        end
+
+        @content << compile_next(left)
         @content << " #{operator} "
         @content << "(" + compile_next(children.shift) + ")"
       when :prefix
@@ -169,6 +205,8 @@ module Spoon
 
   class Function < Base
     def compile
+      @compiler.namespace_new
+
       children = @node.children.dup
       name = compile_str(children.shift.to_s)
 
@@ -185,6 +223,8 @@ module Spoon
 
       @content << ") "
       @content << compile_next(children.last)
+
+      @compiler.namespace_pop
       super
     end
   end

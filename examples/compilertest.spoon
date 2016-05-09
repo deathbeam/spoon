@@ -2,10 +2,15 @@
 
 import Sys.print
 
+a = 10
+a = 15
+
 function log-message message = "hello"
+  a = 25
+  b = 10
   print message
 
-a = 10
+b = 15
 
 log-message "Hello World"
 

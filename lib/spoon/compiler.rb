@@ -102,7 +102,7 @@ module Spoon
         end
       end
 
-      @content = "#{imports}\n#{@content}"
+      @content = "#{imports}#{@content}"
       @content << "  }\n"
       @content << "}"
 
@@ -170,22 +170,16 @@ module Spoon
   class Value < Base
     def compile
       children = @node.children.dup
-      interpolated = children.length > 1
-
-      if interpolated
-        children.each do |child|
-          if child.is_a? String
-            @content << child.to_s
-          else
-            @content << compile_next(child)
-          end
-
-          @content << " + " unless children.last == child
+      children.each do |child|
+        if child.is_a?(String) || child.is_a?(Fixnum) || [true, false].include?(child)
+          @content << compile_str(child.to_s)
+        else
+          @content << compile_next(child)
         end
-      else
-        content = @node.children.dup.shift.to_s
-        @content << compile_str(content)
+
+        @content << " + " unless children.last == child
       end
+
       super
     end
   end

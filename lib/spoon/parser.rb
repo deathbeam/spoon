@@ -138,11 +138,21 @@ module Spoon
     # Matches strings
     rule(:string) {
       str('"') >>
-      (
-        str('\\') >> any |
-        str('"').absent? >> any
-      ).repeat.as(:string) >>
+      (text.as(:text) | interpolation).repeat.as(:string) >>
       str('"')
+    }
+
+    # Matches text inside string
+    rule(:text) {
+      (
+        interpolation.absent? >>
+        (str('\\') >> any | str('"').absent? >> any)
+      ).repeat(1)
+    }
+
+    # Matches interpolation inside string
+    rule(:interpolation) {
+      str('#{') >> expression >> str('}')
     }
 
     # Matches numbers

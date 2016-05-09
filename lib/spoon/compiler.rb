@@ -163,8 +163,23 @@ module Spoon
 
   class Value < Base
     def compile
-      content = @node.children.dup.shift.to_s
-      @content << compile_str(content)
+      children = @node.children.dup
+      interpolated = children.length > 1
+
+      if interpolated
+        children.each do |child|
+          if child.is_a? String
+            @content << child.to_s
+          else
+            @content << compile_next(child)
+          end
+          
+          @content << " + " unless children.last == child
+        end
+      else
+        content = @node.children.dup.shift.to_s
+        @content << compile_str(content)
+      end
       super
     end
   end

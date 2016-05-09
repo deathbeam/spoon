@@ -1,8 +1,4 @@
 #!/usr/bin/env coffee
 
-greet = name -> print "Hello #{name}"
-print "Enter your name: "
-greet read!
-
-# > Enter your name: <user_input>
-# > Hello <user_input>
+greet = name -> trace "Hello #{name}, how are you?"
+greet "Person"

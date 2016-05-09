@@ -20,8 +20,16 @@ module Spoon
       AST::Node.new :value, [ boolean.to_b ]
     }
 
+    rule(:text => simple(:text)) {
+      "'#{text}'"
+    }
+
     rule(:string => simple(:string)) {
       AST::Node.new :value, [ "'#{string}'" ]
+    }
+
+    rule(:string => sequence(:values)) {
+      AST::Node.new :value, values
     }
 
     rule(:number => simple(:number)) {

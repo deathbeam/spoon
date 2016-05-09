@@ -127,6 +127,8 @@ module Spoon
       children = @node.children.dup
       operator = children.shift.to_s
 
+      @content << "(" if @parent.node.type == :op
+
       case @node.option :operation
       when :infix
         left = children.shift
@@ -143,14 +145,16 @@ module Spoon
 
         @content << compile_next(left)
         @content << " #{operator} "
-        @content << "(" + compile_next(children.shift) + ")"
+        @content << compile_next(children.shift)
       when :prefix
         @content << operator
-        @content << "(" + compile_next(children.shift) + ")"
+        @content << compile_next(children.shift)
       when :suffix
-        @content << "(" + compile_next(children.shift) + ")"
+        @content << compile_next(children.shift)
         @content << operator
       end
+
+      @content << ")" if @parent.node.type == :op
 
       super
     end

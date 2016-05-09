@@ -152,7 +152,7 @@ module Spoon
 
     # Matches interpolation inside string
     rule(:interpolation) {
-      str('#{') >> expression >> str('}')
+      (str('#{') >> expression >> str('}')) | str('#') >> expression
     }
 
     # Matches numbers

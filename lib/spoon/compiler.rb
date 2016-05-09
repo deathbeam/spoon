@@ -273,7 +273,7 @@ module Spoon
         end
       end
 
-      @content << ") "
+      @content << ") return "
       @content << compile_next(children.last)
 
       @compiler.namespace_pop

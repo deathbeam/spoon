@@ -11,6 +11,7 @@ module Spoon
         :while => While,
         :op => Operation,
         :call => Call,
+        :return => Return,
         :import => Import,
         :param => Param,
         :value => Value
@@ -292,6 +293,24 @@ module Spoon
 
       @content << "while (" << compile_next(children.shift) << ") "
       @content << compile_next(children.shift)
+      super
+    end
+  end
+
+  class Return < Base
+    def compile
+      children = @node.children.dup
+      multi = children.length > 1
+      @content << "return "
+      @content << "[" if multi
+
+      children.each do |child|
+        @content << compile_next(child)
+        @content << ", " unless children.last == child
+      end
+
+      @content << "]" if multi
+
       super
     end
   end

@@ -24,6 +24,14 @@ module Spoon
       "'#{text}'"
     }
 
+    rule(:this => simple(:value)) {
+      AST::Node.new :this, [ value ]
+    }
+
+    rule(:self => simple(:value)) {
+      AST::Node.new :self, [ value ]
+    }
+
     rule(:string => simple(:string)) {
       AST::Node.new :value, [ "'#{string}'" ]
     }

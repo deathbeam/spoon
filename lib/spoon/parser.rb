@@ -111,6 +111,8 @@ module Spoon
       import |
       ret |
       literal |
+      self_call |
+      this_call |
       word.as(:identifier)
     }
 
@@ -118,6 +120,14 @@ module Spoon
     # TODO: Add classes, interfaces and so
     rule(:statement) {
       function
+    }
+
+    rule(:self_call) {
+      str('@@') >> value.as(:self)
+    }
+
+    rule(:this_call) {
+      str('@') >> value.as(:this)
     }
 
     # Matches word

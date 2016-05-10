@@ -4,10 +4,14 @@ module Spoon
   class Compiler
     attr_reader :name
     attr_reader :scope
+    attr_reader :class_scope
+    attr_reader :instance_scope
+    attr_reader :class_names
 
     def initialize(path = "main")
       basename = File.basename(path, ".*")
       @name = basename.split('_').collect!{ |w| w.capitalize }.join
+      @class_names = []
 
       @nodes = {
         :root => Root,
@@ -22,10 +26,14 @@ module Spoon
         :return => Return,
         :import => Import,
         :param => Param,
+        :self => Self,
+        :this => This,
         :value => Value
       }
 
       @scope = Spoon::Util::Namespace.new
+      @class_scope = Spoon::Util::Namespace.new
+      @instance_scope = Spoon::Util::Namespace.new
     end
 
     def compile(node, parent = nil, tab = "")
@@ -51,7 +59,8 @@ module Spoon
     end
 
     def compile_next(node)
-      @compiler.compile(node, self, @tab)
+
+        @compiler.compile(node, self, @tab)
     end
 
     def compile_str(str)
@@ -72,10 +81,11 @@ module Spoon
     def compile
       @compiler.scope.add
       @compiler.scope.push @compiler.name
+      @compiler.class_names.push @compiler.name
+      @compiler.class_scope.add
+      @compiler.instance_scope.add
 
       imports = ""
-      @content << "class #{@compiler.name} {\n"
-      @content << "  static public function main() {\n"
 
       @node.children.each do |child|
         if child.type == :import
@@ -85,11 +95,27 @@ module Spoon
         end
       end
 
+      class_variables = ""
+
+      @compiler.class_scope.get.each do |key, value|
+        class_variables << "  static var #{key};\n"
+      end
+
+      instance_variables = ""
+
+      @compiler.instance_scope.get.each do |key, value|
+        class_variables << "  var #{key};\n"
+      end
+
+      @content = "class #{@compiler.name} {\n#{class_variables}\n#{instance_variables}  static public function main() {\n#{@content}"
       @content = "#{imports}#{@content}"
       @content << "  }\n"
       @content << "}"
 
       @compiler.scope.pop
+      @compiler.class_scope.pop
+      @compiler.instance_scope.pop
+      @compiler.class_names.pop
       super
     end
   end
@@ -122,16 +148,21 @@ module Spoon
       case @node.option :operation
       when :infix
         left = children.shift
+        content = compile_next(left)
 
-        if left.type == :value && operator == "="
-          name = compile_next(left)
-
-          if @compiler.scope.push name
-            @content << "var "
+        if operator == "="
+          if left.type == :value
+            if @compiler.scope.push content
+              @content << "var "
+            end
+          elsif left.type == :self
+            @compiler.class_scope.push compile_next(left.children.first)
+          elsif left.type == :this
+            @compiler.instance_scope.push compile_next(left.children.first)
           end
         end
 
-        @content << compile_next(left)
+        @content << content
         @content << " #{operator} "
         @content << compile_next(children.shift)
       when :prefix
@@ -148,9 +179,28 @@ module Spoon
     end
   end
 
+  class This < Base
+    def compile
+      child = @node.children.dup.shift
+      @content << "this."
+      @content << compile_next(child)
+      super
+    end
+  end
+
+  class Self < Base
+    def compile
+      child = @node.children.dup.shift
+      @content << "#{@compiler.class_names.last}."
+      @content << compile_next(child)
+      super
+    end
+  end
+
   class Value < Base
     def compile
       children = @node.children.dup
+
       children.each do |child|
         if child.is_a?(String) || child.is_a?(Fixnum) || [true, false].include?(child)
           @content << compile_str(child.to_s)
@@ -210,9 +260,15 @@ module Spoon
       @compiler.scope.add
 
       children = @node.children.dup
-      name = compile_str(children.shift.to_s)
+      first = children.shift
 
-      @content << "function #{name}("
+      if first.is_a?(String) || first.is_a?(Fixnum) || [true, false].include?(first)
+        name = compile_str(first.to_s)
+        @content << "function #{name}("
+      elsif first.type == :self
+        name = compile_next(first.children.first)
+        @content << "static function #{name}("
+      end
 
       if children.length > 1
         children.each do |child|

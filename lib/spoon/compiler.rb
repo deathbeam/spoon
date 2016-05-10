@@ -1,6 +1,9 @@
+require "spoon/util/namespace"
+
 module Spoon
   class Compiler
     attr_reader :name
+    attr_reader :scope
 
     def initialize(path = "main")
       basename = File.basename(path, ".*")
@@ -22,27 +25,7 @@ module Spoon
         :value => Value
       }
 
-      @namespace = []
-    end
-
-    def namespace_new
-      @namespace.push Hash.new
-    end
-
-    def namespace_pop
-      @namespace.pop
-    end
-
-    def namespace_current
-      @namespace.last
-    end
-
-    def namespace_contains(key)
-      @namespace.each do |namespace|
-        return true if namespace.key?(key)
-      end
-
-      false
+      @scope = Spoon::Util::Namespace.new
     end
 
     def compile(node, parent = nil, tab = "")
@@ -87,8 +70,8 @@ module Spoon
     end
 
     def compile
-      @compiler.namespace_new
-      @compiler.namespace_current[@compiler.name] = true
+      @compiler.scope.add
+      @compiler.scope.push @compiler.name
 
       imports = ""
       @content << "class #{@compiler.name} {\n"
@@ -106,7 +89,7 @@ module Spoon
       @content << "  }\n"
       @content << "}"
 
-      @compiler.namespace_pop
+      @compiler.scope.pop
       super
     end
   end
@@ -141,11 +124,9 @@ module Spoon
         left = children.shift
 
         if left.type == :value && operator == "="
-          namespace = @compiler.namespace_current
           name = compile_next(left)
 
-          unless @compiler.namespace_contains name
-            namespace[name] = true
+          if @compiler.scope.push name
             @content << "var "
           end
         end
@@ -226,7 +207,7 @@ module Spoon
 
   class Function < Base
     def compile
-      @compiler.namespace_new
+      @compiler.scope.add
 
       children = @node.children.dup
       name = compile_str(children.shift.to_s)
@@ -236,7 +217,7 @@ module Spoon
       if children.length > 1
         children.each do |child|
           name = child.children.first.to_s
-          @compiler.namespace_current[name] = true unless @compiler.namespace_contains name
+          @compiler.scope.push name
 
           unless child == children.last
             @content << compile_next(child)
@@ -248,14 +229,14 @@ module Spoon
       @content << ") "
       @content << compile_next(children.last)
 
-      @compiler.namespace_pop
+      @compiler.scope.pop
       super
     end
   end
 
   class Closure < Base
     def compile
-      @compiler.namespace_new
+      @compiler.scope.add
 
       children = @node.children.dup
 
@@ -264,7 +245,7 @@ module Spoon
       if children.length > 1
         children.each do |child|
           name = child.children.first.to_s
-          @compiler.namespace_current[name] = true unless @compiler.namespace_contains name
+          @compiler.scope.push name
 
           unless child == children.last
             @content << compile_next(child)
@@ -276,7 +257,7 @@ module Spoon
       @content << ") return "
       @content << compile_next(children.last)
 
-      @compiler.namespace_pop
+      @compiler.scope.pop
       super
     end
   end

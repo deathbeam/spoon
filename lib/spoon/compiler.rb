@@ -36,6 +36,10 @@ module Spoon
       @instance_scope = Spoon::Util::Namespace.new
     end
 
+    def in_class
+      @class_names.length > 1
+    end
+
     def compile(node, parent = nil, tab = "")
       @nodes[node.type].new(self, node, parent, tab).compile.to_s
     end
@@ -59,8 +63,7 @@ module Spoon
     end
 
     def compile_next(node)
-
-        @compiler.compile(node, self, @tab)
+      @compiler.compile(node, self, @tab)
     end
 
     def compile_str(str)
@@ -107,7 +110,7 @@ module Spoon
         class_variables << "  var #{key};\n"
       end
 
-      @content = "class #{@compiler.name} {\n#{class_variables}\n#{instance_variables}  static public function main() {\n#{@content}"
+      @content = "class #{@compiler.name} {\n#{class_variables}#{instance_variables}  static public function main() {\n#{@content}"
       @content = "#{imports}#{@content}"
       @content << "  }\n"
       @content << "}"
@@ -155,10 +158,19 @@ module Spoon
             if @compiler.scope.push content
               @content << "var "
             end
-          elsif left.type == :self
-            @compiler.class_scope.push compile_next(left.children.first)
-          elsif left.type == :this
-            @compiler.instance_scope.push compile_next(left.children.first)
+          elsif left.type == :self || left.type == :this
+            name = compile_next(left.children.first)
+
+            if left.type == :self
+              raise ArgumentError, 'Self call cannot be used outside of class' unless @compiler.in_class
+              @compiler.class_scope.push name
+            elsif left.type == :this
+              if @compiler.in_class
+                @compiler.instance_scope.push name
+              else
+                @compiler.class_scope.push name
+              end
+            end
           end
         end
 
@@ -182,7 +194,7 @@ module Spoon
   class This < Base
     def compile
       child = @node.children.dup.shift
-      @content << "this."
+      @content << (@compiler.in_class ?  "this." : "#{@compiler.class_names.last}.")
       @content << compile_next(child)
       super
     end
@@ -190,6 +202,7 @@ module Spoon
 
   class Self < Base
     def compile
+      raise ArgumentError, 'Self call cannot be used outside of class' unless @compiler.in_class
       child = @node.children.dup.shift
       @content << "#{@compiler.class_names.last}."
       @content << compile_next(child)

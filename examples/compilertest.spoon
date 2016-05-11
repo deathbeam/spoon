@@ -2,7 +2,7 @@
 
 import Sys.print
 
-@@message = "Hello"
+@message = "Hello"
 
 a = 10
 a = 15 + 8 * 6 / 7 + (8 - 7)

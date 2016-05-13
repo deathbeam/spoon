@@ -52,8 +52,12 @@ module Spoon
       AST::Node.new :value, [ value.to_v ], :is_type => true
     }
 
-    rule(:arg => simple(:arg)) {
-      arg
+    rule(:array => simple(:value)) {
+      AST::Node.new :array, [ value ]
+    }
+
+    rule(:array => sequence(:values)) {
+      AST::Node.new :array, values
     }
 
     rule(:import => simple(:import)) {

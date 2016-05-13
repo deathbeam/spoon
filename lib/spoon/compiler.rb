@@ -27,7 +27,8 @@ module Spoon
         :return => Return,
         :import => Import,
         :param => Param,
-        :value => Value
+        :value => Value,
+        :array => Array
       }
 
       @scope = Spoon::Util::Namespace.new
@@ -141,19 +142,44 @@ module Spoon
   end
 
   class Assign < Base
+    @@array_counter = 0
+
     def compile
       children = @node.children.dup
 
-      @content << "(" if @parent.node.type == :op
-
       left = children.shift
-      content = compile_next(left)
+      right = children.shift
 
+      if left.type == :array
+        arr_name = "__array#{@@array_counter}"
+        @content << "var #{arr_name} = #{compile_next(right)};\n"
+        @@array_counter += 1
+
+        left.children.each do |child|
+          child_name = compile_next(child)
+          @content << @parent.tab
+          scope_name(left, right)
+          @content << "#{child_name} = #{arr_name}.#{child_name}"
+          @content << ";\n" unless left.children.last == child
+        end
+      else
+        @content << "(" if @parent.node.type == :op
+        @content << scope_name(left, right)
+        @content << " = " << compile_next(right)
+        @content << ")" if @parent.node.type == :op
+      end
+
+      super
+    end
+
+    def scope_name(left, right)
       if left.type == :value
+        content = compile_next(left)
         if @compiler.scope.push content
           @content << "var "
         end
       elsif left.type == :self || left.type == :this
+        content = compile_next(left)
         name = compile_next(left.children.first)
 
         if left.type == :self
@@ -168,10 +194,7 @@ module Spoon
         end
       end
 
-      @content << content << " = " << compile_next(children.shift)
-      @content << ")" if @parent.node.type == :op
-
-      super
+      content
     end
   end
 
@@ -231,6 +254,21 @@ module Spoon
       children = @node.children.dup
       @content << compile_next(children.shift)
       @content << " = " << compile_next(children.shift) unless children.empty?
+      super
+    end
+  end
+
+  class Array < Base
+    def compile
+      children = @node.children.dup
+      @content << "["
+
+      children.each do |child|
+        @content << compile_next(child)
+        @content << ", " unless children.last == child
+      end
+
+      @content << "]"
       super
     end
   end

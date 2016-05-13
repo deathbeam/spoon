@@ -76,19 +76,18 @@ module Spoon
     rule(:operation) {
        unary_operation | infix_expression(
         unary_operation | parens(value) | parens(operation, true),
-        [DOT(), 13, :left],
-        [MUL(), 12, :left],
-        [ADD(), 11, :left],
-        [SHIFT(), 10, :left],
-        [COMPARE(), 9, :left],
-        [EQ(), 8, :left],
-        [BAND(), 7, :left],
-        [BXOR(), 6, :left],
-        [BOR(), 5, :left],
-        [AND(), 4, :left],
-        [OR(), 3, :left],
-        [CASSIGN(), 2, :right],
-        [ASSIGN(), 1, :right]
+        [DOT(), 12, :left],
+        [MUL(), 11, :left],
+        [ADD(), 10, :left],
+        [SHIFT(), 9, :left],
+        [COMPARE(), 8, :left],
+        [EQ(), 7, :left],
+        [BAND(), 6, :left],
+        [BXOR(), 5, :left],
+        [BOR(), 4, :left],
+        [AND(), 3, :left],
+        [OR(), 2, :left],
+        [CASSIGN(), 1, :right]
       )
     }
 
@@ -97,7 +96,7 @@ module Spoon
     rule(:construct) {
       (
         type.as(:name) >>
-        space.maybe >> (EXCLAMATION() |  argument_list.as(:args))
+        space.maybe >> (EXCLAMATION() |  expression_list.as(:args))
       ).as(:construct)
     }
 
@@ -128,6 +127,7 @@ module Spoon
       call |
       import |
       ret |
+      array |
       literal |
       self_call |
       this_call |
@@ -141,6 +141,18 @@ module Spoon
 
     rule(:this_call) {
       str('@') >> value.as(:this)
+    }
+
+    rule(:array) {
+      str('[') >> whitespace.maybe >>
+      repeat(expression, COMMA()).as(:array) >>
+      whitespace.maybe >> str(']')
+    }
+
+    rule(:ident_array) {
+      str('[') >> whitespace.maybe >>
+      repeat(ident, COMMA()).as(:array) >>
+      whitespace.maybe >> str(']')
     }
 
     # Matches word
@@ -214,7 +226,7 @@ module Spoon
     rule(:ret) {
       RETURN() >>
       space.maybe >>
-      argument_list.maybe.as(:return)
+      expression_list.maybe.as(:return)
     }
 
     # Matches function call
@@ -222,7 +234,7 @@ module Spoon
     rule(:call) {
       (
         (ident | self_call | this_call).as(:name) >>
-        space.maybe >> (EXCLAMATION() |  argument_list.as(:args))
+        space.maybe >> (EXCLAMATION() | expression_list.as(:args))
       ).as(:call)
     }
 
@@ -240,8 +252,8 @@ module Spoon
 
     # Matches comma delimited expressions
     # example: a(b), c(d), e
-    rule(:argument_list) {
-      parens(repeat(expression.as(:arg), COMMA()))
+    rule(:expression_list) {
+      parens(repeat(expression, COMMA()))
     }
 
     # Matches closure

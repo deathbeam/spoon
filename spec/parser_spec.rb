@@ -38,22 +38,13 @@ describe Spoon::Parser do
     it { should_not parse "# foo\n bar" }
   end
 
-  context "condition" do
+  context "if" do
     subject { parser.condition }
 
     it { should parse "if (foo) bar" }
     it { should parse "if foo do bar" }
     it { should parse "if (foo) bar else if (baz) foo else bar" }
     it { should_not parse "if foo bar" }
-  end
-
-  context "reverse condition" do
-    subject { parser.condition_reverse }
-
-    it { should parse "unless (foo) bar" }
-    it { should parse "unless foo do bar" }
-    it { should parse "unless (foo) bar else if (baz) foo else bar" }
-    it { should_not parse "unless foo bar" }
   end
 
   context "expression" do
@@ -75,13 +66,26 @@ describe Spoon::Parser do
     it { should parse "for foo in bar do baz" }
   end
 
-  context "function" do
-    subject { parser.function }
+  context "ident" do
+    subject { parser.ident }
 
-    it { should parse "function foo bar" }
-    it { should parse "function foo() bar" }
-    it { should parse "function foo bar = 1 baz" }
-    it { should parse "function foo(bar = 1) baz" }
+    it { should parse "foo" }
+    it { should parse "foo-bar" }
+    it { should_not parse "Foo" }
+    it { should_not parse "-foo" }
+    it { should_not parse "foo2" }
+    it { should_not parse "foo?" }
+    it { should_not parse "foo_bar" }
+  end
+
+  context "new" do
+    subject { parser.construct }
+
+    it { should parse "Foo!" }
+    it { should parse "Foo bar" }
+    it { should parse "Foo(bar)" }
+    it { should parse "Foo bar, baz" }
+    it { should parse "Foo(bar, baz)" }
   end
 
   context "number" do
@@ -101,22 +105,31 @@ describe Spoon::Parser do
     it { should parse "# foo\n    print bar\n # baz " }
   end
 
+  context "type" do
+    subject { parser.type }
+
+    it { should parse "Foo" }
+    it { should parse "Foo-bar" }
+    it { should_not parse "foo" }
+    it { should_not parse "-foo" }
+    it { should_not parse "foo2" }
+    it { should_not parse "foo?" }
+    it { should_not parse "Foo_bar" }
+  end
+
+  context "unless" do
+    subject { parser.condition_reverse }
+
+    it { should parse "unless (foo) bar" }
+    it { should parse "unless foo do bar" }
+    it { should parse "unless (foo) bar else if (baz) foo else bar" }
+    it { should_not parse "unless foo bar" }
+  end
+
   context "while" do
     subject { parser.while_loop }
 
     it { should parse "while (foo) baz" }
     it { should parse "while foo do baz" }
-  end
-
-  context "word" do
-    subject { parser.word }
-
-    it { should parse "foo" }
-    it { should parse "Foo" }
-    it { should parse "foo-bar" }
-    it { should_not parse "-foo" }
-    it { should_not parse "foo2" }
-    it { should_not parse "foo?" }
-    it { should_not parse "foo_bar" }
   end
 end

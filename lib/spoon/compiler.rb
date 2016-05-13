@@ -28,7 +28,7 @@ module Spoon
         :import => Import,
         :param => Param,
         :value => Value,
-        :array => Array
+        :table => Table
       }
 
       @scope = Spoon::Util::Namespace.new
@@ -142,7 +142,7 @@ module Spoon
   end
 
   class Assign < Base
-    @@array_counter = 0
+    @@assign_counter = 0
 
     def compile
       children = @node.children.dup
@@ -150,10 +150,10 @@ module Spoon
       left = children.shift
       right = children.shift
 
-      if left.type == :array
-        arr_name = "__assign#{@@array_counter}"
+      if left.option :is_array
+        arr_name = "__assign#{@@assign_counter}"
         @content << "var #{arr_name} = #{compile_next(right)};\n"
-        @@array_counter += 1
+        @@assign_counter += 1
 
         left.children.each do |child|
           child_name = compile_next(child)
@@ -258,17 +258,17 @@ module Spoon
     end
   end
 
-  class Array < Base
+  class Table < Base
     def compile
       children = @node.children.dup
-      @content << "["
+      @content << (@node.option(:is_array) ? "[" : "{")
 
       children.each do |child|
         @content << compile_next(child)
         @content << ", " unless children.last == child
       end
 
-      @content << "]"
+      @content << (@node.option(:is_array) ? "]" : "}")
       super
     end
   end

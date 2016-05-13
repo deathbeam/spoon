@@ -127,6 +127,7 @@ module Spoon
       call |
       import |
       ret |
+      hash |
       array |
       literal |
       self_call |
@@ -143,15 +144,21 @@ module Spoon
       str('@') >> value.as(:this)
     }
 
+    rule(:field) {
+      (ident | self_call | this_call | string).as(:l) >>
+      trim(DOUBLE_DOT()).as(:o) >>
+      expression.as(:r)
+    }
+
     rule(:array) {
       str('[') >> whitespace.maybe >>
       repeat(expression, COMMA()).as(:array) >>
       whitespace.maybe >> str(']')
     }
 
-    rule(:ident_array) {
+    rule(:hash) {
       str('[') >> whitespace.maybe >>
-      repeat(ident, COMMA()).as(:array) >>
+      repeat(field, COMMA()).as(:hash) >>
       whitespace.maybe >> str(']')
     }
 

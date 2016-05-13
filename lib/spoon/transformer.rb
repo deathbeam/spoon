@@ -53,11 +53,19 @@ module Spoon
     }
 
     rule(:array => simple(:value)) {
-      AST::Node.new :array, [ value ]
+      AST::Node.new :table, [ value ], :is_array => true
     }
 
     rule(:array => sequence(:values)) {
-      AST::Node.new :array, values
+      AST::Node.new :table, values, :is_array => true
+    }
+
+    rule(:hash => simple(:value)) {
+      AST::Node.new :table, [ value ], :is_hash => true
+    }
+
+    rule(:hash => sequence(:values)) {
+      AST::Node.new :table, values, :is_hash => true
     }
 
     rule(:import => simple(:import)) {

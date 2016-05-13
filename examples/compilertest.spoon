@@ -9,12 +9,18 @@ a = 15 + 8 * 6 / 7 + (8 - 7)
 
 array = [ a, b, c ]
 
+hash = [
+  a: b,
+  b: c,
+  c: d
+]
+
 test = (a = 5) ->
   print "Jajaja"
 
 
-[foo, bar] = baz
-[a, b] = hello(world)
+[ foo, bar ] = baz
+[ a, b ] = hello(world)
 
 log-message = (message = "hello") ->
   message = "bb"

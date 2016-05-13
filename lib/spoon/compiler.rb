@@ -151,7 +151,7 @@ module Spoon
       right = children.shift
 
       if left.type == :array
-        arr_name = "__array#{@@array_counter}"
+        arr_name = "__assign#{@@array_counter}"
         @content << "var #{arr_name} = #{compile_next(right)};\n"
         @@array_counter += 1
 

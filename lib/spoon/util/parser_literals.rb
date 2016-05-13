@@ -14,8 +14,6 @@ module Spoon
 
       rule(:FOR)      { key :for }
 
-      rule(:FUNCTION) { key :function }
-
       rule(:IF)       { key :if }
 
       rule(:IMPORT)   { key :import }
@@ -30,6 +28,8 @@ module Spoon
 
       rule(:WHILE)    { key :while }
 
+      rule(:NEW)      { key :new }
+
       ####################################
       # Special characters
       ####################################
@@ -39,6 +39,8 @@ module Spoon
       rule(:EXCLAMATION) { str "!" }
 
       rule(:HASH)        { str "#" }
+
+      rule(:DOUBLE_DOT)  { str ":" }
 
       ####################################
       # Operators

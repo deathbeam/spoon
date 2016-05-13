@@ -13,7 +13,6 @@ module Spoon
       @keywords = [
         :if,
         :else,
-        :function,
         :return,
         :and,
         :is,
@@ -26,7 +25,8 @@ module Spoon
         :unless,
         :do,
         :while,
-        :import
+        :import,
+        :new
       ]
     end
 
@@ -68,7 +68,7 @@ module Spoon
     # TODO: Add decorators (postfix if, unless, for and while)
     rule(:expression) {
       space.maybe >>
-      (statement | operation | value) >>
+      (assign | operation | value) >>
       endline.maybe
     }
 
@@ -92,6 +92,20 @@ module Spoon
       )
     }
 
+    # Matches object construction
+    # example: new Foo!
+    rule(:construct) {
+      NEW() >> whitespace.maybe >> call.as(:construct)
+    }
+
+    # Matches assign
+    # example: foo = bar
+    rule(:assign) {
+      (
+        parens(value).as(:l) >> ASSIGN() >> expression.as(:r)
+      ).as(:assign)
+    }
+
     # Matches unary operation
     # example: !foo
     # TODO: Enable spaces between operator and value
@@ -107,6 +121,7 @@ module Spoon
       for_loop |
       while_loop |
       closure |
+      construct |
       call |
       import |
       ret |
@@ -114,12 +129,6 @@ module Spoon
       self_call |
       this_call |
       word.as(:identifier)
-    }
-
-    # Matches statement, so everything that is unassignable
-    # TODO: Add classes, interfaces and so
-    rule(:statement) {
-      function
     }
 
     rule(:self_call) {
@@ -199,7 +208,9 @@ module Spoon
     # Matches function call
     # example: a(b, c, d, e, f)
     rule(:call) {
-      (word.as(:name) >> space.maybe >> (EXCLAMATION() |  argument_list.as(:args))).as(:call)
+      (
+        (word.as(:identifier) | self_call | this_call).as(:name) >>
+        space.maybe >> (EXCLAMATION() |  argument_list.as(:args))).as(:call)
     }
 
     # Matches function parameter
@@ -229,26 +240,6 @@ module Spoon
         ARROW() >>
         body.as(:body)
       ).as(:closure)
-    }
-
-    # Matches function definition
-    # example: def (a) b
-    rule(:function) {
-      (
-        FUNCTION() >>
-        space.maybe >>
-        word.as(:name) >>
-        function_body
-      ).as(:function)
-    }
-
-    # Matches function body
-    rule(:function_body) {
-      (
-        space.maybe >>
-        parameter_list.as(:params).maybe >>
-        body.as(:body)
-      ) | body.as(:body)
     }
 
     # Matches for loop

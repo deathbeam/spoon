@@ -2,7 +2,7 @@
 # Above is just for nice syntax highlighting
 # as Spoon syntax is very similar to CoffeeScript
 
-function log message
+log = (message) ->
   if message
     print "[INFO] #{@message}"
   else

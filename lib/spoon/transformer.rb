@@ -68,6 +68,13 @@ module Spoon
       AST::Node.new :param, [ name.to_v, value]
     }
 
+    rule(:assign => {
+          :l => simple(:left),
+          :r => simple(:right)
+        }) {
+      AST::Node.new :assign, [ left, right ]
+    }
+
     rule(:l => simple(:left), :o => simple(:op), :r => simple(:right)) {
       AST::Node.new :op, [ op.to_op, left, right ], :operation => :infix
     }
@@ -80,8 +87,8 @@ module Spoon
       AST::Node.new :op, [ op.to_op, right ], :operation => :prefix
     }
 
-    rule(:call => { :name => simple(:name) }) {
-      AST::Node.new :call, [ name.to_v ]
+    rule(:construct => simple(:object)) {
+      AST::Node.new :new, [ object ]
     }
 
     rule(:return => simple(:args)) {
@@ -96,18 +103,22 @@ module Spoon
       AST::Node.new :return, args
     }
 
+    rule(:call => { :name => simple(:name) }) {
+      AST::Node.new :call, [ name ]
+    }
+
     rule(:call => {
           :name => simple(:name),
           :args => simple(:args)
           }) {
-      AST::Node.new :call, [ name.to_v, args ]
+      AST::Node.new :call, [ name, args ]
     }
 
     rule(:call => {
           :name => simple(:name),
           :args => sequence(:args)
           }) {
-      AST::Node.new :call, [ name.to_v ] + args
+      AST::Node.new :call, [ name ] + args
     }
 
     rule(:closure => {
@@ -128,29 +139,6 @@ module Spoon
           :body => simple(:body)
           }) {
       AST::Node.new :closure, params + [ body ]
-    }
-
-    rule(:function => {
-          :name => simple(:name),
-          :body => simple(:body)
-          }) {
-      AST::Node.new :function, [ name.to_v, body ]
-    }
-
-    rule(:function => {
-          :name => simple(:name),
-          :params => simple(:params),
-          :body => simple(:body)
-          }) {
-      AST::Node.new :function, [ name.to_v , params, body ]
-    }
-
-    rule(:function => {
-          :name => simple(:name),
-          :params => sequence(:params),
-          :body => simple(:body)
-          }) {
-      AST::Node.new :function, [ name.to_v ] + params + [ body ]
     }
 
     rule(:if => {

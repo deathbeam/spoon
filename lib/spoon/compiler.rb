@@ -16,13 +16,14 @@ module Spoon
       @nodes = {
         :root => Root,
         :block => Block,
-        :function => Function,
         :closure => Closure,
         :if => If,
         :for => For,
         :while => While,
+        :assign => Assign,
         :op => Operation,
         :call => Call,
+        :new => New,
         :return => Return,
         :import => Import,
         :param => Param,
@@ -141,6 +142,41 @@ module Spoon
     end
   end
 
+  class Assign < Base
+    def compile
+      children = @node.children.dup
+
+      @content << "(" if @parent.node.type == :op
+
+      left = children.shift
+      content = compile_next(left)
+
+      if left.type == :value
+        if @compiler.scope.push content
+          @content << "var "
+        end
+      elsif left.type == :self || left.type == :this
+        name = compile_next(left.children.first)
+
+        if left.type == :self
+          raise ArgumentError, 'Self call cannot be used outside of class' unless @compiler.in_class
+          @compiler.class_scope.push name
+        elsif left.type == :this
+          if @compiler.in_class
+            @compiler.instance_scope.push name
+          else
+            @compiler.class_scope.push name
+          end
+        end
+      end
+
+      @content << content << " = " << compile_next(children.shift)
+      @content << ")" if @parent.node.type == :op
+
+      super
+    end
+  end
+
   class Operation < Base
     def compile
       children = @node.children.dup
@@ -150,31 +186,7 @@ module Spoon
 
       case @node.option :operation
       when :infix
-        left = children.shift
-        content = compile_next(left)
-
-        if operator == "="
-          if left.type == :value
-            if @compiler.scope.push content
-              @content << "var "
-            end
-          elsif left.type == :self || left.type == :this
-            name = compile_next(left.children.first)
-
-            if left.type == :self
-              raise ArgumentError, 'Self call cannot be used outside of class' unless @compiler.in_class
-              @compiler.class_scope.push name
-            elsif left.type == :this
-              if @compiler.in_class
-                @compiler.instance_scope.push name
-              else
-                @compiler.class_scope.push name
-              end
-            end
-          end
-        end
-
-        @content << content
+        @content << compile_next(children.shift)
         @content << " #{operator} "
         @content << compile_next(children.shift)
       when :prefix
@@ -187,6 +199,14 @@ module Spoon
 
       @content << ")" if @parent.node.type == :op
 
+      super
+    end
+  end
+
+  class New < Base
+    def compile
+      @content << "new "
+      @content << compile_next(@node.children.dup.shift)
       super
     end
   end
@@ -240,7 +260,7 @@ module Spoon
   class Call < Base
     def compile
       children = @node.children.dup
-      @content << compile_str(children.shift.to_s)
+      @content << compile_next(children.shift)
       @content << "("
 
       children.each do |child|
@@ -264,41 +284,6 @@ module Spoon
         @content << "." unless children.last == child
       end
 
-      super
-    end
-  end
-
-  class Function < Base
-    def compile
-      @compiler.scope.add
-
-      children = @node.children.dup
-      first = children.shift
-
-      if first.is_a?(String) || first.is_a?(Fixnum) || [true, false].include?(first)
-        name = compile_str(first.to_s)
-        @content << "function #{name}("
-      elsif first.type == :self
-        name = compile_next(first.children.first)
-        @content << "static function #{name}("
-      end
-
-      if children.length > 1
-        children.each do |child|
-          name = child.children.first.to_s
-          @compiler.scope.push name
-
-          unless child == children.last
-            @content << compile_next(child)
-            @content << ", " unless child == children[children.length - 2]
-          end
-        end
-      end
-
-      @content << ") "
-      @content << compile_next(children.last)
-
-      @compiler.scope.pop
       super
     end
   end

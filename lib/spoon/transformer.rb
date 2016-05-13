@@ -25,11 +25,11 @@ module Spoon
     }
 
     rule(:this => simple(:value)) {
-      AST::Node.new :this, [ value ]
+      AST::Node.new :value, [ value ], :is_this => true
     }
 
     rule(:self => simple(:value)) {
-      AST::Node.new :self, [ value ]
+      AST::Node.new :value, [ value ], :is_self => true
     }
 
     rule(:string => simple(:string)) {
@@ -44,8 +44,12 @@ module Spoon
       AST::Node.new :value, [ number.to_i ]
     }
 
-    rule(:identifier => simple(:identifier)) {
-      AST::Node.new :value, [ identifier.to_v ]
+    rule(:ident => simple(:value)) {
+      AST::Node.new :value, [ value.to_v ], :is_ident => true
+    }
+
+    rule(:type => simple(:value)) {
+      AST::Node.new :value, [ value.to_v ], :is_type => true
     }
 
     rule(:arg => simple(:arg)) {
@@ -53,7 +57,7 @@ module Spoon
     }
 
     rule(:import => simple(:import)) {
-      AST::Node.new :import, [ import.to_v ]
+      AST::Node.new :import, [ import ]
     }
 
     rule(:import => sequence(:import)) {
@@ -61,17 +65,14 @@ module Spoon
     }
 
     rule(:param => { :name => simple(:name) }) {
-      AST::Node.new :param, [ name.to_v ]
+      AST::Node.new :param, [ name ]
     }
 
     rule(:param => { :name => simple(:name), :value => simple(:value) }) {
-      AST::Node.new :param, [ name.to_v, value]
+      AST::Node.new :param, [ name, value]
     }
 
-    rule(:assign => {
-          :l => simple(:left),
-          :r => simple(:right)
-        }) {
+    rule(:assign => { :l => simple(:left), :r => simple(:right) }) {
       AST::Node.new :assign, [ left, right ]
     }
 
@@ -87,10 +88,6 @@ module Spoon
       AST::Node.new :op, [ op.to_op, right ], :operation => :prefix
     }
 
-    rule(:construct => simple(:object)) {
-      AST::Node.new :new, [ object ]
-    }
-
     rule(:return => simple(:args)) {
       unless args == nil
         AST::Node.new :return, [ args ]
@@ -103,85 +100,63 @@ module Spoon
       AST::Node.new :return, args
     }
 
+    rule(:construct => { :name => simple(:name) }) {
+      AST::Node.new :new, [ name ]
+    }
+
+    rule(:construct => { :name => simple(:name), :args => simple(:args) }) {
+      AST::Node.new :new, [ name, args ]
+    }
+
+    rule(:construct => { :name => simple(:name), :args => sequence(:args) }) {
+      AST::Node.new :new, [ name ] + args
+    }
+
     rule(:call => { :name => simple(:name) }) {
       AST::Node.new :call, [ name ]
     }
 
-    rule(:call => {
-          :name => simple(:name),
-          :args => simple(:args)
-          }) {
+    rule(:call => { :name => simple(:name), :args => simple(:args) }) {
       AST::Node.new :call, [ name, args ]
     }
 
-    rule(:call => {
-          :name => simple(:name),
-          :args => sequence(:args)
-          }) {
+    rule(:call => { :name => simple(:name), :args => sequence(:args) }) {
       AST::Node.new :call, [ name ] + args
     }
 
-    rule(:closure => {
-          :body => simple(:body)
-          }) {
+    rule(:closure => { :body => simple(:body) }) {
       AST::Node.new :closure, [ body ]
     }
 
-    rule(:closure => {
-          :params => simple(:params),
-          :body => simple(:body)
-          }) {
+    rule(:closure => { :params => simple(:params), :body => simple(:body) }) {
       AST::Node.new :closure, [ params, body ]
     }
 
-    rule(:closure => {
-          :params => sequence(:params),
-          :body => simple(:body)
-          }) {
+    rule(:closure => { :params => sequence(:params), :body => simple(:body) }) {
       AST::Node.new :closure, params + [ body ]
     }
 
-    rule(:if => {
-          :condition => simple(:condition),
-          :true => simple(:if_true)
-          }) {
+    rule(:if => { :condition => simple(:condition), :true => simple(:if_true) }) {
       AST::Node.new :if, [ condition, if_true ]
     }
 
-    rule(:if => {
-          :condition => simple(:condition),
-          :true => simple(:if_true),
-          :false => simple(:if_false)
-          }) {
+    rule(:if => { :condition => simple(:condition), :true => simple(:if_true), :false => simple(:if_false) }) {
       AST::Node.new :if, [ condition, if_true, if_false ]
     }
 
-    rule(:unless => {
-          :condition => simple(:condition),
-          :true => simple(:if_true)
-          }) {
+    rule(:unless => { :condition => simple(:condition), :true => simple(:if_true) }) {
       AST::Node.new :if, [ AST::Node.new(:op, [ "!", condition ], :operation => :prefix), if_true ]
     }
 
-    rule(:unless => {
-          :condition => simple(:condition),
-          :true => simple(:if_true),
-          :false => simple(:if_false)
-          }) {
+    rule(:unless => { :condition => simple(:condition), :true => simple(:if_true), :false => simple(:if_false) }) {
       AST::Node.new :if, [ AST::Node.new(:op, [ "!", condition ], :operation => :prefix), if_true, if_false ]
     }
 
-    rule(:for => {
-          :condition => simple(:condition),
-          :body => simple(:body)
-          }) {
+    rule(:for => { :condition => simple(:condition), :body => simple(:body) }) {
       AST::Node.new :for, [ condition, body ]
     }
 
-    rule(:while => {
-          :condition => simple(:condition),
-          :body => simple(:body)
-          }) {
+    rule(:while => { :condition => simple(:condition), :body => simple(:body) }) {
       AST::Node.new :while, [ condition, body ]
     }
   end

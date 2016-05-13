@@ -42,6 +42,8 @@ module Spoon
 
       rule(:DOUBLE_DOT)  { str ":" }
 
+      rule(:STAR)        { str "*" }
+
       ####################################
       # Operators
       ####################################

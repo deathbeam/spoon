@@ -18,7 +18,7 @@ log-message = (message = "hello") ->
   return a, b
 
 b = 15
-test = new TestClass!
+test = TestClass!
 
 log-message "Hello World"
 

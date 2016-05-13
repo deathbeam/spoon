@@ -60,7 +60,7 @@ module Spoon
       space.maybe >>
       IMPORT() >>
       space.maybe >>
-      repeat((word | str('*')).as(:identifier), DOT()).as(:import) >>
+      repeat((ident | type | STAR().as(:ident)), DOT()).as(:import) >>
       endline.maybe
     }
 
@@ -95,7 +95,10 @@ module Spoon
     # Matches object construction
     # example: new Foo!
     rule(:construct) {
-      NEW() >> whitespace.maybe >> call.as(:construct)
+      (
+        type.as(:name) >>
+        space.maybe >> (EXCLAMATION() |  argument_list.as(:args))
+      ).as(:construct)
     }
 
     # Matches assign
@@ -128,7 +131,8 @@ module Spoon
       literal |
       self_call |
       this_call |
-      word.as(:identifier)
+      ident |
+      type
     }
 
     rule(:self_call) {
@@ -140,13 +144,21 @@ module Spoon
     }
 
     # Matches word
-    rule(:word) {
+    rule(:ident) {
       skip_key >>
       (
-        str('@').maybe >>
-        match['a-zA-Z'] >>
+        match['a-z'] >>
         match['a-zA-Z\-'].repeat
-      )
+      ).as(:ident)
+    }
+
+    # Matches type
+    rule(:type) {
+      skip_key >>
+      (
+        match['A-Z'] >>
+        match['a-zA-Z\-'].repeat
+      ).as(:type)
     }
 
     # Matches true false
@@ -209,14 +221,15 @@ module Spoon
     # example: a(b, c, d, e, f)
     rule(:call) {
       (
-        (word.as(:identifier) | self_call | this_call).as(:name) >>
-        space.maybe >> (EXCLAMATION() |  argument_list.as(:args))).as(:call)
+        (ident | self_call | this_call).as(:name) >>
+        space.maybe >> (EXCLAMATION() |  argument_list.as(:args))
+      ).as(:call)
     }
 
     # Matches function parameter
     # example a = 1
     rule(:parameter) {
-      word.as(:name) >> (ASSIGN() >> expression.as(:value)).maybe
+      ident.as(:name) >> (ASSIGN() >> expression.as(:value)).maybe
     }
 
     # Matches comma delimited function parameters
@@ -247,7 +260,7 @@ module Spoon
       (
         FOR() >>
         space.maybe >>
-        parens(word.as(:identifier).as(:l) >> trim(IN()).as(:o) >> expression.as(:r)).as(:condition) >>
+        parens(ident.as(:l) >> trim(IN()).as(:o) >> expression.as(:r)).as(:condition) >>
         body.as(:body)
       ).as(:for)
     }

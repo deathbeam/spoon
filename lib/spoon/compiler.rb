@@ -27,8 +27,6 @@ module Spoon
         :return => Return,
         :import => Import,
         :param => Param,
-        :self => Self,
-        :this => This,
         :value => Value
       }
 
@@ -203,33 +201,6 @@ module Spoon
     end
   end
 
-  class New < Base
-    def compile
-      @content << "new "
-      @content << compile_next(@node.children.dup.shift)
-      super
-    end
-  end
-
-  class This < Base
-    def compile
-      child = @node.children.dup.shift
-      @content << (@compiler.in_class ?  "this." : "#{@compiler.class_names.last}.")
-      @content << compile_next(child)
-      super
-    end
-  end
-
-  class Self < Base
-    def compile
-      raise ArgumentError, 'Self call cannot be used outside of class' unless @compiler.in_class
-      child = @node.children.dup.shift
-      @content << "#{@compiler.class_names.last}."
-      @content << compile_next(child)
-      super
-    end
-  end
-
   class Value < Base
     def compile
       children = @node.children.dup
@@ -238,6 +209,13 @@ module Spoon
         if child.is_a?(String) || child.is_a?(Fixnum) || [true, false].include?(child)
           @content << compile_str(child.to_s)
         else
+          if @node.option :is_self
+            raise ArgumentError, 'Self call cannot be used outside of class' unless @compiler.in_class
+            @content << "#{@compiler.class_names.last}."
+          elsif @node.option :is_this
+            @content << (@compiler.in_class ?  "this." : "#{@compiler.class_names.last}.")
+          end
+
           @content << compile_next(child)
         end
 
@@ -251,8 +229,25 @@ module Spoon
   class Param < Base
     def compile
       children = @node.children.dup
-      @content << children.shift.to_s
+      @content << compile_next(children.shift)
       @content << " = " << compile_next(children.shift) unless children.empty?
+      super
+    end
+  end
+
+  class New < Base
+    def compile
+      children = @node.children.dup
+      @content << "new "
+      @content << compile_next(children.shift)
+      @content << "("
+
+      children.each do |child|
+        @content << compile_next(child)
+        @content << ", " unless children.last == child
+      end
+
+      @content << ")"
       super
     end
   end

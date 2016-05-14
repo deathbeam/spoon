@@ -54,6 +54,9 @@ module Spoon
       # Comma
       rule(:COMMA) { trim(str(",")) }
 
+      # Range
+      rule(:RANGE) { trim(str("..")) }
+
       # Multiplication, division, and remainder
       rule(:MUL) { trim(match['\*/%']) }
 

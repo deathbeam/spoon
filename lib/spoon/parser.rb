@@ -76,6 +76,7 @@ module Spoon
     rule(:operation) {
        unary_operation | infix_expression(
         unary_operation | parens(value) | parens(operation, true),
+        [RANGE(), 13, :left],
         [DOT(), 12, :left],
         [MUL(), 11, :left],
         [ADD(), 10, :left],
@@ -202,7 +203,8 @@ module Spoon
 
     # Matches interpolation inside string
     rule(:interpolation) {
-      (str('#{') >> expression >> str('}')) | str('#') >> expression
+      (str('\\').absent? >> str('#{') >> expression >> str('}')) |
+      str('\\').absent? >> str('#') >> expression
     }
 
     # Matches numbers

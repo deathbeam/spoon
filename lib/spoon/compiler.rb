@@ -151,15 +151,30 @@ module Spoon
       right = children.shift
 
       if left.option :is_array
-        arr_name = "__assign#{@@assign_counter}"
-        @content << "var #{arr_name} = #{compile_next(right)};\n"
+        assign_name = "__assign#{@@assign_counter}"
+        @content << "var #{assign_name} = #{compile_next(right)};\n"
         @@assign_counter += 1
 
-        left.children.each do |child|
+        left.children.each_with_index do |child, index|
           child_name = compile_next(child)
           @content << @parent.tab
           scope_name(left, right)
-          @content << "#{child_name} = #{arr_name}.#{child_name}"
+          @content << "#{child_name} = #{assign_name}[#{index}]"
+          @content << ";\n" unless left.children.last == child
+        end
+      elsif left.option :is_hash
+        assign_name = "__assign#{@@assign_counter}"
+        @content << "var #{assign_name} = #{compile_next(right)};\n"
+        @@assign_counter += 1
+
+        left.children.each do |child|
+          child_children = child.children.dup
+          child_children.shift
+          child_alias = compile_next(child_children.shift)
+          child_name = compile_next(child_children.shift)
+          @content << @parent.tab
+          scope_name(left, right)
+          @content << "#{child_alias} = #{assign_name}.#{child_name}"
           @content << ";\n" unless left.children.last == child
         end
       else

@@ -21,6 +21,7 @@ test = (a = 5) ->
 
 [ foo, bar ] = baz
 [ a, b ] = hello(world)
+[ a: bar, b: baz] = hello(world)
 
 log-message = (message = "hello") ->
   message = "bb"

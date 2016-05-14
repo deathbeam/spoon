@@ -32,6 +32,13 @@ module Spoon
       AST::Node.new :value, [ value ], :is_self => true
     }
 
+    rule(:access => {
+        :l => simple(:left),
+        :r => simple(:right)
+        }) {
+      AST::Node.new :access, [ left, right ]
+    }
+
     rule(:string => simple(:string)) {
       AST::Node.new :value, [ "'#{string}'" ]
     }

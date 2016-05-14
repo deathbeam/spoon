@@ -28,7 +28,8 @@ module Spoon
         :import => Import,
         :param => Param,
         :value => Value,
-        :table => Table
+        :table => Table,
+        :access => Access
       }
 
       @scope = Spoon::Util::Namespace.new
@@ -189,13 +190,13 @@ module Spoon
     end
 
     def scope_name(node)
+      content = compile_next(node)
+
       if node.type == :value
-        content = compile_next(node)
         if @compiler.scope.push content
           @content << "var "
         end
-      elsif node.type == :self || left.type == :this
-        content = compile_next(node)
+      elsif node.type == :self || node.type == :this
         name = compile_next(node.children.first)
 
         if node.type == :self
@@ -270,6 +271,17 @@ module Spoon
       children = @node.children.dup
       @content << compile_next(children.shift)
       @content << " = " << compile_next(children.shift) unless children.empty?
+      super
+    end
+  end
+
+  class Access < Base
+    def compile
+      children = @node.children.dup
+      @content << compile_next(children.shift)
+      @content << "["
+      @content << compile_next(children.shift)
+      @content << "]"
       super
     end
   end

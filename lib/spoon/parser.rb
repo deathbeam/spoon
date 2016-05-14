@@ -125,6 +125,7 @@ module Spoon
       while_loop |
       closure |
       construct |
+      array_access |
       call |
       import |
       ret |
@@ -149,6 +150,13 @@ module Spoon
       (ident | self_call | this_call | string).as(:l) >>
       trim(DOUBLE_DOT()).as(:o) >>
       expression.as(:r)
+    }
+
+    # Matches array access
+    rule(:array_access) {
+      (ident.as(:l) >> trim(str('[')) >>
+      expression.as(:r) >>
+      whitespace.maybe >> str(']')).as(:access)
     }
 
     rule(:array) {

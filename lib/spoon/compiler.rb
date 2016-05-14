@@ -158,7 +158,7 @@ module Spoon
         left.children.each_with_index do |child, index|
           child_name = compile_next(child)
           @content << @parent.tab
-          scope_name(left, right)
+          scope_name(child)
           @content << "#{child_name} = #{assign_name}[#{index}]"
           @content << ";\n" unless left.children.last == child
         end
@@ -170,16 +170,17 @@ module Spoon
         left.children.each do |child|
           child_children = child.children.dup
           child_children.shift
-          child_alias = compile_next(child_children.shift)
+          child_alias_node = child_children.shift
+          child_alias = compile_next(child_alias_node)
           child_name = compile_next(child_children.shift)
           @content << @parent.tab
-          scope_name(left, right)
+          scope_name(child_alias_node)
           @content << "#{child_alias} = #{assign_name}.#{child_name}"
           @content << ";\n" unless left.children.last == child
         end
       else
         @content << "(" if @parent.node.type == :op
-        @content << scope_name(left, right)
+        @content << scope_name(left)
         @content << " = " << compile_next(right)
         @content << ")" if @parent.node.type == :op
       end
@@ -187,20 +188,20 @@ module Spoon
       super
     end
 
-    def scope_name(left, right)
-      if left.type == :value
-        content = compile_next(left)
+    def scope_name(node)
+      if node.type == :value
+        content = compile_next(node)
         if @compiler.scope.push content
           @content << "var "
         end
-      elsif left.type == :self || left.type == :this
-        content = compile_next(left)
-        name = compile_next(left.children.first)
+      elsif node.type == :self || left.type == :this
+        content = compile_next(node)
+        name = compile_next(node.children.first)
 
-        if left.type == :self
+        if node.type == :self
           raise ArgumentError, 'Self call cannot be used outside of class' unless @compiler.in_class
           @compiler.class_scope.push name
-        elsif left.type == :this
+        elsif node.type == :this
           if @compiler.in_class
             @compiler.instance_scope.push name
           else

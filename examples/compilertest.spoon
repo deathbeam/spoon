@@ -4,6 +4,8 @@ import Sys.print
 
 @message = "Hello"
 
+canvas = js.Browser.document
+
 a = 10
 a = 15 + 8 * 6 / 7 + (8 - 7)
 
@@ -18,10 +20,9 @@ hash = [
 test = (a = 5) ->
   print "Jajaja"
 
-
 [ foo, bar ] = baz
 [ a, b ] = hello(world)
-[ a: bar, b: baz] = hello(world)
+[ a: bar, b: baz ] = hello(world)
 
 log-message = (message = "hello") ->
   message = "bb"

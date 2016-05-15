@@ -20,7 +20,6 @@ module Spoon
         :if => If,
         :for => For,
         :while => While,
-        :assign => Assign,
         :op => Operation,
         :call => Call,
         :new => New,
@@ -142,49 +141,69 @@ module Spoon
     end
   end
 
-  class Assign < Base
+  class Operation < Base
     @@assign_counter = 0
 
     def compile
       children = @node.children.dup
+      operator = children.shift.to_s
 
-      left = children.shift
-      right = children.shift
+      @content << "(" if @parent.node.type == :op
 
-      if left.option :is_array
-        assign_name = "__assign#{@@assign_counter}"
-        @content << "var #{assign_name} = #{compile_next(right)};\n"
-        @@assign_counter += 1
+      case @node.option :operation
+      when :infix
+        left = children.shift
+        right = children.shift
 
-        left.children.each_with_index do |child, index|
-          child_name = compile_next(child)
-          @content << @parent.tab
-          scope_name(child)
-          @content << "#{child_name} = #{assign_name}[#{index}]"
-          @content << ";\n" unless left.children.last == child
+        if operator == "="
+          if left.option :is_array
+            assign_name = "__assign#{@@assign_counter}"
+            @content << "var #{assign_name} = #{compile_next(right)};\n"
+            @@assign_counter += 1
+
+            left.children.each_with_index do |child, index|
+              child_name = compile_next(child)
+              @content << @parent.tab
+              scope_name(child)
+              @content << "#{child_name} = #{assign_name}[#{index}]"
+              @content << ";\n" unless left.children.last == child
+            end
+          elsif left.option :is_hash
+            assign_name = "__assign#{@@assign_counter}"
+            @content << "var #{assign_name} = #{compile_next(right)};\n"
+            @@assign_counter += 1
+
+            left.children.each do |child|
+              child_children = child.children.dup
+              child_children.shift
+              child_alias_node = child_children.shift
+              child_alias = compile_next(child_alias_node)
+              child_name = compile_next(child_children.shift)
+              @content << @parent.tab
+              scope_name(child_alias_node)
+              @content << "#{child_alias} = #{assign_name}.#{child_name}"
+              @content << ";\n" unless left.children.last == child
+            end
+          else
+            @content << "(" if @parent.node.type == :op
+            @content << scope_name(left)
+            @content << " #{operator} " << compile_next(right)
+            @content << ")" if @parent.node.type == :op
+          end
+        else
+          @content << compile_next(left)
+          @content << " #{operator} "
+          @content << compile_next(right)
         end
-      elsif left.option :is_hash
-        assign_name = "__assign#{@@assign_counter}"
-        @content << "var #{assign_name} = #{compile_next(right)};\n"
-        @@assign_counter += 1
-
-        left.children.each do |child|
-          child_children = child.children.dup
-          child_children.shift
-          child_alias_node = child_children.shift
-          child_alias = compile_next(child_alias_node)
-          child_name = compile_next(child_children.shift)
-          @content << @parent.tab
-          scope_name(child_alias_node)
-          @content << "#{child_alias} = #{assign_name}.#{child_name}"
-          @content << ";\n" unless left.children.last == child
-        end
-      else
-        @content << "(" if @parent.node.type == :op
-        @content << scope_name(left)
-        @content << " = " << compile_next(right)
-        @content << ")" if @parent.node.type == :op
+      when :prefix
+        @content << operator
+        @content << compile_next(children.shift)
+      when :suffix
+        @content << compile_next(children.shift)
+        @content << operator
       end
+
+      @content << ")" if @parent.node.type == :op
 
       super
     end
@@ -212,32 +231,6 @@ module Spoon
       end
 
       content
-    end
-  end
-
-  class Operation < Base
-    def compile
-      children = @node.children.dup
-      operator = children.shift.to_s
-
-      @content << "(" if @parent.node.type == :op
-
-      case @node.option :operation
-      when :infix
-        @content << compile_next(children.shift)
-        @content << " #{operator} "
-        @content << compile_next(children.shift)
-      when :prefix
-        @content << operator
-        @content << compile_next(children.shift)
-      when :suffix
-        @content << compile_next(children.shift)
-        @content << operator
-      end
-
-      @content << ")" if @parent.node.type == :op
-
-      super
     end
   end
 

@@ -35,7 +35,7 @@ module Spoon
       (
         whitespace.maybe >>
         import.repeat >>
-        expression.repeat(1) >>
+        expression.repeat >>
         whitespace.maybe
       ).as(:root)
     }
@@ -68,28 +68,37 @@ module Spoon
     # TODO: Add decorators (postfix if, unless, for and while)
     rule(:expression) {
       space.maybe >>
-      (assign | operation | value) >>
+      (unary_operation | operation | value) >>
       endline.maybe
     }
 
     # Matches operation
     rule(:operation) {
-       unary_operation | infix_expression(
+      infix_expression(
         unary_operation | parens(value) | parens(operation, true),
-        [RANGE(), 13, :left],
-        [DOT(), 12, :left],
-        [MUL(), 11, :left],
-        [ADD(), 10, :left],
-        [SHIFT(), 9, :left],
-        [COMPARE(), 8, :left],
-        [EQ(), 7, :left],
-        [BAND(), 6, :left],
-        [BXOR(), 5, :left],
-        [BOR(), 4, :left],
-        [AND(), 3, :left],
-        [OR(), 2, :left],
-        [CASSIGN(), 1, :right]
+        [RANGE(), 14, :left],
+        [DOT(), 13, :left],
+        [MUL(), 12, :left],
+        [ADD(), 11, :left],
+        [SHIFT(), 10, :left],
+        [COMPARE(), 9, :left],
+        [EQ(), 8, :left],
+        [BAND(), 7, :left],
+        [BXOR(), 6, :left],
+        [BOR(), 5, :left],
+        [AND(), 4, :left],
+        [OR(), 3, :left],
+        [CASSIGN(), 2, :right],
+        [ASSIGN(), 1, :right]
       )
+    }
+
+    # Matches unary operation
+    # example: !foo
+    # TODO: Enable spaces between operator and value
+    rule(:unary_operation) {
+      ((INCREMENT() | UNARY()).as(:o) >> value.as(:r)) |
+      (value.as(:l) >> INCREMENT().as(:o))
     }
 
     # Matches object construction
@@ -99,22 +108,6 @@ module Spoon
         type.as(:name) >>
         space.maybe >> (EXCLAMATION() |  expression_list.as(:args))
       ).as(:construct)
-    }
-
-    # Matches assign
-    # example: foo = bar
-    rule(:assign) {
-      (
-        parens(value).as(:l) >> ASSIGN() >> expression.as(:r)
-      ).as(:assign)
-    }
-
-    # Matches unary operation
-    # example: !foo
-    # TODO: Enable spaces between operator and value
-    rule(:unary_operation) {
-      ((INCREMENT() | UNARY()).as(:o) >> value.as(:r)) |
-      (value.as(:l) >> INCREMENT().as(:o))
     }
 
     # Matches value
@@ -176,7 +169,7 @@ module Spoon
       skip_key >>
       (
         match['a-z'] >>
-        match['a-zA-Z\-'].repeat
+        match['a-zA-Z0-9\-'].repeat
       ).as(:ident)
     }
 
@@ -185,7 +178,7 @@ module Spoon
       skip_key >>
       (
         match['A-Z'] >>
-        match['a-zA-Z\-'].repeat
+        match['a-zA-Z0-9\-'].repeat
       ).as(:type)
     }
 

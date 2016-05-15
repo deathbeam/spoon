@@ -91,10 +91,6 @@ module Spoon
       AST::Node.new :param, [ name, value]
     }
 
-    rule(:assign => { :l => simple(:left), :r => simple(:right) }) {
-      AST::Node.new :assign, [ left, right ]
-    }
-
     rule(:l => simple(:left), :o => simple(:op), :r => simple(:right)) {
       AST::Node.new :op, [ op.to_op, left, right ], :operation => :infix
     }

@@ -7,10 +7,10 @@ module Spoon
     class Spoon::Util::IndentParser
       # Matches only if you are not trying to match any previously stored key
       rule(:skip_key) {
-        result = str(@keywords.first).absent?
+        result = key(@keywords.first).absent?
 
         for keyword in @keywords
-          result = result >> str(keyword).absent?
+          result = result >> key(keyword).absent? unless keyword == @keywords.first
         end
 
         result
@@ -25,7 +25,7 @@ module Spoon
       # Stores string as key and matches it
       def key(value)
         preserve(value)
-        str(value)
+        str(value) >> match['a-zA-Z0-9-'].absent?
       end
 
       # Trims all whitespace around value

@@ -4,8 +4,6 @@ import Sys.print
 
 @message = "Hello"
 
-canvas = js.Browser.document
-
 a = 10
 a = 15 + 8 * 6 / 7 + (8 - 7)
 

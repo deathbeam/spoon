@@ -71,9 +71,9 @@ describe Spoon::Parser do
 
     it { should parse "foo" }
     it { should parse "foo-bar" }
+    it { should parse "foo2" }
     it { should_not parse "Foo" }
     it { should_not parse "-foo" }
-    it { should_not parse "foo2" }
     it { should_not parse "foo?" }
     it { should_not parse "foo_bar" }
   end

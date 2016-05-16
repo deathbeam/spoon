@@ -68,7 +68,7 @@ module Spoon
 
     def compile_str(str)
       if str.start_with? "'"
-        str
+        str.gsub!("\\#", "#") || str
       else
         str.gsub!("-", "_") || str
       end
@@ -148,14 +148,14 @@ module Spoon
       children = @node.children.dup
       operator = children.shift.to_s
 
-      @content << "(" if @parent.node.type == :op
+      @content << "(" if @parent.node.type == :op && !@parent.node.option(:is_assign)
 
       case @node.option :operation
       when :infix
         left = children.shift
         right = children.shift
 
-        if operator == "="
+        if @node.option :is_assign
           if left.option :is_array
             assign_name = "__assign#{@@assign_counter}"
             @content << "var #{assign_name} = #{compile_next(right)};\n"
@@ -187,12 +187,17 @@ module Spoon
           else
             @content << "(" if @parent.node.type == :op
             @content << scope_name(left)
-            @content << " #{operator} " << compile_next(right)
+            @content << " " unless @node.option :is_chain
+            @content << operator
+            @content << " " unless @node.option :is_chain
+            @content << compile_next(right)
             @content << ")" if @parent.node.type == :op
           end
         else
           @content << compile_next(left)
-          @content << " #{operator} "
+          @content << " " unless @node.option :is_chain
+          @content << operator
+          @content << " " unless @node.option :is_chain
           @content << compile_next(right)
         end
       when :prefix
@@ -203,7 +208,7 @@ module Spoon
         @content << operator
       end
 
-      @content << ")" if @parent.node.type == :op
+      @content << ")" if @parent.node.type == :op && !@parent.node.option(:is_assign)
 
       super
     end

@@ -76,8 +76,8 @@ module Spoon
     rule(:operation) {
       infix_expression(
         unary_operation | parens(value) | parens(operation, true),
-        [RANGE(), 14, :left],
-        [DOT(), 13, :left],
+        [DOT(), 14, :left],
+        [RANGE(), 13, :left],
         [MUL(), 12, :left],
         [ADD(), 11, :left],
         [SHIFT(), 10, :left],

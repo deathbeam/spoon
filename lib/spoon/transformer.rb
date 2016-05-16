@@ -92,7 +92,15 @@ module Spoon
     }
 
     rule(:l => simple(:left), :o => simple(:op), :r => simple(:right)) {
-      AST::Node.new :op, [ op.to_op, left, right ], :operation => :infix
+      operator = op.to_op
+
+      if operator == "="
+        AST::Node.new :op, [ op.to_op, left, right ], :operation => :infix, :is_assign => true
+      elsif operator == "."
+        AST::Node.new :op, [ op.to_op, left, right ], :operation => :infix, :is_chain => true
+      else
+        AST::Node.new :op, [ op.to_op, left, right ], :operation => :infix
+      end
     }
 
     rule(:l => simple(:left), :o => simple(:op)) {

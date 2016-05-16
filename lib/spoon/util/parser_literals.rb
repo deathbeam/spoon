@@ -49,7 +49,7 @@ module Spoon
       ####################################
 
       # Dot
-      rule(:DOT) { trim(str(".")) }
+      rule(:DOT) { trim(str(".") >> str(".").absent? ) }
 
       # Comma
       rule(:COMMA) { trim(str(",")) }

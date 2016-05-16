@@ -27,7 +27,7 @@ log-message = (message = "hello") ->
   a = 25
   b = 10
   print message
-  return a, b
+  return [ a, b ]
 
 b = 15
 test = TestClass!

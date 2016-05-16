@@ -119,10 +119,6 @@ module Spoon
       end
     }
 
-    rule(:return => sequence(:args)) {
-      AST::Node.new :return, args
-    }
-
     rule(:construct => { :name => simple(:name) }) {
       AST::Node.new :new, [ name ]
     }

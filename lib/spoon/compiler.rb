@@ -412,18 +412,8 @@ module Spoon
 
   class Return < Base
     def compile
-      children = @node.children.dup
-      multi = children.length > 1
       @content << "return "
-      @content << "[" if multi
-
-      children.each do |child|
-        @content << compile_next(child)
-        @content << ", " unless child.equal? children.last
-      end
-
-      @content << "]" if multi
-
+      @content << compile_next(@node.children.dup.shift)
       super
     end
   end

@@ -236,7 +236,7 @@ module Spoon
     rule(:ret) {
       RETURN() >>
       space.maybe >>
-      expression_list.maybe.as(:return)
+      expression.maybe.as(:return)
     }
 
     # Matches function call

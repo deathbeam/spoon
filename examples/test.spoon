@@ -1,20 +1,45 @@
 #!/usr/bin/env coffee
-# Above is just for nice syntax highlighting
-# as Spoon syntax is very similar to CoffeeScript
 
-log = (message) ->
-  if message
-    print "[INFO] #{@message}"
-  else
-    print "[INFO] Empty message"
-    return a, b
+import Sys.print
 
-greet = name -> log "Hello #{name}"
+@message = "Hello"
 
-for i in greet!
-  print "Hello #{i}"
+a = 10
+a = 15 + 8 * 6 / 7 + (8 - 7)
 
-while true
-  print "Endless loop"
+array = [ a, b, c ]
 
-greet "friend" # This will print "Hello friend" to console
+hash = [
+  a: b,
+  b: c,
+  c: d
+]
+
+test = (a = 5) ->
+  print "Jajaja"
+
+[ foo, bar ] = baz
+[ a, b ] = hello(world)
+[ a: bar, b: baz ] = hello(world)
+
+log-message = (message = "hello") ->
+  message = "bb"
+  a = 25
+  b = 10
+  print message
+  return a, b
+
+b = 15
+test = TestClass!
+
+log-message "Hello World"
+
+if message
+  print "[INFO] #{@message}"
+else
+  print "[INFO] Empty message"
+
+for i in message
+  print "#{i}"
+
+while true do print "Hello"

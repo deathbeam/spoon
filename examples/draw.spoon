@@ -1,4 +1,4 @@
-#!/usr/bin/env ls
+#!/usr/bin/env coffee
 
 import js.Browser.document
 

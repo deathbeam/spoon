@@ -1,5 +1,0 @@
-#!/usr/bin/env ls
-
-print "Hello World"
-
-# > Hello World

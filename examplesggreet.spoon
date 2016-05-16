@@ -1,0 +1,4 @@
+#!/usr/bin/env ls
+
+greet = name -> trace "Hello #{name}, how are you?"
+greet "Person"

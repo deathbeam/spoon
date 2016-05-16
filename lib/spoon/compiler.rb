@@ -70,7 +70,9 @@ module Spoon
       if str.start_with? "'"
         str.gsub!("\\#", "#") || str
       else
-        str.gsub!("-", "_") || str
+        str_array = str.split('-')
+        first = str_array.shift
+        first + str_array.collect(&:capitalize).join
       end
     end
   end

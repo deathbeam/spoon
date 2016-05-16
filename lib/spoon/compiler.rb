@@ -103,7 +103,7 @@ module Spoon
       class_variables = ""
 
       @compiler.class_scope.get.each do |key, value|
-        class_variables << "  static var #{key};\n"
+        class_variables << "  static public var #{key};\n"
       end
 
       instance_variables = ""
@@ -217,23 +217,25 @@ module Spoon
 
     def scope_name(node)
       content = compile_next(node)
+      is_self = node.option :is_self
+      is_this = node.option :is_this
 
-      if node.type == :value
-        if @compiler.scope.push content
-          @content << "var "
-        end
-      elsif node.type == :self || node.type == :this
+      if is_self || is_this
         name = compile_next(node.children.first)
 
-        if node.type == :self
+        if is_self
           raise ArgumentError, 'Self call cannot be used outside of class' unless @compiler.in_class
           @compiler.class_scope.push name
-        elsif node.type == :this
+        elsif is_this
           if @compiler.in_class
             @compiler.instance_scope.push name
           else
             @compiler.class_scope.push name
           end
+        end
+      elsif node.type == :value
+        if @compiler.scope.push content
+          @content << "var "
         end
       end
 

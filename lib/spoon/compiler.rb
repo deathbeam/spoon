@@ -168,7 +168,7 @@ module Spoon
               @content << @parent.tab
               scope_name(child)
               @content << "#{child_name} = #{assign_name}[#{index}]"
-              @content << ";\n" unless left.children.last == child
+              @content << ";\n" unless child.equal? left.children.last
             end
           elsif left.option :is_hash
             assign_name = "__assign#{@@assign_counter}"
@@ -184,7 +184,7 @@ module Spoon
               @content << @parent.tab
               scope_name(child_alias_node)
               @content << "#{child_alias} = #{assign_name}.#{child_name}"
-              @content << ";\n" unless left.children.last == child
+              @content << ";\n" unless child.equal? left.children.last
             end
           else
             @content << "(" if @parent.node.type == :op
@@ -259,7 +259,7 @@ module Spoon
           @content << compile_next(child)
         end
 
-        @content << " + " unless children.last == child
+        @content << " + " unless child.equal? children.last
       end
 
       super
@@ -293,7 +293,7 @@ module Spoon
 
       children.each do |child|
         @content << compile_next(child)
-        @content << ", " unless children.last == child
+        @content << ", " unless child.equal? children.last
       end
 
       @content << (@node.option(:is_array) ? "]" : "}")
@@ -310,7 +310,7 @@ module Spoon
 
       children.each do |child|
         @content << compile_next(child)
-        @content << ", " unless children.last == child
+        @content << ", " unless child.equal? children.last
       end
 
       @content << ")"
@@ -326,7 +326,7 @@ module Spoon
 
       children.each do |child|
         @content << compile_next(child)
-        @content << ", " unless children.last == child
+        @content << ", " unless child.equal? children.last
       end
 
       @content << ")"
@@ -342,7 +342,7 @@ module Spoon
 
       children.each do |child|
         @content << compile_next(child)
-        @content << "." unless children.last == child
+        @content << "." unless child.equal? children.last
       end
 
       super
@@ -362,7 +362,7 @@ module Spoon
           name = child.children.first.to_s
           @compiler.scope.push name
 
-          unless child == children.last
+          unless child.equal? children.last
             @content << compile_next(child)
             @content << ", " unless child == children[children.length - 2]
           end
@@ -417,7 +417,7 @@ module Spoon
 
       children.each do |child|
         @content << compile_next(child)
-        @content << ", " unless children.last == child
+        @content << ", " unless child.equal? children.last
       end
 
       @content << "]" if multi

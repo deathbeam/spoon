@@ -10,7 +10,7 @@ module Spoon
         result = key(@keywords.first).absent?
 
         for keyword in @keywords
-          result = result >> key(keyword).absent? unless keyword == @keywords.first
+          result = result >> key(keyword).absent? unless keyword.equal? @keywords.first
         end
 
         result

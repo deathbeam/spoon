@@ -28,7 +28,8 @@ module Spoon
         :param => Param,
         :value => Value,
         :table => Table,
-        :access => Access
+        :access => Access,
+        :class => Class
       }
 
       @scope = Spoon::Util::Namespace.new
@@ -42,6 +43,26 @@ module Spoon
 
     def compile(node, parent = nil, tab = "")
       @nodes[node.type].new(self, node, parent, tab).compile.to_s
+    end
+
+    def class_variables
+      result = ""
+
+      @class_scope.get.each do |key, value|
+        result << "  static public var #{key};\n"
+      end
+
+      result
+    end
+
+    def instance_variables
+      result = ""
+
+      @instance_scope.get.each do |key, value|
+        result << "  public var #{key};\n"
+      end
+
+      result
     end
   end
 
@@ -91,36 +112,56 @@ module Spoon
       @compiler.instance_scope.add
 
       imports = ""
+      classes = ""
 
       @node.children.each do |child|
         if child.type == :import
           imports << compile_next(child) << ";\n"
+        elsif child.type == :class
+          classes << compile_next(child) << "\n"
         else
           @content << @tab << compile_next(child) << ";\n"
         end
       end
 
-      class_variables = ""
-
-      @compiler.class_scope.get.each do |key, value|
-        class_variables << "  static public var #{key};\n"
-      end
-
-      instance_variables = ""
-
-      @compiler.instance_scope.get.each do |key, value|
-        class_variables << "  var #{key};\n"
-      end
-
-      @content = "class #{@compiler.name} {\n#{class_variables}#{instance_variables}  static public function main() {\n#{@content}"
+      @content = "class #{@compiler.name} {\n#{@compiler.class_variables}#{@compiler.instance_variables}  static public function main() {\n#{@content}"
       @content = "#{imports}#{@content}"
       @content << "  }\n"
-      @content << "}"
+      @content << "}\n#{classes}"
 
       @compiler.scope.pop
       @compiler.class_scope.pop
       @compiler.instance_scope.pop
       @compiler.class_names.pop
+      super
+    end
+  end
+
+  class Class < Base
+    def initialize(compiler, node, parent, tab)
+      super
+      @tab = ""
+    end
+
+    def compile
+      children = @node.children.dup
+      name = compile_next(children.shift)
+
+      @compiler.scope.add
+      @compiler.scope.push name
+      @compiler.class_names.push name
+      @compiler.class_scope.add
+      @compiler.instance_scope.add
+
+      @content << "class #{name} "
+      body = children.shift
+      @content << compile_next(body)
+
+      @compiler.scope.pop
+      @compiler.class_scope.pop
+      @compiler.instance_scope.pop
+      @compiler.class_names.pop
+
       super
     end
   end
@@ -132,11 +173,15 @@ module Spoon
     end
 
     def compile
-      @content << "{\n"
+      content = ""
 
       @node.children.each do |child|
-        @content << @tab << compile_next(child) << ";\n"
+        content << @tab << compile_next(child) << ";\n"
       end
+
+      @content << "{\n"
+      (@content << "#{@compiler.class_variables}#{@compiler.instance_variables}") if @parent.node.type == :class
+      @content << content
 
       @content << @parent.tab << "}"
       super
@@ -186,6 +231,28 @@ module Spoon
               @content << "#{child_alias} = #{assign_name}.#{child_name}"
               @content << ";\n" unless child.equal? left.children.last
             end
+          elsif @parent.parent.node.type == :class
+            is_this = left.option :is_this
+            scope_name(left)
+            name = ""
+
+            if is_this
+              name = compile_next(left.children.first)
+            else
+              name = compile_next(left)
+              name = "new" if name == "constructor"
+            end
+
+            value = compile_next(right)
+
+            if right.type == :closure
+              value = value.insert(8, " #{name}")
+            else
+              value = "var #{name} = #{value}"
+            end
+
+            value = "static #{value}" if is_this
+            @content << "public #{value}"
           else
             @content << "(" if @parent.node.type == :op
             @content << scope_name(left)
@@ -235,7 +302,7 @@ module Spoon
         end
       elsif node.type == :value
         if @compiler.scope.push content
-          @content << "var "
+          content << "var "
         end
       end
 

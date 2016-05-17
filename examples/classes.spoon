@@ -1,0 +1,8 @@
+#!/usr/bin/env coffee
+
+class Test
+  constructor = ->
+    @hello = "hello"
+
+  @greet = ->
+    print @hello

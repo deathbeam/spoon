@@ -32,10 +32,11 @@ module Spoon
       AST::Node.new :value, [ value ], :is_self => true
     }
 
-    rule(:access => {
-        :l => simple(:left),
-        :r => simple(:right)
-        }) {
+    rule(:class => { :name => simple(:name), :body => simple(:body) } ) {
+      AST::Node.new :class, [ name, body ]
+    }
+
+    rule(:access => { :l => simple(:left), :r => simple(:right) }) {
       AST::Node.new :access, [ left, right ]
     }
 

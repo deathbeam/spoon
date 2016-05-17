@@ -26,7 +26,8 @@ module Spoon
         :do,
         :while,
         :import,
-        :new
+        :new,
+        :class
       ]
     end
 
@@ -35,7 +36,7 @@ module Spoon
       (
         whitespace.maybe >>
         import.repeat >>
-        expression.repeat >>
+        (classdef | expression).repeat >>
         whitespace.maybe
       ).as(:root)
     }
@@ -143,6 +144,10 @@ module Spoon
       (ident | self_call | this_call | string).as(:l) >>
       trim(DOUBLE_DOT()).as(:o) >>
       expression.as(:r)
+    }
+
+    rule(:classdef) {
+      CLASS() >> space.maybe >> (type.as(:name) >> body.as(:body)).as(:class)
     }
 
     # Matches array access

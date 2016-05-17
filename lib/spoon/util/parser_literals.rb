@@ -30,6 +30,8 @@ module Spoon
 
       rule(:NEW)      { key :new }
 
+      rule(:CLASS)    { key :class }
+
       ####################################
       # Special characters
       ####################################

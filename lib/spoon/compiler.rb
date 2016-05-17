@@ -233,14 +233,12 @@ module Spoon
             end
           elsif @parent.parent.node.type == :class
             is_this = left.option :is_this
-            scope_name(left)
             name = ""
 
             if is_this
               name = compile_next(left.children.first)
             else
               name = compile_next(left)
-              name = "new" if name == "constructor"
             end
 
             value = compile_next(right)

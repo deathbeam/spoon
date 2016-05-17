@@ -26,7 +26,6 @@ module Spoon
         :do,
         :while,
         :import,
-        :new,
         :class
       ]
     end

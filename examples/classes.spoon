@@ -1,8 +1,10 @@
 #!/usr/bin/env coffee
 
-class Test
-  constructor = ->
-    @hello = "hello"
+class Person
+  new = name ->
+    @name = name
 
-  @greet = ->
-    print @hello
+  greet = ->
+    print "Hello, #{@name}!"
+
+Person("Tomas").greet!

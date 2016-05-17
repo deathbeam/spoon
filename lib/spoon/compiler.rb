@@ -4,7 +4,7 @@ module Spoon
   class Compiler
     attr_reader :name
     attr_reader :scope
-    attr_reader :class_scope
+    attr_reader :static_scope
     attr_reader :instance_scope
     attr_reader :class_names
 
@@ -33,7 +33,7 @@ module Spoon
       }
 
       @scope = Spoon::Util::Namespace.new
-      @class_scope = Spoon::Util::Namespace.new
+      @static_scope = Spoon::Util::Namespace.new
       @instance_scope = Spoon::Util::Namespace.new
     end
 
@@ -48,7 +48,7 @@ module Spoon
     def class_variables
       result = ""
 
-      @class_scope.get.each do |key, value|
+      @static_scope.get.each do |key, value|
         result << "  static public var #{key};\n"
       end
 
@@ -108,7 +108,7 @@ module Spoon
       @compiler.scope.add
       @compiler.scope.push @compiler.name
       @compiler.class_names.push @compiler.name
-      @compiler.class_scope.add
+      @compiler.static_scope.add
       @compiler.instance_scope.add
 
       imports = ""
@@ -130,7 +130,7 @@ module Spoon
       @content << "}\n#{classes}"
 
       @compiler.scope.pop
-      @compiler.class_scope.pop
+      @compiler.static_scope.pop
       @compiler.instance_scope.pop
       @compiler.class_names.pop
       super
@@ -150,7 +150,7 @@ module Spoon
       @compiler.scope.add
       @compiler.scope.push name
       @compiler.class_names.push name
-      @compiler.class_scope.add
+      @compiler.static_scope.add
       @compiler.instance_scope.add
 
       @content << "class #{name} "
@@ -158,7 +158,7 @@ module Spoon
       @content << compile_next(body)
 
       @compiler.scope.pop
-      @compiler.class_scope.pop
+      @compiler.static_scope.pop
       @compiler.instance_scope.pop
       @compiler.class_names.pop
 
@@ -244,7 +244,8 @@ module Spoon
             value = compile_next(right)
 
             if right.type == :closure
-              value = value.insert(8, " #{name}")
+              value = value.sub("return {", "{") if name == "new"
+              value[8] = " #{name}"
             else
               value = "var #{name} = #{value}"
             end
@@ -290,12 +291,12 @@ module Spoon
 
         if is_self
           raise ArgumentError, 'Self call cannot be used outside of class' unless @compiler.in_class
-          @compiler.class_scope.push name
+          @compiler.static_scope.push name
         elsif is_this
           if @compiler.in_class
             @compiler.instance_scope.push name
           else
-            @compiler.class_scope.push name
+            @compiler.static_scope.push name
           end
         end
       elsif node.type == :value

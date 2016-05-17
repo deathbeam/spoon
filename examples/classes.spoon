@@ -1,10 +1,12 @@
 #!/usr/bin/env coffee
 
 class Person
+  name as String
+
   new = name ->
     @name = name
 
   greet = ->
-    print "Hello, #{@name}!"
+    trace "Hello, #{@name}!"
 
 Person("Tomas").greet!

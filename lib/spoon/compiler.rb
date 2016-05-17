@@ -202,22 +202,22 @@ module Spoon
         left = children.shift
         right = children.shift
 
-        if @node.option :is_assign
+        if @node.option(:is_assign) || @node.option(:is_typed)
           if left.option :is_array
             assign_name = "__assign#{@@assign_counter}"
-            @content << "var #{assign_name} = #{compile_next(right)};\n"
+            @content << "var #{assign_name} #{operator} #{compile_next(right)};\n"
             @@assign_counter += 1
 
             left.children.each_with_index do |child, index|
               child_name = compile_next(child)
               @content << @parent.tab
               scope_name(child)
-              @content << "#{child_name} = #{assign_name}[#{index}]"
+              @content << "#{child_name} #{operator} #{assign_name}[#{index}]"
               @content << ";\n" unless child.equal? left.children.last
             end
           elsif left.option :is_hash
             assign_name = "__assign#{@@assign_counter}"
-            @content << "var #{assign_name} = #{compile_next(right)};\n"
+            @content << "var #{assign_name} #{operator} #{compile_next(right)};\n"
             @@assign_counter += 1
 
             left.children.each do |child|
@@ -228,7 +228,7 @@ module Spoon
               child_name = compile_next(child_children.shift)
               @content << @parent.tab
               scope_name(child_alias_node)
-              @content << "#{child_alias} = #{assign_name}.#{child_name}"
+              @content << "#{child_alias} #{operator} #{assign_name}.#{child_name}"
               @content << ";\n" unless child.equal? left.children.last
             end
           elsif @parent.parent.node.type == :class
@@ -247,7 +247,7 @@ module Spoon
               value = value.sub("return {", "{") if name == "new"
               value[8] = " #{name}"
             else
-              value = "var #{name} = #{value}"
+              value = "var #{name} #{operator} #{value}"
             end
 
             value = "static #{value}" if is_this
@@ -301,7 +301,7 @@ module Spoon
         end
       elsif node.type == :value
         if @compiler.scope.push content
-          content << "var "
+          content = "var " << content
         end
       end
 

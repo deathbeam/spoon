@@ -29,6 +29,7 @@ module Spoon
       def to_op
         str = trim
 
+        return ":" if str == "as"
         return "..." if str == ".."
         return "!" if str == "not"
         return "&&" if str == "and"

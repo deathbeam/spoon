@@ -96,11 +96,13 @@ module Spoon
       operator = op.to_op
 
       if operator == "="
-        AST::Node.new :op, [ op.to_op, left, right ], :operation => :infix, :is_assign => true
+        AST::Node.new :op, [ operator, left, right ], :operation => :infix, :is_assign => true
       elsif operator == "."
-        AST::Node.new :op, [ op.to_op, left, right ], :operation => :infix, :is_chain => true
+        AST::Node.new :op, [ operator, left, right ], :operation => :infix, :is_chain => true
+      elsif op == "as"
+        AST::Node.new :op, [ operator, left, right ], :operation => :infix, :is_typed => true
       else
-        AST::Node.new :op, [ op.to_op, left, right ], :operation => :infix
+        AST::Node.new :op, [ operator, left, right ], :operation => :infix
       end
     }
 

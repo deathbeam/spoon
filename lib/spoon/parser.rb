@@ -26,7 +26,8 @@ module Spoon
         :do,
         :while,
         :import,
-        :class
+        :class,
+        :as
       ]
     end
 
@@ -127,6 +128,7 @@ module Spoon
       literal |
       self_call |
       this_call |
+      typed |
       ident |
       type
     }
@@ -166,6 +168,11 @@ module Spoon
       str('[') >> whitespace.maybe >>
       repeat(field, COMMA()).as(:hash) >>
       whitespace.maybe >> str(']')
+    }
+
+    # Matches typed word
+    rule(:typed) {
+      ident.as(:l) >> trim(AS().as(:o)) >> type.as(:r)
     }
 
     # Matches word

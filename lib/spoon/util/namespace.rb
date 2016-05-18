@@ -9,9 +9,9 @@ module Spoon
         @map.push Hash.new
       end
 
-      def push(key)
+      def push(key, value = true)
         unless has?(key)
-          get[key] = true
+          get[key] = value
           true
         else
           false

@@ -49,7 +49,7 @@ module Spoon
       result = ""
 
       @static_scope.get.each do |key, value|
-        result << "  static public var #{key};\n"
+        result << "  static public var #{key};\n" if value
       end
 
       result
@@ -59,7 +59,7 @@ module Spoon
       result = ""
 
       @instance_scope.get.each do |key, value|
-        result << "  public var #{key};\n"
+        result << "  public var #{key};\n" if value
       end
 
       result
@@ -237,8 +237,10 @@ module Spoon
 
             if is_this
               name = compile_next(left.children.first)
+              @compiler.static_scope.push name, false
             else
               name = compile_next(left)
+              @compiler.instance_scope.push name, false
             end
 
             value = compile_next(right)
@@ -253,13 +255,11 @@ module Spoon
             value = "static #{value}" if is_this
             @content << "public #{value}"
           else
-            @content << "(" if @parent.node.type == :op
             @content << scope_name(left)
             @content << " " unless @node.option :is_chain
             @content << operator
             @content << " " unless @node.option :is_chain
             @content << compile_next(right)
-            @content << ")" if @parent.node.type == :op
           end
         else
           @content << compile_next(left)

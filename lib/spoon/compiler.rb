@@ -44,26 +44,6 @@ module Spoon
     def compile(node, parent = nil, tab = "")
       @nodes[node.type].new(self, node, parent, tab).compile.to_s
     end
-
-    def class_variables
-      result = ""
-
-      @static_scope.get.each do |key, value|
-        result << "  static public var #{key};\n" if value
-      end
-
-      result
-    end
-
-    def instance_variables
-      result = ""
-
-      @instance_scope.get.each do |key, value|
-        result << "  public var #{key};\n" if value
-      end
-
-      result
-    end
   end
 
   class Base
@@ -96,6 +76,26 @@ module Spoon
         first + str_array.collect(&:capitalize).join
       end
     end
+
+    def compile_class_variables
+      result = ""
+
+      @compiler.static_scope.get.each do |key, value|
+        result << "  static public var #{key};\n" if value
+      end
+
+      result
+    end
+
+    def compile_instance_variables
+      result = ""
+
+      @compiler.instance_scope.get.each do |key, value|
+        result << "  public var #{key};\n" if value
+      end
+
+      result
+    end
   end
 
   class Root < Base
@@ -113,10 +113,17 @@ module Spoon
 
       imports = ""
       classes = ""
+      import_calls = ""
 
       @node.children.each do |child|
         if child.type == :import
           imports << compile_next(child) << ";\n"
+          last = child.children.last
+
+          if last.option :is_type
+            name = compile_next(child.children.last)
+            import_calls << "#{@tab}if (Reflect.hasField(#{name}, 'main')) Reflect.callMethod(#{name}, Reflect.field(#{name}, 'main'), []);\n"
+          end
         elsif child.type == :class
           classes << compile_next(child) << "\n"
         else
@@ -124,7 +131,7 @@ module Spoon
         end
       end
 
-      @content = "class #{@compiler.name} {\n#{@compiler.class_variables}#{@compiler.instance_variables}  static public function main() {\n#{@content}"
+      @content = "class #{@compiler.name} {\n#{compile_class_variables}#{compile_instance_variables}  @:keep public static function main() {\n#{import_calls}#{@content}"
       @content = "#{imports}#{@content}"
       @content << "  }\n"
       @content << "}\n#{classes}"
@@ -180,7 +187,7 @@ module Spoon
       end
 
       @content << "{\n"
-      (@content << "#{@compiler.class_variables}#{@compiler.instance_variables}") if @parent.node.type == :class
+      (@content << "#{compile_class_variables}#{compile_instance_variables}") if @parent.node.type == :class
       @content << content
 
       @content << @parent.tab << "}"
@@ -231,7 +238,7 @@ module Spoon
               @content << "#{child_alias} #{operator} #{assign_name}.#{child_name}"
               @content << ";\n" unless child.equal? left.children.last
             end
-          elsif @parent.parent.node.type == :class
+          elsif @parent.parent != nil && @parent.parent.node.type == :class
             is_this = left.option :is_this
             name = ""
 

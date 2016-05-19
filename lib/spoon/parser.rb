@@ -115,10 +115,9 @@ module Spoon
     }
 
     # Matches annotation
-    # example: :annotation
-    # TODO: Think about better operator than ":"
+    # example: \annotation
     rule(:annotation) {
-      DOUBLE_DOT() >> (unary_operation | operation | value).as(:annotation) >> endline
+      str('\\') >> (unary_operation | operation | value).as(:annotation) >> endline
     }
 
     # Matches self call
@@ -181,9 +180,8 @@ module Spoon
 
     # Matches typed word
     # example: foo as Bar
-    # FIXME: Better solution than handling this as operation
     rule(:typed) {
-      (ident.as(:name) >> trim(AS()) >> type.as(:type)).as(:typed)
+      (ident.as(:name) >> trim(DOUBLE_DOT()) >> type.as(:type)).as(:typed)
     }
 
     # Matches word

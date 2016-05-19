@@ -2,23 +2,21 @@
 
 class Point2d
   new = (x, y) ->
-    @x as Int = x
-    @y as Int = y
+    @x : Int = x
+    @y : Int = y
 
-  to-string = ->
-    "Point2d: x=#{@x}, y=#{@y}"
-
-point2d = Point2d(100, 200)
-trace point2d.to-string!
+  to-string = -> "Point2d: x=#{@x}, y=#{@y}"
 
 class Point3d < Point2d
   new = (x, y, z) ->
     super x, y
-    @z as Int = z
+    @z : Int = z
 
-  :override
-  to-string = ->
-    "Point3d: x=#{@x}, y=#{@y}, z=#{@z}"
+  \override
+  to-string = -> "Point3d: x=#{@x}, y=#{@y}, z=#{@z}"
+
+point2d = Point2d(100, 200)
+trace point2d.to-string!
 
 point3d = Point3d(100, 200, 150)
 trace point3d.to-string!

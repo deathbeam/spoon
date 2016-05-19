@@ -23,8 +23,7 @@ module Spoon
           :do,
           :while,
           :import,
-          :class,
-          :as
+          :class
         ]
       end
 
@@ -55,8 +54,6 @@ module Spoon
       rule(:NEW)      { key :new }
 
       rule(:CLASS)    { key :class }
-
-      rule(:AS)       { key :as }
 
       ####################################
       # Special characters

@@ -7,30 +7,6 @@ require "spoon/util/parser_literals"
 
 module Spoon
   class Parser < Spoon::Util::IndentParser
-    # Initialize the keyword map
-    def initialize
-      super
-      @keywords = [
-        :if,
-        :else,
-        :return,
-        :and,
-        :is,
-        :isnt,
-        :or,
-        :not,
-        :then,
-        :in,
-        :for,
-        :unless,
-        :do,
-        :while,
-        :import,
-        :class,
-        :as
-      ]
-    end
-
     # Matches entire file, skipping all whitespace at beginning and end
     rule(:root) {
       (
@@ -154,7 +130,12 @@ module Spoon
     }
 
     rule(:classdef) {
-      CLASS() >> space.maybe >> (type.as(:name) >> body.as(:body)).as(:class)
+      space.maybe >> CLASS() >> space.maybe >>
+      (
+        type.as(:name) >>
+        (trim(str("<")) >> type).as(:extends).maybe >>
+        body.as(:body)
+      ).as(:class)
     }
 
     # Matches array access

@@ -4,6 +4,30 @@ require 'spoon/util/indent_parser'
 module Spoon
   module Util
     class Spoon::Util::IndentParser
+      attr_accessor :keywords
+
+      def keywords
+        [
+          :if,
+          :else,
+          :return,
+          :and,
+          :is,
+          :isnt,
+          :or,
+          :not,
+          :then,
+          :in,
+          :for,
+          :unless,
+          :do,
+          :while,
+          :import,
+          :class,
+          :as
+        ]
+      end
+
       ####################################
       # Special keywords
       ####################################

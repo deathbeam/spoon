@@ -40,6 +40,10 @@ module Spoon
       AST::Node.new :class, [ name, body ]
     }
 
+    rule(:class => { :name => simple(:name), :extends => simple(:extends), :body => simple(:body) } ) {
+      AST::Node.new :class, [ name, extends, body ], :is_extended => true
+    }
+
     rule(:access => { :l => simple(:left), :r => simple(:right) }) {
       AST::Node.new :access, [ left, right ]
     }

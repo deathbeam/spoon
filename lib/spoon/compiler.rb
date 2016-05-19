@@ -166,6 +166,8 @@ module Spoon
       @compiler.instance_scope.add
 
       @content << "class #{name} "
+      @content << "extends #{compile_next(children.shift)} " if @node.option :is_extended
+
       body = children.shift
       @content << compile_next(body)
 

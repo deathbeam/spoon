@@ -18,7 +18,7 @@ module Spoon
 
       # Stores string as key
       def preserve(value)
-        @keywords = [] if @keywords.nil?
+        @keywords = keywords if @keywords.nil?
         @keywords.push value unless @keywords.include? value
       end
 

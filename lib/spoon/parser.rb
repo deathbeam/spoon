@@ -33,14 +33,6 @@ module Spoon
       dedent
     }
 
-    rule(:import) {
-      space.maybe >>
-      IMPORT() >>
-      space.maybe >>
-      repeat((ident | type | STAR().as(:ident)), DOT()).as(:import) >>
-      endline.maybe
-    }
-
     # Matches expression
     # TODO: Add decorators (postfix if, unless, for and while)
     rule(:expression) {
@@ -49,7 +41,31 @@ module Spoon
       endline.maybe
     }
 
+    # Matches value
+    rule(:value) {
+      annotation |
+      closure |
+      condition |
+      condition_reverse |
+      for_loop |
+      while_loop |
+      construct |
+      array_access |
+      call |
+      import |
+      ret |
+      hash |
+      array |
+      literal |
+      self_call |
+      this_call |
+      typed |
+      ident |
+      type
+    }
+
     # Matches operation
+    # example: a * b
     rule(:operation) {
       infix_expression(
         unary_operation | value | parens(operation, true),
@@ -78,8 +94,19 @@ module Spoon
       (value.as(:l) >> INCREMENT().as(:o))
     }
 
+    # Matches import
+    # example: import foo.bar.Baz.*
+    # TODO: Implement import syntax from this issue: https://github.com/nondev/spoon/issues/26
+    rule(:import) {
+      space.maybe >>
+      IMPORT() >>
+      space.maybe >>
+      repeat((ident | type | STAR().as(:ident)), DOT()).as(:import) >>
+      endline.maybe
+    }
+
     # Matches object construction
-    # example: new Foo!
+    # example: Foo!
     rule(:construct) {
       (
         type.as(:name) >>
@@ -87,70 +114,65 @@ module Spoon
       ).as(:construct)
     }
 
-    # Matches value
-    rule(:value) {
-      annotation |
-      closure |
-      condition |
-      condition_reverse |
-      for_loop |
-      while_loop |
-      construct |
-      array_access |
-      call |
-      import |
-      ret |
-      hash |
-      array |
-      literal |
-      self_call |
-      this_call |
-      typed |
-      ident |
-      type
-    }
-
     # Matches annotation
+    # example: :annotation
+    # TODO: Think about better operator than ":"
     rule(:annotation) {
       DOUBLE_DOT() >> (unary_operation | operation | value).as(:annotation) >> endline
     }
 
+    # Matches self call
+    # example: @@foo
     rule(:self_call) {
       str('@@') >> value.as(:self)
     }
 
+    # Matches this call
+    # example: @foo
     rule(:this_call) {
       str('@') >> value.as(:this)
     }
 
+    # Matches hash field
+    # example: a : b
     rule(:field) {
       (ident | self_call | this_call | string).as(:l) >>
       trim(DOUBLE_DOT()).as(:o) >>
       expression.as(:r)
     }
 
+    # Matches class definition
+    # example: class Foo < Bar do @baz = "Baz"
+    # TODO: Add also "implements", to implement interfaces
+    # FIXME: Multiple class definitions in one file
     rule(:classdef) {
       space.maybe >> CLASS() >> space.maybe >>
       (
         type.as(:name) >>
-        (trim(str("<")) >> type).as(:extends).maybe >>
+        (trim(str("<")) >> type.as(:extends)).maybe >>
         body.as(:body)
       ).as(:class)
     }
 
     # Matches array access
+    # example: foo[bar]
     rule(:array_access) {
       (ident.as(:l) >> trim(str('[')) >>
       expression.as(:r) >>
       whitespace.maybe >> str(']')).as(:access)
     }
 
+    # Matches array
+    # example: [ foo, bar ]
     rule(:array) {
       str('[') >> whitespace.maybe >>
       repeat(expression, COMMA()).as(:array) >>
       whitespace.maybe >> str(']')
     }
 
+    # Matches hash
+    # example: [ foo: bar, baz: foo ]
+    # TODO: Should this be with the [ ] syntax, or switch back to classical { } syntax?
     rule(:hash) {
       str('[') >> whitespace.maybe >>
       repeat(field, COMMA()).as(:hash) >>
@@ -158,6 +180,8 @@ module Spoon
     }
 
     # Matches typed word
+    # example: foo as Bar
+    # FIXME: Better solution than handling this as operation
     rule(:typed) {
       ident.as(:l) >> trim(AS().as(:o)) >> type.as(:r)
     }
@@ -180,12 +204,13 @@ module Spoon
       ).as(:type)
     }
 
-    # Matches true false
+    # Matches true/false
     rule(:boolean) {
       (str(:true) | str(:false)).as(:boolean)
     }
 
     # Matches strings
+    # TODO: Add support for single quotes
     rule(:string) {
       str('"') >>
       (text.as(:text) | interpolation).repeat.as(:string) >>
@@ -276,6 +301,7 @@ module Spoon
     }
 
     # Matches for loop
+    # example: for (foo in bar) baz
     rule(:for_loop) {
       (
         FOR() >>
@@ -286,6 +312,7 @@ module Spoon
     }
 
     # Matches while loop
+    # example: while (foo) bar
     rule(:while_loop) {
       (
         WHILE() >>
@@ -306,8 +333,8 @@ module Spoon
       ).as(:if)
     }
 
-    # Matches if-else if-else in recursive structure
-    # example: if (a) b else if(c) d else e
+    # Matches unless-else unless-else in recursive structure
+    # example: unless (a) b else c
     rule(:condition_reverse) {
       (
         UNLESS() >>
@@ -318,6 +345,7 @@ module Spoon
     }
 
     # Matches condition body
+    # example: foo else bar
     rule(:condition_body) {
       body.as(:true) >>
       (

@@ -39,6 +39,7 @@ module Spoon
       end
 
       # Matches value in parens or not in parens
+      # FIXME: Ignore parens in parser output (wait for new Parslet release)
       def parens(value, force = false)
         if force
           str("(") >> trim(value) >> str(")") >> endline.maybe

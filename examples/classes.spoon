@@ -6,6 +6,7 @@ class Person
   new = name ->
     @name = name
 
+  :override
   greet = ->
     trace "Hello, #{@name}!"
 

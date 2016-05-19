@@ -76,7 +76,7 @@ module Spoon
     # Matches operation
     rule(:operation) {
       infix_expression(
-        unary_operation | parens(value) | parens(operation, true),
+        unary_operation | value | parens(operation, true),
         [DOT(), 14, :left],
         [RANGE(), 13, :left],
         [MUL(), 12, :left],
@@ -113,11 +113,12 @@ module Spoon
 
     # Matches value
     rule(:value) {
+      annotation |
+      closure |
       condition |
       condition_reverse |
       for_loop |
       while_loop |
-      closure |
       construct |
       array_access |
       call |
@@ -131,6 +132,11 @@ module Spoon
       typed |
       ident |
       type
+    }
+
+    # Matches annotation
+    rule(:annotation) {
+      DOUBLE_DOT() >> (unary_operation | operation | value).as(:annotation) >> endline
     }
 
     rule(:self_call) {

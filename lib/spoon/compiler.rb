@@ -29,7 +29,8 @@ module Spoon
         :value => Value,
         :table => Table,
         :access => Access,
-        :class => Class
+        :class => Class,
+        :annotation => Annotation
       }
 
       @scope = Spoon::Util::Namespace.new
@@ -96,6 +97,10 @@ module Spoon
 
       result
     end
+
+    def eol(node)
+      (node.type == :annotation || node.type == :class) ? "\n" : ";\n"
+    end
   end
 
   class Root < Base
@@ -117,7 +122,7 @@ module Spoon
 
       @node.children.each do |child|
         if child.type == :import
-          imports << compile_next(child) << ";\n"
+          imports << compile_next(child) << eol(child)
           last = child.children.last
 
           if last.option :is_type
@@ -125,9 +130,9 @@ module Spoon
             import_calls << "#{@tab}if (Reflect.hasField(#{name}, 'main')) Reflect.callMethod(#{name}, Reflect.field(#{name}, 'main'), []);\n"
           end
         elsif child.type == :class
-          classes << compile_next(child) << "\n"
+          classes << compile_next(child) << eol(child)
         else
-          @content << @tab << compile_next(child) << ";\n"
+          @content << @tab << compile_next(child) << eol(child)
         end
       end
 
@@ -183,7 +188,7 @@ module Spoon
       content = ""
 
       @node.children.each do |child|
-        content << @tab << compile_next(child) << ";\n"
+        content << @tab << compile_next(child) << eol(child)
       end
 
       @content << "{\n"
@@ -220,7 +225,7 @@ module Spoon
               @content << @parent.tab
               scope_name(child)
               @content << "#{child_name} #{operator} #{assign_name}[#{index}]"
-              @content << ";\n" unless child.equal? left.children.last
+              @content << eol(child) unless child.equal? left.children.last
             end
           elsif left.option :is_hash
             assign_name = "__assign#{@@assign_counter}"
@@ -236,7 +241,7 @@ module Spoon
               @content << @parent.tab
               scope_name(child_alias_node)
               @content << "#{child_alias} #{operator} #{assign_name}.#{child_name}"
-              @content << ";\n" unless child.equal? left.children.last
+              @content << eol(child) unless child.equal? left.children.last
             end
           elsif @parent.parent != nil && @parent.parent.node.type == :class
             is_this = left.option :is_this
@@ -347,6 +352,15 @@ module Spoon
       @content << compile_next(children.shift)
       @content << " = " << compile_next(children.shift) unless children.empty?
       super
+    end
+  end
+
+  class Annotation < Base
+    def compile
+      children = @node.children.dup
+      body = compile_next(children.shift)
+      @content << "@" unless body == "override"
+      @content << body
     end
   end
 

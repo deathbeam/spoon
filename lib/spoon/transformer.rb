@@ -24,6 +24,10 @@ module Spoon
       "'#{text}'"
     }
 
+    rule(:annotation => simple(:value)) {
+      AST::Node.new :annotation, [ value ]
+    }
+
     rule(:this => simple(:value)) {
       AST::Node.new :value, [ value ], :is_this => true
     }

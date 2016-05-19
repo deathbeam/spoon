@@ -7,6 +7,7 @@ module Spoon
     class Spoon::Util::IndentParser
       # Matches only if you are not trying to match any previously stored key
       rule(:skip_key) {
+        @keywords = keywords if @keywords.nil?
         result = key(@keywords.first).absent?
 
         for keyword in @keywords

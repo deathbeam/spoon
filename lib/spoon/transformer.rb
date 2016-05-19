@@ -36,6 +36,10 @@ module Spoon
       AST::Node.new :value, [ value ], :is_self => true
     }
 
+    rule(:typed => { :name => simple(:name), :type => simple(:type) } ) {
+      AST::Node.new :value, [ name, type ], :is_typed => true
+    }
+
     rule(:class => { :name => simple(:name), :body => simple(:body) } ) {
       AST::Node.new :class, [ name, body ]
     }
@@ -107,8 +111,6 @@ module Spoon
         AST::Node.new :op, [ operator, left, right ], :operation => :infix, :is_assign => true
       elsif operator == "."
         AST::Node.new :op, [ operator, left, right ], :operation => :infix, :is_chain => true
-      elsif op == "as"
-        AST::Node.new :op, [ operator, left, right ], :operation => :infix, :is_typed => true
       else
         AST::Node.new :op, [ operator, left, right ], :operation => :infix
       end

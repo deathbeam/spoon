@@ -1,29 +1,24 @@
 #!/usr/bin/env coffee
 
-point2d = Point2d(100, 200)
-trace point2d.to-string!
-
-point3d = Point3d(100, 200, 150)
-trace point3d.to-string!
-
 class Point2d
-  x as Int
-  y as Int
-
   new = (x, y) ->
-    @x = x
-    @y = y
+    @x as Int = x
+    @y as Int = y
 
   to-string = ->
     "Point2d: x=#{@x}, y=#{@y}"
 
-class Point3d < Point2d
-  z as Int
+point2d = Point2d(100, 200)
+trace point2d.to-string!
 
+class Point3d < Point2d
   new = (x, y, z) ->
-    super(x, y)
-    @z = z
+    super x, y
+    @z as Int = z
 
   :override
   to-string = ->
     "Point3d: x=#{@x}, y=#{@y}, z=#{@z}"
+
+point3d = Point3d(100, 200, 150)
+trace point3d.to-string!

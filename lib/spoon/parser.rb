@@ -183,7 +183,7 @@ module Spoon
     # example: foo as Bar
     # FIXME: Better solution than handling this as operation
     rule(:typed) {
-      ident.as(:l) >> trim(AS().as(:o)) >> type.as(:r)
+      (ident.as(:name) >> trim(AS()) >> type.as(:type)).as(:typed)
     }
 
     # Matches word

@@ -224,7 +224,7 @@ module Spoon
         left = children.shift
         right = children.shift
 
-        if @node.option(:is_assign) || @node.option(:is_typed)
+        if @node.option :is_assign
           if left.option :is_array
             assign_name = "__assign#{@@assign_counter}"
             @content << "var #{assign_name} #{operator} #{compile_next(right)}#{eol(right)}"
@@ -309,22 +309,36 @@ module Spoon
       is_this = node.option :is_this
 
       if is_self || is_this
-        name = compile_next(node.children.first)
+        child = node.children.first
+        is_typed = child.option :is_typed
+        name = ""
+        type = true
+
+        if child.option :is_typed
+          children = child.children.dup
+          name = compile_next(children.shift)
+          type = compile_next(children.shift)
+        else
+          name = compile_next(child)
+        end
 
         if is_self
           raise ArgumentError, 'Self call cannot be used outside of class' unless @compiler.in_class
-          @compiler.static_scope.push name
+          @compiler.static_scope.push name, type
         elsif is_this
           if @compiler.in_class
-            @compiler.instance_scope.push name
+            @compiler.instance_scope.push name, type
           else
-            @compiler.static_scope.push name
+            @compiler.static_scope.push name, type
           end
         end
+      elsif node.option :is_typed
+        children = node.children.dup
+        name = compile_next(children.shift)
+        type = compile_next(children.shift)
+        content = "var " << content if @compiler.scope.push name, type
       elsif node.type == :value
-        if @compiler.scope.push content
-          content = "var " << content
-        end
+        content = "var " << content if @compiler.scope.push content
       end
 
       content
@@ -346,10 +360,23 @@ module Spoon
             @content << (@compiler.in_class ?  "this." : "#{@compiler.class_names.last}.")
           end
 
-          @content << compile_next(child)
+          unless child.equal?(children.last) &&
+                  @node.option(:is_typed) &&
+                  (@parent.node.option(:is_self) ||
+                  @parent.node.option(:is_this))
+            @content << compile_next(child)
+          end
         end
 
-        @content << " + " unless child.equal? children.last
+        unless child.equal? children.last
+          if @node.option(:is_typed)
+            if !@parent.node.option(:is_self) && !@parent.node.option(:is_this)
+              @content << " : "
+            end
+          else
+            @content << " + "
+          end
+        end
       end
 
       super

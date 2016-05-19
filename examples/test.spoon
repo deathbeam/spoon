@@ -1,6 +1,6 @@
 #!/usr/bin/env coffee
 
-import Sys.print
+import Sys
 
 @message = "Hello"
 
@@ -16,7 +16,7 @@ hash = [
 ]
 
 test = (a = 5) ->
-  print "Jajaja"
+  Sys.print "Jajaja"
 
 [ foo, bar ] = baz
 [ a, b ] = hello(world)
@@ -26,7 +26,7 @@ log-message = (message = "hello") ->
   message = "bb"
   a = 25
   b = 10
-  print message
+  Sys.print message
   return [ a, b ]
 
 b = 15
@@ -35,11 +35,11 @@ test = TestClass!
 log-message "Hello World"
 
 if message
-  print "[INFO] #{@message}"
+  Sys.print "[INFO] #{@message}"
 else
-  print "[INFO] Empty message"
+  Sys.print "[INFO] Empty message"
 
 for i in message
-  print "#{i}"
+  Sys.print "#{i}"
 
-while true do print "Hello"
+while true do Sys.print "Hello"

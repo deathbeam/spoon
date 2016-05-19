@@ -82,7 +82,11 @@ module Spoon
       result = ""
 
       @compiler.static_scope.get.each do |key, value|
-        result << "  static public var #{key};\n" if value
+        if value
+          result << "  static public var #{key}"
+          result << " : #{value}" if value.is_a?(String)
+          result << eol
+        end
       end
 
       result
@@ -92,14 +96,18 @@ module Spoon
       result = ""
 
       @compiler.instance_scope.get.each do |key, value|
-        result << "  public var #{key};\n" if value
+        if value
+          result << "  public var #{key}"
+          result << " : #{value}" if value.is_a?(String)
+          result << eol
+        end
       end
 
       result
     end
 
-    def eol(node)
-      (node.type == :annotation || node.type == :class) ? "\n" : ";\n"
+    def eol(node = nil)
+      (node == nil || (node.type != :annotation && node.type != :class)) ? ";\n" : "\n"
     end
   end
 
@@ -127,7 +135,7 @@ module Spoon
 
           if last.option :is_type
             name = compile_next(child.children.last)
-            import_calls << "#{@tab}if (Reflect.hasField(#{name}, 'main')) Reflect.callMethod(#{name}, Reflect.field(#{name}, 'main'), []);\n"
+            import_calls << "#{@tab}if (Reflect.hasField(#{name}, 'main')) Reflect.callMethod(#{name}, Reflect.field(#{name}, 'main'), [])#{eol(child.children.last)}"
           end
         elsif child.type == :class
           classes << compile_next(child) << eol(child)
@@ -219,7 +227,7 @@ module Spoon
         if @node.option(:is_assign) || @node.option(:is_typed)
           if left.option :is_array
             assign_name = "__assign#{@@assign_counter}"
-            @content << "var #{assign_name} #{operator} #{compile_next(right)};\n"
+            @content << "var #{assign_name} #{operator} #{compile_next(right)}#{eol(right)}"
             @@assign_counter += 1
 
             left.children.each_with_index do |child, index|
@@ -231,7 +239,7 @@ module Spoon
             end
           elsif left.option :is_hash
             assign_name = "__assign#{@@assign_counter}"
-            @content << "var #{assign_name} #{operator} #{compile_next(right)};\n"
+            @content << "var #{assign_name} #{operator} #{compile_next(right)}#{eol(right)}"
             @@assign_counter += 1
 
             left.children.each do |child|

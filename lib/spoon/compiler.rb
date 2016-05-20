@@ -310,7 +310,6 @@ module Spoon
 
       if is_self || is_this
         child = node.children.first
-        is_typed = child.option :is_typed
         name = ""
         type = true
 
@@ -386,7 +385,10 @@ module Spoon
   class Param < Base
     def compile
       children = @node.children.dup
+      type = (@node.option(:is_typed) ? children.shift : false)
+
       @content << compile_next(children.shift)
+      @content << " : #{compile_next(type)}" if type
       @content << " = " << compile_next(children.shift) unless children.empty?
       super
     end
@@ -480,6 +482,7 @@ module Spoon
       @compiler.scope.add
 
       children = @node.children.dup
+      type = (@node.option(:is_typed) ? children.shift : false)
 
       @content << "function ("
 
@@ -495,7 +498,9 @@ module Spoon
         end
       end
 
-      @content << ") return "
+      @content << ") "
+      @content << ": #{compile_next(type)} " if type
+      @content << "return "
       @content << compile_next(children.last)
 
       @compiler.scope.pop

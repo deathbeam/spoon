@@ -36,8 +36,8 @@ module Spoon
       AST::Node.new :value, [ value ], :is_self => true
     }
 
-    rule(:typed => { :name => simple(:name), :type => simple(:type) } ) {
-      AST::Node.new :value, [ name, type ], :is_typed => true
+    rule(:typed => { :value => simple(:value), :type => simple(:type) } ) {
+      AST::Node.new :value, [ value, type ], :is_typed => true
     }
 
     rule(:class => { :name => simple(:name), :body => simple(:body) } ) {
@@ -100,8 +100,16 @@ module Spoon
       AST::Node.new :param, [ name ]
     }
 
+    rule(:param => { :name => simple(:name), :type => simple(:type) }) {
+      AST::Node.new :param, [ type, name ], :is_typed => true
+    }
+
     rule(:param => { :name => simple(:name), :value => simple(:value) }) {
-      AST::Node.new :param, [ name, value]
+      AST::Node.new :param, [ name, value ]
+    }
+
+    rule(:param => { :name => simple(:name), :type => simple(:type), :value => simple(:value) }) {
+      AST::Node.new :param, [ type, name, value ], :is_typed => true
     }
 
     rule(:l => simple(:left), :o => simple(:op), :r => simple(:right)) {
@@ -166,6 +174,18 @@ module Spoon
 
     rule(:closure => { :params => sequence(:params), :body => simple(:body) }) {
       AST::Node.new :closure, params + [ body ]
+    }
+
+    rule(:closure => { :type => simple(:type), :body => simple(:body) }) {
+      AST::Node.new :closure, [ type, body ], :is_typed => true
+    }
+
+    rule(:closure => { :params => simple(:params), :type => simple(:type), :body => simple(:body) }) {
+      AST::Node.new :closure, [ type, params, body ], :is_typed => true
+    }
+
+    rule(:closure => { :params => sequence(:params), :type => simple(:type), :body => simple(:body) }) {
+      AST::Node.new :closure, [ type ] + params + [ body ], :is_typed => true
     }
 
     rule(:if => { :condition => simple(:condition), :true => simple(:if_true) }) {

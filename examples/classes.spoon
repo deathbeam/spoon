@@ -1,19 +1,19 @@
 #!/usr/bin/env coffee
 
 class Point2d
-  new = (x, y) ->
+  new = (x : Int, y : Int) : Void ->
     @x : Int = x
     @y : Int = y
 
-  to-string = -> "Point2d: x=#{@x}, y=#{@y}"
+  to-string = : String -> "Point2d: x=#{@x}, y=#{@y}"
 
 class Point3d < Point2d
-  new = (x, y, z) ->
+  new = (x : Int, y : Int, z : Int) : Void ->
     super x, y
     @z : Int = z
 
   \override
-  to-string = -> "Point3d: x=#{@x}, y=#{@y}, z=#{@z}"
+  to-string = : String -> "Point3d: x=#{@x}, y=#{@y}, z=#{@z}"
 
 point2d = Point2d(100, 200)
 trace point2d.to-string!

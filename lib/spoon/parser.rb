@@ -181,7 +181,7 @@ module Spoon
     # Matches typed word
     # example: foo as Bar
     rule(:typed) {
-      (ident.as(:name) >> trim(DOUBLE_DOT()) >> type.as(:type)).as(:typed)
+      (ident.as(:value) >> trim(DOUBLE_DOT()) >> type.as(:type)).as(:typed)
     }
 
     # Matches word
@@ -272,7 +272,9 @@ module Spoon
     # Matches function parameter
     # example a = 1
     rule(:parameter) {
-      ident.as(:name) >> (ASSIGN() >> expression.as(:value)).maybe
+      ident.as(:name) >>
+      (trim(DOUBLE_DOT()) >> type.as(:type)).maybe >>
+      (ASSIGN() >> expression.as(:value)).maybe
     }
 
     # Matches comma delimited function parameters
@@ -292,6 +294,7 @@ module Spoon
     rule(:closure) {
       (
         parameter_list.as(:params).maybe >>
+        (trim(DOUBLE_DOT()) >> type.as(:type)).maybe >>
         whitespace.maybe >>
         ARROW() >>
         body.as(:body)

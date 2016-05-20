@@ -11,8 +11,7 @@ module Spoon
     rule(:root) {
       (
         whitespace.maybe >>
-        import.repeat >>
-        (classdef | expression).repeat >>
+        (statement | expression).repeat >>
         whitespace.maybe
       ).as(:root)
     }
@@ -33,6 +32,12 @@ module Spoon
       dedent
     }
 
+    # Matches statements
+    # TODO: Add interfaces, abstracts and enums
+    rule(:statement) {
+      space.maybe >> (import | classdef)
+    }
+
     # Matches expression
     # TODO: Add decorators (postfix if, unless, for and while)
     rule(:expression) {
@@ -42,6 +47,7 @@ module Spoon
     }
 
     # Matches value
+    # TODO: Add ternary and elvis operator
     rule(:value) {
       annotation |
       closure |
@@ -98,7 +104,6 @@ module Spoon
     # example: import foo.bar.Baz.*
     # TODO: Implement import syntax from this issue: https://github.com/nondev/spoon/issues/26
     rule(:import) {
-      space.maybe >>
       IMPORT() >>
       space.maybe >>
       repeat((ident | type | STAR().as(:ident)), DOT()).as(:import) >>
@@ -122,12 +127,14 @@ module Spoon
 
     # Matches self call
     # example: @@foo
+    # TODO: Add also "self." syntax?
     rule(:self_call) {
       str('@@') >> value.as(:self)
     }
 
     # Matches this call
     # example: @foo
+    # TODO: Add also "this." syntax?
     rule(:this_call) {
       str('@') >> value.as(:this)
     }
@@ -143,9 +150,8 @@ module Spoon
     # Matches class definition
     # example: class Foo < Bar do @baz = "Baz"
     # TODO: Add also "implements", to implement interfaces
-    # FIXME: Multiple class definitions in one file
     rule(:classdef) {
-      space.maybe >> CLASS() >> space.maybe >>
+      CLASS() >> space.maybe >>
       (
         type.as(:name) >>
         (trim(str("<")) >> type.as(:extends)).maybe >>
@@ -179,12 +185,13 @@ module Spoon
     }
 
     # Matches typed word
-    # example: foo as Bar
+    # example: foo : Bar
     rule(:typed) {
       (ident.as(:value) >> trim(DOUBLE_DOT()) >> type.as(:type)).as(:typed)
     }
 
     # Matches word
+    # example: to-string
     rule(:ident) {
       skip_key >>
       (
@@ -194,6 +201,7 @@ module Spoon
     }
 
     # Matches type
+    # example: MyType
     rule(:type) {
       skip_key >>
       (
@@ -224,6 +232,7 @@ module Spoon
     }
 
     # Matches interpolation inside string
+    # example: #{my-expression}
     rule(:interpolation) {
       (str('\\').absent? >> str('#{') >> expression >> str('}')) |
       str('\\').absent? >> str('#') >> expression
@@ -241,19 +250,21 @@ module Spoon
     }
 
     # Matches literals (strings, numbers)
+    # TODO: Add "null" and "void" literal
     rule(:literal) {
       number | string | boolean
     }
 
     # Matches everything that starts with '#' until end of line
     # example: # abc
+    # TODO: Add support for block comments
     rule(:comment) {
       HASH() >>
       stop
     }
 
     # Matches return statement
-    # example: return a, b, c
+    # example: return foo
     rule(:ret) {
       RETURN() >>
       space.maybe >>

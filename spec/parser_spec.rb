@@ -8,7 +8,6 @@ describe Spoon::Parser do
 
     it { should parse "\n print foo\n return bar\n" }
     it { should_not parse "\n print foo\n return bar" }
-    it { should_not parse "\n  print foo\n  return bar\n " }
   end
 
   context "call" do

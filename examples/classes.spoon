@@ -5,7 +5,8 @@ class Point2d
     @x : Int = x
     @y : Int = y
 
-  to-string = : String -> "Point2d: x=#{@x}, y=#{@y}"
+  to-string = : String ->
+    "Point2d: x=#{@x}, y=#{@y}"
 
 class Point3d < Point2d
   new = (x : Int, y : Int, z : Int) : Void ->
@@ -13,7 +14,8 @@ class Point3d < Point2d
     @z : Int = z
 
   \override
-  to-string = : String -> "Point3d: x=#{@x}, y=#{@y}, z=#{@z}"
+  to-string = : String ->
+    "Point3d: x=#{@x}, y=#{@y}, z=#{@z}"
 
 point2d = Point2d(100, 200)
 trace point2d.to-string!

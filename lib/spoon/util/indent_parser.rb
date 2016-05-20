@@ -27,7 +27,9 @@ module Spoon
           @prev_stack.push @last
           @stack.push @current
         elsif @current < @last
-          @stack.pop
+          while @current != @stack[@stack.length - 1] && !@stack.empty?
+            @stack.pop
+          end
         end
 
         AlwaysMatch.new

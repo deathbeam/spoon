@@ -47,7 +47,8 @@ module Spoon
     }
 
     # Matches value
-    # TODO: Add ternary and elvis operator
+    # TODO: Add ternary or existential operator
+    # TODO: Add switch-when, try-catch, break and continue
     rule(:value) {
       annotation |
       closure |
@@ -56,6 +57,7 @@ module Spoon
       condition_reverse |
       for_loop |
       while_loop |
+      until_loop |
       construct |
       array_access |
       call |
@@ -162,6 +164,7 @@ module Spoon
 
     # Matches array access
     # example: foo[bar]
+    # TODO: Implement something similar for generics
     rule(:array_access) {
       (ident.as(:l) >> trim(str('[')) >>
       expression.as(:r) >>
@@ -345,6 +348,17 @@ module Spoon
         parens(expression).as(:condition) >>
         body.as(:body)
       ).as(:while)
+    }
+
+    # Matches while loop
+    # example: while (foo) bar
+    rule(:until_loop) {
+      (
+        UNTIL() >>
+        space.maybe >>
+        parens(expression).as(:condition) >>
+        body.as(:body)
+      ).as(:until)
     }
 
     # Matches if-else if-else in recursive structure

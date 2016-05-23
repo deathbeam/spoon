@@ -1,3 +1,5 @@
+#!/usr/bin/env coffee
+
 import haxe.unit.TestCase
 import haxe.unit.TestRunner
 

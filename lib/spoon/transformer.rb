@@ -235,5 +235,9 @@ module Spoon
     rule(:while => { :condition => simple(:condition), :body => simple(:body) }) {
       AST::Node.new :while, [ condition, body ]
     }
+
+    rule(:until => { :condition => simple(:condition), :body => simple(:body) }) {
+      AST::Node.new :while, [ AST::Node.new(:op, [ "!", condition ], :operation => :prefix), body ]
+    }
   end
 end

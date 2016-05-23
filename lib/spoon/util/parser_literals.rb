@@ -28,7 +28,8 @@ module Spoon
           :when,
           :try,
           :catch,
-          :to
+          :to,
+          :until
         ]
       end
 
@@ -55,6 +56,8 @@ module Spoon
       rule(:UNLESS)   { key :unless }
 
       rule(:WHILE)    { key :while }
+
+      rule(:UNTIL)    { key :until }
 
       rule(:NEW)      { key :new }
 

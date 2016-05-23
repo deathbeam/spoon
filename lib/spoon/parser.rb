@@ -157,7 +157,7 @@ module Spoon
       CLASS() >> space.maybe >>
       (
         type.as(:name) >>
-        (trim(str("<")) >> type.as(:extends)).maybe >>
+        (trim(EXTENDS()) >> type.as(:extends)).maybe >>
         body.as(:body)
       ).as(:class)
     }

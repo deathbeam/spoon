@@ -29,7 +29,8 @@ module Spoon
           :try,
           :catch,
           :to,
-          :until
+          :until,
+          :extends
         ]
       end
 
@@ -70,6 +71,8 @@ module Spoon
       rule(:TRY)      { key :try }
 
       rule(:CATCH)    { key :catch }
+
+      rule(:EXTENDS)  { key :extends }
 
       ####################################
       # Special characters

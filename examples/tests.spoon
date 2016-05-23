@@ -1,0 +1,23 @@
+import haxe.unit.TestCase
+import haxe.unit.TestRunner
+
+r = TestRunner!
+r.add MyTests!
+r.run!
+
+class MyTests < TestCase
+  \override
+  setup = =>
+    @myVal : String = "foo"
+    @myInt : Int = 1 + 1
+
+  # Every test function name has to start with 'test'
+
+  test-value = =>
+    assert-equals "foo", myVal
+
+  test-math1 = =>
+    assert-true myInt is 2
+
+  test-math2 = =>
+    assert-false myInt is 3

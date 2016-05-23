@@ -23,7 +23,12 @@ module Spoon
           :do,
           :while,
           :import,
-          :class
+          :class,
+          :switch,
+          :when,
+          :try,
+          :catch,
+          :to
         ]
       end
 
@@ -55,19 +60,29 @@ module Spoon
 
       rule(:CLASS)    { key :class }
 
+      rule(:SWITCH)   { key :switch }
+
+      rule(:WHEN)     { key :when }
+
+      rule(:TRY)      { key :try }
+
+      rule(:CATCH)    { key :catch }
+
       ####################################
       # Special characters
       ####################################
 
       rule(:ARROW)       { str "->" }
 
+      rule(:FAT_ARROW)   { str "=>" }
+
       rule(:EXCLAMATION) { str "!" }
 
       rule(:HASH)        { str "#" }
 
-      rule(:DOUBLE_DOT)  { str ":" }
-
       rule(:STAR)        { str "*" }
+
+      rule(:DOUBLE_DOT)  { trim(str(":")) }
 
       ####################################
       # Operators
@@ -80,7 +95,7 @@ module Spoon
       rule(:COMMA) { trim(str(",")) }
 
       # Range
-      rule(:RANGE) { trim(str("..")) }
+      rule(:RANGE) { trim(str("..") | key("to")) }
 
       # Multiplication, division, and remainder
       rule(:MUL) { trim(match['\*/%']) }

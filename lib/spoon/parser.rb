@@ -51,6 +51,7 @@ module Spoon
     rule(:value) {
       annotation |
       closure |
+      fat_closure |
       condition |
       condition_reverse |
       for_loop |
@@ -143,7 +144,7 @@ module Spoon
     # example: a : b
     rule(:field) {
       (ident | self_call | this_call | string).as(:l) >>
-      trim(DOUBLE_DOT()).as(:o) >>
+      DOUBLE_DOT().as(:o) >>
       expression.as(:r)
     }
 
@@ -187,7 +188,7 @@ module Spoon
     # Matches typed word
     # example: foo : Bar
     rule(:typed) {
-      (ident.as(:value) >> trim(DOUBLE_DOT()) >> type.as(:type)).as(:typed)
+      (ident.as(:value) >> DOUBLE_DOT() >> type.as(:type)).as(:typed)
     }
 
     # Matches word
@@ -284,7 +285,7 @@ module Spoon
     # example a = 1
     rule(:parameter) {
       ident.as(:name) >>
-      (trim(DOUBLE_DOT()) >> type.as(:type)).maybe >>
+      (DOUBLE_DOT() >> type.as(:type)).maybe >>
       (ASSIGN() >> expression.as(:value)).maybe
     }
 
@@ -305,11 +306,23 @@ module Spoon
     rule(:closure) {
       (
         parameter_list.as(:params).maybe >>
-        (trim(DOUBLE_DOT()) >> type.as(:type)).maybe >>
+        (DOUBLE_DOT() >> type.as(:type)).maybe >>
         whitespace.maybe >>
         ARROW() >>
         body.as(:body)
       ).as(:closure)
+    }
+
+    # Matches fat closure (no implicit return)
+    # example: (a) => b
+    rule(:fat_closure) {
+      (
+        parameter_list.as(:params).maybe >>
+        (DOUBLE_DOT() >> type.as(:type)).maybe >>
+        whitespace.maybe >>
+        FAT_ARROW() >>
+        body.as(:body)
+      ).as(:fat_closure)
     }
 
     # Matches for loop

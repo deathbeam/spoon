@@ -188,6 +188,30 @@ module Spoon
       AST::Node.new :closure, [ type ] + params + [ body ], :is_typed => true
     }
 
+    rule(:fat_closure => { :body => simple(:body) }) {
+      AST::Node.new :closure, [ body ], :fat => true
+    }
+
+    rule(:fat_closure => { :params => simple(:params), :body => simple(:body) }) {
+      AST::Node.new :closure, [ params, body ], :fat => true
+    }
+
+    rule(:fat_closure => { :params => sequence(:params), :body => simple(:body) }) {
+      AST::Node.new :closure, params + [ body ], :fat => true
+    }
+
+    rule(:fat_closure => { :type => simple(:type), :body => simple(:body) }) {
+      AST::Node.new :closure, [ type, body ], :is_typed => true, :fat => true
+    }
+
+    rule(:fat_closure => { :params => simple(:params), :type => simple(:type), :body => simple(:body) }) {
+      AST::Node.new :closure, [ type, params, body ], :is_typed => true, :fat => true
+    }
+
+    rule(:fat_closure => { :params => sequence(:params), :type => simple(:type), :body => simple(:body) }) {
+      AST::Node.new :closure, [ type ] + params + [ body ], :is_typed => true, :fat => true
+    }
+
     rule(:if => { :condition => simple(:condition), :true => simple(:if_true) }) {
       AST::Node.new :if, [ condition, if_true ]
     }

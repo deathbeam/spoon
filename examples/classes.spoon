@@ -1,7 +1,7 @@
 #!/usr/bin/env coffee
 
 class Point2d
-  new = (x : Int, y : Int) : Void ->
+  new = (x : Int, y : Int) : Void =>
     @x : Int = x
     @y : Int = y
 
@@ -9,7 +9,7 @@ class Point2d
     "Point2d: x=#{@x}, y=#{@y}"
 
 class Point3d < Point2d
-  new = (x : Int, y : Int, z : Int) : Void ->
+  new = (x : Int, y : Int, z : Int) : Void =>
     super x, y
     @z : Int = z
 

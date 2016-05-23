@@ -268,7 +268,6 @@ module Spoon
             value = compile_next(right)
 
             if right.type == :closure
-              value = value.sub("return {", "{") if name == "new"
               value[8] = " #{name}"
             else
               value = "var #{name} #{operator} #{value}"
@@ -500,7 +499,7 @@ module Spoon
 
       @content << ") "
       @content << ": #{compile_next(type)} " if type
-      @content << "return "
+      @content << "return " unless @node.option :fat
       @content << compile_next(children.last)
 
       @compiler.scope.pop

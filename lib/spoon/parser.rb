@@ -63,7 +63,7 @@ module Spoon
       call |
       import |
       ret |
-      hash |
+      map |
       array |
       literal |
       self_call |
@@ -179,13 +179,12 @@ module Spoon
       whitespace.maybe >> str(']')
     }
 
-    # Matches hash
-    # example: [ foo: bar, baz: foo ]
-    # TODO: Should this be with the [ ] syntax, or switch back to classical { } syntax?
-    rule(:hash) {
-      str('[') >> whitespace.maybe >>
-      repeat(field, COMMA()).as(:hash) >>
-      whitespace.maybe >> str(']')
+    # Matches map
+    # example: { foo: bar, baz: foo }
+    rule(:map) {
+      str('{') >> whitespace.maybe >>
+      repeat(field, COMMA()).as(:map) >>
+      whitespace.maybe >> str('}')
     }
 
     # Matches typed word

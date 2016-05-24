@@ -27,7 +27,8 @@ module Spoon
         :import => Import,
         :param => Param,
         :value => Value,
-        :table => Table,
+        :array => Array,
+        :map => Map,
         :access => Access,
         :class => Class,
         :annotation => Annotation
@@ -225,7 +226,7 @@ module Spoon
         right = children.shift
 
         if @node.option :is_assign
-          if left.option :is_array
+          if left.type == :array
             assign_name = "__assign#{@@assign_counter}"
             @content << "var #{assign_name} #{operator} #{compile_next(right)}#{eol(right)}"
             @@assign_counter += 1
@@ -237,7 +238,7 @@ module Spoon
               @content << "#{child_name} #{operator} #{assign_name}[#{index}]"
               @content << eol(child) unless child.equal? left.children.last
             end
-          elsif left.option :is_hash
+          elsif left.type == :map
             assign_name = "__assign#{@@assign_counter}"
             @content << "var #{assign_name} #{operator} #{compile_next(right)}#{eol(right)}"
             @@assign_counter += 1
@@ -413,17 +414,32 @@ module Spoon
     end
   end
 
-  class Table < Base
+  class Array < Base
     def compile
       children = @node.children.dup
-      @content << (@node.option(:is_array) ? "[" : "{")
+      @content << "["
 
       children.each do |child|
         @content << compile_next(child)
         @content << ", " unless child.equal? children.last
       end
 
-      @content << (@node.option(:is_array) ? "]" : "}")
+      @content << "]"
+      super
+    end
+  end
+
+  class Map < Base
+    def compile
+      children = @node.children.dup
+      @content << "{"
+
+      children.each do |child|
+        @content << compile_next(child)
+        @content << ", " unless child.equal? children.last
+      end
+
+      @content << "}"
       super
     end
   end

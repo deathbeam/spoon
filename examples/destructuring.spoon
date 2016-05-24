@@ -1,0 +1,13 @@
+#!/usr/bin/env coffee
+
+date = ->
+  [24, "May", 2016]
+
+[day, month, year] = date!
+
+person = {
+  name: "John",
+  age: 50
+}
+
+{name: name, age: age} = person

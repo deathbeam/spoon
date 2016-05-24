@@ -232,10 +232,9 @@ module Spoon
             @@assign_counter += 1
 
             left.children.each_with_index do |child, index|
-              child_name = compile_next(child)
               @content << @parent.tab
-              scope_name(child)
-              @content << "#{child_name} #{operator} #{assign_name}[#{index}]"
+              @content << scope_name(child)
+              @content << " #{operator} #{assign_name}[#{index}]"
               @content << eol(child) unless child.equal? left.children.last
             end
           elsif left.type == :map
@@ -246,12 +245,11 @@ module Spoon
             left.children.each do |child|
               child_children = child.children.dup
               child_children.shift
-              child_alias_node = child_children.shift
-              child_alias = compile_next(child_alias_node)
               child_name = compile_next(child_children.shift)
+              child_alias_node = child_children.shift
               @content << @parent.tab
-              scope_name(child_alias_node)
-              @content << "#{child_alias} #{operator} #{assign_name}.#{child_name}"
+              @content << scope_name(child_alias_node)
+              @content << " #{operator} #{assign_name}.#{child_name}"
               @content << eol(child) unless child.equal? left.children.last
             end
           elsif @parent.parent != nil && @parent.parent.node.type == :class

@@ -1,0 +1,15 @@
+#!/usr/bin/env coffee
+
+import openfl.display.Sprite
+import openfl.Assets
+
+class Main extends Sprite
+  new = =>
+    super!
+
+    bitmap-data = Assets.get-bitmap-data "assets/openfl.png"
+    bitmap = Bitmap(bitmap-data)
+    add-child bitmap
+
+    bitmap.x = (stage.stage-width - bitmap.width) / 2
+    bitmap.y = (stage.stage-height - bitmap.height) / 2

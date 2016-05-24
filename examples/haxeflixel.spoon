@@ -1,0 +1,12 @@
+#!/usr/bin/env coffee
+
+import flixel.FlxState
+import flixel.text.FlxText
+
+class Main extends FlxState
+  \override
+  create = =>
+    super.create!
+
+    text = FlxText(0, 0, 0, "Hello World!")
+    add text

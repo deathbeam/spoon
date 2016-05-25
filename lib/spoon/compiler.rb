@@ -554,8 +554,8 @@ module Spoon
 
   class Return < Base
     def compile
-      @content << "return "
-      @content << compile_next(@node.children.dup.shift)
+      @content << "return"
+      @content << " #{compile_next(@node.children.first)}" unless @node.children.empty?
       super
     end
   end

@@ -1,4 +1,4 @@
 #!/usr/bin/env coffee
 
-greet = name -> trace "Hello #{name}, how are you?"
+greet = (name) => trace "Hello #{name}, how are you?"
 greet "Person"

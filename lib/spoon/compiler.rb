@@ -506,7 +506,7 @@ module Spoon
 
           unless child.equal? children.last
             @content << compile_next(child)
-            @content << ", " unless child == children[children.length - 2]
+            @content << ", " unless child.equal? children[children.length - 2]
           end
         end
       end

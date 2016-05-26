@@ -20,10 +20,6 @@ module Spoon
       AST::Node.new :value, [ boolean.to_b ]
     }
 
-    rule(:text => simple(:text)) {
-      "'#{text}'"
-    }
-
     rule(:annotation => simple(:value)) {
       AST::Node.new :annotation, [ value ]
     }

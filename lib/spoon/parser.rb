@@ -222,7 +222,7 @@ module Spoon
     # TODO: Add support for single quotes
     rule(:string) {
       str('"') >>
-      (text.as(:text) | interpolation).repeat.as(:string) >>
+      (text.as(:string) | interpolation).repeat.maybe.as(:string) >>
       str('"')
     }
 

@@ -110,14 +110,15 @@ module Spoon
 
     rule(:l => simple(:left), :o => simple(:op), :r => simple(:right)) {
       operator = op.to_op
+      options = { :operation => :infix }
 
       if operator == "="
-        AST::Node.new :op, [ operator, left, right ], :operation => :infix, :is_assign => true
+        options.store :is_assign, true
       elsif operator == "."
-        AST::Node.new :op, [ operator, left, right ], :operation => :infix, :is_chain => true
-      else
-        AST::Node.new :op, [ operator, left, right ], :operation => :infix
+        options.store :is_chain, true
       end
+
+      AST::Node.new :op, [ operator, left, right ], options
     }
 
     rule(:l => simple(:left), :o => simple(:op)) {

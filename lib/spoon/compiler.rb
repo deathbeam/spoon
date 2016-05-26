@@ -9,9 +9,11 @@ module Spoon
     attr_reader :class_names
 
     def initialize(path = "main")
-      basename = File.basename(path, ".*")
-      @name = basename.split('_').collect!{ |w| w.capitalize }.join
+      @name = File.basename(path, ".*").split('_').collect!{ |w| w.capitalize }.join
       @class_names = []
+      @scope = Spoon::Util::Namespace.new
+      @static_scope = Spoon::Util::Namespace.new
+      @instance_scope = Spoon::Util::Namespace.new
 
       @nodes = {
         :root => Root,
@@ -33,10 +35,6 @@ module Spoon
         :class => Class,
         :annotation => Annotation
       }
-
-      @scope = Spoon::Util::Namespace.new
-      @static_scope = Spoon::Util::Namespace.new
-      @instance_scope = Spoon::Util::Namespace.new
     end
 
     def in_class
@@ -65,11 +63,11 @@ module Spoon
       @content
     end
 
-    def compile_next(node)
+    def subtree(node)
       @compiler.compile(node, self, @tab)
     end
 
-    def compile_str(str)
+    def string(str)
       if str.start_with? "'"
         str.gsub!("\\#", "#") || str
       else
@@ -79,7 +77,18 @@ module Spoon
       end
     end
 
-    def compile_class_variables
+    def each(children, separator)
+      content = ""
+
+      children.each do |child|
+        content << subtree(child)
+        content << ", " unless child.equal? children.last
+      end
+
+      content
+    end
+
+    def cache
       result = ""
 
       @compiler.static_scope.get.each do |key, value|
@@ -89,12 +98,6 @@ module Spoon
           result << eol
         end
       end
-
-      result
-    end
-
-    def compile_instance_variables
-      result = ""
 
       @compiler.instance_scope.get.each do |key, value|
         if value
@@ -118,47 +121,54 @@ module Spoon
       @tab = "    "
     end
 
-    def compile
+    def push_scope(name)
       @compiler.scope.add
-      @compiler.scope.push @compiler.name
-      @compiler.class_names.push @compiler.name
+      @compiler.scope.push name
+      @compiler.class_names.push name
       @compiler.static_scope.add
       @compiler.instance_scope.add
+    end
 
-      imports = ""
-      classes = ""
-      import_calls = ""
-
-      @node.children.each do |child|
-        if child.type == :import
-          imports << compile_next(child) << eol(child)
-          last = child.children.last
-
-          if last.option :is_type
-            name = compile_next(child.children.last)
-            import_calls << "#{@tab}if (Reflect.hasField(#{name}, 'main')) Reflect.callMethod(#{name}, Reflect.field(#{name}, 'main'), [])#{eol(child.children.last)}"
-          end
-        elsif child.type == :class
-          classes << compile_next(child) << eol(child)
-        else
-          @content << @tab << compile_next(child) << eol(child)
-        end
-      end
-
-      @content = "class #{@compiler.name} {\n#{compile_class_variables}#{compile_instance_variables}  @:keep public static function main() {\n#{import_calls}#{@content}"
-      @content = "#{imports}#{@content}"
-      @content << "  }\n"
-      @content << "}\n#{classes}"
-
+    def pop_scope
       @compiler.scope.pop
       @compiler.static_scope.pop
       @compiler.instance_scope.pop
       @compiler.class_names.pop
+    end
+
+    def compile
+      imports = ""
+      classes = ""
+      import_calls = ""
+      push_scope @compiler.name
+
+      @node.children.each do |child|
+        if child.type == :import
+          imports << subtree(child) + eol(child)
+          last = child.children.last
+
+          if last.option :is_type
+            name = subtree(child.children.last)
+            import_calls << "#{@tab}if (Reflect.hasField(#{name}, 'main')) Reflect.callMethod(#{name}, Reflect.field(#{name}, 'main'), [])#{eol(child.children.last)}"
+          end
+        elsif child.type == :class
+          classes << subtree(child) + eol(child)
+        else
+          @content << @tab + subtree(child) + eol(child)
+        end
+      end
+
+      @content = "class #{@compiler.name} {\n#{cache}  @:keep public static function main() {\n#{import_calls}#{@content}"
+      @content = "#{imports}#{@content}"
+      @content << "  }\n"
+      @content << "}\n#{classes}"
+      pop_scope
+
       super
     end
   end
 
-  class Class < Base
+  class Class < Root
     def initialize(compiler, node, parent, tab)
       super
       @tab = ""
@@ -166,26 +176,15 @@ module Spoon
 
     def compile
       children = @node.children.dup
-      name = compile_next(children.shift)
-
-      @compiler.scope.add
-      @compiler.scope.push name
-      @compiler.class_names.push name
-      @compiler.static_scope.add
-      @compiler.instance_scope.add
+      name = subtree(children.shift)
+      push_scope name
 
       @content << "class #{name} "
-      @content << "extends #{compile_next(children.shift)} " if @node.option :is_extended
+      @content << "extends #{subtree(children.shift)} " if @node.option :is_extended
+      @content << subtree(children.shift)
 
-      body = children.shift
-      @content << compile_next(body)
-
-      @compiler.scope.pop
-      @compiler.static_scope.pop
-      @compiler.instance_scope.pop
-      @compiler.class_names.pop
-
-      super
+      pop_scope
+      @content
     end
   end
 
@@ -199,11 +198,11 @@ module Spoon
       content = ""
 
       @node.children.each do |child|
-        content << @tab << compile_next(child) << eol(child)
+        content << @tab << subtree(child) << eol(child)
       end
 
       @content << "{\n"
-      (@content << "#{compile_class_variables}#{compile_instance_variables}") if @parent.node.type == :class
+      @content << "#{cache}" if @parent.node.type == :class
       @content << content
 
       @content << @parent.tab << "}"
@@ -228,7 +227,7 @@ module Spoon
         if @node.option :is_assign
           if left.type == :array
             assign_name = "__assign#{@@assign_counter}"
-            @content << "var #{assign_name} #{operator} #{compile_next(right)}#{eol(right)}"
+            @content << "var #{assign_name} #{operator} #{subtree(right)}#{eol(right)}"
             @@assign_counter += 1
 
             left.children.each_with_index do |child, index|
@@ -239,13 +238,13 @@ module Spoon
             end
           elsif left.type == :map
             assign_name = "__assign#{@@assign_counter}"
-            @content << "var #{assign_name} #{operator} #{compile_next(right)}#{eol(right)}"
+            @content << "var #{assign_name} #{operator} #{subtree(right)}#{eol(right)}"
             @@assign_counter += 1
 
             left.children.each do |child|
               child_children = child.children.dup
               child_children.shift
-              child_name = compile_next(child_children.shift)
+              child_name = subtree(child_children.shift)
               child_alias_node = child_children.shift
               @content << @parent.tab
               @content << scope_name(child_alias_node)
@@ -257,14 +256,14 @@ module Spoon
             name = ""
 
             if is_this
-              name = compile_next(left.children.first)
+              name = subtree(left.children.first)
               @compiler.static_scope.push name, false
             else
-              name = compile_next(left)
+              name = subtree(left)
               @compiler.instance_scope.push name, false
             end
 
-            value = compile_next(right)
+            value = subtree(right)
 
             if right.type == :closure
               value[8] = " #{name}"
@@ -279,20 +278,20 @@ module Spoon
             @content << " " unless @node.option :is_chain
             @content << operator
             @content << " " unless @node.option :is_chain
-            @content << compile_next(right)
+            @content << subtree(right)
           end
         else
-          @content << compile_next(left)
+          @content << subtree(left)
           @content << " " unless @node.option :is_chain
           @content << operator
           @content << " " unless @node.option :is_chain
-          @content << compile_next(right)
+          @content << subtree(right)
         end
       when :prefix
         @content << operator
-        @content << compile_next(children.shift)
+        @content << subtree(children.shift)
       when :suffix
-        @content << compile_next(children.shift)
+        @content << subtree(children.shift)
         @content << operator
       end
 
@@ -302,7 +301,7 @@ module Spoon
     end
 
     def scope_name(node)
-      content = compile_next(node)
+      content = subtree(node)
       is_self = node.option :is_self
       is_this = node.option :is_this
 
@@ -313,10 +312,10 @@ module Spoon
 
         if child.option :is_typed
           children = child.children.dup
-          name = compile_next(children.shift)
-          type = compile_next(children.shift)
+          name = subtree(children.shift)
+          type = subtree(children.shift)
         else
-          name = compile_next(child)
+          name = subtree(child)
         end
 
         if is_self
@@ -331,8 +330,8 @@ module Spoon
         end
       elsif node.option :is_typed
         children = node.children.dup
-        name = compile_next(children.shift)
-        type = compile_next(children.shift)
+        name = subtree(children.shift)
+        type = subtree(children.shift)
         content = "var " << content if @compiler.scope.push name, type
       elsif node.type == :value
         content = "var " << content if @compiler.scope.push content
@@ -348,7 +347,7 @@ module Spoon
 
       children.each do |child|
         if child.is_a?(String) || child.is_a?(Fixnum) || [true, false].include?(child)
-          @content << compile_str(child.to_s)
+          @content << string(child.to_s)
         else
           if @node.option :is_self
             raise ArgumentError, 'Self call cannot be used outside of class' unless @compiler.in_class
@@ -361,7 +360,7 @@ module Spoon
                   @node.option(:is_typed) &&
                   (@parent.node.option(:is_self) ||
                   @parent.node.option(:is_this))
-            @content << compile_next(child)
+            @content << subtree(child)
           end
         end
 
@@ -385,17 +384,16 @@ module Spoon
       children = @node.children.dup
       type = (@node.option(:is_typed) ? children.shift : false)
 
-      @content << compile_next(children.shift)
-      @content << " : #{compile_next(type)}" if type
-      @content << " = " << compile_next(children.shift) unless children.empty?
+      @content << subtree(children.shift)
+      @content << " : #{subtree(type)}" if type
+      @content << " = #{subtree(children.shift)}" unless children.empty?
       super
     end
   end
 
   class Annotation < Base
     def compile
-      children = @node.children.dup
-      body = compile_next(children.shift)
+      body = subtree(@node.children.first)
       @content << "@" unless body == "override"
       @content << body
     end
@@ -404,24 +402,15 @@ module Spoon
   class Access < Base
     def compile
       children = @node.children.dup
-      @content << compile_next(children.shift)
-      @content << "["
-      @content << compile_next(children.shift)
-      @content << "]"
+      @content << "#{subtree(children.shift)}[#{subtree(children.shift)}]"
       super
     end
   end
 
   class Array < Base
     def compile
-      children = @node.children.dup
       @content << "["
-
-      children.each do |child|
-        @content << compile_next(child)
-        @content << ", " unless child.equal? children.last
-      end
-
+      @content << each(@node.children, ", ")
       @content << "]"
       super
     end
@@ -429,32 +418,9 @@ module Spoon
 
   class Haash < Base
     def compile
-      children = @node.children.dup
       @content << "{"
-
-      children.each do |child|
-        @content << compile_next(child)
-        @content << ", " unless child.equal? children.last
-      end
-
+      @content << each(@node.children, ", ")
       @content << "}"
-      super
-    end
-  end
-
-  class New < Base
-    def compile
-      children = @node.children.dup
-      @content << "new "
-      @content << compile_next(children.shift)
-      @content << "("
-
-      children.each do |child|
-        @content << compile_next(child)
-        @content << ", " unless child.equal? children.last
-      end
-
-      @content << ")"
       super
     end
   end
@@ -462,30 +428,25 @@ module Spoon
   class Call < Base
     def compile
       children = @node.children.dup
-      @content << compile_next(children.shift)
+      @content << subtree(children.shift)
       @content << "("
-
-      children.each do |child|
-        @content << compile_next(child)
-        @content << ", " unless child.equal? children.last
-      end
-
+      @content << each(children, ", ")
       @content << ")"
+      super
+    end
+  end
+
+  class New < Call
+    def compile
+      @content << "new "
       super
     end
   end
 
   class Import < Base
     def compile
-      children = @node.children.dup
-
       @content << "import "
-
-      children.each do |child|
-        @content << compile_next(child)
-        @content << "." unless child.equal? children.last
-      end
-
+      @content << each(@node.children, ".")
       super
     end
   end
@@ -505,16 +466,16 @@ module Spoon
           @compiler.scope.push name
 
           unless child.equal? children.last
-            @content << compile_next(child)
+            @content << subtree(child)
             @content << ", " unless child.equal? children[children.length - 2]
           end
         end
       end
 
       @content << ") "
-      @content << ": #{compile_next(type)} " if type
+      @content << ": #{subtree(type)} " if type
       @content << "return " unless @node.option :fat
-      @content << compile_next(children.last)
+      @content << subtree(children.last)
 
       @compiler.scope.pop
       super
@@ -525,9 +486,9 @@ module Spoon
     def compile
       children = @node.children.dup
 
-      @content << "if (" << compile_next(children.shift) << ") "
-      @content << compile_next(children.shift)
-      @content << " else " << compile_next(children.shift) unless children.empty?
+      @content << "if (#{subtree(children.shift)}) "
+      @content << subtree(children.shift)
+      @content << " else #{subtree(children.shift)}" unless children.empty?
       super
     end
   end
@@ -547,11 +508,11 @@ module Spoon
       if left_children_children.shift == ","
         for_name = "__for#{@@for_counter}"
         @@for_counter += 1
-        key_name = compile_next(left_children_children.shift)
-        value_name = compile_next(left_children_children.shift)
+        key_name = subtree(left_children_children.shift)
+        value_name = subtree(left_children_children.shift)
 
         content << "#{key_name} in Reflect.fields(#{for_name})"
-        content = "var #{for_name} = #{compile_next(left_children.shift)};\n#{@tab}" + content
+        content = "var #{for_name} = #{subtree(left_children.shift)}#{eol(left)}#{@tab}" + content
         value = AST::Node.new :value, [ "var #{value_name} = Reflect.field(#{for_name}, #{key_name})" ]
 
         if right.type == :block
@@ -560,11 +521,11 @@ module Spoon
           right = AST::Node.new :block, [ value, right ]
         end
       else
-        content << compile_next(left)
+        content << subtree(left)
       end
 
       content <<  ") "
-      content << compile_next(right)
+      content << subtree(right)
       @content << content
       super
     end
@@ -574,8 +535,8 @@ module Spoon
     def compile
       children = @node.children.dup
 
-      @content << "while (" << compile_next(children.shift) << ") "
-      @content << compile_next(children.shift)
+      @content << "while (#{subtree(children.shift)}) "
+      @content << subtree(children.shift)
       super
     end
   end
@@ -583,7 +544,7 @@ module Spoon
   class Return < Base
     def compile
       @content << "return"
-      @content << " #{compile_next(@node.children.first)}" unless @node.children.empty?
+      @content << " #{subtree(@node.children.first)}" unless @node.children.empty?
       super
     end
   end

@@ -82,7 +82,7 @@ module Spoon
 
       children.each do |child|
         content << subtree(child)
-        content << ", " unless child.equal? children.last
+        content << separator unless child.equal? children.last
       end
 
       content

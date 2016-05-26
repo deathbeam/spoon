@@ -50,33 +50,33 @@ module Spoon
         NeverMatch.new "Mismatched indentation level"
       end
 
-      rule (:checkdent) {
-        dynamic { |source, context|
+      rule(:checkdent) {
+        dynamic { |source|
           check_indentation(source)
         }
       }
 
       rule(:indent) {
-        dynamic { |source, context|
+        dynamic {
           @current > @last ? AlwaysMatch.new : NeverMatch.new("Not an indent")
         }
       }
 
       rule(:dedent) {
-        dynamic { |source, context|
+        dynamic { |source|
           @current < @last ? fix_position(source) : NeverMatch.new("Not a dedent")
         }
       }
 
       rule(:samedent) {
-        dynamic { |source, context|
+        dynamic {
           @current == @last ? AlwaysMatch.new : NeverMatch.new("Not a samedent")
         }
       }
     end
 
     class AlwaysMatch < Parslet::Atoms::Base
-      def try(source, context, consume_all)
+      def try(_, _, _)
         succ("")
       end
     end
@@ -88,7 +88,7 @@ module Spoon
         self.msg = msg
       end
 
-      def try(source, context, consume_all)
+      def try(source, context, _)
         context.err(self, source, msg)
       end
     end

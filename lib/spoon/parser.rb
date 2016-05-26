@@ -63,7 +63,7 @@ module Spoon
       call |
       import |
       ret |
-      map |
+      hash |
       array |
       literal |
       self_call |
@@ -179,11 +179,11 @@ module Spoon
       whitespace.maybe >> str(']')
     }
 
-    # Matches map
+    # Matches hash
     # example: { foo: bar, baz: foo }
-    rule(:map) {
+    rule(:hash) {
       str('{') >> whitespace.maybe >>
-      repeat(field, COMMA()).as(:map) >>
+      repeat(field, COMMA()).as(:hash) >>
       whitespace.maybe >> str('}')
     }
 
@@ -333,7 +333,10 @@ module Spoon
       (
         FOR() >>
         space.maybe >>
-        parens(ident.as(:l) >> trim(IN()).as(:o) >> expression.as(:r)).as(:condition) >>
+        parens(
+          ((ident.as(:l) >> COMMA().as(:o) >> ident.as(:r)) | ident).as(:l) >>
+          trim(IN()).as(:o) >> expression.as(:r)
+        ).as(:condition) >>
         body.as(:body)
       ).as(:for)
     }

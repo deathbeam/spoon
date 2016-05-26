@@ -1,0 +1,7 @@
+#!/usr/bin/env coffee
+
+array = [0, 1, 2]
+for v in array do trace "Array: #{v}"
+
+hash = {foo: 1, bar:2, baz: 3}
+for k, v in hash do trace "Hash: #{k}-#{v}"

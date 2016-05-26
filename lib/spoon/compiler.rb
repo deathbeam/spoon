@@ -28,7 +28,7 @@ module Spoon
         :param => Param,
         :value => Value,
         :array => Array,
-        :map => Map,
+        :hash => Haash,
         :access => Access,
         :class => Class,
         :annotation => Annotation
@@ -427,7 +427,7 @@ module Spoon
     end
   end
 
-  class Map < Base
+  class Haash < Base
     def compile
       children = @node.children.dup
       @content << "{"
@@ -533,11 +533,39 @@ module Spoon
   end
 
   class For < Base
+    @@for_counter = 0
+
     def compile
       children = @node.children.dup
+      left = children.shift
+      right = children.shift
+      left_children = left.children.dup
+      left_children.shift
+      left_children_children = left_children.shift.children.dup
+      content = "for ("
 
-      @content << "for (" << compile_next(children.shift) << ") "
-      @content << compile_next(children.shift)
+      if left_children_children.shift == ","
+        for_name = "__for#{@@for_counter}"
+        @@for_counter += 1
+        key_name = compile_next(left_children_children.shift)
+        value_name = compile_next(left_children_children.shift)
+
+        content << "#{key_name} in Reflect.fields(#{for_name})"
+        content = "var #{for_name} = #{compile_next(left_children.shift)};\n#{@tab}" + content
+        value = AST::Node.new :value, [ "var #{value_name} = Reflect.field(#{for_name}, #{key_name})" ]
+
+        if right.type == :block
+          right = AST::Node.new :block, [ value ] + right.children.dup
+        else
+          right = AST::Node.new :block, [ value, right ]
+        end
+      else
+        content << compile_next(left)
+      end
+
+      content <<  ") "
+      content << compile_next(right)
+      @content << content
       super
     end
   end

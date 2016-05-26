@@ -80,12 +80,12 @@ module Spoon
       AST::Node.new :array, values
     }
 
-    rule(:map => simple(:value)) {
-      AST::Node.new :map, [ value ]
+    rule(:hash => simple(:value)) {
+      AST::Node.new :hash, [ value ]
     }
 
-    rule(:map => sequence(:values)) {
-      AST::Node.new :map, values
+    rule(:hash => sequence(:values)) {
+      AST::Node.new :hash, values
     }
 
     rule(:import => simple(:import)) {

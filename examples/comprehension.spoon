@@ -1,7 +1,12 @@
 #!/usr/bin/env coffee
 
-array = [0, 1, 2]
+# Array comprehension
+array = [1, 2, 3]
 for v in array do trace "Array: #{v}"
 
+# Range comprehension
+for i in 0 to array.length do trace "Array with index: #{i}-#{array[i]}"
+
+# Object/hash comprehension
 hash = {foo: 1, bar:2, baz: 3}
 for k, v in hash do trace "Hash: #{k}-#{v}"

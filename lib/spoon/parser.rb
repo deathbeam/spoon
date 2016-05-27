@@ -7,6 +7,15 @@ require "spoon/util/parser_literals"
 
 module Spoon
   class Parser < Spoon::Util::IndentParser
+    def parse_with_debug(text)
+      begin
+        parse(text, reporter: Parslet::ErrorReporter::Deepest.new)
+      rescue Parslet::ParseFailed => error
+        puts error.cause.ascii_tree
+        false
+      end
+    end
+
     # Matches entire file, skipping all whitespace at beginning and end
     rule(:root) {
       (
@@ -248,7 +257,8 @@ module Spoon
         match('[0-9]').repeat(1) >>
         (
           str('.') >> match('[0-9]').repeat(1) |
-          str('e') >> match('[0-9]').repeat(1)
+          str('e') >> match('[0-9]').repeat(1) |
+          str('x') >> match('[a-zA-Z]').repeat(1)
         ).maybe
       ).as(:number)
     }

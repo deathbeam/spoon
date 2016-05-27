@@ -1,0 +1,83 @@
+#!/usr/bin/env coffee
+
+import h2d.*
+import hxd.*
+
+Res.initEmbed!
+MyGame!
+
+class MyGame extends App
+  \override
+  init = =>
+    # creates a new sprite and put it at the center of the sceen
+    @spr : Sprite = Sprite(s2d)
+    @spr.x = Std.int(s2d.width / 2)
+    @spr.y = Std.int(s2d.height / 2)
+
+    # load the haxe logo png into a tile
+    tile = Res.hxlogo.toTile!
+
+    # change its pivot so it is centered
+    tile = tile.center!
+
+    for i in 0 to 15
+      # creates a bitmap into the sprite
+      bmp = Bitmap(tile, spr)
+
+      # move its position
+      bmp.x = Math.cos(i * Math.PI / 8) * 100
+      bmp.y = Math.sin(i * Math.PI / 8) * 100
+
+      # makes it transparent by 10%
+      bmp.alpha = 0.1
+
+      # makes the colors adds to the background
+      bmp.blendMode = Add
+
+    ifdef !cpp
+      # load a true type font, can be not very high quality
+      font = Res.trueTypeFont.build(64)
+
+      # creates a text display with the given font
+      @tf : Text = Text(font, s2d)
+
+      # set the text color
+      @tf.textColor = 0xFFFFFF
+
+      # adds a red shadow
+      @tf.dropShadow = { dx : 3, dy : 3, color : 0xFF0000, alpha : 0.8 }
+
+      # set the text color
+      @tf.text = "Héllò h2d !"
+
+      # set the text position
+      @tf.x = 20
+      @tf.y = s2d.height - 80
+
+    # load a bitmap font Resource
+    font = Res.customFont.toFont!
+
+    # creates another text field with this font
+    @tf : Text = Text(font, s2d)
+    @tf.textColor = 0xFFFFFF
+    @tf.dropShadow = { dx : 0.5, dy : 0.5, color : 0xFF0000, alpha : 0.8 }
+    @tf.text = "Héllò h2d !"
+
+    @tf.y = 20
+    @tf.x = 20
+    @tf.scale(7)
+
+  # if we the window has been resized
+  \override
+  on-resize = =>
+    # center our sprite
+    @spr.x = Std.int(s2d.width / 2)
+    @spr.y = Std.int(s2d.height / 2)
+
+    # move our text up/down accordingly
+    if @tf != null do @tf.y = s2d.height - 80
+
+  \override
+  update = (dt:Float) =>
+    # rotate our sprite every frame
+    @spr.rotation += 0.01 * dt

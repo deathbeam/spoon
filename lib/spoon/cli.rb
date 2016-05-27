@@ -22,17 +22,19 @@ db   8D 88      `8b  d8' `8b  d8' 88  V888
 
     desc "compile FILE", "Print compiled file and exit"
     def compile(file)
-      tree = Spoon::Parser.new.parse_with_debug(File.read(file))
-      ast = Spoon::Transformer.new.apply tree
-      result = Spoon::Compiler.new(file).compile ast
-      puts result.to_s
+      if tree = Spoon::Parser.new.parse_with_debug(File.read(file))
+        ast = Spoon::Transformer.new.apply tree
+        result = Spoon::Compiler.new(file).compile ast
+        puts result.to_s
+      end
     end
 
     desc "tree FILE", "Print file AST and exit"
     def tree(file)
-      file = Spoon::Parser.new.parse_with_debug(File.read(file))
-      ast = Spoon::Transformer.new.apply file
-      puts ast
+      if tree = Spoon::Parser.new.parse_with_debug(File.read(file))
+        ast = Spoon::Transformer.new.apply tree
+        puts ast
+      end
     end
 
     desc "hello", "I greet you!"

@@ -107,28 +107,28 @@ module Spoon
       rule(:RANGE) { trim(str("..") | key("to")) }
 
       # Multiplication, division, and remainder
-      rule(:MUL) { trim(match['\*/%']) }
+      rule(:MUL) { trim(match['\*/%'] >> str("=").absent?) }
 
       # Addition and subtraction
-      rule(:ADD) { trim(match['\+\-']) }
+      rule(:ADD) { trim(match['\+\-'] >> str("=").absent?) }
 
       # Bitwise left shift and right shift
       rule(:SHIFT) { trim(str("<<") | str(">>")) }
 
       # For relational operators <, ≤ > and ≥ respectively
-      rule(:COMPARE) { trim(match['<>'] |str("<=") | str(">=")) }
+      rule(:COMPARE) { trim(str("<=") | str(">=") | match['<>'] >> str("=").absent?) }
 
       # For relational operators = and ≠ respectively
       rule(:EQ) { trim(str("==") | str("!=") | key("is") | key("isnt")) }
 
       # Bitwise AND
-      rule(:BAND) { trim(str("&")) }
+      rule(:BAND) { trim(str("&") >> str("=").absent?) }
 
       # Bitwise XOR
-      rule(:BXOR) { trim(str("^")) }
+      rule(:BXOR) { trim(str("^") >> str("=").absent?) }
 
       # Bitwise OR
-      rule(:BOR) { trim(str("|")) }
+      rule(:BOR) { trim(str("|") >> str("=").absent?) }
 
       # Logical AND
       rule(:AND) { trim(str("&&") | key("and")) }

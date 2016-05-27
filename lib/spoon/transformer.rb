@@ -57,7 +57,7 @@ module Spoon
     }
 
     rule(:number => simple(:number)) {
-      AST::Node.new :value, [ number.to_i ]
+      AST::Node.new :value, [ number.to_s ]
     }
 
     rule(:ident => simple(:value)) {

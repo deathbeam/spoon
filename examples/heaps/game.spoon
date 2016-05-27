@@ -3,19 +3,22 @@
 import h2d.*
 import hxd.*
 
-Res.initEmbed!
+Res.init-embed!
 MyGame!
 
 class MyGame extends App
+  spr : Sprite = null
+  tf : Text = null
+
   \override
   init = =>
     # creates a new sprite and put it at the center of the sceen
-    @spr : Sprite = Sprite(s2d)
+    @spr = Sprite(s2d)
     @spr.x = Std.int(s2d.width / 2)
     @spr.y = Std.int(s2d.height / 2)
 
     # load the haxe logo png into a tile
-    tile = Res.hxlogo.toTile!
+    tile = Res.hxlogo.to-tile!
 
     # change its pivot so it is centered
     tile = tile.center!
@@ -32,14 +35,14 @@ class MyGame extends App
       bmp.alpha = 0.1
 
       # makes the colors adds to the background
-      bmp.blendMode = Add
+      bmp.blend-mode = Add
 
     ifdef !cpp
       # load a true type font, can be not very high quality
-      font = Res.trueTypeFont.build(64)
+      font = Res.true-type-font.build 64
 
       # creates a text display with the given font
-      @tf : Text = Text(font, s2d)
+      @tf = Text(font, s2d)
 
       # set the text color
       @tf.textColor = 0xFFFFFF
@@ -55,12 +58,12 @@ class MyGame extends App
       @tf.y = s2d.height - 80
 
     # load a bitmap font Resource
-    font = Res.customFont.toFont!
+    font = Res.custom-font.to-font!
 
     # creates another text field with this font
-    @tf : Text = Text(font, s2d)
-    @tf.textColor = 0xFFFFFF
-    @tf.dropShadow = { dx : 0.5, dy : 0.5, color : 0xFF0000, alpha : 0.8 }
+    @tf = Text(font, s2d)
+    @tf.text-color = 0xFFFFFF
+    @tf.drop-shadow = { dx : 0.5, dy : 0.5, color : 0xFF0000, alpha : 0.8 }
     @tf.text = "Héllò h2d !"
 
     @tf.y = 20

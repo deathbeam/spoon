@@ -225,7 +225,7 @@ module Spoon
 
     # Matches true/false
     rule(:boolean) {
-      (str(:true) | str(:false)).as(:boolean)
+      (key(:true) | key(:false)).as(:boolean)
     }
 
     # Matches strings
@@ -258,7 +258,7 @@ module Spoon
         (
           str('.') >> match('[0-9]').repeat(1) |
           str('e') >> match('[0-9]').repeat(1) |
-          str('x') >> match('[a-zA-Z]').repeat(1)
+          str('x') >> match('[a-zA-Z0-9]').repeat(1)
         ).maybe
       ).as(:number)
     }

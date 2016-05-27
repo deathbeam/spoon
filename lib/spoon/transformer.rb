@@ -217,6 +217,14 @@ module Spoon
       AST::Node.new :if, [ condition, if_true, if_false ]
     }
 
+    rule(:ifdef => { :condition => simple(:condition), :true => simple(:if_true) }) {
+      AST::Node.new :ifdef, [ condition, if_true ]
+    }
+
+    rule(:ifdef => { :condition => simple(:condition), :true => simple(:if_true), :false => simple(:if_false) }) {
+      AST::Node.new :ifdef, [ condition, if_true, if_false ]
+    }
+
     rule(:unless => { :condition => simple(:condition), :true => simple(:if_true) }) {
       AST::Node.new :if, [ AST::Node.new(:op, [ "!", condition ], :operation => :prefix), if_true ]
     }

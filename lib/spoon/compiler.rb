@@ -9,7 +9,14 @@ module Spoon
     attr_reader :class_names
 
     def initialize(path = "main")
-      @name = File.basename(path, ".*").split('_').collect!{ |w| w.capitalize }.join
+      @name = File.basename(path, ".*")
+        .split('-')
+        .collect(&:capitalize)
+        .join
+        .split('_')
+        .collect(&:capitalize)
+        .join
+
       @class_names = []
       @scope = Spoon::Util::Namespace.new
       @static_scope = Spoon::Util::Namespace.new
@@ -19,6 +26,7 @@ module Spoon
         :root => Root,
         :block => Block,
         :closure => Closure,
+        :ifdef => IfDef,
         :if => If,
         :for => For,
         :while => While,
@@ -111,7 +119,7 @@ module Spoon
     end
 
     def eol(node = nil)
-      (node == nil || (node.type != :annotation && node.type != :class)) ? ";\n" : "\n"
+      (node == nil || (node.type != :annotation && node.type != :class && node.type != :ifdef)) ? ";\n" : "\n"
     end
   end
 
@@ -489,6 +497,43 @@ module Spoon
       @content << "if (#{subtree(children.shift)}) "
       @content << subtree(children.shift)
       @content << " else #{subtree(children.shift)}" unless children.empty?
+      super
+    end
+  end
+
+  class IfDef < Base
+    def compile
+      children = @node.children.dup
+      @content << "#" unless @parent.node.type == :ifdef
+      @content << "if (#{subtree(children.shift)})\n"
+
+      body_true = children.shift
+
+      if body_true.type == :block
+        body_true.children.each do |child|
+          @content << @tab + "  " + subtree(child) + eol(child)
+        end
+      else
+        @content << @tab + "  " + subtree(body_true) + eol(body_true)
+      end
+
+      if !children.empty?
+        body_false = children.shift
+        @content << "#{@tab}#else"
+        @content << " \n" unless body_false.type == :ifdef
+
+        if body_false.type == :block
+          body_false.children.each do |child|
+            @content << @tab + "  " + subtree(child) + eol(child)
+          end
+        elsif body_false.type == :ifdef
+          @content << subtree(body_false) + eol(body_false)
+        else
+          @content << @tab + "  " + subtree(body_false) + eol(body_false)
+        end
+      end
+
+      @content << "#{@tab}#end" unless @parent.node.type == :ifdef
       super
     end
   end

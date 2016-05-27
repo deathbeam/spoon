@@ -8,6 +8,7 @@ module Spoon
 
       def keywords
         [
+          :ifdef,
           :if,
           :else,
           :return,
@@ -43,6 +44,8 @@ module Spoon
       rule(:ELSE)     { key :else }
 
       rule(:FOR)      { key :for }
+
+      rule(:IFDEF)    { key :ifdef }
 
       rule(:IF)       { key :if }
 

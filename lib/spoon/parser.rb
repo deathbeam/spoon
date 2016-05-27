@@ -53,6 +53,7 @@ module Spoon
       annotation |
       closure |
       fat_closure |
+      condition_def |
       condition |
       condition_reverse |
       for_loop |
@@ -361,6 +362,17 @@ module Spoon
         parens(expression).as(:condition) >>
         body.as(:body)
       ).as(:until)
+    }
+
+    # Matches compiler-scoped condition
+    # example: ifdef (a) b else if(c) d else e
+    rule(:condition_def) {
+      (
+        IFDEF() >>
+        space.maybe >>
+        parens(expression).as(:condition) >>
+        condition_body
+      ).as(:ifdef)
     }
 
     # Matches if-else if-else in recursive structure

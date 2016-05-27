@@ -22,7 +22,7 @@ db   8D 88      `8b  d8' `8b  d8' 88  V888
 
     desc "compile SOURCE DESTINATION", "Compile file and exit"
     def compile(source, destination = nil)
-      if tree = Spoon::Parser.new.parse_with_debug(File.read(source))
+      if tree = Spoon::Parser.new.parse_with_debug(File.read(source, :encoding => "UTF-8"))
         ast = Spoon::Transformer.new.apply tree
         result = Spoon::Compiler.new(source).compile ast
 

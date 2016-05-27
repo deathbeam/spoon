@@ -20,12 +20,17 @@ db   8D 88      `8b  d8' `8b  d8' 88  V888
   class CLI < Thor
     default_task :hello
 
-    desc "compile FILE", "Print compiled file and exit"
-    def compile(file)
-      if tree = Spoon::Parser.new.parse_with_debug(File.read(file))
+    desc "compile SOURCE DESTINATION", "Compile file and exit"
+    def compile(source, destination = nil)
+      if tree = Spoon::Parser.new.parse_with_debug(File.read(source))
         ast = Spoon::Transformer.new.apply tree
-        result = Spoon::Compiler.new(file).compile ast
-        puts result.to_s
+        result = Spoon::Compiler.new(source).compile ast
+
+        unless destination == nil
+          File.write(destination, result)
+        else
+          puts result
+        end
       end
     end
 

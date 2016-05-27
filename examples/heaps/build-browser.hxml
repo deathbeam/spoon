@@ -1,4 +1,5 @@
--cmd ./../../script/run compile -s game.spoon -d Game.hx
+-cmd "./../../bin/spoon compile game.spoon Game.hx"
+--next
 -js game.js
 -main Game
 -lib heaps

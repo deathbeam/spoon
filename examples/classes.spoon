@@ -14,7 +14,7 @@ class Point3d extends Point2d
     @z : Int = z
 
   \override
-  to-string = : String =>
+  to-string = : String ->
     "Point3d: x=#{@x}, y=#{@y}, z=#{@z}"
 
 point2d = Point2d(100, 200)

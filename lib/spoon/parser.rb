@@ -290,7 +290,7 @@ module Spoon
     rule(:call) {
       (
         (ident | self_call | this_call).as(:name) >>
-        space.maybe >> (EXCLAMATION() | expression_list.as(:args))
+        space.maybe >> (EXCLAMATION() >> space.maybe >> str("=").absent? | expression_list.as(:args))
       ).as(:call)
     }
 

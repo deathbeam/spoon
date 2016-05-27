@@ -71,6 +71,14 @@ module Spoon
       @content
     end
 
+    def simple(node)
+      if node.is_a?(String) || node.is_a?(Fixnum) || [true, false].include?(node)
+        string(node)
+      else
+        subtree(node)
+      end
+    end
+
     def subtree(node)
       @compiler.compile(node, self, @tab)
     end
@@ -224,8 +232,9 @@ module Spoon
     def compile
       children = @node.children.dup
       operator = children.shift.to_s
+      insert_parens = @parent.node.type == :op && !@parent.node.children.first.to_s.end_with?("=")
 
-      @content << "(" if @parent.node.type == :op && !@parent.node.option(:is_assign)
+      @content << "(" if insert_parens
 
       case @node.option :operation
       when :infix
@@ -261,16 +270,15 @@ module Spoon
             end
           elsif @parent.parent != nil && @parent.parent.node.type == :class
             is_this = left.option :is_this
-            name = ""
+            name = simple(left.children.first)
 
             if is_this
-              name = subtree(left.children.first)
               @compiler.static_scope.push name, false
             else
-              name = subtree(left)
               @compiler.instance_scope.push name, false
             end
 
+            name = subtree(left)
             value = subtree(right)
 
             if right.type == :closure
@@ -303,7 +311,7 @@ module Spoon
         @content << operator
       end
 
-      @content << ")" if @parent.node.type == :op && !@parent.node.option(:is_assign)
+      @content << ")" if insert_parens
 
       super
     end

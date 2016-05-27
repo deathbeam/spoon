@@ -1,0 +1,9 @@
+#!/usr/bin/env coffee
+
+people = {
+  "Elizabeth": "Programming",
+  "Joel": "Design"
+}
+
+for name, job in people
+  trace "#{name} does #{job} for a living!"

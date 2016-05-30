@@ -219,6 +219,7 @@ module Spoon
       skip_key >>
       (
         (
+          (match['a-z'] >> match['a-zA-Z0-9\-'].repeat >> DOT()).repeat >>
           match['A-Z'] >>
           match['a-zA-Z0-9\-'].repeat
         ).as(:ident).as(:type) >>

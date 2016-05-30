@@ -33,7 +33,7 @@ module Spoon
     }
 
     rule(:typed => { :value => simple(:value), :type => simple(:type) } ) {
-      AST::Node.new :value, [ type, value ], :is_typed => true
+      AST::Node.new :value, [ value, type ], :is_typed => true
     }
 
     rule(:class => { :name => simple(:name), :body => simple(:body) } ) {

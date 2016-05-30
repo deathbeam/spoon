@@ -330,8 +330,8 @@ module Spoon
 
         if child.option :is_typed
           children = child.children.dup
-          type = simple(children.shift)
           name = subtree(children.shift)
+          type = simple(children.shift)
         else
           name = subtree(child)
         end
@@ -379,8 +379,8 @@ module Spoon
           @content << (@compiler.in_class ?  "this." : "#{@compiler.class_names.last}.")
           @content << simple(children.shift)
         elsif @node.option :is_typed
-          type = simple(children.shift)
           name = simple(children.shift)
+          type = simple(children.shift)
           @content << name
           @content << ": #{type}" unless @parent.node.option(:is_self) || @parent.node.option(:is_this)
         elsif @node.option(:is_type) && node.option(:is_generic)
@@ -517,6 +517,7 @@ module Spoon
 
   class IfDef < Base
     def compile
+      @compiler.scope.add
       children = @node.children.dup
       @content << "#" unless @parent.node.type == :ifdef
       @content << "if (#{subtree(children.shift)})\n"
@@ -548,6 +549,7 @@ module Spoon
       end
 
       @content << "#{@tab}#end" unless @parent.node.type == :ifdef
+      @compiler.scope.pop
       super
     end
   end

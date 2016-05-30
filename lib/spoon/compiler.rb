@@ -322,14 +322,16 @@ module Spoon
       is_this = node.option :is_this
 
       if is_self || is_this
-        child = node.children.first
+        children = node.children.dup
+        children.shift
+        child = children.first
         name = ""
         type = true
 
         if child.option :is_typed
           children = child.children.dup
+          type = simple(children.shift)
           name = subtree(children.shift)
-          type = subtree(children.shift)
         else
           name = subtree(child)
         end
@@ -347,7 +349,7 @@ module Spoon
       elsif node.option :is_typed
         children = node.children.dup
         name = subtree(children.shift)
-        type = subtree(children.shift)
+        type = simple(children.shift)
         content = "var " << content if @compiler.scope.push name, type
       elsif node.type == :value
         content = "var " << content if @compiler.scope.push content
@@ -361,33 +363,37 @@ module Spoon
     def compile
       children = @node.children.dup
 
-      children.each do |child|
-        if child.is_a?(String) || child.is_a?(Fixnum) || [true, false].include?(child)
-          @content << string(child.to_s)
-        else
-          if @node.option :is_self
-            raise ArgumentError, 'Self call cannot be used outside of class' unless @compiler.in_class
-            @content << "#{@compiler.class_names.last}."
-          elsif @node.option :is_this
-            @content << (@compiler.in_class ?  "this." : "#{@compiler.class_names.last}.")
-          end
-
-          unless child.equal?(children.last) &&
-                  @node.option(:is_typed) &&
-                  (@parent.node.option(:is_self) ||
-                  @parent.node.option(:is_this))
-            @content << subtree(child)
-          end
+      if @node.option :is_interpolated
+        children.each do |child|
+          @content << simple(child)
+          @content << " + " unless child.equal?(children.last)
         end
+      else
+        if @node.option :is_self
+          children.shift
+          raise ArgumentError, 'Self call cannot be used outside of class' unless @compiler.in_class
+          @content << "#{@compiler.class_names.last}."
+          @content << simple(children.shift)
+        elsif @node.option :is_this
+          children.shift
+          @content << (@compiler.in_class ?  "this." : "#{@compiler.class_names.last}.")
+          @content << simple(children.shift)
+        elsif @node.option :is_typed
+          type = simple(children.shift)
+          name = simple(children.shift)
+          @content << name
+          @content << ": #{type}" unless @parent.node.option(:is_self) || @parent.node.option(:is_this)
+        elsif @node.option(:is_type) && node.option(:is_generic)
+          @content << "#{simple(children.shift)}<"
 
-        unless child.equal? children.last
-          if @node.option(:is_typed)
-            if !@parent.node.option(:is_self) && !@parent.node.option(:is_this)
-              @content << " : "
-            end
-          else
-            @content << " + "
+          children.each do |child|
+            @content << simple(child)
+            @content << ", " unless child.equal? children.last
           end
+
+          @content << ">"
+        else
+          @content << simple(children.shift)
         end
       end
 
@@ -401,7 +407,7 @@ module Spoon
       type = (@node.option(:is_typed) ? children.shift : false)
 
       @content << subtree(children.shift)
-      @content << " : #{subtree(type)}" if type
+      @content << " : #{simple(type)}" if type
       @content << " = #{subtree(children.shift)}" unless children.empty?
       super
     end
@@ -482,14 +488,14 @@ module Spoon
           @compiler.scope.push name
 
           unless child.equal? children.last
-            @content << subtree(child)
+            @content << simple(child)
             @content << ", " unless child.equal? children[children.length - 2]
           end
         end
       end
 
       @content << ") "
-      @content << ": #{subtree(type)} " if type
+      @content << ": #{simple(type)} " if type
       @content << "return " unless @node.option :fat
       @content << subtree(children.last)
 

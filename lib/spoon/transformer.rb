@@ -25,15 +25,15 @@ module Spoon
     }
 
     rule(:this => simple(:value)) {
-      AST::Node.new :value, [ value ], :is_this => true
+      AST::Node.new :value, [ "this", value ], :is_this => true
     }
 
     rule(:self => simple(:value)) {
-      AST::Node.new :value, [ value ], :is_self => true
+      AST::Node.new :value, [ "self", value ], :is_self => true
     }
 
     rule(:typed => { :value => simple(:value), :type => simple(:type) } ) {
-      AST::Node.new :value, [ value, type ], :is_typed => true
+      AST::Node.new :value, [ type, value ], :is_typed => true
     }
 
     rule(:class => { :name => simple(:name), :body => simple(:body) } ) {
@@ -53,7 +53,7 @@ module Spoon
     }
 
     rule(:string => sequence(:values)) {
-      AST::Node.new :value, values
+      AST::Node.new :value, values, :is_interpolated => true
     }
 
     rule(:number => simple(:number)) {
@@ -64,8 +64,16 @@ module Spoon
       AST::Node.new :value, [ value.to_v ], :is_ident => true
     }
 
-    rule(:type => simple(:value)) {
-      AST::Node.new :value, [ value.to_v ], :is_type => true
+    rule(:type => simple(:name)) {
+      AST::Node.new :value, [ name ], :is_type => true
+    }
+
+    rule(:type => simple(:name), :generic => simple(:generic)) {
+      AST::Node.new :value, [ name, generic ], :is_type => true, :is_generic => true
+    }
+
+    rule(:type => simple(:name), :generic => sequence(:generic)) {
+      AST::Node.new :value, [ name ] + generic, :is_type => true, :is_generic => true
     }
 
     rule(:array => simple(:value)) {

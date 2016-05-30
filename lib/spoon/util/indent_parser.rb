@@ -21,7 +21,7 @@ module Spoon
           @current += 1
         end
 
-        @last = @stack[@stack.length - 1]
+        @last = (@stack[@stack.length - 1] == nil ? 0 : @stack[@stack.length - 1])
 
         if @current > @last
           @prev_stack.push @last

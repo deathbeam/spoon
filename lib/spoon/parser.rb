@@ -200,7 +200,7 @@ module Spoon
     # Matches typed word
     # example: foo : Bar
     rule(:typed) {
-      (ident.as(:value) >> DOUBLE_DOT() >> type.as(:type)).as(:typed)
+      (ident.as(:value) >> DOUBLE_DOT() >> type).as(:typed)
     }
 
     # Matches word
@@ -218,8 +218,15 @@ module Spoon
     rule(:type) {
       skip_key >>
       (
-        match['A-Z'] >>
-        match['a-zA-Z0-9\-'].repeat
+        (
+          match['A-Z'] >>
+          match['a-zA-Z0-9\-'].repeat
+        ).as(:ident).as(:type) >>
+        (
+          trim(str("<")) >>
+          repeat(type, COMMA()).as(:generic) >>
+          whitespace.maybe >> str(">")
+        ).maybe
       ).as(:type)
     }
 
@@ -298,7 +305,7 @@ module Spoon
     # example a = 1
     rule(:parameter) {
       ident.as(:name) >>
-      (DOUBLE_DOT() >> type.as(:type)).maybe >>
+      (DOUBLE_DOT() >> type).maybe >>
       (ASSIGN() >> expression.as(:value)).maybe
     }
 
@@ -319,7 +326,7 @@ module Spoon
     rule(:closure) {
       (
         parameter_list.as(:params).maybe >>
-        (DOUBLE_DOT() >> type.as(:type)).maybe >>
+        (DOUBLE_DOT() >> type).maybe >>
         whitespace.maybe >>
         ARROW() >>
         body.as(:body)
@@ -331,7 +338,7 @@ module Spoon
     rule(:fat_closure) {
       (
         parameter_list.as(:params).maybe >>
-        (DOUBLE_DOT() >> type.as(:type)).maybe >>
+        (DOUBLE_DOT() >> type).maybe >>
         whitespace.maybe >>
         FAT_ARROW() >>
         body.as(:body)

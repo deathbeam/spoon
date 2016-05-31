@@ -56,7 +56,7 @@ module Spoon
     }
 
     # Matches value
-    # TODO: Add ternary or existential operator
+    # TODO: Add existential operator
     # TODO: Add switch-when, try-catch, break and continue
     rule(:value) {
       annotation |
@@ -215,11 +215,12 @@ module Spoon
 
     # Matches type
     # example: MyType
+    # TODO: Better AST output for types, maybe revisit dot.chain
     rule(:type) {
       skip_key >>
       (
         (
-          (match['a-z'] >> match['a-zA-Z0-9\-'].repeat >> DOT()).repeat >>
+          (match['a-zA-Z0-9\-'].repeat >> DOT()).repeat >>
           match['A-Z'] >>
           match['a-zA-Z0-9\-'].repeat
         ).as(:ident).as(:type) >>

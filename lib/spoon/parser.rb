@@ -119,8 +119,8 @@ module Spoon
     rule(:import) {
       IMPORT() >>
       space.maybe >>
-      repeat((ident | type | STAR().as(:ident)), DOT()).as(:import) >>
-      endline.maybe
+      infix_expression(ident | type | STAR().as(:ident), [DOT(), 14, :left]).as(:import) >>
+      endline
     }
 
     # Matches object construction

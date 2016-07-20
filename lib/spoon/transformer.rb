@@ -4,6 +4,10 @@ require "spoon/util/ast_extensions"
 
 module Spoon
   class Transformer < Parslet::Transform
+    def reverse(expression)
+      AST::Node.new(:op, [ "!", expression ], :operation => :prefix)
+    end
+
     rule(:root => sequence(:expressions)) {
       AST::Node.new :root, expressions
     }
@@ -94,10 +98,6 @@ module Spoon
 
     rule(:import => simple(:import)) {
       AST::Node.new :import, [ import ]
-    }
-
-    rule(:import => sequence(:import)) {
-      AST::Node.new :import, import
     }
 
     rule(:param => { :name => simple(:name) }) {
@@ -234,11 +234,11 @@ module Spoon
     }
 
     rule(:unless => { :condition => simple(:condition), :true => simple(:if_true) }) {
-      AST::Node.new :if, [ AST::Node.new(:op, [ "!", condition ], :operation => :prefix), if_true ]
+      AST::Node.new :if, [ reverse(condition), if_true ]
     }
 
     rule(:unless => { :condition => simple(:condition), :true => simple(:if_true), :false => simple(:if_false) }) {
-      AST::Node.new :if, [ AST::Node.new(:op, [ "!", condition ], :operation => :prefix), if_true, if_false ]
+      AST::Node.new :if, [ reverse(condition), if_true, if_false ]
     }
 
     rule(:for => { :condition => simple(:condition), :body => simple(:body) }) {
@@ -250,7 +250,7 @@ module Spoon
     }
 
     rule(:until => { :condition => simple(:condition), :body => simple(:body) }) {
-      AST::Node.new :while, [ AST::Node.new(:op, [ "!", condition ], :operation => :prefix), body ]
+      AST::Node.new :while, [ reverse(condition), body ]
     }
   end
 end

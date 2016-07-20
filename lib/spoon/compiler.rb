@@ -467,8 +467,7 @@ module Spoon
 
   class Import < Base
     def compile
-      @content << "import "
-      @content << each(@node.children, ".")
+      @content << "import #{subtree(@node.children.first)}"
       super
     end
   end

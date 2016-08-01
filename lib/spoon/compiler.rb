@@ -253,7 +253,7 @@ module Spoon
               @content << " #{operator} #{assign_name}[#{index}]"
               @content << eol(child) unless child.equal? left.children.last
             end
-          elsif left.type == :map
+          elsif left.type == :hash
             assign_name = "__assign#{@@assign_counter}"
             @content << "var #{assign_name} #{operator} #{subtree(right)}#{eol(right)}"
             @@assign_counter += 1

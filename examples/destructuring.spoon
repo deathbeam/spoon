@@ -1,13 +1,18 @@
 #!/usr/bin/env coffee
 
-date = ->
-  [24, "May", 2016]
+date = [
+  "24",
+  "May",
+  "2016"
+]
 
-[day, month, year] = date!
+[day, month, year] = date
+trace "Day: #{day}, Month: #{month}, Year: #{year}"
 
 person = {
   name: "John",
   age: 50
 }
 
-{name: name, age: age} = person
+{name: person-name, age: person-age} = person
+trace "Person name: #{person-name}, Person age: #{person-age}"

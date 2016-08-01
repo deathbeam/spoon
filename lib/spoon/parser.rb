@@ -1,15 +1,55 @@
 require "parslet"
 require "parslet/convenience"
 
-require "spoon/util/indent_parser"
-require "spoon/util/parser_extensions"
-require "spoon/util/parser_literals"
+require "spoon/lexer"
 
 module Spoon
-  class Parser < Spoon::Util::IndentParser
-    def parse_with_debug(text)
+  class Parser < Lexer
+    def self.keywords(*names)
+      names.each do |name|
+        rule("#{name}_keyword") { str(name.to_s).as(:keyword) >> spaces? }
+      end
+    end
+
+    def self.symbols(symbols)
+      symbols.each do |name,symbol|
+        rule(name) { str(symbol) >> spaces? }
+      end
+    end
+
+    def self.operators(operators={})
+      trailing_chars = Hash.new { |hash,symbol| hash[symbol] = [] }
+
+      operators.each_value do |symbol|
+        operators.each_value do |op|
+          if op[0,symbol.length] == symbol
+            char = op[symbol.length,1]
+
+            unless (char.nil? || char.empty?)
+              trailing_chars[symbol] << char
+            end
+          end
+        end
+      end
+
+      operators.each do |name,symbol|
+        trailing = trailing_chars[symbol]
+
+        if trailing.empty?
+          rule(name) { str(symbol).as(:operator) >> spaces? }
+        else
+          pattern = "[#{Regexp.escape(trailing.join)}]"
+
+          rule(name) {
+            (str(symbol) >> match(pattern).absnt?).as(:operator) >> spaces?
+          }
+        end
+      end
+    end
+
+    def parse(text)
       begin
-        parse(text, reporter: Parslet::ErrorReporter::Deepest.new)
+        super(text, reporter: Parslet::ErrorReporter::Deepest.new)
       rescue Parslet::ParseFailed => error
         puts error.cause.ascii_tree
         false
